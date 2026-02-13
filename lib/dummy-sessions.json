@@ -1,0 +1,69 @@
+{
+  "success": true,
+  "user_id": "user_12345",
+  "sessions": [
+    {
+      "id": 1,
+      "session_id": "sse_12fc35e41e29",
+      "thread_id": "thread_sse_12fc35e41e29",
+      "title": "Amazon Aging Summary",
+      "created_at": "2026-02-05T22:43:48.785845+00:00",
+      "updated_at": "2026-02-05T22:48:25.401735+00:00",
+      "message_count": 3,
+      "metadata": {
+        "user_query": "Get the aging summary of Amazon"
+      }
+    },
+    {
+      "id": 2,
+      "session_id": "sse_8a2b91c53f40",
+      "thread_id": "thread_sse_8a2b91c53f40",
+      "title": "AP Bills Report",
+      "created_at": "2026-02-04T14:20:10.000000+00:00",
+      "updated_at": "2026-02-04T14:35:22.000000+00:00",
+      "message_count": 5,
+      "metadata": {
+        "user_query": "Show me all open AP bills for Q1"
+      }
+    },
+    {
+      "id": 3,
+      "session_id": "sse_3d4e67f82a11",
+      "thread_id": "thread_sse_3d4e67f82a11",
+      "title": "AR Invoices by Customer",
+      "created_at": "2026-02-03T09:15:00.000000+00:00",
+      "updated_at": "2026-02-03T09:42:18.000000+00:00",
+      "message_count": 4,
+      "metadata": {
+        "user_query": "List AR invoices grouped by customer"
+      }
+    },
+    {
+      "id": 4,
+      "session_id": "sse_5f6a12b94c33",
+      "thread_id": "thread_sse_5f6a12b94c33",
+      "title": "Cash Flow Forecast",
+      "created_at": "2026-02-02T16:00:00.000000+00:00",
+      "updated_at": "2026-02-02T16:28:45.000000+00:00",
+      "message_count": 6,
+      "metadata": {
+        "user_query": "What is the cash flow forecast for next month?"
+      }
+    },
+    {
+      "id": 5,
+      "session_id": "sse_9e7b34d06e55",
+      "thread_id": "thread_sse_9e7b34d06e55",
+      "title": "Trial Balance Summary",
+      "created_at": "2026-02-01T11:30:00.000000+00:00",
+      "updated_at": "2026-02-01T12:05:10.000000+00:00",
+      "message_count": 2,
+      "metadata": {
+        "user_query": "Run trial balance for January 2026"
+      }
+    }
+  ],
+  "count": 5,
+  "limit": 50,
+  "offset": 0
+}

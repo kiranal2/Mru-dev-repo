@@ -1,0 +1,184 @@
+{
+  "success": true,
+  "thread_id": "thread_sse_12fc35e41e29",
+  "user_id": "user_12345",
+  "results": [
+    {
+      "title": "Amazon Aging Summary",
+      "created_at": "2026-02-05T22:43:48.785845+00:00",
+      "conversation_turn_count": 3,
+      "artifact_count": 3,
+      "can_continue": true,
+      "conversation_view": [
+        {
+          "type": "user",
+          "content": "Get the aging summary of Amazon"
+        },
+        {
+          "type": "assistant",
+          "analysis": "Amazon's AR aging summary shows no overdue or outstanding receivables in the current, 30, 60, or 90 day buckets. The company has a total negative AR balance of $-38,203.16, which indicates credits or overpayments are present. As of now, Amazon does not owe any substantial outstanding amounts.",
+          "recommendations": "Monitor credits closely and confirm they are valid. Investigate aged credits or negative balances for potential refund processing or future offset.",
+          "tool_name": "AccountsReceivable",
+          "domain": "AR",
+          "query_id": "query_79f4770e5eb9",
+          "artifact_id": "ar_get_ar_aging_summary_34b073830301",
+          "data_preview": {
+            "columns": [
+              "CUSTOMER_NETSUITE_ID",
+              "CUSTOMER_NAME",
+              "SUBSIDIARY_NAME",
+              "CURRENT_USD",
+              "THIRTY_DAY_BALANCE",
+              "SIXTY_DAY_BALANCE",
+              "NINETY_DAY_BALANCE",
+              "OVER_90_DAY_BALANCE",
+              "TOTAL_OPEN_BALANCE"
+            ],
+            "preview_data_rows": [
+              [8548726, "Amazon TUL2", "DoorDash, Inc.", 0, 0, 0, 0, 2602.1, 2602.1],
+              [
+                5258904,
+                "Amazon (CAD)",
+                "DoorDash Technologies Canada, Inc.",
+                0,
+                0,
+                0,
+                0,
+                -31.53,
+                -31.53
+              ],
+              [88880, "Amazon Web Services", "DoorDash, Inc.", 0, 0, 0, 0, -79.05, -79.05],
+              [3139177, "Amazon Web Services", "DoorDash, Inc.", 0, 0, 0, 0, -79.96, -79.96],
+              [301366, "Amazon", "DoorDash, Inc.", 0, 0, 0, 0, -90, -90],
+              [
+                6174787,
+                "B&B amazonian delicacies LLC",
+                "DoorDash, Inc.",
+                0,
+                0,
+                0,
+                0,
+                -114.64,
+                -114.64
+              ],
+              [1095384, "Amazon Web Services", "DoorDash, Inc.", 0, 0, 0, 0, -239.38, -239.38],
+              [5455982, "Amazon.com Services LLC", "DoorDash, Inc.", 0, 0, 0, 0, -355.42, -355.42],
+              [5258903, "Amazon (US)", "DoorDash, Inc.", 0, 0, 0, 0, -398.38, -398.38],
+              [3945379, "Amazon.com", "DoorDash, Inc.", 0, 0, 0, 0, -650.64, -650.64],
+              [
+                4768961,
+                "Amazon (CAN)",
+                "DoorDash Technologies Canada, Inc.",
+                0,
+                0,
+                0,
+                0,
+                -794.43,
+                -794.43
+              ],
+              [
+                1416775,
+                "Amazon Dev Centre Canada ULC",
+                "DoorDash Technologies Canada, Inc.",
+                0,
+                0,
+                0,
+                0,
+                -1935.87,
+                -1935.87
+              ],
+              [4541421, "Amazon", "DoorDash, Inc.", 0, 0, 0, 0, -2282.18, -2282.18],
+              [250673, "Amazon (USD)", "DoorDash, Inc.", 0, 0, 0, 0, -33753.78, -33753.78],
+              [1029384, "Amazon Logistics UK", "DoorDash UK Ltd.", 0, 1250.5, 0, 0, 0, 1250.5],
+              [2047563, "Amazon EU Sarl", "DoorDash Europe", 0, 0, 890.25, 0, 0, 890.25],
+              [3094821, "Amazon Pay", "DoorDash, Inc.", 0, 0, 0, -442.1, 0, -442.1],
+              [4012839, "Amazon Fresh", "DoorDash, Inc.", 2150.0, 0, 0, 0, 0, 2150.0],
+              [5029384, "Amazon Business", "DoorDash, Inc.", 0, 0, 0, 0, -1205.33, -1205.33],
+              [6038472, "Amazon Kuiper", "DoorDash, Inc.", 0, 0, 0, 0, -89.02, -89.02]
+            ],
+            "total_rows": 20
+          }
+        },
+        {
+          "type": "user",
+          "content": "Whats their average of OVER 90 DAY BALANCE?"
+        },
+        {
+          "type": "assistant",
+          "analysis": "The average 'over 90 day' AR balance for Amazon entities is approximately **$-2,728.80** per record, based on the 14 Amazon-related receivable records. Nearly all balances are negative or near zero, confirming there are no overdue receivables—only credits.",
+          "recommendations": "No collection action is needed. These credits may be reconciliations, overpayments, or reflect refunds by Amazon.",
+          "tool_name": "AnalysisComplete",
+          "domain": "AR",
+          "query_id": "query_avg_90_balance",
+          "artifact_id": "ar_analysis_over_90_avg_55d295051523",
+          "data_preview": {
+            "columns": ["METRIC", "VALUE_USD", "RECORD_COUNT", "MIN_BALANCE", "MAX_BALANCE"],
+            "preview_data_rows": [
+              ["Average OVER_90_DAY_BALANCE", -2728.8, 20, -33753.78, 2602.1],
+              ["Sum OVER_90_DAY_BALANCE", -38203.16, 20, -33753.78, 2602.1]
+            ],
+            "total_rows": 2
+          }
+        },
+        {
+          "type": "user",
+          "content": "Show me top 5 by TOTAL_OPEN_BALANCE"
+        },
+        {
+          "type": "assistant",
+          "analysis": "Top 5 Amazon-related entities by total open balance (absolute value) are: Amazon TUL2 ($2,602.10), Amazon Fresh ($2,150.00), Amazon EU Sarl ($890.25), Amazon Logistics UK ($1,250.50), and Amazon (USD) with the largest credit position at $-33,753.78.",
+          "recommendations": "Use this list to prioritize reconciliation for positive balances and validate the large credit at Amazon (USD).",
+          "tool_name": "AccountsReceivable",
+          "domain": "AR",
+          "query_id": "query_8a1b92c64f50",
+          "artifact_id": "ar_get_ar_aging_summary_top5_44c184941412",
+          "data_preview": {
+            "columns": [
+              "CUSTOMER_NAME",
+              "SUBSIDIARY_NAME",
+              "TOTAL_OPEN_BALANCE",
+              "OVER_90_DAY_BALANCE"
+            ],
+            "preview_data_rows": [
+              ["Amazon (USD)", "DoorDash, Inc.", -33753.78, -33753.78],
+              ["Amazon TUL2", "DoorDash, Inc.", 2602.1, 2602.1],
+              ["Amazon Fresh", "DoorDash, Inc.", 2150.0, 0],
+              ["Amazon Logistics UK", "DoorDash UK Ltd.", 1250.5, 0],
+              ["Amazon EU Sarl", "DoorDash Europe", 890.25, 0]
+            ],
+            "total_rows": 5
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "artifact_id": "ar_get_ar_aging_summary_34b073830301",
+          "domain": "AR",
+          "query_type": "get_ar_aging_summary",
+          "query_id": "query_79f4770e5eb9",
+          "created_at": "2026-02-05T22:43:52.123456+00:00",
+          "row_count": 20,
+          "sql_generated": "SELECT cust.CUSTOMER_NETSUITE_ID, cust.CUSTOMER_NAME, sub.SUBSIDIARY_NAME, COALESCE(SUM(CASE WHEN inv.INVOICE_DUE_DATE >= CURRENT_DATE THEN inv.INVOICE_OPEN_AMOUNT END), 0) AS CURRENT_USD, COALESCE(SUM(CASE WHEN inv.INVOICE_DUE_DATE BETWEEN CURRENT_DATE - 30 AND CURRENT_DATE - 1 THEN inv.INVOICE_OPEN_AMOUNT END), 0) AS THIRTY_DAY_BALANCE, COALESCE(SUM(CASE WHEN inv.INVOICE_DUE_DATE BETWEEN CURRENT_DATE - 60 AND CURRENT_DATE - 31 THEN inv.INVOICE_OPEN_AMOUNT END), 0) AS SIXTY_DAY_BALANCE, COALESCE(SUM(CASE WHEN inv.INVOICE_DUE_DATE BETWEEN CURRENT_DATE - 90 AND CURRENT_DATE - 61 THEN inv.INVOICE_OPEN_AMOUNT END), 0) AS NINETY_DAY_BALANCE, COALESCE(SUM(CASE WHEN inv.INVOICE_DUE_DATE < CURRENT_DATE - 90 THEN inv.INVOICE_OPEN_AMOUNT END), 0) AS OVER_90_DAY_BALANCE, COALESCE(SUM(inv.INVOICE_OPEN_AMOUNT), 0) AS TOTAL_OPEN_BALANCE FROM AR_INVOICE inv LEFT JOIN AR_CUSTOMER cust ON inv.AR_CUSTOMER_FK = cust.AR_CUSTOMER_PK LEFT JOIN DIM_SUBSIDIARY sub ON inv.SUBSIDIARY_FK = sub.SUBSIDIARY_SK WHERE UPPER(cust.CUSTOMER_NAME) LIKE '%AMAZON%' GROUP BY cust.CUSTOMER_NETSUITE_ID, cust.CUSTOMER_NAME, sub.SUBSIDIARY_NAME ORDER BY TOTAL_OPEN_BALANCE DESC"
+        },
+        {
+          "artifact_id": "ar_get_ar_aging_summary_top5_44c184941412",
+          "domain": "AR",
+          "query_type": "get_ar_aging_summary",
+          "query_id": "query_8a1b92c64f50",
+          "created_at": "2026-02-05T22:45:10.654321+00:00",
+          "row_count": 5,
+          "sql_generated": "SELECT CUSTOMER_NAME, SUBSIDIARY_NAME, TOTAL_OPEN_BALANCE, OVER_90_DAY_BALANCE FROM (...) ORDER BY ABS(TOTAL_OPEN_BALANCE) DESC LIMIT 5"
+        },
+        {
+          "artifact_id": "ar_analysis_over_90_avg_55d295051523",
+          "domain": "AR",
+          "query_type": "analysis_over_90_balance",
+          "query_id": "query_avg_90_balance",
+          "created_at": "2026-02-05T22:44:30.000000+00:00",
+          "row_count": 2,
+          "sql_generated": "SELECT 'Average OVER_90_DAY_BALANCE' AS METRIC, AVG(OVER_90_DAY_BALANCE) AS VALUE_USD, COUNT(*) AS RECORD_COUNT, MIN(OVER_90_DAY_BALANCE) AS MIN_BALANCE, MAX(OVER_90_DAY_BALANCE) AS MAX_BALANCE FROM (...) UNION ALL SELECT 'Sum OVER_90_DAY_BALANCE', SUM(OVER_90_DAY_BALANCE), COUNT(*), MIN(OVER_90_DAY_BALANCE), MAX(OVER_90_DAY_BALANCE) FROM (...)"
+        }
+      ]
+    }
+  ]
+}

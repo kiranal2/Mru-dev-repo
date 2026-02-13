@@ -1,0 +1,336 @@
+[
+  {
+    "rule_id": "R-PAY-01",
+    "category": "Payable vs Paid Gap",
+    "rule_name": "Paid < Payable",
+    "description": "Total paid amount is lower than payable for the document.",
+    "severity": "High",
+    "inputs": ["TRAN_MAJOR", "CASH_PAID", "CASH_DET"],
+    "output": "RevenueGap + Impact",
+    "enabled": true,
+    "phase": "Phase 1",
+    "details": {
+      "logic": "Flag when SUM(CASH_PAID.AMOUNT) < SUM(TRAN_MAJOR.*PAYABLE).",
+      "required_fields": ["TRAN_MAJOR.SD_PAYABLE", "CASH_PAID.AMOUNT", "CASH_DET.ACC_CANC"],
+      "false_positive_notes": ["Late receipts posted after registration."],
+      "example": "Payable ₹100,000, Paid ₹76,000 → gap ₹24,000."
+    }
+  },
+  {
+    "rule_id": "R-PAY-02",
+    "category": "Payable vs Paid Gap",
+    "rule_name": "Paid = 0 with payable > 0",
+    "description": "No valid receipts found for a payable document.",
+    "severity": "High",
+    "inputs": ["TRAN_MAJOR", "CASH_DET", "CASH_PAID"],
+    "output": "RevenueGap + Impact",
+    "enabled": true,
+    "phase": "Phase 1",
+    "details": {
+      "logic": "Flag when payable > 0 and included receipts sum to 0.",
+      "required_fields": ["TRAN_MAJOR.*PAYABLE", "CASH_DET.ACC_CANC"],
+      "false_positive_notes": ["Payment reversed and reissued later."],
+      "example": "Payable ₹65,000, Paid ₹0."
+    }
+  },
+  {
+    "rule_id": "R-PAY-03",
+    "category": "Payable vs Paid Gap",
+    "rule_name": "Partial sums across receipts",
+    "description": "Multiple receipts exist but total still short.",
+    "severity": "Medium",
+    "inputs": ["CASH_DET", "CASH_PAID"],
+    "output": "RevenueGap",
+    "enabled": true,
+    "phase": "Phase 1",
+    "details": {
+      "logic": "Flag when receipt count > 1 and paid total < payable.",
+      "required_fields": ["CASH_DET.C_RECEIPT_NO", "CASH_PAID.AMOUNT"],
+      "false_positive_notes": ["Split payments arriving after registration."],
+      "example": "Two receipts total ₹90,000 against payable ₹110,000."
+    }
+  },
+  {
+    "rule_id": "R-PAY-04",
+    "category": "Payment Integrity",
+    "rule_name": "Receipt excluded due to ACC_CANC != A",
+    "description": "Excluded receipts cause mismatch with payable.",
+    "severity": "Medium",
+    "inputs": ["CASH_DET.ACC_CANC"],
+    "output": "RevenueGap",
+    "enabled": true,
+    "phase": "Phase 1",
+    "details": {
+      "logic": "Exclude non-ACC_CANC=A receipts and recompute gap.",
+      "required_fields": ["CASH_DET.ACC_CANC"],
+      "false_positive_notes": ["Receipt was reversed and reissued with a new number."],
+      "example": "Cancelled receipt excluded causing ₹18,000 gap."
+    }
+  },
+  {
+    "rule_id": "R-CHLN-01",
+    "category": "Challan Delay",
+    "rule_name": "Challan delay > threshold",
+    "description": "Delay between challan date and receipt date exceeds threshold.",
+    "severity": "Medium",
+    "inputs": ["CASH_DET.BANK_CHALLAN_DT", "CASH_DET.RECEIPT_DATE"],
+    "output": "ChallanDelay",
+    "enabled": true,
+    "phase": "Phase 1",
+    "details": {
+      "logic": "Flag when RECEIPT_DATE - BANK_CHALLAN_DT > threshold.",
+      "required_fields": ["CASH_DET.BANK_CHALLAN_DT", "CASH_DET.RECEIPT_DATE"],
+      "false_positive_notes": ["Bank holiday delays."],
+      "example": "Delay 21 days with threshold 7 days."
+    }
+  },
+  {
+    "rule_id": "R-CHLN-02",
+    "category": "Challan Delay",
+    "rule_name": "Challan present but date missing",
+    "description": "Challan number exists with missing challan date.",
+    "severity": "Low",
+    "inputs": ["CASH_DET.BANK_CHALLAN_NO", "CASH_DET.BANK_CHALLAN_DT"],
+    "output": "ChallanDelay",
+    "enabled": true,
+    "phase": "Phase 1",
+    "details": {
+      "logic": "Flag when BANK_CHALLAN_NO exists and BANK_CHALLAN_DT is null.",
+      "required_fields": ["CASH_DET.BANK_CHALLAN_NO", "CASH_DET.BANK_CHALLAN_DT"],
+      "false_positive_notes": ["Legacy migrated receipts."],
+      "example": "Challan number present, challan date null."
+    }
+  },
+  {
+    "rule_id": "R-PROB-01",
+    "category": "Prohibited Land",
+    "rule_name": "Prohibited land match (rural)",
+    "description": "Rural parcel matched against prohibited list.",
+    "severity": "High",
+    "inputs": ["PROHB_AG"],
+    "output": "ProhibitedLand",
+    "enabled": true,
+    "phase": "Phase 1",
+    "details": {
+      "logic": "Match on SRO + VILLAGE + SURVEY (+ SUB_SURVEY).",
+      "required_fields": ["PROHB_AG.SRO_CODE", "PROHB_AG.VILLAGE_CODE", "PROHB_AG.SURVEY_NO"],
+      "false_positive_notes": ["Survey number formats vary across sources."],
+      "example": "Survey 112/3 matched prohibited record."
+    }
+  },
+  {
+    "rule_id": "R-PROB-02",
+    "category": "Prohibited Land",
+    "rule_name": "Prohibited land match (urban)",
+    "description": "Urban parcel matched against prohibited list.",
+    "severity": "High",
+    "inputs": ["PROHB_HU"],
+    "output": "ProhibitedLand",
+    "enabled": true,
+    "phase": "Phase 1",
+    "details": {
+      "logic": "Match on SRO + WARD + DOOR + VILLAGE.",
+      "required_fields": ["PROHB_HU.SRO_CODE", "PROHB_HU.WARD_NO", "PROHB_HU.DOOR_NO"],
+      "false_positive_notes": ["Door number missing in legacy data."],
+      "example": "Ward 12, Door 44 matched prohibited list."
+    }
+  },
+  {
+    "rule_id": "R-DATA-01",
+    "category": "Data Completeness",
+    "rule_name": "Missing schedule for registered doc",
+    "description": "Registered doc missing schedule entries.",
+    "severity": "Medium",
+    "inputs": ["TRAN_SCHED"],
+    "output": "DataIntegrity",
+    "enabled": true,
+    "phase": "Phase 1",
+    "details": {
+      "logic": "Flag when no TRAN_SCHED rows exist for document.",
+      "required_fields": ["TRAN_SCHED.*"],
+      "false_positive_notes": ["Schedule data not migrated."],
+      "example": "Schedule missing for REG_YEAR 2024 document."
+    }
+  },
+  {
+    "rule_id": "R-DATA-02",
+    "category": "Data Completeness",
+    "rule_name": "Missing parties for registered doc",
+    "description": "Registered doc missing party details.",
+    "severity": "Medium",
+    "inputs": ["TRAN_EC"],
+    "output": "DataIntegrity",
+    "enabled": true,
+    "phase": "Phase 1",
+    "details": {
+      "logic": "Flag when no TRAN_EC parties exist for document.",
+      "required_fields": ["TRAN_EC.CODE", "TRAN_EC.NAME"],
+      "false_positive_notes": ["Parties in annexed offline form."],
+      "example": "Party list empty for registered doc."
+    }
+  },
+  {
+    "rule_id": "R-MV-01",
+    "category": "Market Value",
+    "rule_name": "Declared MKT_VALUE < Expected",
+    "description": "Declared market value is below expected rate card value by more than X%.",
+    "severity": "High",
+    "inputs": ["SROMSTR.MV_BASIC_RUR_REG", "SROMSTR.MV_BASIC_URB_REG", "TRAN_MAJOR"],
+    "output": "MarketValueRisk + Impact",
+    "enabled": true,
+    "phase": "Phase 2 Enhanced",
+    "details": {
+      "logic": "Compare FINAL_TAXABLE_VALUE against UNIT_RATE × EXTENT. Flag if deviation > threshold %.",
+      "required_fields": [
+        "SROMSTR.UNIT_RATE",
+        "TRAN_SCHED.EXTENT",
+        "TRAN_MAJOR.FINAL_TAXABLE_VALUE"
+      ],
+      "false_positive_notes": [
+        "Distress sales may have valid lower values.",
+        "Agricultural land rates differ from residential."
+      ],
+      "example": "Expected ₹15,00,000 based on rate card; declared ₹9,50,000 (37% below)."
+    }
+  },
+  {
+    "rule_id": "R-MV-02",
+    "category": "Market Value",
+    "rule_name": "Sudden drop in unit rate vs previous year",
+    "description": "Current revision rate significantly lower than previous year rate.",
+    "severity": "Medium",
+    "inputs": ["SROMSTR.REV_RATE", "SROMSTR.PRE_REV_RATE"],
+    "output": "MarketValueRisk",
+    "enabled": true,
+    "phase": "Phase 2 Enhanced",
+    "details": {
+      "logic": "Flag when REV_RATE / PRE_REV_RATE < threshold ratio (e.g., < 0.8).",
+      "required_fields": ["SROMSTR.REV_RATE", "SROMSTR.PRE_REV_RATE"],
+      "false_positive_notes": [
+        "Market corrections in specific localities.",
+        "Rate card revision pending."
+      ],
+      "example": "Previous rate ₹5,000/sqft, current ₹3,200/sqft (36% drop)."
+    }
+  },
+  {
+    "rule_id": "R-MV-03",
+    "category": "Market Value",
+    "rule_name": "Outlier unit rate vs nearby distribution",
+    "description": "Unit rate is a statistical outlier compared to nearby village/ward transactions.",
+    "severity": "Medium",
+    "inputs": ["SROMSTR.MV_BASIC_RUR_REG", "SROMSTR.MV_BASIC_URB_REG"],
+    "output": "MarketValueRisk",
+    "enabled": true,
+    "phase": "Phase 2 Enhanced",
+    "details": {
+      "logic": "Compare declared per-unit rate against distribution of nearby transactions. Flag if > 2 std deviations below median.",
+      "required_fields": ["SROMSTR.UNIT_RATE", "TRAN_SCHED.VILLAGE_CODE"],
+      "false_positive_notes": [
+        "Different land classifications within same village.",
+        "Mixed-use properties."
+      ],
+      "example": "Median rate ₹4,200/sqft in ward; declared ₹2,100/sqft."
+    }
+  },
+  {
+    "rule_id": "R-EX-01",
+    "category": "Exemption",
+    "rule_name": "Exemption not eligible for doc type",
+    "description": "Exemption applied but document type is not eligible for the exemption.",
+    "severity": "High",
+    "inputs": ["TRAN_MAJOR.TRAN_MAJ_CODE", "EXEMPTION_TABLE"],
+    "output": "ExemptionRisk",
+    "enabled": true,
+    "phase": "Phase 2 Enhanced",
+    "details": {
+      "logic": "Cross-check exemption_code against allowed doc types. Flag if mismatch.",
+      "required_fields": ["EXEMPTION.exemption_code", "TRAN_MAJOR.TRAN_MAJ_CODE"],
+      "false_positive_notes": ["Legacy exemption codes from pre-migration."],
+      "example": "Agricultural exemption applied to commercial property sale."
+    }
+  },
+  {
+    "rule_id": "R-EX-02",
+    "category": "Exemption",
+    "rule_name": "Exemption amount exceeds cap",
+    "description": "Claimed exemption amount exceeds the statutory cap.",
+    "severity": "High",
+    "inputs": ["EXEMPTION_TABLE"],
+    "output": "ExemptionRisk + Impact",
+    "enabled": true,
+    "phase": "Phase 2 Enhanced",
+    "details": {
+      "logic": "Compare exemption_amount against cap for the exemption_code.",
+      "required_fields": ["EXEMPTION.exemption_amount", "EXEMPTION.cap_amount"],
+      "false_positive_notes": ["Multiple beneficiaries may share cap."],
+      "example": "Cap ₹50,000; claimed ₹1,20,000."
+    }
+  },
+  {
+    "rule_id": "R-EX-03",
+    "category": "Exemption",
+    "rule_name": "Repeat exemption usage by same party",
+    "description": "Same PAN/AADHAR has claimed exemption multiple times.",
+    "severity": "Medium",
+    "inputs": ["TRAN_EC.PAN_NO", "EXEMPTION_TABLE"],
+    "output": "ExemptionRisk",
+    "enabled": true,
+    "phase": "Phase 2 Enhanced",
+    "details": {
+      "logic": "Group exemptions by encrypted PAN/AADHAR. Flag if count > threshold within window.",
+      "required_fields": ["TRAN_EC.PAN_NO", "EXEMPTION.exemption_code"],
+      "false_positive_notes": ["Family members sharing PAN in legacy data."],
+      "example": "Same PAN claimed agricultural exemption 4 times in 12 months."
+    }
+  },
+  {
+    "rule_id": "R-EX-04",
+    "category": "Exemption",
+    "rule_name": "Office-level unusual exemption concentration",
+    "description": "Abnormally high exemption rate at a specific office.",
+    "severity": "Medium",
+    "inputs": ["TRAN_MAJOR", "EXEMPTION_TABLE"],
+    "output": "ExemptionRisk",
+    "enabled": true,
+    "phase": "Phase 2 Enhanced",
+    "details": {
+      "logic": "Compare office exemption rate against district/state average. Flag if > 2x average.",
+      "required_fields": ["TRAN_MAJOR.SR_CODE", "EXEMPTION.exemption_code"],
+      "false_positive_notes": ["Agricultural zones may legitimately have higher exemption rates."],
+      "example": "Office SR05 has 42% exemption rate vs 18% district average."
+    }
+  },
+  {
+    "rule_id": "R-COMP-05",
+    "category": "Compliance",
+    "rule_name": "Holiday registration fee missing",
+    "description": "Registration on a gazetted holiday is missing the mandatory ₹5,000 convenience fee under OTHER_FEE.",
+    "severity": "Medium",
+    "inputs": [
+      "TRAN_MAJOR.R_DATE",
+      "TRAN_MAJOR.OTHER_FEE",
+      "SROMSTR.HOLIDAY_MASTER",
+      "CASH_PAID.AMOUNT"
+    ],
+    "output": "RevenueGap + Impact",
+    "enabled": true,
+    "phase": "Phase 2 Enhanced",
+    "details": {
+      "logic": "Cross-reference R_DATE against HOLIDAY_MASTER. If FEE_APPLICABLE = Y and OTHER_FEE < ₹5,000, and no Account Code 59/99 payment found, flag as leakage.",
+      "required_fields": [
+        "TRAN_MAJOR.R_DATE",
+        "TRAN_MAJOR.OTHER_FEE",
+        "HOLIDAY_MASTER.HOLIDAY_DATE",
+        "HOLIDAY_MASTER.FEE_APPLICABLE",
+        "CASH_PAID.AMOUNT",
+        "CASH_PAID.ACCOUNT_CODE"
+      ],
+      "false_positive_notes": [
+        "Some offices may have pre-approved waivers for holiday fees.",
+        "Fee may be collected separately and posted later."
+      ],
+      "example": "Registration on 15-Aug-2024 (Independence Day) with OTHER_FEE = ₹0. Holiday fee of ₹5,000 not charged."
+    }
+  }
+]
