@@ -1,4 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { parseBody } from '@/app/api/_lib/validation';
+
+const createBindingSchema = z.object({
+  scope: z.string().min(1),
+  scope_id: z.string().min(1),
+  template_id: z.string().min(1),
+  role: z.enum(['SOURCE', 'TARGET', 'SUPPORTING', 'VALIDATION']),
+  auto_refresh: z.boolean().optional(),
+  parameter_overrides: z.record(z.unknown()).optional(),
+  display_name: z.string().optional(),
+  created_by: z.string().optional(),
+});
 
 // Mock bindings data based on the provided JSON
 const MOCK_BINDINGS = [
@@ -214,7 +227,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const parsed = await parseBody(request, createBindingSchema);
+    if ('error' in parsed) return parsed.error;
     const {
       scope,
       scope_id,
@@ -224,7 +238,7 @@ export async function POST(request: NextRequest) {
       parameter_overrides,
       display_name,
       created_by
-    } = body;
+    } = parsed.data;
 
     // Generate a new ID
     const newId = `binding-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -267,7 +281,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Add to mock data (in a real app, this would be saved to a database)
-    MOCK_BINDINGS.push(newBinding);
+    (MOCK_BINDINGS as any[]).push(newBinding);
 
     return NextResponse.json(newBinding, { status: 201 });
   } catch (error) {

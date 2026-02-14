@@ -6,8 +6,8 @@ import axios, {
   HttpStatusCode,
   isAxiosError,
 } from 'axios';
-import { errorToast } from '../components/Toast';
-import { BASE_URL, localStorageNames } from '../conf/conf';
+import { errorToast } from '@/components/toast';
+import { BASE_URL, localStorageNames } from '@/conf/conf';
 // Removed generateUUID import - using simpler approach
 import { logoutAndRedirect } from './SessionApis';
 

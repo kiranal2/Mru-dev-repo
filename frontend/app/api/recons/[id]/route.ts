@@ -1,4 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { parseBody, parseParams } from '@/app/api/_lib/validation';
+
+const reconIdParamsSchema = z.object({
+  id: z.string().min(1),
+});
+
+const patchReconSchema = z.object({
+  status: z.enum(['OPEN', 'READY', 'REVIEWED', 'CLOSED']).optional(),
+  area: z.string().optional(),
+  name: z.string().optional(),
+  owner_id: z.string().optional(),
+  threshold_abs: z.number().optional(),
+  threshold_pct: z.number().optional(),
+}).passthrough();
 
 // Mock data generation (duplicated from route.ts for this handler)
 const generateMockReconsData = () => {
@@ -288,7 +303,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const { id } = await Promise.resolve(params);
+    const resolvedParams = await Promise.resolve(params);
+    const paramsParsed = parseParams(resolvedParams, reconIdParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { id } = paramsParsed.data;
     const allRecons = generateMockReconsData();
     const recon = allRecons.find(r => r.id === id);
 
@@ -321,9 +339,15 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const { id } = await Promise.resolve(params);
-    const body = await request.json();
-    
+    const resolvedParams = await Promise.resolve(params);
+    const paramsParsed = parseParams(resolvedParams, reconIdParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { id } = paramsParsed.data;
+
+    const parsed = await parseBody(request, patchReconSchema);
+    if ('error' in parsed) return parsed.error;
+    const body = parsed.data;
+
     const allRecons = generateMockReconsData();
     const recon = allRecons.find(r => r.id === id);
     

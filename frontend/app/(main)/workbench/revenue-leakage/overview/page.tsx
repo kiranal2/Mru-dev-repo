@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { revenueLeakageApi } from "@/lib/revenue-leakage/revenueLeakageApi";
 import { OverviewEnhanced, LeakageSignal } from "@/lib/revenue-leakage/types";
 import { formatINR, type INRDisplayMode } from "@/lib/revenue-leakage/formatINR";
-import { RevenueLeakageShell } from "@/components/revenue-leakage/RevenueLeakageShell";
+import { RevenueLeakageShell } from "@/components/revenue-leakage/revenue-leakage-shell";
 import {
   LeakageBySignalChart,
   ImpactShareDonut,
   GapTrendLineChart,
   StatusFunnelChart,
   MicroSparkline,
-} from "@/components/revenue-leakage/OverviewCharts";
+} from "@/components/revenue-leakage/overview-charts";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

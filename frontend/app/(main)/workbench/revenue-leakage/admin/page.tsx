@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { RevenueLeakageShell } from "@/components/revenue-leakage/RevenueLeakageShell";
+import { RevenueLeakageShell } from "@/components/revenue-leakage/revenue-leakage-shell";
 import { revenueLeakageApi } from "@/lib/revenue-leakage/revenueLeakageApi";
 import { AdminData, RuleCatalogItem, LeakageCase } from "@/lib/revenue-leakage/types";
 import { formatINR } from "@/lib/revenue-leakage/formatINR";
@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/Switch";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useMenuVisibility, MenuVisibility } from "@/lib/revenue-leakage/menuVisibilityContext";

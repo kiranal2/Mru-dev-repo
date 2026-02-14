@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Download, Play, CheckCircle2, AlertTriangle, RotateCcw } from 'lucide-react';
-import { ExplainPanel } from '@/components/workspace/ExplainPanel';
+import { ExplainPanel } from '@/components/workspace/explain-panel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { SavedViewsDropdown } from '@/components/workspace/SavedViewsDropdown';
-import { BindingsSection } from '@/components/workspace/BindingsSection';
+import { SavedViewsDropdown } from '@/components/workspace/saved-views-dropdown';
+import { BindingsSection } from '@/components/workspace/bindings-section';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +34,7 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
-import Breadcrumb from '@/components/layout/Breadcrumb';
+import Breadcrumb from '@/components/layout/breadcrumb';
 
 interface Reconciliation {
   id: string;

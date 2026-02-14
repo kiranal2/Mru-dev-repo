@@ -3,15 +3,15 @@
 import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
-import ErrorBoundary from '@/components/ErrorBoundary';
+import ErrorBoundary from '@/components/error-boundary';
 
 // Dynamically import components to avoid SSR issues
-const AppShell = dynamic(() => import('@/components/layout/AppShell'), {
+const AppShell = dynamic(() => import('@/components/layout/app-shell'), {
   ssr: false,
   loading: () => <div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>
 });
 
-const PrivateRoute = dynamic(() => import('@/components/PrivateRoute'), {
+const PrivateRoute = dynamic(() => import('@/components/private-route'), {
   ssr: false,
   loading: () => <div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>
 });

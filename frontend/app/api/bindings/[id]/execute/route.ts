@@ -1,13 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { parseBody, parseParams } from '@/app/api/_lib/validation';
+
+const executeBindingParamsSchema = z.object({
+  id: z.string().min(1),
+});
+
+const executeBindingBodySchema = z.object({
+  actor: z.string().optional(),
+  triggered_by: z.string().optional(),
+});
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const { id } = await Promise.resolve(params);
-    const body = await request.json();
-    const { actor, triggered_by } = body;
+    const resolvedParams = await Promise.resolve(params);
+    const paramsParsed = parseParams(resolvedParams, executeBindingParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { id } = paramsParsed.data;
+
+    const parsed = await parseBody(request, executeBindingBodySchema);
+    if ('error' in parsed) return parsed.error;
+    const { actor, triggered_by } = parsed.data;
 
     // Simulate execution
     // In a real app, this would trigger the actual template execution

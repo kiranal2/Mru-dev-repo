@@ -1,4 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { parseBody } from '@/app/api/_lib/validation';
+
+const bulkMrpPatchSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1),
+  status: z.string().optional(),
+  action: z.string().optional(),
+});
 
 // Mock data based on the SQL seed data
 const mockMRPLines = [
@@ -278,8 +286,9 @@ export async function GET() {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { ids, status, action } = body;
+    const parsed = await parseBody(request, bulkMrpPatchSchema);
+    if ('error' in parsed) return parsed.error;
+    const { ids, status, action } = parsed.data;
 
     // In a real implementation, this would update the database
     // For now, we'll just return success

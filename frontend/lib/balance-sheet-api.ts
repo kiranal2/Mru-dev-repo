@@ -1,5 +1,5 @@
 // Import JSON data - Next.js handles this via resolveJsonModule
-import balanceSheetData from "../mock-api-responses/balance-sheet-api-response.json";
+import balanceSheetData from "@/mock-api-responses/balance-sheet-api-response.json";
 
 // Types matching the JSON structure
 export interface BalanceSheetApiResponse {

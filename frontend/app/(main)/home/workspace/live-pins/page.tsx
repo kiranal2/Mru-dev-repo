@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LivePinTileV2 } from '@/components/live-pins/LivePinTileV2';
-import { LivePinPreviewModal } from '@/components/live-pins/LivePinPreviewModal';
+import { LivePinTileV2 } from '@/components/live-pins/live-pin-tile-v2';
+import { LivePinPreviewModal } from '@/components/live-pins/live-pin-preview-modal';
 import { Pin, ChevronRight, Home } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import Breadcrumb from '@/components/layout/Breadcrumb';
+import Breadcrumb from '@/components/layout/breadcrumb';
 
 interface BucketSummary {
   value: number;

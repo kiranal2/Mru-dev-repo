@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { RevenueLeakageShell } from "@/components/revenue-leakage/RevenueLeakageShell";
+import { RevenueLeakageShell } from "@/components/revenue-leakage/revenue-leakage-shell";
 import { revenueLeakageApi } from "@/lib/revenue-leakage/revenueLeakageApi";
 import { RuleCatalogItem } from "@/lib/revenue-leakage/types";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/Switch";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";

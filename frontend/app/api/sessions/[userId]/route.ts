@@ -1,4 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { parseParams } from "@/app/api/_lib/validation";
+
+const sessionUserIdParamsSchema = z.object({
+  userId: z.string().min(1),
+});
 
 export type SessionItem = {
   id: number;
@@ -22,10 +28,9 @@ export type SessionsResponse = {
 
 export async function GET(_request: NextRequest, { params }: { params: { userId: string } }) {
   try {
-    const userId = params.userId;
-    if (!userId) {
-      return NextResponse.json({ error: "Missing user_id" }, { status: 400 });
-    }
+    const paramsParsed = parseParams(params, sessionUserIdParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { userId } = paramsParsed.data;
 
     const baseUrl = process.env.API_BASE_URL;
     if (!baseUrl) {

@@ -1,4 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { parseBody, parseParams } from '@/app/api/_lib/validation';
+
+const taskIdParamsSchema = z.object({
+  id: z.string().min(1),
+});
+
+const patchTaskSchema = z.object({
+  status: z.enum(['OPEN', 'READY', 'IN_REVIEW', 'BLOCKED', 'CLOSED']).optional(),
+  priority: z.enum(['HIGH', 'MEDIUM', 'LOW']).optional(),
+  assignee_id: z.string().optional(),
+  blocking_reason: z.string().nullable().optional(),
+  title: z.string().optional(),
+  due_date: z.string().optional(),
+}).passthrough();
 
 // Mock tasks data (same as in tasks route)
 const MOCK_TASKS: Record<string, any> = {
@@ -297,7 +312,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const { id } = await Promise.resolve(params);
+    const resolvedParams = await Promise.resolve(params);
+    const paramsParsed = parseParams(resolvedParams, taskIdParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { id } = paramsParsed.data;
     const task = MOCK_TASKS[id];
 
     if (!task) {
@@ -322,9 +340,15 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const { id } = await Promise.resolve(params);
-    const body = await request.json();
-    
+    const resolvedParams = await Promise.resolve(params);
+    const paramsParsed = parseParams(resolvedParams, taskIdParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { id } = paramsParsed.data;
+
+    const parsed = await parseBody(request, patchTaskSchema);
+    if ('error' in parsed) return parsed.error;
+    const body = parsed.data;
+
     const task = MOCK_TASKS[id];
     if (!task) {
       return NextResponse.json(

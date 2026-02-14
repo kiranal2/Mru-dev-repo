@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Download, ChevronDown, X, AlertCircle, CheckCircle2, Clock, Ban, Link2 } from 'lucide-react';
-import { LinkReconModal } from '@/components/modals/LinkReconModal';
-import { QuickCreateTaskModal } from '@/components/modals/QuickCreateTaskModal';
+import { LinkReconModal } from '@/components/modals/link-recon-modal';
+import { QuickCreateTaskModal } from '@/components/modals/quick-create-task-modal';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { SavedViewsDropdown } from '@/components/workspace/SavedViewsDropdown';
-import { BindingsSection } from '@/components/workspace/BindingsSection';
-import { PersonaSwitcher, Persona } from '@/components/workspace/PersonaSwitcher';
+import { SavedViewsDropdown } from '@/components/workspace/saved-views-dropdown';
+import { BindingsSection } from '@/components/workspace/bindings-section';
+import { PersonaSwitcher, Persona } from '@/components/workspace/persona-switcher';
 import {
   AccountantDashboard,
   ControllerDashboard,
   CFODashboard
-} from '@/components/workspace/PersonaDashboards';
-import Breadcrumb from '@/components/layout/Breadcrumb';
+} from '@/components/workspace/persona-dashboards';
+import Breadcrumb from '@/components/layout/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';

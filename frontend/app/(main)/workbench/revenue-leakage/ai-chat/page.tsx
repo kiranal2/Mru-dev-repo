@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { RevenueLeakageShell } from "@/components/revenue-leakage/RevenueLeakageShell";
-import { RevenueConversationThread } from "@/components/revenue-leakage/RevenueConversationThread";
+import { RevenueLeakageShell } from "@/components/revenue-leakage/revenue-leakage-shell";
+import { RevenueConversationThread } from "@/components/revenue-leakage/revenue-conversation-thread";
 import {
   processRevenueQuery,
   getAvailableZones,

@@ -51,7 +51,7 @@ import {
   PieChart,
   ChevronDown,
 } from "lucide-react";
-import Breadcrumb from "@/components/layout/Breadcrumb";
+import Breadcrumb from "@/components/layout/breadcrumb";
 
 export default function MyWorkspace2Page() {
   const [entity, setEntity] = useState("amazon");

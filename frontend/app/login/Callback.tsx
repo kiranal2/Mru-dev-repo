@@ -1,9 +1,9 @@
 import { Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createSession } from '../../api/SessionApis';
-import { useAuth } from '../../lib/auth-context';
-import { removeSessionState } from '../../utils/useStorage';
+import { createSession } from '@/api/SessionApis';
+import { useAuth } from '@/lib/auth-context';
+import { removeSessionState } from '@/utils/use-storage';
 
 function Callback() {
   const effectRan = useRef(false);

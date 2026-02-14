@@ -1,4 +1,4 @@
-import { removeSessionState } from '../utils/useStorage';
+import { removeSessionState } from '@/utils/use-storage';
 import { sessionRoutes } from './ApiConstants';
 import { apiCall } from './AxiosApi';
 

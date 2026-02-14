@@ -23,7 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Breadcrumb from "@/components/layout/Breadcrumb";
+import Breadcrumb from "@/components/layout/breadcrumb";
 import { cashAppStore } from "@/lib/cash-app-store";
 
 export default function CashApplicationLayout({ children }: { children: React.ReactNode }) {

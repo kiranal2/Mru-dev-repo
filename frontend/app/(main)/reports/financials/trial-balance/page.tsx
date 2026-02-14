@@ -23,7 +23,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { X, Download, Columns, ChevronDown, ChevronRight, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import Breadcrumb from "@/components/layout/Breadcrumb";
+import Breadcrumb from "@/components/layout/breadcrumb";
 import {
   getPeriodStructure,
   getSubsidiaryStructure,

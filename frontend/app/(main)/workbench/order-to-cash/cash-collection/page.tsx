@@ -41,7 +41,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Download, Mail, Phone, DollarSign, AlertTriangle, X, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import Breadcrumb from "@/components/layout/Breadcrumb";
+import Breadcrumb from "@/components/layout/breadcrumb";
 
 const COLLECTORS = [
   "Alex Chen",

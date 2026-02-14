@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { parseBody } from "@/app/api/_lib/validation";
+
+const commandQuerySchema = z.object({
+  query: z.string().min(1),
+}).passthrough();
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const parsed = await parseBody(request, commandQuerySchema);
+    if ('error' in parsed) return parsed.error;
+    const body = parsed.data;
     console.log("API BASE URL:", process.env.API_BASE_URL);
     const externalUrl = `${process.env.API_BASE_URL}/api/query`;
 

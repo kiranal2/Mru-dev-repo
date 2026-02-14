@@ -239,4 +239,5 @@ const AgingSummaryCards: React.FC<AgingSummaryCardsProps> = ({
   );
 };
 
+export { AgingSummaryCards };
 export default AgingSummaryCards;

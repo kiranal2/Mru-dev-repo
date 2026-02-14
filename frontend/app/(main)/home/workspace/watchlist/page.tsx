@@ -27,7 +27,7 @@ import {
 } from "@/lib/watch-utils";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import Breadcrumb from "@/components/layout/Breadcrumb";
+import Breadcrumb from "@/components/layout/breadcrumb";
 
 function WatchlistPageContent() {
   // Dummy data for watchlist

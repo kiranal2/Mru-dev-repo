@@ -1,6 +1,6 @@
 "use client";
 
-import CommandCenterContainer from "../CommandCenterContainer";
+import CommandCenterContainer from "@/app/(main)/home/command-center/CommandCenterContainer";
 
 interface CommandCenterSessionPageProps {
   params: { sessionId: string };

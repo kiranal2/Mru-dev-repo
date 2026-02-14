@@ -16,10 +16,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { UploadTemplateModal } from '@/components/modals/UploadTemplateModal';
-import { EditTemplateModal } from '@/components/modals/EditTemplateModal';
-import Breadcrumb from '@/components/layout/Breadcrumb';
-import { useToast } from '@/hooks/use-toast';
+import { UploadTemplateModal } from '@/components/modals/upload-template-modal';
+import { EditTemplateModal } from '@/components/modals/edit-template-modal';
+import Breadcrumb from '@/components/layout/breadcrumb';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -105,7 +104,6 @@ export default function DataTemplatePage() {
   const [selectedTemplate, setSelectedTemplate] = useState<DataTemplate | null>(null);
   const templatesGridRef = useRef<AgGridReact>(null);
   const runsGridRef = useRef<AgGridReact>(null);
-  const { toast } = useToast();
 
   // Fetch templates and runs data
   useEffect(() => {

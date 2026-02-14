@@ -11,7 +11,7 @@ import { FinancialWorkflow, FinancialWorkflow as FinancialWorkflowType } from "@
 import { useState, useEffect, useRef } from "react";
 import { CheckCircle, Clock, AlertCircle, Loader2, Play, Pause, RotateCcw, Bot, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import PrivateRoute from "@/components/PrivateRoute";
+import PrivateRoute from "@/components/private-route";
 
 interface FinancialTaskState {
   steps: {

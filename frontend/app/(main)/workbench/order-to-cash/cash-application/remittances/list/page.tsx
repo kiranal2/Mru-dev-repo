@@ -28,8 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ToastAction } from "@/components/ui/toast";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { cashAppStore } from "@/lib/cash-app-store";
 import type { Payment, Remittance, RemittanceValidationStatus } from "@/lib/cash-app-types";
 import {
@@ -67,7 +66,6 @@ const linkLabelMap = {
 
 export default function RemittancesListPage() {
   const router = useRouter();
-  const { toast } = useToast();
   const [remittances, setRemittances] = useState<Remittance[]>(cashAppStore.getRemittances());
   const [search, setSearch] = useState("");
   const [sourceFilter, setSourceFilter] = useState("All");
@@ -459,21 +457,15 @@ export default function RemittancesListPage() {
       ts: new Date().toISOString(),
       detail: reason,
     });
-    toast({
-      title: "Exception created",
+    toast.success("Exception created", {
       description: `${reason} • ${exceptionPayment.paymentNumber}`,
-      action: (
-        <ToastAction
-          altText="Open in Payments Queue"
-          onClick={() =>
-            router.push(
-              `/workbench/order-to-cash/cash-application/payments?paymentId=${exceptionPayment.paymentNumber}`
-            )
-          }
-        >
-          Open in Payments Queue
-        </ToastAction>
-      ),
+      action: {
+        label: "Open in Payments Queue",
+        onClick: () =>
+          router.push(
+            `/workbench/order-to-cash/cash-application/payments?paymentId=${exceptionPayment.paymentNumber}`
+          ),
+      },
     });
   };
 
@@ -834,8 +826,7 @@ export default function RemittancesListPage() {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() =>
-                                  toast({
-                                    title: "Download started",
+                                  toast.success("Download started", {
                                     description:
                                       remittance.inputFileUrl || "Original remittance file",
                                   })
@@ -904,8 +895,7 @@ export default function RemittancesListPage() {
                   variant="outline"
                   onClick={() =>
                     selectedRemittance &&
-                    toast({
-                      title: "Download started",
+                    toast.success("Download started", {
                       description: selectedRemittance.inputFileUrl || "Original remittance file",
                     })
                   }
@@ -1022,8 +1012,7 @@ export default function RemittancesListPage() {
                               size="sm"
                               variant="ghost"
                               onClick={() =>
-                                toast({
-                                  title: "Download started",
+                                toast.success("Download started", {
                                   description: attachment.url || attachment.name,
                                 })
                               }

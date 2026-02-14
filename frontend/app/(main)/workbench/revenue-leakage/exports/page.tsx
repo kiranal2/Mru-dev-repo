@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { RevenueLeakageShell } from "@/components/revenue-leakage/RevenueLeakageShell";
+import { RevenueLeakageShell } from "@/components/revenue-leakage/revenue-leakage-shell";
 import { revenueLeakageApi } from "@/lib/revenue-leakage/revenueLeakageApi";
 import { ExportRecord, ExportTemplate } from "@/lib/revenue-leakage/types";
 import { Card } from "@/components/ui/card";

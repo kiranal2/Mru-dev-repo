@@ -9,9 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Lock, Mail } from 'lucide-react';
-import { validateEmailAndGetLoginUrl } from '../../api/SessionApis';
-import { removeSessionState } from '../../utils/useStorage';
-import { localStorageNames } from '../../conf/conf';
+import { validateEmailAndGetLoginUrl } from '@/api/SessionApis';
+import { removeSessionState } from '@/utils/use-storage';
+import { localStorageNames } from '@/conf/conf';
 
 function LoginPage() {
   const effectRan = useRef(false);

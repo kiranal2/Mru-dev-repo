@@ -12,7 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import Breadcrumb from '@/components/layout/Breadcrumb';
+import Breadcrumb from '@/components/layout/breadcrumb';
 import {
   Chart as ChartJS,
   CategoryScale,

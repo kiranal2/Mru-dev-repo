@@ -18,10 +18,10 @@ import { cashAppStore } from "@/lib/cash-app-store";
 import { Payment, EnhancedARItem, MatchingContext } from "@/lib/cash-app-types";
 import { CheckCircle2, Search, AlertCircle, X, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import { MatchContextBanner } from "@/components/cash-app/MatchContextBanner";
-import { EvidencePanel } from "@/components/cash-app/EvidencePanel";
-import { InvoiceSearchFilters } from "@/components/cash-app/InvoiceSearchFilters";
-import { EnhancedInvoiceCard } from "@/components/cash-app/EnhancedInvoiceCard";
+import { MatchContextBanner } from "@/components/cash-app/match-context-banner";
+import { EvidencePanel } from "@/components/cash-app/evidence-panel";
+import { InvoiceSearchFilters } from "@/components/cash-app/invoice-search-filters";
+import { EnhancedInvoiceCard } from "@/components/cash-app/enhanced-invoice-card";
 
 export default function MatchingStudioPage() {
   const searchParams = useSearchParams();

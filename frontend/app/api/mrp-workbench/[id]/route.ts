@@ -1,4 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { parseBody, parseParams } from '@/app/api/_lib/validation';
+
+const mrpLineIdParamsSchema = z.object({
+  id: z.string().min(1),
+});
+
+const patchMrpLineSchema = z.object({
+  status: z.string().optional(),
+  action: z.string().optional(),
+});
 
 // Mock data with history for the first PO line
 const mockLineWithHistory = {
@@ -75,7 +86,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const { id } = await Promise.resolve(params);
+    const resolvedParams = await Promise.resolve(params);
+    const paramsParsed = parseParams(resolvedParams, mrpLineIdParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { id } = paramsParsed.data;
 
     // Return the line with history for id 1, or a mock line for others
     if (id === '1') {
@@ -113,9 +127,14 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const { id } = await Promise.resolve(params);
-    const body = await request.json();
-    const { status, action } = body;
+    const resolvedParams = await Promise.resolve(params);
+    const paramsParsed = parseParams(resolvedParams, mrpLineIdParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { id } = paramsParsed.data;
+
+    const parsed = await parseBody(request, patchMrpLineSchema);
+    if ('error' in parsed) return parsed.error;
+    const { status, action } = parsed.data;
 
     // In a real implementation, this would update the database
     // For now, we'll just return success

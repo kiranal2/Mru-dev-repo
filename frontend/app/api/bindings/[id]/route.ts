@@ -1,4 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { parseParams } from '@/app/api/_lib/validation';
+
+const bindingIdParamsSchema = z.object({
+  id: z.string().min(1),
+});
 
 // Mock bindings data - in a real app, this would be in a database
 const MOCK_BINDINGS = [
@@ -139,8 +145,11 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const { id } = await Promise.resolve(params);
-    
+    const resolvedParams = await Promise.resolve(params);
+    const paramsParsed = parseParams(resolvedParams, bindingIdParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { id } = paramsParsed.data;
+
     // In a real app, this would delete from a database
     // For now, we'll just return success
     return NextResponse.json({ 

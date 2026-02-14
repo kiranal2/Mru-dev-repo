@@ -28,7 +28,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FileText, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import Breadcrumb from "@/components/layout/Breadcrumb";
+import Breadcrumb from "@/components/layout/breadcrumb";
 
 const DATA = {
   is: [

@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { parseParams } from "@/app/api/_lib/validation";
+
+const threadHistoryParamsSchema = z.object({
+  userId: z.string().min(1),
+  threadId: z.string().min(1),
+});
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: { userId: string; threadId: string } }
 ) {
   try {
-    const userId = params.userId;
-    const threadId = params.threadId;
-    if (!userId || !threadId) {
-      return NextResponse.json({ error: "Missing user_id or thread_id" }, { status: 400 });
-    }
+    const paramsParsed = parseParams(params, threadHistoryParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { userId, threadId } = paramsParsed.data;
 
     const baseUrl = process.env.API_BASE_URL;
     if (!baseUrl) {

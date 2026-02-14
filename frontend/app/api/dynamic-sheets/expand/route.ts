@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { sheetsStorage } from "@/lib/dynamic-sheets-storage";
+import { parseBody } from "@/app/api/_lib/validation";
+
+const expandSheetSchema = z.object({
+  userId: z.string().min(1),
+  name: z.string().min(1),
+  entity: z.string().optional(),
+  sourceType: z.string().optional(),
+  promptText: z.string().optional(),
+  description: z.string().optional(),
+  columns: z.array(z.unknown()).optional(),
+  calculatedColumns: z.array(z.unknown()).optional(),
+  filters: z.array(z.unknown()).optional(),
+  rows: z.array(z.unknown()).optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const parsed = await parseBody(request, expandSheetSchema);
+    if ('error' in parsed) return parsed.error;
     const {
       userId,
       name,
@@ -15,11 +31,7 @@ export async function POST(request: NextRequest) {
       calculatedColumns,
       filters,
       rows,
-    } = body;
-
-    if (!userId || !name) {
-      return NextResponse.json({ error: "userId and name are required" }, { status: 400 });
-    }
+    } = parsed.data;
 
     const sheetId = `sheet-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 

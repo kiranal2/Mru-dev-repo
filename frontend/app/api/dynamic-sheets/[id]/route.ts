@@ -1,5 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { sheetsStorage } from '@/lib/dynamic-sheets-storage';
+import { parseBody, parseParams } from '@/app/api/_lib/validation';
+
+const sheetIdParamsSchema = z.object({
+  id: z.string().min(1),
+});
+
+const patchSheetSchema = z.object({
+  name: z.string().optional(),
+  entity: z.string().optional(),
+  columns: z.array(z.unknown()).optional(),
+  calculatedColumns: z.array(z.unknown()).optional(),
+  filters: z.array(z.unknown()).optional(),
+  rows: z.array(z.unknown()).optional(),
+  isFavorite: z.boolean().optional(),
+  isDirty: z.boolean().optional(),
+}).passthrough();
 
 export async function GET(
   request: NextRequest,
@@ -46,8 +63,13 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
-    const body = await request.json();
+    const paramsParsed = parseParams(params, sheetIdParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { id } = paramsParsed.data;
+
+    const parsed = await parseBody(request, patchSheetSchema);
+    if ('error' in parsed) return parsed.error;
+    const body = parsed.data;
 
     const sheet = sheetsStorage.get(id);
 

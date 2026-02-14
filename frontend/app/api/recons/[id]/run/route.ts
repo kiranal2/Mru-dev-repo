@@ -1,4 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { parseBody, parseParams } from '@/app/api/_lib/validation';
+
+const reconRunParamsSchema = z.object({
+  id: z.string().min(1),
+});
+
+const reconRunBodySchema = z.object({
+  created_by: z.string().optional(),
+});
 
 // Mock runs data storage (in a real app, this would be in a database)
 const MOCK_RUNS: Record<string, any[]> = {
@@ -30,9 +40,14 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const { id } = await Promise.resolve(params);
-    const body = await request.json();
-    const { created_by } = body;
+    const resolvedParams = await Promise.resolve(params);
+    const paramsParsed = parseParams(resolvedParams, reconRunParamsSchema);
+    if ('error' in paramsParsed) return paramsParsed.error;
+    const { id } = paramsParsed.data;
+
+    const parsed = await parseBody(request, reconRunBodySchema);
+    if ('error' in parsed) return parsed.error;
+    const { created_by } = parsed.data;
 
     // Get the reconciliation to determine thresholds
     const allRecons = [

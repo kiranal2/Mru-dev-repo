@@ -5,7 +5,7 @@
  */
 
 // API base URLs for different versions
-import { BASE_URL } from '../conf/conf';
+import { BASE_URL } from '@/conf/conf';
 const v1 = `${BASE_URL}/v1/`;
 
 // Session API endpoints

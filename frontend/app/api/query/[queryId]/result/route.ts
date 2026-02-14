@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { parseParams } from "@/app/api/_lib/validation";
+
+const queryResultParamsSchema = z.object({
+  queryId: z.string().min(1),
+});
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ queryId: string }> }
 ) {
-  const { queryId } = await params;
+  const resolvedParams = await params;
+  const paramsParsed = parseParams(resolvedParams, queryResultParamsSchema);
+  if ('error' in paramsParsed) return paramsParsed.error;
+  const { queryId } = paramsParsed.data;
   const { searchParams } = new URL(request.url);
   const threadId = searchParams.get("thread_id");
-  if (!queryId) {
-    return NextResponse.json({ error: "Missing queryId" }, { status: 400 });
-  }
   const backendUrl = threadId
     ? `${process.env.API_BASE_URL}/api/query/${queryId}/result?thread_id=${threadId}`
     : `${process.env.API_BASE_URL}/api/query/${queryId}/result`;

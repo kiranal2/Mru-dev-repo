@@ -13,7 +13,7 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { Search, GripVertical, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import Breadcrumb from "@/components/layout/Breadcrumb";
+import Breadcrumb from "@/components/layout/breadcrumb";
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);

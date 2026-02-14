@@ -1,4 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { parseBody } from '@/app/api/_lib/validation';
+
+const createReconSchema = z.object({
+  area: z.string().optional(),
+  name: z.string().optional(),
+  owner_id: z.string().optional(),
+  threshold_abs: z.number().optional(),
+  threshold_pct: z.number().optional(),
+  entity: z.string().optional(),
+  period: z.string().optional(),
+});
 
 // Mock reconciliations data based on SQL seed
 const generateMockRecons = () => {
@@ -364,8 +376,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { area, name, owner_id, threshold_abs, threshold_pct, entity, period } = body;
+    const parsed = await parseBody(request, createReconSchema);
+    if ('error' in parsed) return parsed.error;
+    const { area, name, owner_id, threshold_abs, threshold_pct, entity, period } = parsed.data;
 
     // Generate new reconciliation
     const newRecon = {

@@ -1,7 +1,7 @@
 'use client';
 
 import { Wallet } from 'lucide-react';
-import Breadcrumb from '@/components/layout/Breadcrumb';
+import Breadcrumb from '@/components/layout/breadcrumb';
 
 export default function LiquidityWorkbenchPage() {
   return (

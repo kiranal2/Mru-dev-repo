@@ -2,9 +2,9 @@
 
 import { Suspense, useEffect, useMemo, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import { RevenueLeakageShell } from "@/components/revenue-leakage/RevenueLeakageShell";
-import { RevenueLeakageCaseDrawer } from "@/components/revenue-leakage/RevenueLeakageCaseDrawer";
-import { CreateManualCaseSheet } from "@/components/revenue-leakage/CreateManualCaseSheet";
+import { RevenueLeakageShell } from "@/components/revenue-leakage/revenue-leakage-shell";
+import { RevenueLeakageCaseDrawer } from "@/components/revenue-leakage/revenue-leakage-case-drawer";
+import { CreateManualCaseSheet } from "@/components/revenue-leakage/create-manual-case-sheet";
 import { revenueLeakageApi } from "@/lib/revenue-leakage/revenueLeakageApi";
 import {
   LeakageCase,
@@ -34,7 +34,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { DensityToggle } from "@/components/cash-app/DensityToggle";
+import { DensityToggle } from "@/components/cash-app/density-toggle";
 import { DensityMode } from "@/components/cash-app/cash-app-theme";
 import { toast } from "sonner";
 import { Filter, Search, FileDown, UserPlus, CheckCircle2, Plus } from "lucide-react";

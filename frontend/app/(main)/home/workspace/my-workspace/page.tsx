@@ -3,16 +3,16 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronRight, Home, Pin, Eye, ArrowRight, RefreshCw, CheckSquare, Search, Bell, Paperclip, Send } from 'lucide-react';
-import Breadcrumb from '@/components/layout/Breadcrumb';
+import Breadcrumb from '@/components/layout/breadcrumb';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LivePin } from '@/lib/live-pins-types';
-import { ReconciliationsSection } from '@/components/workspace/ReconciliationsSection';
-import { WorklistManagementSection } from '@/components/workspace/WorklistManagementSection';
+import { ReconciliationsSection } from '@/components/workspace/reconciliations-section';
+import { WorklistManagementSection } from '@/components/workspace/worklist-management-section';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { CreateTemplateModal } from '@/components/modals/CreateTemplateModal';
-import { TemplateCreatedModal } from '@/components/modals/TemplateCreatedModal';
-import { DataBindingsWidget } from '@/components/workspace/DataBindingsWidget';
+import { CreateTemplateModal } from '@/components/modals/create-template-modal';
+import { TemplateCreatedModal } from '@/components/modals/template-created-modal';
+import { DataBindingsWidget } from '@/components/workspace/data-bindings-widget';
 
 interface Counters {
   approvalsDue: number;

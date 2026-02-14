@@ -184,4 +184,5 @@ const LivePinModal: React.FC<LivePinModalProps> = ({ open, onClose, onAddToLiveP
   );
 };
 
+export { LivePinModal };
 export default LivePinModal;
