@@ -1,0 +1,190 @@
+[
+  {
+    "id": "EMAIL-001",
+    "from": "ap@amazon.com",
+    "to": "ar@meeru.com",
+    "subject": "Remittance Advice - Payment Dec 2024",
+    "receivedAt": "2024-12-01T07:55:00Z",
+    "body": "Please find attached our remittance advice for payment of $45,230.50 covering invoices INV-2024-10001 and INV-2024-10002. Payment sent via ACH on 12/01/2024.\n\nRegards,\nAmazon AP Team",
+    "attachments": [
+      { "fileName": "AWS_Remittance_Dec2024.pdf", "fileSize": 245000, "mimeType": "application/pdf" }
+    ],
+    "remittanceId": "REM-001",
+    "paymentId": "PAY-001",
+    "status": "Processed",
+    "extractedData": {
+      "amount": 45230.50,
+      "invoiceNumbers": ["INV-2024-10001", "INV-2024-10002"],
+      "paymentDate": "2024-12-01"
+    }
+  },
+  {
+    "id": "EMAIL-002",
+    "from": "accounts.payable@oracle.com",
+    "to": "ar@meeru.com",
+    "subject": "Oracle Corporation - Payment Notification",
+    "receivedAt": "2024-12-03T07:40:00Z",
+    "body": "Dear Meeru Accounts Receivable,\n\nThis is to confirm that we have initiated an ACH payment of $15,340.25 for the following invoices:\n- INV-2024-10011: $10,240.25\n- INV-2024-10012: $5,100.00\n\nPlease confirm receipt.\n\nBest regards,\nOracle Accounts Payable",
+    "attachments": [
+      { "fileName": "Oracle_Remit_120324.pdf", "fileSize": 189000, "mimeType": "application/pdf" }
+    ],
+    "remittanceId": "REM-005",
+    "paymentId": "PAY-005",
+    "status": "Processed",
+    "extractedData": {
+      "amount": 15340.25,
+      "invoiceNumbers": ["INV-2024-10011", "INV-2024-10012"],
+      "paymentDate": "2024-12-03"
+    }
+  },
+  {
+    "id": "EMAIL-003",
+    "from": "finance@zoom.us",
+    "to": "ar@meeru.com",
+    "subject": "Payment - December 2024 (Discount Applied)",
+    "receivedAt": "2024-12-05T12:50:00Z",
+    "body": "Hi,\n\nWe have processed payment for invoice INV-2024-10020. Please note we have applied our standard 2% early payment discount per our contract terms (Section 4.2).\n\nOriginal amount: $13,250.00\nDiscount (2%): -$500.00 (approx)\nPayment amount: $12,750.00\n\nPlease update your records accordingly.\n\nThanks,\nZoom Finance Team",
+    "attachments": [
+      { "fileName": "Zoom_Remit_120524.pdf", "fileSize": 156000, "mimeType": "application/pdf" }
+    ],
+    "remittanceId": "REM-006",
+    "paymentId": "PAY-013",
+    "status": "Processed",
+    "extractedData": {
+      "amount": 12750.00,
+      "invoiceNumbers": ["INV-2024-10020"],
+      "paymentDate": "2024-12-05"
+    }
+  },
+  {
+    "id": "EMAIL-004",
+    "from": "payables@shopify.com",
+    "to": "ar@meeru.com",
+    "subject": "Wire Transfer Confirmation",
+    "receivedAt": "2024-12-06T09:40:00Z",
+    "body": "To whom it may concern,\n\nPlease be advised that a wire transfer of $5,600.00 has been sent to your account for outstanding balance. Reference: PO-44521.\n\nIf you have any questions, please contact our AP department.\n\nShopify Inc\nAccounts Payable",
+    "attachments": [
+      { "fileName": "Shopify_Payment_Dec.pdf", "fileSize": 98000, "mimeType": "application/pdf" }
+    ],
+    "remittanceId": "REM-008",
+    "paymentId": "PAY-015",
+    "status": "NeedsReview",
+    "extractedData": {
+      "amount": 5600.00,
+      "invoiceNumbers": [],
+      "paymentDate": "2024-12-06"
+    }
+  },
+  {
+    "id": "EMAIL-005",
+    "from": "ap-noreply@hubspot.com",
+    "to": "ar@meeru.com",
+    "subject": "HubSpot - Consolidated Payment Advice",
+    "receivedAt": "2024-12-08T07:55:00Z",
+    "body": "Automated Payment Notification\n\nPayment has been processed from HubSpot Inc (Parent Entity) covering invoices across subsidiary accounts.\n\nTotal Payment: $33,450.75\n\nBreakdown:\n- HubSpot Inc (Marketing): INV-2024-10024 - $18,200.75\n- HubSpot Inc (CRM): INV-2024-10025 - $15,250.00\n\nPlease see attached for full details.",
+    "attachments": [
+      { "fileName": "HubSpot_Remittance_Dec.pdf", "fileSize": 312000, "mimeType": "application/pdf" }
+    ],
+    "remittanceId": "REM-010",
+    "paymentId": "PAY-018",
+    "status": "NeedsReview",
+    "extractedData": {
+      "amount": 33450.75,
+      "invoiceNumbers": ["INV-2024-10024", "INV-2024-10025"],
+      "paymentDate": "2024-12-08"
+    }
+  },
+  {
+    "id": "EMAIL-006",
+    "from": "ap@datadog.com",
+    "to": "ar@meeru.com",
+    "subject": "EFT Payment Confirmation - Invoice INV-2024-10030",
+    "receivedAt": "2024-12-10T06:55:00Z",
+    "body": "Dear Meeru Team,\n\nWe confirm that an EFT payment of $28,400.00 has been initiated for invoice INV-2024-10030 (Monitoring & Observability Suite).\n\nExpected settlement: 12/10/2024\n\nThank you,\nDatadog Accounts Payable",
+    "attachments": [
+      { "fileName": "Datadog_Remit_121024.pdf", "fileSize": 134000, "mimeType": "application/pdf" }
+    ],
+    "remittanceId": "REM-012",
+    "paymentId": "PAY-022",
+    "status": "Processed",
+    "extractedData": {
+      "amount": 28400.00,
+      "invoiceNumbers": ["INV-2024-10030"],
+      "paymentDate": "2024-12-10"
+    }
+  },
+  {
+    "id": "EMAIL-007",
+    "from": "treasury@uber.com",
+    "to": "ar@meeru.com",
+    "subject": "Uber Technologies - Payment for INV-2024-10036",
+    "receivedAt": "2024-12-12T07:25:00Z",
+    "body": "Hello,\n\nPayment of $42,300.00 has been sent via ACH for invoice INV-2024-10036 (Ride Analytics Dashboard).\n\nThank you for your services.\n\nBest,\nUber Treasury Department",
+    "attachments": [
+      { "fileName": "Uber_Remit_121224.pdf", "fileSize": 178000, "mimeType": "application/pdf" }
+    ],
+    "remittanceId": "REM-014",
+    "paymentId": "PAY-026",
+    "status": "Processed",
+    "extractedData": {
+      "amount": 42300.00,
+      "invoiceNumbers": ["INV-2024-10036"],
+      "paymentDate": "2024-12-12"
+    }
+  },
+  {
+    "id": "EMAIL-008",
+    "from": "ap@workday.com",
+    "to": "ar@meeru.com",
+    "subject": "Workday Payment Advice - December",
+    "receivedAt": "2024-12-05T11:25:00Z",
+    "body": "Remittance Advice\n\nCompany: Workday Inc\nPayment Method: ACH\nPayment Amount: $38,900.50\n\nThis payment includes a credit adjustment of $3,100.50 per contract amendment CA-2024-112.\n\nNet invoices covered under this payment will be detailed in the attached PDF.",
+    "attachments": [
+      { "fileName": "Workday_Remit_120524.pdf", "fileSize": 267000, "mimeType": "application/pdf" }
+    ],
+    "remittanceId": null,
+    "paymentId": "PAY-012",
+    "status": "Processed",
+    "extractedData": {
+      "amount": 38900.50,
+      "invoiceNumbers": [],
+      "paymentDate": "2024-12-05"
+    }
+  },
+  {
+    "id": "EMAIL-009",
+    "from": "noreply@palantir.com",
+    "to": "ar@meeru.com",
+    "subject": "Automated Payment Notification - Palantir Technologies",
+    "receivedAt": "2024-12-08T10:55:00Z",
+    "body": "This is an automated notification.\n\nPalantir Technologies Inc has processed a payment of $19,800.00.\n\nReference: INV-2024-10027\nPayment Date: 2024-12-08\n\nNote: This payment includes coverage for all outstanding balances including billing adjustments.\n\nDo not reply to this email.",
+    "attachments": [],
+    "remittanceId": null,
+    "paymentId": "PAY-019",
+    "status": "Processed",
+    "extractedData": {
+      "amount": 19800.00,
+      "invoiceNumbers": ["INV-2024-10027"],
+      "paymentDate": "2024-12-08"
+    }
+  },
+  {
+    "id": "EMAIL-010",
+    "from": "ap@servicenow.com",
+    "to": "ar@meeru.com",
+    "subject": "ServiceNow - ACH Payment Sent",
+    "receivedAt": "2024-12-04T09:15:00Z",
+    "body": "Dear Vendor,\n\nWe have submitted an ACH payment for the following:\n\nInvoice: INV-2024-10017\nAmount: $21,450.00\nPayment Date: 12/04/2024\nACH Trace: 2024120400987\n\nPlease allow 1-2 business days for settlement.\n\nServiceNow Accounts Payable",
+    "attachments": [
+      { "fileName": "ServiceNow_Remit_120424.pdf", "fileSize": 145000, "mimeType": "application/pdf" }
+    ],
+    "remittanceId": null,
+    "paymentId": "PAY-009",
+    "status": "Processed",
+    "extractedData": {
+      "amount": 21450.00,
+      "invoiceNumbers": ["INV-2024-10017"],
+      "paymentDate": "2024-12-04"
+    }
+  }
+]

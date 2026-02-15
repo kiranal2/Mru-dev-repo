@@ -12,10 +12,14 @@ import Breadcrumb from "@/components/layout/breadcrumb";
 import { useAccountActivity } from "./hooks/useAccountActivity";
 import { MOCK_DATA, OPENING_BALANCE, CLOSING_BALANCE } from "./constants";
 import FilterBar from "./components/FilterBar";
+import { useMemo } from "react";
 
 export default function AccountActivityPage() {
   const {
     gridRef,
+    dataLoading,
+    dataError,
+    dataLayerRows,
     glAccount,
     currency,
     setCurrency,
@@ -55,6 +59,14 @@ export default function AccountActivityPage() {
     handleApplyFilters,
     handleExportCSV,
   } = useAccountActivity();
+
+  // Prefer data-layer rows, fall back to inline mock data
+  const rowData = useMemo(() => {
+    if (dataLayerRows && dataLayerRows.length > 0) {
+      return dataLayerRows;
+    }
+    return MOCK_DATA;
+  }, [dataLayerRows]);
 
   return (
     <div className="flex flex-col bg-white" style={{ height: "100%", minHeight: 0 }}>
@@ -105,6 +117,16 @@ export default function AccountActivityPage() {
 
       {/* Account Summary and Table Section */}
       <div className="flex-1 p-6 overflow-auto" style={{ minHeight: 0 }}>
+        {dataLoading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-sm text-slate-500">Loading account activity data...</div>
+          </div>
+        )}
+        {dataError && (
+          <div className="flex items-center justify-center py-4">
+            <div className="text-sm text-red-500">Error: {dataError}</div>
+          </div>
+        )}
         {/* Account Information Header */}
         <div className="mb-4">
           <div className="flex items-center gap-6 flex-wrap mb-2">
@@ -131,7 +153,7 @@ export default function AccountActivityPage() {
           >
             <AgGridReact
               ref={gridRef}
-              rowData={MOCK_DATA}
+              rowData={rowData}
               columnDefs={columnDefs}
               defaultColDef={defaultColDef}
               suppressRowClickSelection={true}

@@ -1,0 +1,98 @@
+[
+  {
+    "id": "EXP-001",
+    "name": "Q4 2024 Revenue Leakage Report",
+    "description": "Comprehensive report of all leakage cases detected in Q4 2024 with root cause analysis and recovery status",
+    "format": "PDF",
+    "type": "Quarterly Report",
+    "status": "Completed",
+    "fileSize": "2.4 MB",
+    "recordCount": 25,
+    "filters": {
+      "dateRange": { "start": "2024-10-01", "end": "2024-12-31" },
+      "categories": ["Pricing", "Billing", "Contract", "Discount", "Subscription", "Commission", "Recognition"],
+      "statuses": ["Open", "Investigating", "Confirmed", "Recovered", "Closed", "False Positive"]
+    },
+    "generatedBy": "Sarah Chen",
+    "generatedAt": "2024-12-12T18:00:00Z",
+    "downloadUrl": "/exports/q4-2024-leakage-report.pdf",
+    "expiresAt": "2025-01-12T18:00:00Z"
+  },
+  {
+    "id": "EXP-002",
+    "name": "Enterprise Customer Risk Assessment",
+    "description": "Risk scores, active leakage cases, and contract compliance metrics for all Enterprise-tier customers",
+    "format": "XLSX",
+    "type": "Customer Analysis",
+    "status": "Completed",
+    "fileSize": "856 KB",
+    "recordCount": 8,
+    "filters": {
+      "dateRange": { "start": "2024-01-01", "end": "2024-12-31" },
+      "customerTiers": ["Enterprise"],
+      "minRiskScore": 0
+    },
+    "generatedBy": "James Rodriguez",
+    "generatedAt": "2024-12-10T14:30:00Z",
+    "downloadUrl": "/exports/enterprise-risk-assessment-2024.xlsx",
+    "expiresAt": "2025-01-10T14:30:00Z"
+  },
+  {
+    "id": "EXP-003",
+    "name": "Discount Compliance Audit Trail",
+    "description": "Full audit trail of all discount applications, approvals, and overrides for SOX compliance review",
+    "format": "CSV",
+    "type": "Audit Export",
+    "status": "Completed",
+    "fileSize": "1.1 MB",
+    "recordCount": 142,
+    "filters": {
+      "dateRange": { "start": "2024-01-01", "end": "2024-12-31" },
+      "categories": ["Discount"],
+      "includeAuditLog": true
+    },
+    "generatedBy": "Emily Watson",
+    "generatedAt": "2024-12-08T09:00:00Z",
+    "downloadUrl": "/exports/discount-audit-trail-2024.csv",
+    "expiresAt": "2025-01-08T09:00:00Z"
+  },
+  {
+    "id": "EXP-004",
+    "name": "Monthly Leakage Trends - YTD 2024",
+    "description": "Month-by-month breakdown of leakage detection, recovery rates, and trend analysis for board reporting",
+    "format": "PDF",
+    "type": "Trend Analysis",
+    "status": "Completed",
+    "fileSize": "3.8 MB",
+    "recordCount": 12,
+    "filters": {
+      "dateRange": { "start": "2024-01-01", "end": "2024-12-31" },
+      "granularity": "Monthly",
+      "includeCharts": true
+    },
+    "generatedBy": "Sarah Chen",
+    "generatedAt": "2024-12-11T16:00:00Z",
+    "downloadUrl": "/exports/leakage-trends-ytd-2024.pdf",
+    "expiresAt": "2025-01-11T16:00:00Z"
+  },
+  {
+    "id": "EXP-005",
+    "name": "Open Cases Detail Export",
+    "description": "Detailed export of all currently open and investigating cases with assigned owners and aging metrics",
+    "format": "XLSX",
+    "type": "Case Export",
+    "status": "Processing",
+    "fileSize": null,
+    "recordCount": 12,
+    "filters": {
+      "dateRange": { "start": "2024-09-01", "end": "2024-12-31" },
+      "statuses": ["Open", "Investigating"],
+      "includeActivityLog": true,
+      "includeSignals": true
+    },
+    "generatedBy": "Michael Torres",
+    "generatedAt": "2024-12-12T20:00:00Z",
+    "downloadUrl": null,
+    "expiresAt": null
+  }
+]

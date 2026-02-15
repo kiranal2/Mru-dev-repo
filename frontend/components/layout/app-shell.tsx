@@ -55,7 +55,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   // Load persisted rail selection from localStorage
   useEffect(() => {
     const savedRailItem = localStorage.getItem("meeru-selected-rail");
-    if (savedRailItem && ["home", "automation", "reports"].includes(savedRailItem)) {
+    if (savedRailItem && ["home", "automation", "reports", "workbench", "igrs", "revenue-assurance"].includes(savedRailItem)) {
       setSelectedRailItem(savedRailItem as RailItem);
     }
   }, []);
@@ -85,6 +85,10 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
         setSelectedRailItem("home");
       } else if (pathname.startsWith("/automation/")) {
         setSelectedRailItem("automation");
+      } else if (pathname.startsWith("/igrs/")) {
+        setSelectedRailItem("igrs");
+      } else if (pathname.startsWith("/revenue-assurance/")) {
+        setSelectedRailItem("revenue-assurance");
       } else if (pathname.startsWith("/workbench/")) {
         setSelectedRailItem("workbench");
       } else if (pathname.startsWith("/reports/")) {
@@ -106,9 +110,11 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     setSelectedRailItem(item);
     // Set hoveredRailItem to show panel immediately when clicking
     setHoveredRailItem(item);
-    const defaultRoutes = {
+    const defaultRoutes: Record<RailItem, string> = {
       home: "/home/command-center",
       automation: "/automation/autonomy-studio",
+      igrs: "/igrs/revenue-assurance/overview",
+      "revenue-assurance": "/revenue-assurance/overview",
       workbench: "/workbench/order-to-cash/cash-application",
       reports: "/reports/sec/balance-sheet",
     };
@@ -133,6 +139,12 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     } else if (route.startsWith("/automation/")) {
       railItem = "automation";
       setSelectedRailItem("automation");
+    } else if (route.startsWith("/igrs/")) {
+      railItem = "igrs";
+      setSelectedRailItem("igrs");
+    } else if (route.startsWith("/revenue-assurance/")) {
+      railItem = "revenue-assurance";
+      setSelectedRailItem("revenue-assurance");
     } else if (route.startsWith("/workbench/")) {
       railItem = "workbench";
       setSelectedRailItem("workbench");

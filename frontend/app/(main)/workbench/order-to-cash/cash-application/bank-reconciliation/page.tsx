@@ -22,6 +22,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCashBankLines } from "@/hooks/data/use-cash-bank-lines";
+import { useCashPayments } from "@/hooks/data/use-cash-payments";
 
 type BankLineMatchStatus =
   | "LINKED"
@@ -95,101 +97,36 @@ const formatCurrency = (amount: number, currency = "USD") =>
 
 const formatDate = (date: string) => new Date(date).toLocaleDateString("en-US");
 
-const BANK_ACCOUNTS = [
-  { id: "ba-001", label: "US Bank - *****4521" },
-  { id: "ba-002", label: "Chase - *****7892" },
-  { id: "ba-003", label: "Wells Fargo - *****3456" },
-  { id: "ba-004", label: "Bank of America - *****9012" },
-];
-
-const CUSTOMERS = [
-  "Nova Services",
-  "Global Retail Group",
-  "Acme Logistics",
-  "Walmart INC",
-  "Skyline Media",
-];
-
-const makeDate = (offsetDays: number) => {
-  const date = new Date();
-  date.setDate(date.getDate() - offsetDays);
-  date.setHours(9, 0, 0, 0);
-  return date.toISOString().split("T")[0];
+/** Derive source type from bank line description */
+const inferSourceType = (description: string): "ACH" | "WIRE" | "LOCKBOX" | "CHECK" | "CARD" => {
+  const desc = description.toUpperCase();
+  if (desc.includes("ACH")) return "ACH";
+  if (desc.includes("WIRE")) return "WIRE";
+  if (desc.includes("LOCKBOX") || desc.includes("CHECK")) return "LOCKBOX";
+  if (desc.includes("CARD")) return "CARD";
+  return "ACH";
 };
 
-const generatePaymentRecords = (): PaymentRecord[] => {
-  const payments: PaymentRecord[] = [];
-  for (let i = 0; i < 26; i += 1) {
-    const posted = i % 4 === 0 || i % 5 === 0;
-    payments.push({
-      payment_id: `PMT-2026-${(1000 + i).toString()}`,
-      customer: CUSTOMERS[i % CUSTOMERS.length],
-      payer_name: CUSTOMERS[(i + 1) % CUSTOMERS.length],
-      payment_date: makeDate(i % 25),
-      amount: 15000 + ((i * 2900) % 65000),
-      status: posted ? "Posted" : i % 3 === 0 ? "PendingToPost" : "Exception",
-      match_type: i % 2 === 0 ? "Exact" : "WithinTolerance",
-      netsuite_payment_id: posted ? `NS-PAY-${7000 + i}` : undefined,
-      netsuite_je_id: i % 6 === 0 ? `NS-JE-${9000 + i}` : undefined,
-      posted_flag: posted,
-      posting_batch_id: posted ? `BATCH-${200 + i}` : undefined,
-      remittance_present: i % 5 !== 0,
-    });
+/** Derive match status from JSON status field */
+const mapBankLineStatus = (
+  status: string,
+  idx: number,
+): { matchStatus: BankLineMatchStatus; riskFlags: string[] } => {
+  if (status === "Matched" || status === "Linked") {
+    return { matchStatus: "LINKED", riskFlags: idx % 9 === 0 ? ["STALE_AGE"] : [] };
   }
-  return payments;
+  if (status === "Unmatched" || status === "Unlinked") {
+    return { matchStatus: "UNLINKED", riskFlags: [] };
+  }
+  if (status === "NonAR" || status === "Risk") {
+    return { matchStatus: "AMOUNT_MISMATCH", riskFlags: ["AMOUNT_VARIANCE"] };
+  }
+  return { matchStatus: "UNLINKED", riskFlags: [] };
 };
 
-const generateBankLines = (paymentRecords: PaymentRecord[]): BankLineRecord[] => {
-  const statusPool: BankLineMatchStatus[] = [
-    ...Array(10).fill("LINKED"),
-    ...Array(8).fill("UNLINKED"),
-    ...Array(6).fill("MULTI_MATCH"),
-    ...Array(6).fill("AMOUNT_MISMATCH"),
-    ...Array(6).fill("SETTLEMENT_PENDING"),
-    ...Array(6).fill("LINKED"),
-  ];
-
-  return statusPool.map((status, idx) => {
-    const account = BANK_ACCOUNTS[idx % BANK_ACCOUNTS.length];
-    const ref = `BNK-${2026}${(10000 + idx).toString()}`;
-    const payment = paymentRecords[idx % paymentRecords.length];
-    const candidateIds = [
-      payment.payment_id,
-      paymentRecords[(idx + 3) % paymentRecords.length].payment_id,
-      paymentRecords[(idx + 5) % paymentRecords.length].payment_id,
-    ];
-    const isPrelim = status === "SETTLEMENT_PENDING";
-    const riskFlags =
-      status === "AMOUNT_MISMATCH"
-        ? ["AMOUNT_VARIANCE"]
-        : status === "MULTI_MATCH"
-          ? ["DUPLICATE_REF"]
-          : status === "SETTLEMENT_PENDING"
-            ? ["NO_FINAL_FILE"]
-            : idx % 9 === 0
-              ? ["STALE_AGE"]
-              : [];
-
-    return {
-      bank_line_id: `BL-${9000 + idx}`,
-      bank_date: makeDate(idx % 30),
-      amount: 14000 + ((idx * 3700) % 80000),
-      currency: "USD",
-      bank_ref: ref + (idx % 5 === 0 ? `-LONGREF-${idx}-${idx + 4}` : ""),
-      bank_account_id: account.id,
-      bank_account_label: account.label,
-      payer_hint: CUSTOMERS[idx % CUSTOMERS.length],
-      source_type: (["ACH", "WIRE", "LOCKBOX", "CHECK", "CARD"] as const)[idx % 5],
-      settlement_state: isPrelim ? "PRELIMINARY" : "FINAL",
-      final_settlement_confirmed: !isPrelim,
-      match_status: status,
-      risk_flags: riskFlags,
-      linked_payment_id:
-        status === "LINKED" || status === "AMOUNT_MISMATCH" ? payment.payment_id : undefined,
-      candidate_payment_ids: status === "MULTI_MATCH" ? candidateIds : undefined,
-      notes: status === "AMOUNT_MISMATCH" ? "Amount does not match bank line" : undefined,
-    };
-  });
+/** Derive bank account id from label */
+const toBankAccountId = (label: string): string => {
+  return label.replace(/[^a-z0-9]/gi, "-").toLowerCase().slice(0, 20);
 };
 
 const getStatusLabel = (status: BankLineMatchStatus) => {
@@ -248,6 +185,10 @@ export default function BankReconciliationPage() {
   const searchParams = useSearchParams();
   const paymentIdParam = searchParams?.get("paymentId") || "";
 
+  // Data hooks for fetch lifecycle
+  const { data: rawBankLines, loading: bankLinesLoading, error: bankLinesError } = useCashBankLines();
+  const { data: rawPayments, loading: paymentsLoading, error: paymentsError } = useCashPayments();
+
   const [bankLines, setBankLines] = useState<BankLineRecord[]>([]);
   const [paymentRecords, setPaymentRecords] = useState<PaymentRecord[]>([]);
   const [bankAccountFilter, setBankAccountFilter] = useState<string>("all");
@@ -255,23 +196,67 @@ export default function BankReconciliationPage() {
   const [dateRange, setDateRange] = useState<DateRange>("30d");
   const [search, setSearch] = useState<string>(paymentIdParam);
   const [activeTab, setActiveTab] = useState("bank-lines");
-  const [isLoading, setIsLoading] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeBankLine, setActiveBankLine] = useState<BankLineRecord | null>(null);
   const [unlinkedSearch, setUnlinkedSearch] = useState("");
   const [selectedPaymentId, setSelectedPaymentId] = useState<string>("");
 
+  const isLoading = bankLinesLoading || paymentsLoading;
+  const dataError = bankLinesError || paymentsError;
+
+  // Map data from hooks to page-local types
   useEffect(() => {
-    const payments = generatePaymentRecords();
-    setPaymentRecords(payments);
-    setBankLines(generateBankLines(payments));
-  }, []);
+    if (rawPayments.length === 0) return;
+    const mapped: PaymentRecord[] = rawPayments.map((p) => ({
+      payment_id: p.id,
+      customer: p.customerName,
+      payer_name: p.payerName,
+      payment_date: p.date,
+      amount: p.amount,
+      status: p.status === "Posted" ? "Posted" as const
+        : p.status === "PendingToPost" ? "PendingToPost" as const
+        : p.status === "AutoMatched" ? "AutoMatched" as const
+        : "Exception" as const,
+      match_type: p.confidenceScore >= 95 ? "Exact" as const : "WithinTolerance" as const,
+      netsuite_payment_id: p.status === "Posted" ? `NS-PAY-${p.id.replace(/\D/g, "")}` : undefined,
+      netsuite_je_id: undefined,
+      posted_flag: p.status === "Posted",
+      posting_batch_id: p.status === "Posted" ? `BATCH-${p.id.replace(/\D/g, "")}` : undefined,
+      remittance_present: p.remittanceSource !== "None",
+    }));
+    setPaymentRecords(mapped);
+  }, [rawPayments]);
 
   useEffect(() => {
-    setIsLoading(true);
-    const timer = window.setTimeout(() => setIsLoading(false), 300);
-    return () => window.clearTimeout(timer);
-  }, [activeTab]);
+    if (rawBankLines.length === 0 || paymentRecords.length === 0) return;
+    const mapped: BankLineRecord[] = rawBankLines.map((bl: any, idx: number) => {
+      const { matchStatus, riskFlags } = mapBankLineStatus(bl.status, idx);
+      const bankAccount = bl.bankAccount || "";
+      return {
+        bank_line_id: bl.id,
+        bank_date: bl.statementDate || bl.bankDate || "",
+        amount: bl.amount,
+        currency: "USD",
+        bank_ref: bl.reference || bl.bankReference || bl.id,
+        bank_account_id: toBankAccountId(bankAccount),
+        bank_account_label: bankAccount,
+        payer_hint: bl.description
+          ? bl.description.replace(/^(ACH CREDIT|WIRE TRANSFER|LOCKBOX DEPOSIT[^A-Z]*)/i, "").trim().split(" REF:")[0]
+          : undefined,
+        source_type: inferSourceType(bl.description || ""),
+        settlement_state: "FINAL" as const,
+        final_settlement_confirmed: true,
+        match_status: matchStatus,
+        risk_flags: riskFlags,
+        linked_payment_id: (matchStatus === "LINKED" || matchStatus === "AMOUNT_MISMATCH")
+          ? bl.paymentId || bl.linkedPaymentId || undefined
+          : undefined,
+        candidate_payment_ids: undefined,
+        notes: matchStatus === "AMOUNT_MISMATCH" ? "Amount does not match bank line" : undefined,
+      };
+    });
+    setBankLines(mapped);
+  }, [rawBankLines, paymentRecords]);
 
   const paymentIndex = useMemo(() => {
     return paymentRecords.reduce<Record<string, PaymentRecord>>((acc, record) => {
@@ -281,12 +266,15 @@ export default function BankReconciliationPage() {
   }, [paymentRecords]);
 
   const accountOptions = useMemo(() => {
-    const labels = new Map(BANK_ACCOUNTS.map((account) => [account.id, account.label]));
-    const items = bankLines.map((line) => line.bank_account_id);
-    const unique = Array.from(new Set(items));
+    const accountMap = new Map<string, string>();
+    bankLines.forEach((line) => {
+      if (!accountMap.has(line.bank_account_id)) {
+        accountMap.set(line.bank_account_id, line.bank_account_label);
+      }
+    });
     return [
       { id: "all", label: "All Bank Accounts" },
-      ...unique.map((id) => ({ id, label: labels.get(id) || id })),
+      ...Array.from(accountMap.entries()).map(([id, label]) => ({ id, label })),
     ];
   }, [bankLines]);
 
@@ -489,6 +477,19 @@ export default function BankReconciliationPage() {
   const linkedPayment = activeBankLine?.linked_payment_id
     ? paymentIndex[activeBankLine.linked_payment_id]
     : undefined;
+
+  if (dataError) {
+    return (
+      <div className="h-full flex flex-col bg-gray-50">
+        <div className="border-b bg-white px-8 py-4">
+          <h1 className="text-2xl font-semibold text-gray-900">Bank Reconciliation</h1>
+        </div>
+        <div className="p-8 text-center">
+          <p className="text-sm text-red-600">Error loading data: {dataError}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col bg-gray-50">

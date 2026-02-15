@@ -1,0 +1,118 @@
+[
+  {
+    "id": "WF-001",
+    "name": "Auto-Match & Post Payments",
+    "description": "Automatically matches incoming payments to open invoices using AI-assisted matching and posts confirmed matches with confidence >= 90%.",
+    "trigger": { "type": "Event", "event": "PaymentReceived", "conditions": [] },
+    "status": "Active",
+    "createdBy": "USR-001",
+    "steps": [
+      { "order": 1, "action": "ExtractRemittance", "description": "Parse remittance data from email/EDI/lockbox" },
+      { "order": 2, "action": "IdentifyCustomer", "description": "Map payer name to customer master" },
+      { "order": 3, "action": "MatchInvoices", "description": "Run AI matching engine against open invoices" },
+      { "order": 4, "action": "ConfirmMatch", "description": "Auto-confirm if confidence >= 90%" },
+      { "order": 5, "action": "PostToERP", "description": "Post confirmed match to ERP system" },
+      { "order": 6, "action": "CreateException", "description": "Create exception if confidence < 90% or variance detected" }
+    ],
+    "executionHistory": [
+      { "executionId": "EXEC-001-A", "startedAt": "2024-12-13T15:30:00Z", "completedAt": "2024-12-13T15:31:00Z", "status": "Completed", "triggeredBy": "PAY-029", "result": "Exception created - new unprocessed payment" },
+      { "executionId": "EXEC-001-B", "startedAt": "2024-12-13T14:00:00Z", "completedAt": "2024-12-13T14:01:30Z", "status": "Completed", "triggeredBy": "PAY-028", "result": "Exception created - new unprocessed payment" },
+      { "executionId": "EXEC-001-C", "startedAt": "2024-12-12T09:00:00Z", "completedAt": "2024-12-12T09:00:45Z", "status": "Completed", "triggeredBy": "PAY-027", "result": "Auto-matched and confirmed (97% confidence)" },
+      { "executionId": "EXEC-001-D", "startedAt": "2024-12-12T07:30:00Z", "completedAt": "2024-12-12T07:31:15Z", "status": "Completed", "triggeredBy": "PAY-026", "result": "Auto-matched and confirmed (95% confidence)" },
+      { "executionId": "EXEC-001-E", "startedAt": "2024-12-11T06:00:00Z", "completedAt": "2024-12-11T06:01:00Z", "status": "Completed", "triggeredBy": "PAY-025", "result": "Auto-matched and confirmed (99% confidence)" }
+    ],
+    "metrics": { "totalExecutions": 30, "successRate": 92, "avgDuration": "52s" },
+    "createdAt": "2024-01-15T10:00:00Z",
+    "updatedAt": "2024-12-01T08:00:00Z"
+  },
+  {
+    "id": "WF-002",
+    "name": "Exception Aging Escalation",
+    "description": "Automatically escalates exceptions that remain unresolved for more than 3 business days.",
+    "trigger": { "type": "Schedule", "schedule": "0 9 * * 1-5", "conditions": [{ "field": "age", "operator": ">=", "value": 3 }] },
+    "status": "Active",
+    "createdBy": "USR-002",
+    "steps": [
+      { "order": 1, "action": "QueryExceptions", "description": "Find exceptions older than 3 business days" },
+      { "order": 2, "action": "CheckSeverity", "description": "Determine escalation level based on severity and amount" },
+      { "order": 3, "action": "AssignEscalation", "description": "Escalate to manager or senior analyst" },
+      { "order": 4, "action": "SendNotification", "description": "Send email and in-app notification to escalation target" },
+      { "order": 5, "action": "UpdateStatus", "description": "Update exception status to Escalated" }
+    ],
+    "executionHistory": [
+      { "executionId": "EXEC-002-A", "startedAt": "2024-12-13T09:00:00Z", "completedAt": "2024-12-13T09:00:30Z", "status": "Completed", "triggeredBy": "Schedule", "result": "1 exception escalated (EXC-008)" },
+      { "executionId": "EXEC-002-B", "startedAt": "2024-12-12T09:00:00Z", "completedAt": "2024-12-12T09:00:25Z", "status": "Completed", "triggeredBy": "Schedule", "result": "0 exceptions to escalate" },
+      { "executionId": "EXEC-002-C", "startedAt": "2024-12-11T09:00:00Z", "completedAt": "2024-12-11T09:00:28Z", "status": "Completed", "triggeredBy": "Schedule", "result": "0 exceptions to escalate" }
+    ],
+    "metrics": { "totalExecutions": 9, "successRate": 100, "avgDuration": "28s" },
+    "createdAt": "2024-02-01T08:00:00Z",
+    "updatedAt": "2024-11-15T10:00:00Z"
+  },
+  {
+    "id": "WF-003",
+    "name": "High-Value Payment Alert",
+    "description": "Sends real-time notifications when payments exceeding $100,000 are received.",
+    "trigger": { "type": "Event", "event": "PaymentReceived", "conditions": [{ "field": "amount", "operator": ">=", "value": 100000 }] },
+    "status": "Active",
+    "createdBy": "USR-001",
+    "steps": [
+      { "order": 1, "action": "ValidateAmount", "description": "Confirm payment exceeds $100K threshold" },
+      { "order": 2, "action": "EnrichData", "description": "Pull customer details and payment history" },
+      { "order": 3, "action": "SendAlert", "description": "Notify Controller and AR Manager via email and Slack" },
+      { "order": 4, "action": "CreateActivity", "description": "Log activity in workspace feed" }
+    ],
+    "executionHistory": [
+      { "executionId": "EXEC-003-A", "startedAt": "2024-12-13T15:30:00Z", "completedAt": "2024-12-13T15:30:15Z", "status": "Completed", "triggeredBy": "PAY-029", "result": "Alert sent for VMware $156,200 wire" },
+      { "executionId": "EXEC-003-B", "startedAt": "2024-12-11T06:00:00Z", "completedAt": "2024-12-11T06:00:12Z", "status": "Completed", "triggeredBy": "PAY-025", "result": "Alert sent for Netflix $189,500 wire" },
+      { "executionId": "EXEC-003-C", "startedAt": "2024-12-09T09:00:00Z", "completedAt": "2024-12-09T09:00:10Z", "status": "Completed", "triggeredBy": "PAY-021", "result": "Alert sent for SAP $112,000 wire" },
+      { "executionId": "EXEC-003-D", "startedAt": "2024-12-09T06:30:00Z", "completedAt": "2024-12-09T06:30:11Z", "status": "Completed", "triggeredBy": "PAY-020", "result": "Alert sent for Snowflake $76,250 wire (below threshold - skipped)" }
+    ],
+    "metrics": { "totalExecutions": 12, "successRate": 100, "avgDuration": "12s" },
+    "createdAt": "2024-03-10T09:00:00Z",
+    "updatedAt": "2024-10-01T08:00:00Z"
+  },
+  {
+    "id": "WF-004",
+    "name": "Close Task Reminder",
+    "description": "Sends daily reminders for close tasks that are due within 2 days or overdue.",
+    "trigger": { "type": "Schedule", "schedule": "0 8 * * 1-5", "conditions": [] },
+    "status": "Active",
+    "createdBy": "USR-002",
+    "steps": [
+      { "order": 1, "action": "QueryTasks", "description": "Find tasks due within 2 days or overdue" },
+      { "order": 2, "action": "GroupByAssignee", "description": "Group tasks by assigned user" },
+      { "order": 3, "action": "SendReminder", "description": "Send personalized reminder to each assignee" },
+      { "order": 4, "action": "UpdateDashboard", "description": "Refresh close management dashboard metrics" }
+    ],
+    "executionHistory": [
+      { "executionId": "EXEC-004-A", "startedAt": "2024-12-13T08:00:00Z", "completedAt": "2024-12-13T08:00:45Z", "status": "Completed", "triggeredBy": "Schedule", "result": "Sent 4 reminders to 3 users (5 tasks due soon)" },
+      { "executionId": "EXEC-004-B", "startedAt": "2024-12-12T08:00:00Z", "completedAt": "2024-12-12T08:00:40Z", "status": "Completed", "triggeredBy": "Schedule", "result": "Sent 3 reminders to 2 users (3 tasks due soon)" }
+    ],
+    "metrics": { "totalExecutions": 10, "successRate": 100, "avgDuration": "42s" },
+    "createdAt": "2024-01-20T10:00:00Z",
+    "updatedAt": "2024-12-01T08:00:00Z"
+  },
+  {
+    "id": "WF-005",
+    "name": "Reconciliation Auto-Run",
+    "description": "Automatically runs bank reconciliations daily at 6 PM for all active bank accounts.",
+    "trigger": { "type": "Schedule", "schedule": "0 18 * * 1-5", "conditions": [] },
+    "status": "Active",
+    "createdBy": "USR-004",
+    "steps": [
+      { "order": 1, "action": "ImportBankData", "description": "Fetch latest bank statement data via API" },
+      { "order": 2, "action": "RunMatching", "description": "Execute auto-matching rules against GL transactions" },
+      { "order": 3, "action": "CalculateVariance", "description": "Compute reconciliation variance" },
+      { "order": 4, "action": "GenerateReport", "description": "Create reconciliation summary report" },
+      { "order": 5, "action": "NotifyAssignee", "description": "Notify assigned reconciler of results" }
+    ],
+    "executionHistory": [
+      { "executionId": "EXEC-005-A", "startedAt": "2024-12-13T18:00:00Z", "completedAt": "2024-12-13T18:05:00Z", "status": "Completed", "triggeredBy": "Schedule", "result": "3 reconciliations run. Chase: 0 variance, BofA: 0 variance, WF: $8,250 unmatched" },
+      { "executionId": "EXEC-005-B", "startedAt": "2024-12-12T18:00:00Z", "completedAt": "2024-12-12T18:04:30Z", "status": "Completed", "triggeredBy": "Schedule", "result": "3 reconciliations run. Chase: $73,800 variance, BofA: 0 variance, WF: 0 variance" },
+      { "executionId": "EXEC-005-C", "startedAt": "2024-12-11T18:00:00Z", "completedAt": "2024-12-11T18:04:00Z", "status": "Completed", "triggeredBy": "Schedule", "result": "3 reconciliations run. All reconciled." }
+    ],
+    "metrics": { "totalExecutions": 9, "successRate": 100, "avgDuration": "4m 30s" },
+    "createdAt": "2024-04-01T08:00:00Z",
+    "updatedAt": "2024-11-30T10:00:00Z"
+  }
+]

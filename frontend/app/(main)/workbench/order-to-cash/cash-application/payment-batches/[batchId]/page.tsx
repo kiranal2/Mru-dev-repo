@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cashAppStore } from "@/lib/cash-app-store";
+import { useCashPayments } from "@/hooks/data/use-cash-payments";
 import { BatchLineItem } from "@/lib/cash-app-types";
 import {
   ArrowLeft,
@@ -27,6 +28,8 @@ import {
 
 export default function BatchDetailsPage({ params }: { params: { batchId: string } }) {
   const router = useRouter();
+  // Bridge: data hook for fetch lifecycle, store for rich batch objects
+  const { loading: dataLoading, error: dataError } = useCashPayments();
   const [batch, setBatch] = useState(() => cashAppStore.getPaymentBatchById(params.batchId));
   const [blockerItem, setBlockerItem] = useState<BatchLineItem | null>(null);
 

@@ -14,9 +14,41 @@ import {
   DEFAULT_GL_ACCOUNT,
   DEFAULT_SUBSIDIARIES,
 } from "../constants";
+import { useJournalEntries } from "@/hooks/data";
+import type { JournalEntry } from "@/lib/data/types";
+
+// Transform JournalEntry[] from the data layer into AccountActivityRow[] for the grid
+function transformJournalEntries(entries: JournalEntry[]): AccountActivityRow[] {
+  const rows: AccountActivityRow[] = [];
+  entries.forEach((entry) => {
+    entry.lines.forEach((line) => {
+      rows.push({
+        type: entry.status === "Posted" ? "Journal" : entry.status,
+        date: entry.date,
+        documentNumber: entry.entryNumber,
+        name: line.accountName,
+        credit: line.credit > 0 ? line.credit : undefined,
+        debit: line.debit > 0 ? line.debit : undefined,
+        memo: line.memo || entry.description,
+      });
+    });
+  });
+  return rows;
+}
 
 export function useAccountActivity() {
   const gridRef = useRef<AgGridReact>(null);
+
+  // Fetch data from the new data layer
+  const { data: journalEntries, loading: dataLoading, error: dataError } = useJournalEntries();
+
+  // Transform journal entries into grid-compatible rows
+  const dataLayerRows = useMemo(() => {
+    if (journalEntries.length > 0) {
+      return transformJournalEntries(journalEntries);
+    }
+    return null;
+  }, [journalEntries]);
 
   // Applied filter states
   const [startPeriod, setStartPeriod] = useState<string>(DEFAULT_START_PERIOD);
@@ -273,6 +305,11 @@ export function useAccountActivity() {
   return {
     // Refs
     gridRef,
+
+    // Data loading states
+    dataLoading,
+    dataError,
+    dataLayerRows,
 
     // Applied filter states
     glAccount,

@@ -5,6 +5,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { FilterState } from "@/components/cash-app/cash-app-filter-rail";
 import { DensityMode } from "@/components/cash-app/cash-app-theme";
 import { cashAppStore } from "@/lib/cash-app-store";
+import { useCashPayments } from "@/hooks/data/use-cash-payments";
 import { Payment } from "@/lib/cash-app-types";
 import { toast } from "sonner";
 import type {
@@ -85,7 +86,8 @@ export function usePaymentsQueue() {
   const [customerContacts, setCustomerContacts] = useState<CustomerContact[]>(CONTACTS_STORE);
   const [emailOutbox, setEmailOutbox] = useState<EmailOutboxLog[]>([]);
 
-  // --- Data ---
+  // --- Data (bridged: data hook for fetch lifecycle, store for rich Payment objects) ---
+  const { loading: dataLoading, error: dataError, refetch: refetchPayments } = useCashPayments();
   const payments = cashAppStore.getPayments();
   const stats = cashAppStore.getStats();
   const dataHealth = cashAppStore.getDataHealth();
@@ -1170,6 +1172,9 @@ export function usePaymentsQueue() {
     filteredPayments,
     paginatedPayments,
     selectedPayments,
+    dataLoading,
+    dataError,
+    refetchPayments,
 
     // Filters
     filters,

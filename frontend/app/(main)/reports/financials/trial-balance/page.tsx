@@ -31,6 +31,8 @@ import {
   type PeriodNode,
   type SubsidiaryNode,
 } from "@/lib/balance-sheet-api";
+import { useTrialBalance } from "@/hooks/data";
+import type { TrialBalanceAccount } from "@/lib/data/types";
 
 interface TrialBalanceRow {
   account: string;
@@ -39,141 +41,32 @@ interface TrialBalanceRow {
   total: number;
 }
 
+// Transform TrialBalanceAccount[] from the data layer into TrialBalanceRow[] for the grid
+function transformTrialBalanceAccounts(accounts: TrialBalanceAccount[]): TrialBalanceRow[] {
+  return accounts.map((acct) => ({
+    account: `${acct.accountNumber} - ${acct.accountName}`,
+    debit: acct.debit,
+    credit: acct.credit,
+    total: acct.netBalance,
+  }));
+}
+
 // Load period and subsidiary structure from API
 const PERIOD_STRUCTURE = getPeriodStructure();
 const SUBSIDIARY_STRUCTURE = getSubsidiaryStructure();
 const defaultFilters = getDefaultFilters();
 
-// Mock data based on the image - expanded with more accounts, all columns filled
-const MOCK_DATA: TrialBalanceRow[] = [
-  { account: "GST Paid", debit: 0.08, credit: 0.0, total: 0.08 },
-  { account: "GST/HST on Purchases", debit: 0.01, credit: 0.0, total: 0.01 },
-  { account: "PST Expenses ON", debit: 0.0, credit: 0.0, total: 0.0 },
-  { account: "Sales Taxes Payable CA", debit: 0.0, credit: 0.0, total: 0.0 },
-  { account: "1000 - DDI JPM AC 9808 (AR)", debit: 2.51, credit: 0.0, total: 2.51 },
-  { account: "1002 - DDI JPM AC 36385 (Payroll)", debit: 0.0, credit: 0.2, total: -0.2 },
-  { account: "1003 - DDI JPM AC 6920 (Savings)", debit: 41.01, credit: 0.0, total: 41.01 },
-  { account: "1004 - DDI JPM AC 6322 (Operating)", debit: 0.0, credit: 1.63, total: -1.63 },
-  { account: "1006 - DDI SVB AC 9303", debit: 0.0, credit: 0.0, total: 0.0 },
-  { account: "1008 - DDI SVB AC 3290", debit: 0.0, credit: 0.6, total: -0.6 },
-  { account: "1010 - DDP JPM AC 7059 (Savings)", debit: 0.32, credit: 0.0, total: 0.32 },
-  { account: "1015 - DDI SVB 4454", debit: 0.02, credit: 0.0, total: 0.02 },
-  { account: "1016 - CAV SVB AC 6545", debit: 0.0, credit: 0.01, total: -0.01 },
-  { account: "1017 - DDT BRAZIL JPM AC 9947 (Operations)", debit: 0.58, credit: 0.0, total: 0.58 },
-  { account: "2000 - Accounts Payable", debit: 0.0, credit: 15.75, total: -15.75 },
-  { account: "2001 - Accrued Expenses", debit: 0.0, credit: 8.42, total: -8.42 },
-  { account: "2002 - Short-term Debt", debit: 0.0, credit: 25.3, total: -25.3 },
-  { account: "2003 - Current Portion of Long-term Debt", debit: 0.0, credit: 12.15, total: -12.15 },
-  { account: "2004 - Notes Payable", debit: 0.0, credit: 18.5, total: -18.5 },
-  { account: "2005 - Unearned Revenue", debit: 0.0, credit: 22.75, total: -22.75 },
-  { account: "2006 - Income Tax Payable", debit: 0.0, credit: 12.3, total: -12.3 },
-  { account: "2007 - Dividends Payable", debit: 0.0, credit: 5.8, total: -5.8 },
-  { account: "3000 - Long-term Debt", debit: 0.0, credit: 150.5, total: -150.5 },
-  { account: "3001 - Deferred Tax Liabilities", debit: 0.0, credit: 5.2, total: -5.2 },
-  { account: "3002 - Bonds Payable", debit: 0.0, credit: 200.0, total: -200.0 },
-  { account: "3003 - Pension Liabilities", debit: 0.0, credit: 35.5, total: -35.5 },
-  { account: "3004 - Lease Liabilities", debit: 0.0, credit: 45.25, total: -45.25 },
-  { account: "4000 - Common Stock", debit: 0.0, credit: 500.0, total: -500.0 },
-  { account: "4001 - Retained Earnings", debit: 0.0, credit: 1250.75, total: -1250.75 },
-  { account: "4002 - Additional Paid-in Capital", debit: 0.0, credit: 350.0, total: -350.0 },
-  { account: "4003 - Treasury Stock", debit: 25.5, credit: 0.0, total: 25.5 },
-  {
-    account: "4004 - Accumulated Other Comprehensive Income",
-    debit: 0.0,
-    credit: 12.4,
-    total: -12.4,
-  },
-  { account: "5000 - Revenue", debit: 0.0, credit: 890.45, total: -890.45 },
-  { account: "5001 - Sales Returns and Allowances", debit: 15.2, credit: 0.0, total: 15.2 },
-  { account: "5002 - Sales Discounts", debit: 8.5, credit: 0.0, total: 8.5 },
-  { account: "5003 - Service Revenue", debit: 0.0, credit: 125.75, total: -125.75 },
-  { account: "5004 - Interest Revenue", debit: 0.0, credit: 3.25, total: -3.25 },
-  { account: "5005 - Rental Income", debit: 0.0, credit: 18.5, total: -18.5 },
-  { account: "5006 - Dividend Income", debit: 0.0, credit: 5.75, total: -5.75 },
-  { account: "5001 - Cost of Goods Sold", debit: 450.3, credit: 0.0, total: 450.3 },
-  { account: "5100 - Purchase Returns", debit: 0.0, credit: 12.5, total: -12.5 },
-  { account: "5101 - Purchase Discounts", debit: 0.0, credit: 8.25, total: -8.25 },
-  { account: "5102 - Freight In", debit: 15.75, credit: 0.0, total: 15.75 },
-  { account: "6000 - Operating Expenses", debit: 125.6, credit: 0.0, total: 125.6 },
-  { account: "6001 - Marketing Expenses", debit: 85.2, credit: 0.0, total: 85.2 },
-  { account: "6002 - Research & Development", debit: 95.4, credit: 0.0, total: 95.4 },
-  { account: "6003 - General & Administrative", debit: 45.8, credit: 0.0, total: 45.8 },
-  { account: "6004 - Salaries and Wages", debit: 180.5, credit: 0.0, total: 180.5 },
-  { account: "6005 - Rent Expense", debit: 65.25, credit: 0.0, total: 65.25 },
-  { account: "6006 - Utilities Expense", debit: 22.5, credit: 0.0, total: 22.5 },
-  { account: "6007 - Insurance Expense", debit: 18.75, credit: 0.0, total: 18.75 },
-  { account: "6008 - Depreciation Expense", debit: 35.0, credit: 0.0, total: 35.0 },
-  { account: "6009 - Amortization Expense", debit: 12.5, credit: 0.0, total: 12.5 },
-  { account: "6010 - Travel Expense", debit: 28.75, credit: 0.0, total: 28.75 },
-  { account: "6011 - Professional Fees", debit: 42.3, credit: 0.0, total: 42.3 },
-  { account: "6012 - Office Supplies Expense", debit: 8.5, credit: 0.0, total: 8.5 },
-  { account: "7000 - Interest Income", debit: 0.0, credit: 2.5, total: -2.5 },
-  { account: "7001 - Interest Expense", debit: 8.25, credit: 0.0, total: 8.25 },
-  { account: "7002 - Bank Charges", debit: 1.25, credit: 0.0, total: 1.25 },
-  { account: "8000 - Other Income", debit: 0.0, credit: 1.2, total: -1.2 },
-  { account: "8001 - Other Expenses", debit: 3.15, credit: 0.0, total: 3.15 },
-  { account: "8002 - Gain on Sale of Assets", debit: 0.0, credit: 5.5, total: -5.5 },
-  { account: "8003 - Loss on Sale of Assets", debit: 2.75, credit: 0.0, total: 2.75 },
-  { account: "8004 - Foreign Exchange Gain", debit: 0.0, credit: 1.8, total: -1.8 },
-  { account: "8005 - Foreign Exchange Loss", debit: 1.2, credit: 0.0, total: 1.2 },
-  { account: "9000 - Income Tax Expense", debit: 22.5, credit: 0.0, total: 22.5 },
-  { account: "9001 - Income Tax Provision", debit: 18.75, credit: 0.0, total: 18.75 },
-  { account: "1100 - Cash and Cash Equivalents", debit: 1250.0, credit: 0.0, total: 1250.0 },
-  { account: "1101 - Petty Cash", debit: 0.5, credit: 0.0, total: 0.5 },
-  { account: "1102 - Cash in Transit", debit: 5.25, credit: 0.0, total: 5.25 },
-  { account: "1200 - Accounts Receivable", debit: 850.75, credit: 0.0, total: 850.75 },
-  { account: "1201 - Allowance for Doubtful Accounts", debit: 0.0, credit: 12.5, total: -12.5 },
-  { account: "1202 - Notes Receivable", debit: 125.0, credit: 0.0, total: 125.0 },
-  { account: "1203 - Accrued Interest Receivable", debit: 2.5, credit: 0.0, total: 2.5 },
-  { account: "1300 - Inventory", debit: 320.5, credit: 0.0, total: 320.5 },
-  { account: "1301 - Raw Materials", debit: 85.25, credit: 0.0, total: 85.25 },
-  { account: "1302 - Work in Process", debit: 45.75, credit: 0.0, total: 45.75 },
-  { account: "1303 - Finished Goods", debit: 189.5, credit: 0.0, total: 189.5 },
-  { account: "1304 - Inventory Reserve", debit: 0.0, credit: 8.25, total: -8.25 },
-  { account: "1400 - Prepaid Expenses", debit: 45.25, credit: 0.0, total: 45.25 },
-  { account: "1401 - Prepaid Insurance", debit: 18.5, credit: 0.0, total: 18.5 },
-  { account: "1402 - Prepaid Rent", debit: 24.75, credit: 0.0, total: 24.75 },
-  { account: "1403 - Prepaid Taxes", debit: 2.0, credit: 0.0, total: 2.0 },
-  { account: "1500 - Property, Plant & Equipment", debit: 2150.0, credit: 0.0, total: 2150.0 },
-  { account: "1501 - Land", debit: 450.0, credit: 0.0, total: 450.0 },
-  { account: "1502 - Buildings", debit: 1200.0, credit: 0.0, total: 1200.0 },
-  { account: "1503 - Machinery and Equipment", debit: 350.0, credit: 0.0, total: 350.0 },
-  { account: "1504 - Vehicles", debit: 150.0, credit: 0.0, total: 150.0 },
-  { account: "1600 - Accumulated Depreciation", debit: 0.0, credit: 450.0, total: -450.0 },
-  {
-    account: "1601 - Accumulated Depreciation - Buildings",
-    debit: 0.0,
-    credit: 180.0,
-    total: -180.0,
-  },
-  {
-    account: "1602 - Accumulated Depreciation - Equipment",
-    debit: 0.0,
-    credit: 150.0,
-    total: -150.0,
-  },
-  {
-    account: "1603 - Accumulated Depreciation - Vehicles",
-    debit: 0.0,
-    credit: 120.0,
-    total: -120.0,
-  },
-  { account: "1700 - Intangible Assets", debit: 580.0, credit: 0.0, total: 580.0 },
-  { account: "1701 - Patents", debit: 250.0, credit: 0.0, total: 250.0 },
-  { account: "1702 - Trademarks", debit: 150.0, credit: 0.0, total: 150.0 },
-  { account: "1703 - Copyrights", debit: 80.0, credit: 0.0, total: 80.0 },
-  {
-    account: "1704 - Accumulated Amortization - Intangibles",
-    debit: 0.0,
-    credit: 45.0,
-    total: -45.0,
-  },
-  { account: "1800 - Goodwill", debit: 750.0, credit: 0.0, total: 750.0 },
-  { account: "1801 - Investment in Affiliates", debit: 125.0, credit: 0.0, total: 125.0 },
-  { account: "1802 - Deferred Charges", debit: 15.5, credit: 0.0, total: 15.5 },
-];
-
 export default function TrialBalancePage() {
+  // Fetch data from the new data layer
+  const { data: trialBalanceAccounts, loading: dataLoading, error: dataError } = useTrialBalance();
+
+  // Transform data-layer accounts into grid-compatible rows
+  const rowData: TrialBalanceRow[] = useMemo(() => {
+    if (trialBalanceAccounts.length > 0) {
+      return transformTrialBalanceAccounts(trialBalanceAccounts);
+    }
+    return [];
+  }, [trialBalanceAccounts]);
   const gridRef = useRef<AgGridReact>(null);
   const [asOfPeriods, setAsOfPeriods] = useState<string[]>(["Oct 2024"]);
   const [subsidiaries, setSubsidiaries] = useState<string[]>([
@@ -724,6 +617,16 @@ export default function TrialBalancePage() {
 
       {/* AG Grid */}
       <div className="flex-1 p-6 overflow-auto" style={{ minHeight: 0 }}>
+        {dataLoading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-sm text-slate-500">Loading trial balance data...</div>
+          </div>
+        )}
+        {dataError && (
+          <div className="flex items-center justify-center py-4">
+            <div className="text-sm text-red-500">Error: {dataError}</div>
+          </div>
+        )}
         <div className="mb-2 text-sm font-medium text-slate-700">
           {subsidiaries[0] || "No subsidiary selected"}
         </div>
@@ -738,7 +641,7 @@ export default function TrialBalancePage() {
           >
             <AgGridReact
               ref={gridRef}
-              rowData={MOCK_DATA}
+              rowData={rowData}
               columnDefs={columnDefs}
               defaultColDef={defaultColDef}
               suppressRowClickSelection={true}

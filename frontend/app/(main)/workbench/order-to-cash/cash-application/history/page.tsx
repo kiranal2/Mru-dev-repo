@@ -4,10 +4,13 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cashAppStore } from "@/lib/cash-app-store";
+import { useCashPayments } from "@/hooks/data/use-cash-payments";
 import { History, FileText, CheckCircle2 } from "lucide-react";
 
 export default function HistoryPage() {
   const router = useRouter();
+  // Bridge: data hook for fetch lifecycle, store for rich Payment objects
+  const { loading: dataLoading, error: dataError } = useCashPayments({ status: ["Posted"] });
   const payments = cashAppStore.getPayments().filter((p) => p.status === "Posted");
 
   const formatCurrency = (amount: number) => {

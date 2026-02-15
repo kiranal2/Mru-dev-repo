@@ -1,5 +1,22 @@
 "use client";
 
+/**
+ * Bridge Pattern: This store maintains the observable store pattern for UI
+ * state management and mutations. Data fetching is progressively delegating
+ * to the data service layer via hooks in @/hooks/data/use-cash-*.ts.
+ *
+ * The store remains the source of truth for:
+ *   - Rich Payment objects with all UI-specific fields
+ *   - Mutation operations (updatePayment, addActivityLog, etc.)
+ *   - UI state (selection, filters, etc.)
+ *
+ * The data hooks (useCashPayments, useCashPayment, useCashRemittances,
+ * useCashMatching, useCashExceptions) handle:
+ *   - Fetch lifecycle (loading, error states)
+ *   - Server-side filtering and pagination (when API provider is active)
+ *   - Refetch triggers
+ */
+
 import {
   Payment,
   Remittance,

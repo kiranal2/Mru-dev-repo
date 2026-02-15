@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,182 +29,99 @@ import { FileText, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import Breadcrumb from "@/components/layout/breadcrumb";
+import { useFluxAnalysis } from "@/hooks/data";
 
-const DATA = {
+/** Raw JSON shape from flux-analysis.json (differs from FluxVariance TS type) */
+interface FluxRaw {
+  id: string;
+  accountNumber: string;
+  accountName: string;
+  currentValue: number;
+  priorValue: number;
+  varianceAmount: number;
+  variancePercent: number;
+  threshold: number;
+  isSignificant: boolean;
+  status: string;
+  aiExplanation: string | null;
+  reviewedBy: string | null;
+}
+
+interface FluxRow {
+  acct: string;
+  name: string;
+  base: number;
+  actual: number;
+  driver: string;
+  owner: string;
+  evidence: boolean;
+  status: string;
+}
+
+interface BsRollRow {
+  acct: string;
+  open: number;
+  activity: number;
+  close: number;
+  notes: string;
+}
+
+interface DriverRow {
+  driver: string;
+  impact: number;
+  confidence: string;
+}
+
+interface CfRow {
+  label: string;
+  val: number;
+}
+
+interface AiExplanationRow {
+  acct: string;
+  delta: number;
+  driver: string;
+  conf: string;
+  owner: string;
+  evidence: boolean;
+  status: string;
+}
+
+interface FluxPageData {
+  is: FluxRow[];
+  bs: FluxRow[];
+  bsRoll: BsRollRow[];
+  drivers: DriverRow[];
+  cf: CfRow[];
+  aiExplanations: AiExplanationRow[];
+}
+
+// Fallback data used when the data layer has no records
+const FALLBACK_DATA: FluxPageData = {
   is: [
-    {
-      acct: "4000",
-      name: "Revenue",
-      base: 48.2,
-      actual: 52.9,
-      driver: "Price/Volume/Mix",
-      owner: "Sales Ops",
-      evidence: false,
-      status: "Open",
-    },
-    {
-      acct: "5000",
-      name: "COGS",
-      base: 30.4,
-      actual: 32.6,
-      driver: "Input costs/Volume",
-      owner: "Supply Chain",
-      evidence: true,
-      status: "In Review",
-    },
-    {
-      acct: "5200",
-      name: "Gross Margin",
-      base: 17.8,
-      actual: 20.3,
-      driver: "Price > COGS",
-      owner: "FP&A",
-      evidence: true,
-      status: "Closed",
-    },
-    {
-      acct: "6100",
-      name: "R&D",
-      base: 6.2,
-      actual: 6.8,
-      driver: "Headcount Rate",
-      owner: "FP&A",
-      evidence: false,
-      status: "Open",
-    },
-    {
-      acct: "6200",
-      name: "S&M",
-      base: 5.5,
-      actual: 5.9,
-      driver: "Programs",
-      owner: "Marketing",
-      evidence: true,
-      status: "Closed",
-    },
-    {
-      acct: "6300",
-      name: "G&A",
-      base: 3.1,
-      actual: 3.0,
-      driver: "One-time/Timing",
-      owner: "Controller",
-      evidence: true,
-      status: "Closed",
-    },
-    {
-      acct: "7000",
-      name: "Other Inc/Exp",
-      base: -0.2,
-      actual: -0.1,
-      driver: "FX Gain/Loss",
-      owner: "Treasury",
-      evidence: false,
-      status: "Open",
-    },
+    { acct: "4000", name: "Revenue", base: 48.2, actual: 52.9, driver: "Price/Volume/Mix", owner: "Sales Ops", evidence: false, status: "Open" },
+    { acct: "5000", name: "COGS", base: 30.4, actual: 32.6, driver: "Input costs/Volume", owner: "Supply Chain", evidence: true, status: "In Review" },
+    { acct: "5200", name: "Gross Margin", base: 17.8, actual: 20.3, driver: "Price > COGS", owner: "FP&A", evidence: true, status: "Closed" },
+    { acct: "6100", name: "R&D", base: 6.2, actual: 6.8, driver: "Headcount Rate", owner: "FP&A", evidence: false, status: "Open" },
+    { acct: "6200", name: "S&M", base: 5.5, actual: 5.9, driver: "Programs", owner: "Marketing", evidence: true, status: "Closed" },
+    { acct: "6300", name: "G&A", base: 3.1, actual: 3.0, driver: "One-time/Timing", owner: "Controller", evidence: true, status: "Closed" },
+    { acct: "7000", name: "Other Inc/Exp", base: -0.2, actual: -0.1, driver: "FX Gain/Loss", owner: "Treasury", evidence: false, status: "Open" },
   ],
   bs: [
-    {
-      acct: "1100",
-      name: "Cash & Equivalents",
-      base: 14.0,
-      actual: 15.1,
-      driver: "Operating CF",
-      owner: "Treasury",
-      evidence: true,
-      status: "Closed",
-    },
-    {
-      acct: "1200",
-      name: "Accounts Receivable",
-      base: 18.4,
-      actual: 19.2,
-      driver: "Collections/DSO",
-      owner: "AR Lead",
-      evidence: false,
-      status: "Open",
-    },
-    {
-      acct: "1300",
-      name: "Prepaids & Other",
-      base: 2.9,
-      actual: 3.0,
-      driver: "Timing",
-      owner: "Accounting",
-      evidence: false,
-      status: "Open",
-    },
-    {
-      acct: "1400",
-      name: "Inventory",
-      base: 9.8,
-      actual: 9.2,
-      driver: "Usage/Reserves",
-      owner: "Ops Finance",
-      evidence: false,
-      status: "Open",
-    },
-    {
-      acct: "2000",
-      name: "Accounts Payable",
-      base: 12.1,
-      actual: 12.9,
-      driver: "Payment Terms",
-      owner: "AP Lead",
-      evidence: true,
-      status: "In Review",
-    },
-    {
-      acct: "2300",
-      name: "Accrued Expenses",
-      base: 7.2,
-      actual: 6.5,
-      driver: "Bonus Accrual",
-      owner: "Payroll",
-      evidence: true,
-      status: "Closed",
-    },
-    {
-      acct: "2400",
-      name: "Deferred Revenue",
-      base: 11.3,
-      actual: 12.1,
-      driver: "Billings > Rev",
-      owner: "RevOps",
-      evidence: false,
-      status: "Open",
-    },
+    { acct: "1100", name: "Cash & Equivalents", base: 14.0, actual: 15.1, driver: "Operating CF", owner: "Treasury", evidence: true, status: "Closed" },
+    { acct: "1200", name: "Accounts Receivable", base: 18.4, actual: 19.2, driver: "Collections/DSO", owner: "AR Lead", evidence: false, status: "Open" },
+    { acct: "1300", name: "Prepaids & Other", base: 2.9, actual: 3.0, driver: "Timing", owner: "Accounting", evidence: false, status: "Open" },
+    { acct: "1400", name: "Inventory", base: 9.8, actual: 9.2, driver: "Usage/Reserves", owner: "Ops Finance", evidence: false, status: "Open" },
+    { acct: "2000", name: "Accounts Payable", base: 12.1, actual: 12.9, driver: "Payment Terms", owner: "AP Lead", evidence: true, status: "In Review" },
+    { acct: "2300", name: "Accrued Expenses", base: 7.2, actual: 6.5, driver: "Bonus Accrual", owner: "Payroll", evidence: true, status: "Closed" },
+    { acct: "2400", name: "Deferred Revenue", base: 11.3, actual: 12.1, driver: "Billings > Rev", owner: "RevOps", evidence: false, status: "Open" },
   ],
   bsRoll: [
-    {
-      acct: "1200 AR",
-      open: 18.4,
-      activity: 0.8,
-      close: 19.2,
-      notes: "Collections slower; DSO 43 → 45",
-    },
-    {
-      acct: "1400 Inventory",
-      open: 9.8,
-      activity: -0.6,
-      close: 9.2,
-      notes: "Scrap improved; DOH down 4d",
-    },
+    { acct: "1200 AR", open: 18.4, activity: 0.8, close: 19.2, notes: "Collections slower; DSO 43 → 45" },
+    { acct: "1400 Inventory", open: 9.8, activity: -0.6, close: 9.2, notes: "Scrap improved; DOH down 4d" },
     { acct: "2000 AP", open: 12.1, activity: 0.8, close: 12.9, notes: "Terms extended by 5d" },
-    {
-      acct: "2400 Deferred Rev",
-      open: 11.3,
-      activity: 0.8,
-      close: 12.1,
-      notes: "Strong billings; recognition lag",
-    },
-    {
-      acct: "2300 Accrued Exp",
-      open: 7.2,
-      activity: -0.7,
-      close: 6.5,
-      notes: "Bonus payout timing",
-    },
+    { acct: "2400 Deferred Rev", open: 11.3, activity: 0.8, close: 12.1, notes: "Strong billings; recognition lag" },
+    { acct: "2300 Accrued Exp", open: 7.2, activity: -0.7, close: 6.5, notes: "Bonus payout timing" },
   ],
   drivers: [
     { driver: "Price", impact: 2.1, confidence: "High" },
@@ -225,46 +142,107 @@ const DATA = {
     { label: "Other WC", val: 0.9 },
   ],
   aiExplanations: [
-    {
-      acct: "4000 Revenue",
-      delta: 4.7,
-      driver: "Price ↑ / Volume ↑",
-      conf: "High",
-      owner: "Sales Ops",
-      evidence: true,
-      status: "Draft",
-    },
-    {
-      acct: "1200 AR",
-      delta: 0.8,
-      driver: "Collections timing",
-      conf: "Med",
-      owner: "AR Lead",
-      evidence: false,
-      status: "Open",
-    },
-    {
-      acct: "2400 Deferred Rev",
-      delta: 0.8,
-      driver: "Billings > Rev",
-      conf: "High",
-      owner: "RevOps",
-      evidence: false,
-      status: "Open",
-    },
-    {
-      acct: "1400 Inventory",
-      delta: -0.6,
-      driver: "Usage/Obsolescence",
-      conf: "Med",
-      owner: "Ops Finance",
-      evidence: true,
-      status: "In Review",
-    },
+    { acct: "4000 Revenue", delta: 4.7, driver: "Price ↑ / Volume ↑", conf: "High", owner: "Sales Ops", evidence: true, status: "Draft" },
+    { acct: "1200 AR", delta: 0.8, driver: "Collections timing", conf: "Med", owner: "AR Lead", evidence: false, status: "Open" },
+    { acct: "2400 Deferred Rev", delta: 0.8, driver: "Billings > Rev", conf: "High", owner: "RevOps", evidence: false, status: "Open" },
+    { acct: "1400 Inventory", delta: -0.6, driver: "Usage/Obsolescence", conf: "Med", owner: "Ops Finance", evidence: true, status: "In Review" },
   ],
 };
 
+/** Convert raw JSON status to page status */
+function mapFluxStatus(rawStatus: string): string {
+  if (rawStatus === "Reviewed" || rawStatus === "AutoClosed") return "Closed";
+  if (rawStatus === "InReview") return "In Review";
+  return "Open";
+}
+
+/** Convert millions value from absolute (e.g. 520000000 → 520.0) */
+function toMillions(n: number): number {
+  return Math.round((n / 1_000_000) * 10) / 10;
+}
+
+/** Check if account number falls in IS range (4xxx-7xxx) */
+function isIncomeStatement(acct: string): boolean {
+  const first = acct.charAt(0);
+  return first >= "4" && first <= "7";
+}
+
+/** Check if account number falls in BS range (1xxx-3xxx) */
+function isBalanceSheet(acct: string): boolean {
+  const first = acct.charAt(0);
+  return first >= "1" && first <= "3";
+}
+
+/** Build page data from raw flux variance records */
+function buildPageData(rawItems: FluxRaw[]): FluxPageData {
+  const mapRow = (r: FluxRaw): FluxRow => ({
+    acct: r.accountNumber,
+    name: r.accountName,
+    base: toMillions(r.priorValue),
+    actual: toMillions(r.currentValue),
+    driver: "—",
+    owner: "—",
+    evidence: r.reviewedBy !== null,
+    status: mapFluxStatus(r.status),
+  });
+
+  const isRows = rawItems.filter((r) => isIncomeStatement(r.accountNumber)).map(mapRow);
+  const bsRows = rawItems.filter((r) => isBalanceSheet(r.accountNumber)).map(mapRow);
+
+  // Derive BS roll-forward from BS items
+  const bsRoll: BsRollRow[] = bsRows
+    .filter((r) => Math.abs(r.actual - r.base) >= 0.3)
+    .map((r) => ({
+      acct: `${r.acct} ${r.name}`,
+      open: r.base,
+      activity: Math.round((r.actual - r.base) * 10) / 10,
+      close: r.actual,
+      notes: `Δ ${r.actual >= r.base ? "+" : ""}${((r.actual - r.base) / r.base * 100).toFixed(1)}%`,
+    }));
+
+  // Derive top drivers from largest absolute variances
+  const sorted = [...rawItems].sort((a, b) => Math.abs(b.varianceAmount) - Math.abs(a.varianceAmount));
+  const drivers: DriverRow[] = sorted.slice(0, 8).map((r) => ({
+    driver: r.accountName,
+    impact: toMillions(r.varianceAmount),
+    confidence: r.isSignificant ? "High" : "Med",
+  }));
+
+  // AI explanations from items that have aiExplanation text
+  const aiExplanations: AiExplanationRow[] = rawItems
+    .filter((r) => r.aiExplanation && r.isSignificant)
+    .slice(0, 6)
+    .map((r) => ({
+      acct: `${r.accountNumber} ${r.accountName}`,
+      delta: toMillions(r.varianceAmount),
+      driver: r.aiExplanation ? r.aiExplanation.slice(0, 50) + "..." : "—",
+      conf: r.variancePercent > 5 ? "High" : "Med",
+      owner: "—",
+      evidence: r.reviewedBy !== null,
+      status: mapFluxStatus(r.status),
+    }));
+
+  return {
+    is: isRows,
+    bs: bsRows,
+    bsRoll: bsRoll.length > 0 ? bsRoll : FALLBACK_DATA.bsRoll,
+    drivers: drivers.length > 0 ? drivers : FALLBACK_DATA.drivers,
+    cf: FALLBACK_DATA.cf, // CF bridge is derived analysis, not in variance data
+    aiExplanations: aiExplanations.length > 0 ? aiExplanations : FALLBACK_DATA.aiExplanations,
+  };
+}
+
 export default function FluxAnalysisPage() {
+  const { data: fluxRaw, loading: fluxLoading, error: fluxError } = useFluxAnalysis();
+
+  // Map hook data → page data structure (raw JSON fields differ from TS type)
+  const DATA: FluxPageData = useMemo(() => {
+    if (fluxRaw.length === 0) return FALLBACK_DATA;
+    // Access actual JSON fields via cast (JSON shape ≠ FluxVariance TS type)
+    const rawItems = fluxRaw as unknown as FluxRaw[];
+    return buildPageData(rawItems);
+  }, [fluxRaw]);
+
   const [materiality, setMateriality] = useState("default");
   const [excludeNoise, setExcludeNoise] = useState(false);
   const [activeView, setActiveView] = useState("is");
@@ -285,7 +263,7 @@ export default function FluxAnalysisPage() {
     return { amt: 0.1, pct: 0.05 };
   };
 
-  const filterData = (rows: any[]) => {
+  const filterData = (rows: FluxRow[]) => {
     const mat = getMaterialityThreshold();
     return rows.filter((r) => {
       const d = r.actual - r.base;
@@ -341,7 +319,8 @@ export default function FluxAnalysisPage() {
   };
 
   const calculateSensitivity = () => {
-    const base = 48.2;
+    const revenueRow = DATA.is.find((r) => r.acct.startsWith("4"));
+    const base = revenueRow?.base ?? 48.2;
     const delta =
       base *
       ((priceSlider[0] / 100) * 0.45 + (volumeSlider[0] / 100) * 0.35 + (fxSlider[0] / 100) * -0.2);
@@ -357,7 +336,8 @@ export default function FluxAnalysisPage() {
       });
     });
     return () => cancelAnimationFrame(raf);
-  }, [activeView]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeView, DATA]);
 
   const drawCFBridge = () => {
     const canvas = canvasRef.current;
@@ -436,6 +416,27 @@ export default function FluxAnalysisPage() {
     ctx.closePath();
   };
 
+  // Derive KPI card values from hook data
+  const kpiRevenue = DATA.is.find((r) => r.name.toLowerCase().includes("revenue") && !r.name.toLowerCase().includes("cost"));
+  const kpiGrossMargin = DATA.is.find((r) => r.name.toLowerCase().includes("gross margin"));
+  const kpiCfTotal = DATA.cf.reduce((sum, r) => sum + r.val, 0);
+
+  if (fluxLoading) {
+    return (
+      <div className="flex flex-col bg-white items-center justify-center" style={{ height: "100%", minHeight: 0 }}>
+        <p className="text-sm text-muted-foreground">Loading flux analysis...</p>
+      </div>
+    );
+  }
+
+  if (fluxError) {
+    return (
+      <div className="flex flex-col bg-white items-center justify-center" style={{ height: "100%", minHeight: 0 }}>
+        <p className="text-sm text-red-600">Error loading flux analysis: {fluxError}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col bg-white" style={{ height: "100%", minHeight: 0 }}>
       {/* Page Header */}
@@ -504,32 +505,46 @@ export default function FluxAnalysisPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
               <Card className="p-4">
                 <div className="text-xs text-slate-600 mb-1">Revenue</div>
-                <div className="text-2xl font-bold">$52.9M</div>
-                <div className="text-xs text-green-600 font-bold flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" />
-                  +9.8%
-                </div>
+                <div className="text-2xl font-bold">${kpiRevenue ? kpiRevenue.actual.toFixed(1) : "—"}M</div>
+                {kpiRevenue && kpiRevenue.base > 0 && (
+                  <div className={`text-xs font-bold flex items-center gap-1 ${kpiRevenue.actual >= kpiRevenue.base ? "text-green-600" : "text-red-600"}`}>
+                    {kpiRevenue.actual >= kpiRevenue.base ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                    {kpiRevenue.actual >= kpiRevenue.base ? "+" : ""}{(((kpiRevenue.actual - kpiRevenue.base) / kpiRevenue.base) * 100).toFixed(1)}%
+                  </div>
+                )}
               </Card>
               <Card className="p-4">
                 <div className="text-xs text-slate-600 mb-1">Gross Margin</div>
-                <div className="text-2xl font-bold">$20.3M</div>
-                <div className="text-xs text-green-600 font-bold flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" />
-                  +14.0%
-                </div>
+                <div className="text-2xl font-bold">${kpiGrossMargin ? kpiGrossMargin.actual.toFixed(1) : "—"}M</div>
+                {kpiGrossMargin && kpiGrossMargin.base > 0 && (
+                  <div className={`text-xs font-bold flex items-center gap-1 ${kpiGrossMargin.actual >= kpiGrossMargin.base ? "text-green-600" : "text-red-600"}`}>
+                    {kpiGrossMargin.actual >= kpiGrossMargin.base ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                    {kpiGrossMargin.actual >= kpiGrossMargin.base ? "+" : ""}{(((kpiGrossMargin.actual - kpiGrossMargin.base) / kpiGrossMargin.base) * 100).toFixed(1)}%
+                  </div>
+                )}
               </Card>
               <Card className="p-4">
                 <div className="text-xs text-slate-600 mb-1">Operating Cash Flow</div>
-                <div className="text-2xl font-bold">$9.4M</div>
+                <div className="text-2xl font-bold">${kpiCfTotal.toFixed(1)}M</div>
                 <div className="text-xs text-green-600 font-bold flex items-center gap-1">
                   <TrendingUp className="h-3 w-3" />
-                  +11.2%
+                  Net Positive
                 </div>
               </Card>
               <Card className="p-4">
                 <div className="text-xs text-slate-600 mb-1">Working Capital Δ</div>
-                <div className="text-2xl font-bold">+$1.0M</div>
-                <div className="text-xs text-slate-600">AR +$0.8M • Inv -$0.6M • AP +$0.8M</div>
+                <div className="text-2xl font-bold">
+                  {(() => {
+                    const wc = DATA.bs.reduce((sum, r) => sum + (r.actual - r.base), 0);
+                    return `${wc >= 0 ? "+" : ""}$${Math.abs(wc).toFixed(1)}M`;
+                  })()}
+                </div>
+                <div className="text-xs text-slate-600">
+                  {DATA.bs.filter(r => Math.abs(r.actual - r.base) >= 0.5).map(r => {
+                    const d = r.actual - r.base;
+                    return `${r.name.split(" ")[0]} ${d >= 0 ? "+" : ""}$${Math.abs(d).toFixed(1)}M`;
+                  }).join(" • ")}
+                </div>
               </Card>
             </div>
 
@@ -791,7 +806,8 @@ export default function FluxAnalysisPage() {
                         </TableHeader>
                         <TableBody>
                           {DATA.drivers.map((row, idx) => {
-                            const pct = row.impact / 48.2;
+                            const baseRev = kpiRevenue?.base ?? 48.2;
+                            const pct = row.impact / baseRev;
                             return (
                               <TableRow key={idx}>
                                 <TableCell className="text-xs">{row.driver}</TableCell>

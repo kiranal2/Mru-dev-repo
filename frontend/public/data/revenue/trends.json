@@ -1,0 +1,134 @@
+[
+  {
+    "month": "2024-01",
+    "leakageUsd": 125000,
+    "recoveredUsd": 85000,
+    "caseCount": 8,
+    "newCases": 5,
+    "closedCases": 3,
+    "avgRiskScore": 52,
+    "topCategory": "Billing",
+    "signalCount": 18
+  },
+  {
+    "month": "2024-02",
+    "leakageUsd": 98000,
+    "recoveredUsd": 72000,
+    "caseCount": 6,
+    "newCases": 3,
+    "closedCases": 2,
+    "avgRiskScore": 48,
+    "topCategory": "Pricing",
+    "signalCount": 14
+  },
+  {
+    "month": "2024-03",
+    "leakageUsd": 142000,
+    "recoveredUsd": 91000,
+    "caseCount": 10,
+    "newCases": 6,
+    "closedCases": 4,
+    "avgRiskScore": 61,
+    "topCategory": "Contract",
+    "signalCount": 22
+  },
+  {
+    "month": "2024-04",
+    "leakageUsd": 88000,
+    "recoveredUsd": 65000,
+    "caseCount": 5,
+    "newCases": 2,
+    "closedCases": 3,
+    "avgRiskScore": 45,
+    "topCategory": "Discount",
+    "signalCount": 12
+  },
+  {
+    "month": "2024-05",
+    "leakageUsd": 115000,
+    "recoveredUsd": 78000,
+    "caseCount": 7,
+    "newCases": 4,
+    "closedCases": 2,
+    "avgRiskScore": 55,
+    "topCategory": "Billing",
+    "signalCount": 16
+  },
+  {
+    "month": "2024-06",
+    "leakageUsd": 134000,
+    "recoveredUsd": 95000,
+    "caseCount": 9,
+    "newCases": 5,
+    "closedCases": 4,
+    "avgRiskScore": 58,
+    "topCategory": "Pricing",
+    "signalCount": 20
+  },
+  {
+    "month": "2024-07",
+    "leakageUsd": 156000,
+    "recoveredUsd": 102000,
+    "caseCount": 11,
+    "newCases": 7,
+    "closedCases": 3,
+    "avgRiskScore": 63,
+    "topCategory": "Discount",
+    "signalCount": 25
+  },
+  {
+    "month": "2024-08",
+    "leakageUsd": 108000,
+    "recoveredUsd": 88000,
+    "caseCount": 7,
+    "newCases": 3,
+    "closedCases": 5,
+    "avgRiskScore": 50,
+    "topCategory": "Subscription",
+    "signalCount": 15
+  },
+  {
+    "month": "2024-09",
+    "leakageUsd": 172000,
+    "recoveredUsd": 110000,
+    "caseCount": 12,
+    "newCases": 8,
+    "closedCases": 3,
+    "avgRiskScore": 67,
+    "topCategory": "Billing",
+    "signalCount": 28
+  },
+  {
+    "month": "2024-10",
+    "leakageUsd": 195000,
+    "recoveredUsd": 125000,
+    "caseCount": 14,
+    "newCases": 9,
+    "closedCases": 5,
+    "avgRiskScore": 70,
+    "topCategory": "Discount",
+    "signalCount": 32
+  },
+  {
+    "month": "2024-11",
+    "leakageUsd": 218000,
+    "recoveredUsd": 98000,
+    "caseCount": 18,
+    "newCases": 12,
+    "closedCases": 4,
+    "avgRiskScore": 72,
+    "topCategory": "Pricing",
+    "signalCount": 38
+  },
+  {
+    "month": "2024-12",
+    "leakageUsd": 247000,
+    "recoveredUsd": 114700,
+    "caseCount": 25,
+    "newCases": 10,
+    "closedCases": 3,
+    "avgRiskScore": 58,
+    "topCategory": "Discount",
+    "signalCount": 42
+  }
+]

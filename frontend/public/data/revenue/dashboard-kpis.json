@@ -1,0 +1,61 @@
+{
+  "summary": {
+    "totalLeakageUsd": 617500,
+    "totalRecoveredUsd": 114700,
+    "netExposureUsd": 502800,
+    "recoveryRate": 18.6,
+    "activeCases": 25,
+    "openCases": 7,
+    "investigatingCases": 5,
+    "confirmedCases": 4,
+    "recoveredCases": 4,
+    "closedCases": 3,
+    "falsePositiveCases": 2,
+    "avgResolutionDays": 18.4,
+    "totalSignals": 60,
+    "rulesEnabled": 20,
+    "rulesTriggeredLast30Days": 16,
+    "lastUpdated": "2024-12-12T23:59:59Z"
+  },
+  "leakageByCategory": [
+    { "category": "Pricing", "amountUsd": 105700, "caseCount": 5, "pct": 17.1 },
+    { "category": "Billing", "amountUsd": 108500, "caseCount": 5, "pct": 17.6 },
+    { "category": "Contract", "amountUsd": 83400, "caseCount": 4, "pct": 13.5 },
+    { "category": "Discount", "amountUsd": 223600, "caseCount": 4, "pct": 36.2 },
+    { "category": "Subscription", "amountUsd": 22300, "caseCount": 3, "pct": 3.6 },
+    { "category": "Commission", "amountUsd": 85700, "caseCount": 2, "pct": 13.9 },
+    { "category": "Recognition", "amountUsd": 37500, "caseCount": 2, "pct": 6.1 }
+  ],
+  "leakageByRiskLevel": [
+    { "riskLevel": "Critical", "amountUsd": 187200, "caseCount": 3 },
+    { "riskLevel": "High", "amountUsd": 254100, "caseCount": 7 },
+    { "riskLevel": "Medium", "amountUsd": 156200, "caseCount": 10 },
+    { "riskLevel": "Low", "amountUsd": 20000, "caseCount": 5 }
+  ],
+  "leakageByCustomerTier": [
+    { "tier": "Enterprise", "amountUsd": 394000, "caseCount": 8, "customerCount": 7 },
+    { "tier": "Mid-Market", "amountUsd": 196100, "caseCount": 10, "customerCount": 8 },
+    { "tier": "SMB", "amountUsd": 14600, "caseCount": 4, "customerCount": 4 }
+  ],
+  "topLeakageCases": [
+    { "caseId": "REV-2024-0004", "title": "CloudBase Ltd - Infrastructure Discount Exceeds Approval Limit", "amountUsd": 150000, "riskLevel": "Critical" },
+    { "caseId": "REV-2024-0008", "title": "Pinnacle Financial - Commission Double-Paid on Renewal", "amountUsd": 54500, "riskLevel": "Medium" },
+    { "caseId": "REV-2024-0002", "title": "TechFlow Inc - Price List Override on API Gateway", "amountUsd": 52000, "riskLevel": "High" },
+    { "caseId": "REV-2024-0001", "title": "Acme Corp - Volume Discount Not Applied", "amountUsd": 45000, "riskLevel": "High" },
+    { "caseId": "REV-2024-0007", "title": "Verdant Health - Missed October Billing Cycle", "amountUsd": 40000, "riskLevel": "High" }
+  ],
+  "topRiskCustomers": [
+    { "customerId": "CUST-004", "customerName": "CloudBase Ltd", "riskScore": 81, "totalLeakageUsd": 150000, "activeCases": 1 },
+    { "customerId": "CUST-003", "customerName": "DataSync Solutions", "riskScore": 72, "totalLeakageUsd": 34500, "activeCases": 2 },
+    { "customerId": "CUST-006", "customerName": "Pinnacle Financial Services", "riskScore": 70, "totalLeakageUsd": 92000, "activeCases": 2 },
+    { "customerId": "CUST-001", "customerName": "Acme Corporation", "riskScore": 65, "totalLeakageUsd": 78000, "activeCases": 2 },
+    { "customerId": "CUST-013", "customerName": "Apex Consulting Group", "riskScore": 62, "totalLeakageUsd": 31200, "activeCases": 1 }
+  ],
+  "recentActivity": [
+    { "ts": "2024-12-12T10:00:00Z", "type": "case_update", "description": "REV-2024-0011 assigned to Michael Torres" },
+    { "ts": "2024-12-11T14:00:00Z", "type": "case_update", "description": "REV-2024-0021 investigation started by Sarah Chen" },
+    { "ts": "2024-12-11T09:00:00Z", "type": "case_update", "description": "REV-2024-0022 confirmed - unapproved discount escalated" },
+    { "ts": "2024-12-10T14:00:00Z", "type": "signal_detected", "description": "3 new signals detected for Streamline Logistics metering gap" },
+    { "ts": "2024-12-10T09:00:00Z", "type": "case_update", "description": "REV-2024-0004 escalated to VP level for CloudBase discount review" }
+  ]
+}

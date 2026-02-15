@@ -1,0 +1,671 @@
+/**
+ * IGRS (Indian Government Registration System) Revenue Assurance Types
+ *
+ * Simplified and reorganised type definitions for the IGRS data layer.
+ * Based on the original revenue-leakage types but uses camelCase field
+ * names, flattened structures, and cleaner generics suitable for the
+ * new provider/hook architecture.
+ */
+
+// ---------------------------------------------------------------------------
+// Enumerations & Literal Types
+// ---------------------------------------------------------------------------
+
+/** Risk severity classification for an IGRS case. */
+export type IGRSRiskLevel = "High" | "Medium" | "Low";
+
+/** Lifecycle status of a revenue-leakage case. */
+export type IGRSCaseStatus =
+  | "New"
+  | "In Review"
+  | "Confirmed"
+  | "Resolved"
+  | "Rejected";
+
+/**
+ * Discrete signal categories that indicate potential revenue leakage.
+ *
+ * - `RevenueGap`      -- Mismatch between payable and paid amounts.
+ * - `ChallanDelay`    -- Abnormal delay between receipt and challan dates.
+ * - `ExemptionRisk`   -- Suspicious or ineligible exemption claims.
+ * - `MarketValueRisk` -- Declared value deviates from market rate card.
+ * - `ProhibitedLand`  -- Property falls in a prohibited-transaction zone.
+ * - `DataIntegrity`   -- Missing or inconsistent data fields.
+ * - `HolidayFee`      -- Registration executed on a holiday / non-working day.
+ */
+export type IGRSLeakageSignal =
+  | "RevenueGap"
+  | "ChallanDelay"
+  | "ExemptionRisk"
+  | "MarketValueRisk"
+  | "ProhibitedLand"
+  | "DataIntegrity"
+  | "HolidayFee";
+
+/** Rule categories that group detection logic into functional domains. */
+export type IGRSRuleCategory =
+  | "Valuation"
+  | "StampDuty"
+  | "Exemption"
+  | "Compliance"
+  | "Operational"
+  | "Systemic";
+
+/** Market-value hotspot severity classification. */
+export type MVSeverity = "Critical" | "High" | "Medium" | "Watch" | "Normal";
+
+/** Location classification for property registrations. */
+export type MVLocationType = "RURAL" | "URBAN";
+
+/** Status of a market-value hotspot. */
+export type MVHotspotStatus = "New" | "In Review" | "Confirmed";
+
+/** Types of statistical patterns detected through trend analysis. */
+export type IGRSPatternType = "spike" | "drop" | "drift" | "seasonal";
+
+/** Sync health indicator for the data pipeline. */
+export type IGRSSyncStatus = "Healthy" | "Degraded" | "Down";
+
+/** Export job lifecycle status. */
+export type IGRSExportStatus = "Queued" | "Ready" | "Running" | "Failed";
+
+/** Signal triage status. */
+export type IGRSSignalStatus = "Open" | "Acknowledged" | "Resolved" | "Dismissed";
+
+// ---------------------------------------------------------------------------
+// Document & Office Sub-structures
+// ---------------------------------------------------------------------------
+
+/** Composite key that uniquely identifies a registered document. */
+export interface IGRSDocumentKey {
+  /** Sub-Registrar office code. */
+  srCode: string;
+  /** Book number. */
+  bookNo: string;
+  /** Document number. */
+  doctNo: string;
+  /** Registration year (e.g. "2024"). */
+  regYear: string;
+}
+
+/** Sub-Registrar office reference attached to a case. */
+export interface IGRSOfficeRef {
+  /** Sub-Registrar office code. */
+  srCode: string;
+  /** Sub-Registrar office name. */
+  srName: string;
+  /** District the office belongs to. */
+  district: string;
+  /** Administrative zone. */
+  zone: string;
+}
+
+/** Document type classification for the registered instrument. */
+export interface IGRSDocType {
+  /** Major transaction code. */
+  tranMajCode: string;
+  /** Minor transaction code. */
+  tranMinCode: string;
+  /** Full transaction description. */
+  tranDesc: string;
+  /** Abbreviated description. */
+  abDesc: string;
+}
+
+/** Key dates associated with a registration document. */
+export interface IGRSDates {
+  /** Presentation date. */
+  pDate: string;
+  /** Execution date. */
+  eDate: string;
+  /** Registration date. */
+  rDate: string;
+}
+
+/** Summarised property information. */
+export interface IGRSPropertySummary {
+  /** Whether the property is classified as urban. */
+  isUrban: boolean;
+  /** Nature of land (Dry, Wet, Converted, etc.). Only relevant for rural. */
+  landNature?: string;
+  /** Extent / area of the property. */
+  extent: string;
+  /** Unit of measurement for the extent (e.g. "acres", "sq.ft"). */
+  unit: string;
+}
+
+/** Condensed party (buyer/seller) information. */
+export interface IGRSPartySummary {
+  /** Party role code. */
+  code: string;
+  /** Full name of the party. */
+  name: string;
+  /** PAN number, if available. */
+  panNo?: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Financial Breakdown
+// ---------------------------------------------------------------------------
+
+/** Itemised breakdown of payable government fees. */
+export interface IGRSPayableBreakdown {
+  /** Stamp duty payable. */
+  sdPayable: number;
+  /** Transfer duty payable. */
+  tdPayable: number;
+  /** Registration fee payable. */
+  rfPayable: number;
+  /** Deficit stamp duty payable. */
+  dsdPayable: number;
+  /** Other miscellaneous fees. */
+  otherFee: number;
+  /** Final taxable value used to compute duties. */
+  finalTaxableValue: number;
+}
+
+// ---------------------------------------------------------------------------
+// Evidence & Rules
+// ---------------------------------------------------------------------------
+
+/** A single detection rule hit attached to a case. */
+export interface IGRSTriggeredRule {
+  /** Unique rule identifier (e.g. "R-001"). */
+  ruleId: string;
+  /** Human-readable rule name. */
+  ruleName: string;
+  /** Functional category the rule belongs to. */
+  category: string;
+  /** Severity of the rule match. */
+  severity: string;
+  /** Monetary impact in INR attributed to this rule. */
+  impactInr: number;
+  /** Plain-language explanation of why the rule fired. */
+  explanation: string;
+  /** Confidence score between 0 and 1. */
+  confidence: number;
+}
+
+/** Aggregated evidence block for an IGRS case. */
+export interface IGRSCaseEvidence {
+  /** Detection rules that were triggered. */
+  triggeredRules: IGRSTriggeredRule[];
+  /** Number of receipt records considered. */
+  receiptCount: number;
+  /** Number of prohibited-land matches found. */
+  prohibitedMatchCount: number;
+  /** Percentage deviation from market value rate card. */
+  mvDeviationPct: number;
+  /** Number of exemption entries on the document. */
+  exemptionCount: number;
+}
+
+// ---------------------------------------------------------------------------
+// SLA & Workflow
+// ---------------------------------------------------------------------------
+
+/** Service-level agreement tracking for a case. */
+export interface IGRSCaseSLA {
+  /** Number of days since case creation. */
+  ageingDays: number;
+  /** Human-friendly ageing bucket (e.g. "0-7d", "8-14d", "15-30d", "30d+"). */
+  ageingBucket: string;
+  /** Whether the case has breached its SLA target. */
+  slaBreached: boolean;
+}
+
+/** A free-text note attached to a case by an analyst. */
+export interface IGRSCaseNote {
+  /** Unique note identifier. */
+  id: string;
+  /** Author (user name or system). */
+  author: string;
+  /** ISO-8601 creation timestamp. */
+  createdAt: string;
+  /** Note body. */
+  note: string;
+}
+
+/** A single entry in a case's activity / audit log. */
+export interface IGRSActivityLogEntry {
+  /** Unique log entry identifier. */
+  id: string;
+  /** ISO-8601 timestamp. */
+  ts: string;
+  /** Actor who performed the action. */
+  actor: string;
+  /** Short action label (e.g. "StatusChange", "NoteAdded"). */
+  action: string;
+  /** Human-readable detail string. */
+  detail: string;
+}
+
+// ---------------------------------------------------------------------------
+// IGRSCase -- the central case entity
+// ---------------------------------------------------------------------------
+
+/**
+ * Primary case record for IGRS revenue assurance.
+ *
+ * Each case represents a single registered document that has been flagged
+ * by the detection engine for one or more revenue-leakage signals.
+ */
+export interface IGRSCase {
+  /** Internal surrogate identifier. */
+  id: string;
+  /** Human-readable case identifier (e.g. "IGRS-2024-00123"). */
+  caseId: string;
+  /** Composite document key that ties back to the IGRS registry. */
+  documentKey: IGRSDocumentKey;
+  /** ISO-8601 creation timestamp. */
+  createdAt: string;
+  /** ISO-8601 last-updated timestamp. */
+  updatedAt: string;
+
+  // --- Risk Assessment ---
+  /** Overall risk classification. */
+  riskLevel: IGRSRiskLevel;
+  /** Numeric risk score (0-100). */
+  riskScore: number;
+  /** Model confidence (0-1). */
+  confidence: number;
+
+  // --- Workflow ---
+  /** Current lifecycle status. */
+  status: IGRSCaseStatus;
+  /** Username of the assigned analyst, or null if unassigned. */
+  assignedTo: string | null;
+
+  // --- Signals & Financials ---
+  /** Set of leakage signal types detected. */
+  leakageSignals: IGRSLeakageSignal[];
+  /** Estimated monetary impact in INR. */
+  impactAmountInr: number;
+  /** Total government fee payable in INR. */
+  payableTotalInr: number;
+  /** Total amount actually paid in INR. */
+  paidTotalInr: number;
+  /** Gap between payable and paid (payable - paid) in INR. */
+  gapInr: number;
+
+  // --- Reference Data ---
+  /** Originating Sub-Registrar office. */
+  office: IGRSOfficeRef;
+  /** Document type classification. */
+  docType: IGRSDocType;
+  /** Key registration dates. */
+  dates: IGRSDates;
+  /** Summarised property details. */
+  propertySummary: IGRSPropertySummary;
+  /** Condensed list of parties involved. */
+  partiesSummary: IGRSPartySummary[];
+  /** Itemised payable breakdown. */
+  payableBreakdown: IGRSPayableBreakdown;
+
+  // --- Evidence ---
+  /** Aggregated evidence supporting the risk assessment. */
+  evidence: IGRSCaseEvidence;
+
+  // --- SLA & Workflow Metadata ---
+  /** SLA tracking (optional -- may be absent for newly ingested cases). */
+  sla?: IGRSCaseSLA;
+  /** Analyst notes attached to the case. */
+  notes: IGRSCaseNote[];
+  /** Chronological activity log. */
+  activityLog: IGRSActivityLogEntry[];
+}
+
+// ---------------------------------------------------------------------------
+// IGRSRule -- detection rule catalogue entry
+// ---------------------------------------------------------------------------
+
+/**
+ * A detection rule in the IGRS revenue-assurance rule catalogue.
+ *
+ * Rules encapsulate the logic used to flag potential leakage on a
+ * document. They are version-controlled and can be toggled on/off.
+ */
+export interface IGRSRule {
+  /** Unique rule identifier (e.g. "R-001"). */
+  ruleId: string;
+  /** Functional category. */
+  category: IGRSRuleCategory;
+  /** Human-readable rule name. */
+  ruleName: string;
+  /** Longer description of what the rule detects. */
+  description: string;
+  /** Default severity when the rule fires. */
+  severity: IGRSRiskLevel;
+  /** List of input field / data-source names the rule consumes. */
+  inputs: string[];
+  /** Description of the rule's output / signal. */
+  output: string;
+  /** Whether the rule is currently enabled for detection runs. */
+  enabled: boolean;
+  /** Implementation phase (e.g. "Phase 1", "Phase 2 Enhanced"). */
+  phase: string;
+  /** Plain-language description of the rule's evaluation logic. */
+  logic: string;
+  /** Fields that must be present for the rule to execute. */
+  requiredFields: string[];
+  /** Known conditions that can produce false positives. */
+  falsePositiveNotes: string[];
+  /** Illustrative example of the rule firing. */
+  example: string;
+}
+
+// ---------------------------------------------------------------------------
+// SROOffice -- Sub-Registrar Office risk profile
+// ---------------------------------------------------------------------------
+
+/**
+ * Risk profile for a Sub-Registrar Office (SRO).
+ *
+ * Aggregates case-level signals into an office-level risk score used
+ * for heatmaps and comparative dashboards.
+ */
+export interface SROOffice {
+  /** Sub-Registrar office code. */
+  srCode: string;
+  /** Sub-Registrar office name. */
+  srName: string;
+  /** District. */
+  district: string;
+  /** Administrative zone. */
+  zone: string;
+  /** Latitude for map rendering. */
+  lat: number;
+  /** Longitude for map rendering. */
+  lng: number;
+  /** Composite risk score (0-100). */
+  riskScore: number;
+  /** Derived risk level. */
+  riskLevel: IGRSRiskLevel;
+  /** Total number of cases originating from this office. */
+  totalCases: number;
+  /** Number of high-risk cases. */
+  highRiskCases: number;
+  /** Total revenue gap in INR across all cases. */
+  totalGapInr: number;
+  /** Breakdown of the composite risk score by component. */
+  componentScores: {
+    /** Revenue-gap component score. */
+    revenueGap: number;
+    /** Challan-delay component score. */
+    challanDelay: number;
+    /** Prohibited-land match component score. */
+    prohibitedMatch: number;
+    /** Market-value deviation component score. */
+    mvDeviation: number;
+    /** Exemption-anomaly component score. */
+    exemptionAnomaly: number;
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Dashboard KPIs
+// ---------------------------------------------------------------------------
+
+/**
+ * Top-level dashboard KPI payload.
+ *
+ * Returned by the overview API and consumed by the main dashboard view
+ * to render summary cards, charts, and alert banners.
+ */
+export interface IGRSDashboardKPIs {
+  // --- Headline Financials ---
+  /** Total government fee payable across all cases in INR. */
+  totalPayable: number;
+  /** Total amount actually paid across all cases in INR. */
+  totalPaid: number;
+  /** Aggregate gap (payable - paid) in INR. */
+  totalGap: number;
+
+  // --- Case Counts ---
+  /** Number of high-risk cases. */
+  highRiskCases: number;
+  /** Average challan delay in days. */
+  avgChallanDelayDays: number;
+  /** Cases currently in "New" or "In Review" status. */
+  casesAwaitingReview: number;
+
+  // --- Breakdowns ---
+  /** Leakage case counts broken down by signal type. */
+  leakageBySignal: Array<{
+    signal: IGRSLeakageSignal;
+    high: number;
+    medium: number;
+    low: number;
+  }>;
+
+  /** Top offices ranked by total gap amount. */
+  topOfficesByGap: Array<{
+    srCode: string;
+    srName: string;
+    gapInr: number;
+    cases: number;
+  }>;
+
+  // --- SLA ---
+  /** SLA compliance summary. */
+  slaSummary: {
+    /** Cases within SLA. */
+    withinSla: number;
+    /** Cases that have breached SLA. */
+    breached: number;
+    /** Distribution across ageing buckets. */
+    ageingBuckets: Record<string, number>;
+  };
+
+  // --- Exemptions ---
+  /** Exemption usage summary. */
+  exemptionSummary: {
+    /** Total exemption claims. */
+    totalExemptions: number;
+    /** Total exempted amount in INR. */
+    totalAmount: number;
+    /** Claims that failed eligibility checks. */
+    failedEligibility: number;
+    /** Parties with repeat exemption usage. */
+    repeatOffenders: number;
+  };
+
+  // --- Rules Engine ---
+  /** Health snapshot of the detection rules engine. */
+  rulesHealth: {
+    /** Number of enabled rules. */
+    enabled: number;
+    /** ISO-8601 timestamp of the last detection run. */
+    lastRun: string;
+    /** Number of rule execution failures in the last run. */
+    failures: number;
+  };
+
+  // --- Trends & Insights ---
+  /** Monthly trend data for time-series charts. */
+  monthlyTrends: IGRSTrend[];
+
+  /** Auto-generated narrative highlights for the dashboard. */
+  highlights: Array<{
+    /** Icon hint for the UI (e.g. "trending-up", "alert"). */
+    icon: string;
+    /** Plain-text highlight sentence. */
+    text: string;
+  }>;
+
+  // --- Meta ---
+  /** ISO-8601 timestamp of the last data refresh. */
+  lastRefresh: string;
+  /** Current health of the upstream data sync pipeline. */
+  syncStatus: IGRSSyncStatus;
+}
+
+// ---------------------------------------------------------------------------
+// Trend & Pattern Analysis
+// ---------------------------------------------------------------------------
+
+/** A single month's aggregated trend data point. */
+export interface IGRSTrend {
+  /** Month label (e.g. "2024-06"). */
+  month: string;
+  /** Total cases in the month. */
+  cases: number;
+  /** Total gap amount in INR for the month. */
+  gapInr: number;
+  /** Number of high-risk cases in the month. */
+  highRisk: number;
+}
+
+/**
+ * A statistical pattern detected across IGRS data.
+ *
+ * Patterns are surfaced by the analytics engine to draw attention to
+ * unusual shifts in registration volumes, gap amounts, or risk profiles.
+ */
+export interface IGRSPattern {
+  /** Unique pattern identifier. */
+  id: string;
+  /** Category of the detected pattern. */
+  type: IGRSPatternType;
+  /** The metric exhibiting the pattern (e.g. "gapInr", "highRiskCases"). */
+  metric: string;
+  /** Office code the pattern relates to, if office-specific. */
+  office?: string;
+  /** Time period over which the pattern was observed (e.g. "2024-Q2"). */
+  period: string;
+  /** Human-readable magnitude description (e.g. "+34%", "-12 cases"). */
+  magnitude: string;
+  /** Plain-language explanation of the pattern and its potential impact. */
+  explanation: string;
+}
+
+// ---------------------------------------------------------------------------
+// Market Value Hotspot
+// ---------------------------------------------------------------------------
+
+/**
+ * A market-value hotspot flagging locations where declared values
+ * consistently deviate from the government rate card.
+ */
+export interface MVHotspot {
+  /** Associated case identifier. */
+  caseId: string;
+  /** Sub-Registrar office code. */
+  sroCode: string;
+  /** Sub-Registrar office name. */
+  sroName: string;
+  /** District name. */
+  district: string;
+  /** Human-readable location label (village / ward name). */
+  locationLabel: string;
+  /** Whether the location is rural or urban. */
+  locationType: MVLocationType;
+  /** Declared-to-Rate-card Ratio (lower = more suspect). */
+  drr: number;
+  /** Government rate-card unit rate in INR. */
+  rateCardUnitRate: number;
+  /** Median declared value per unit across recent transactions. */
+  medianDeclared: number;
+  /** Number of transactions in the hotspot window. */
+  transactionCount: number;
+  /** Severity classification of the hotspot. */
+  severity: MVSeverity;
+  /** Estimated revenue loss in INR. */
+  estimatedLoss: number;
+  /** Current triage status. */
+  status: MVHotspotStatus;
+}
+
+// ---------------------------------------------------------------------------
+// Settings / Configuration
+// ---------------------------------------------------------------------------
+
+/**
+ * IGRS system configuration parameters.
+ *
+ * Encapsulates stamp-duty rates, registration-fee slabs, and detection
+ * thresholds that govern the revenue-assurance engine's behaviour.
+ */
+export interface IGRSSettings {
+  /** Stamp duty rate schedule keyed by document type or slab. */
+  stampDutyRates: Record<string, number>;
+  /** Registration fee slab definitions. */
+  registrationFeeSlabs: Array<{
+    /** Lower bound of the slab in INR (inclusive). */
+    minValue: number;
+    /** Upper bound of the slab in INR (exclusive). Use Infinity for open-ended. */
+    maxValue: number;
+    /** Fee percentage applicable within this slab. */
+    feePct: number;
+    /** Fixed fee component in INR, if any. */
+    fixedFee: number;
+  }>;
+  /** Detection engine thresholds. */
+  thresholds: {
+    /** Minimum gap in INR to flag a case. */
+    minGapInr: number;
+    /** Minimum risk score (0-100) to classify as high risk. */
+    highRiskScoreMin: number;
+    /** Maximum acceptable challan delay in days. */
+    maxChallanDelayDays: number;
+    /** MV deviation percentage above which to raise MarketValueRisk. */
+    mvDeviationPct: number;
+    /** SLA target in days for case resolution. */
+    slaTargetDays: number;
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Export Records
+// ---------------------------------------------------------------------------
+
+/**
+ * Tracks an export job initiated by a user (e.g. CSV / PDF download
+ * of filtered case data).
+ */
+export interface IGRSExport {
+  /** Unique export job identifier. */
+  exportId: string;
+  /** Username of the user who requested the export. */
+  createdBy: string;
+  /** ISO-8601 creation timestamp. */
+  createdAt: string;
+  /** Export type descriptor (e.g. "CaseList-CSV", "Dashboard-PDF"). */
+  type: string;
+  /** Serialised filter criteria that were active when the export was requested. */
+  filtersUsed: string;
+  /** Current status of the export job. */
+  status: IGRSExportStatus;
+}
+
+// ---------------------------------------------------------------------------
+// Signals
+// ---------------------------------------------------------------------------
+
+/**
+ * An individual detection signal raised against a case.
+ *
+ * While `IGRSCase.leakageSignals` carries a summarised list of signal
+ * types, this interface represents the full signal record with metadata
+ * for audit and triage workflows.
+ */
+export interface IGRSSignal {
+  /** Unique signal identifier. */
+  id: string;
+  /** Case the signal belongs to. */
+  caseId: string;
+  /** Rule that produced this signal. */
+  ruleId: string;
+  /** High-level signal type. */
+  signalType: IGRSLeakageSignal;
+  /** Severity of the signal. */
+  severity: IGRSRiskLevel;
+  /** Monetary impact attributed to this signal in INR. */
+  impactInr: number;
+  /** Plain-language explanation. */
+  explanation: string;
+  /** ISO-8601 timestamp when the signal was first raised. */
+  createdAt: string;
+  /** Triage status of the signal. */
+  status: IGRSSignalStatus;
+}

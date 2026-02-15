@@ -1,0 +1,112 @@
+[
+  {
+    "id": "notif-001",
+    "type": "warning",
+    "module": "igrs",
+    "title": "High Risk Case Detected",
+    "message": "Case IGRS-2024-0025 flagged as High Risk with gap of ₹485,000",
+    "read": false,
+    "actionUrl": "/igrs/revenue-assurance/cases/IGRS-2024-0025",
+    "userId": "USR-006",
+    "createdAt": "2025-01-15T10:05:00Z"
+  },
+  {
+    "id": "notif-002",
+    "type": "error",
+    "module": "cash",
+    "title": "Exception Escalated",
+    "message": "Exception EXC-002 (Cisco Duplicate Payment) has been escalated to AR Manager after SLA breach",
+    "read": false,
+    "actionUrl": "/cash/exceptions/EXC-002",
+    "userId": "USR-003",
+    "createdAt": "2025-01-15T09:30:00Z"
+  },
+  {
+    "id": "notif-003",
+    "type": "info",
+    "module": "close",
+    "title": "Close Task Completed",
+    "message": "Task CLT-001 'Import Bank Statements' marked as completed by Michael Torres",
+    "read": true,
+    "actionUrl": "/close/tasks/CLT-001",
+    "userId": "USR-001",
+    "createdAt": "2025-01-15T08:45:00Z"
+  },
+  {
+    "id": "notif-004",
+    "type": "warning",
+    "module": "recons",
+    "title": "Reconciliation Variance Threshold Exceeded",
+    "message": "AR Reconciliation RECON-003 has $250,000 unresolved variance exceeding the $100,000 threshold",
+    "read": false,
+    "actionUrl": "/recons/RECON-003",
+    "userId": "USR-003",
+    "createdAt": "2025-01-15T08:00:00Z"
+  },
+  {
+    "id": "notif-005",
+    "type": "success",
+    "module": "automation",
+    "title": "Workflow Completed Successfully",
+    "message": "Daily IGRS Detection Run (WF-001) completed. 12 new cases detected, 3 flagged as High Risk.",
+    "read": true,
+    "actionUrl": "/automation/workflows/WF-001",
+    "userId": "USR-006",
+    "createdAt": "2025-01-15T06:05:00Z"
+  },
+  {
+    "id": "notif-006",
+    "type": "info",
+    "module": "revenue",
+    "title": "New Revenue Leakage Case",
+    "message": "Case REV-2024-0001 created: Acme Corp volume discount not applied, potential leakage $45,000",
+    "read": true,
+    "actionUrl": "/revenue/cases/REV-2024-0001",
+    "userId": "USR-007",
+    "createdAt": "2025-01-14T16:20:00Z"
+  },
+  {
+    "id": "notif-007",
+    "type": "warning",
+    "module": "close",
+    "title": "Task Overdue",
+    "message": "Close task CLT-006 'Revenue Recognition Review' is past its due date. Currently Not Started.",
+    "read": false,
+    "actionUrl": "/close/tasks/CLT-006",
+    "userId": "USR-002",
+    "createdAt": "2025-01-14T14:00:00Z"
+  },
+  {
+    "id": "notif-008",
+    "type": "error",
+    "module": "automation",
+    "title": "Workflow Execution Failed",
+    "message": "Monthly Revenue Report Generation (WF-004) failed at step 'Fetch billing data'. Error: Billing API timeout.",
+    "read": false,
+    "actionUrl": "/automation/workflows/WF-004",
+    "userId": "USR-001",
+    "createdAt": "2025-01-14T12:30:00Z"
+  },
+  {
+    "id": "notif-009",
+    "type": "info",
+    "module": "reports",
+    "title": "Flux Analysis Ready",
+    "message": "December 2024 flux analysis has been generated. 3 significant variances require review.",
+    "read": true,
+    "actionUrl": "/reports/flux-analysis",
+    "userId": "USR-002",
+    "createdAt": "2025-01-14T10:00:00Z"
+  },
+  {
+    "id": "notif-010",
+    "type": "success",
+    "module": "recons",
+    "title": "Reconciliation Completed",
+    "message": "Bank Reconciliation RECON-001 (Chase Operating 4521) fully reconciled with zero variance.",
+    "read": true,
+    "actionUrl": "/recons/RECON-001",
+    "userId": "USR-004",
+    "createdAt": "2025-01-13T18:15:00Z"
+  }
+]

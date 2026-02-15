@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cashAppStore } from "@/lib/cash-app-store";
+import { useCashPayments } from "@/hooks/data/use-cash-payments";
 import { Clock, CheckCircle2, Send } from "lucide-react";
 import { toast } from "sonner";
 
@@ -14,6 +15,8 @@ export default function PendingToPostPage() {
   const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  // Bridge: data hook for fetch lifecycle, store for rich Payment objects
+  const { loading: dataLoading, error: dataError } = useCashPayments({ status: ["PendingToPost"] });
   const payments = cashAppStore.getPayments().filter((p) => p.status === "PendingToPost");
 
   const totalAmount = payments.reduce((sum, p) => sum + p.amount, 0);

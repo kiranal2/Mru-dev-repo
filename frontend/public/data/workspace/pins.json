@@ -1,0 +1,98 @@
+[
+  {
+    "id": "PIN-001",
+    "userId": "USR-003",
+    "type": "Payment",
+    "referenceId": "PAY-020",
+    "title": "Snowflake Exception - $76,250 Amount Mismatch",
+    "description": "High-priority exception escalated to AR Manager. Waiting for billing team response.",
+    "module": "CashApplication",
+    "url": "/cash/payments/PAY-020",
+    "pinnedAt": "2024-12-09T07:00:00Z",
+    "color": "red"
+  },
+  {
+    "id": "PIN-002",
+    "userId": "USR-004",
+    "type": "Exception",
+    "referenceId": "EXC-002",
+    "title": "Cisco Duplicate Payment - Refund Pending",
+    "description": "Duplicate wire confirmed. Refund wire REF-2024-4521 initiated 12/10.",
+    "module": "CashApplication",
+    "url": "/cash/exceptions/EXC-002",
+    "pinnedAt": "2024-12-06T09:00:00Z",
+    "color": "orange"
+  },
+  {
+    "id": "PIN-003",
+    "userId": "USR-002",
+    "type": "FluxItem",
+    "referenceId": "FLUX-006",
+    "title": "Long-Term Investments +42.9% - FinanceAI Investment",
+    "description": "Board-approved strategic investment. Need to verify proper documentation.",
+    "module": "Reports",
+    "url": "/reports/flux/FLUX-006",
+    "pinnedAt": "2024-12-11T16:30:00Z",
+    "color": "blue"
+  },
+  {
+    "id": "PIN-004",
+    "userId": "USR-001",
+    "type": "CloseTask",
+    "referenceId": "CLT-012",
+    "title": "Controller Sign-off - Due 12/20",
+    "description": "Final review and certification of Q4 close package.",
+    "module": "Close",
+    "url": "/close/tasks/CLT-012",
+    "pinnedAt": "2024-12-13T08:00:00Z",
+    "color": "purple"
+  },
+  {
+    "id": "PIN-005",
+    "userId": "USR-005",
+    "type": "JournalEntry",
+    "referenceId": "JE-017",
+    "title": "Q4 Tax Provision - Draft",
+    "description": "Tax provision estimate needs finalization before close.",
+    "module": "Reports",
+    "url": "/reports/journal-entries/JE-017",
+    "pinnedAt": "2024-12-13T16:15:00Z",
+    "color": "yellow"
+  },
+  {
+    "id": "PIN-006",
+    "userId": "USR-003",
+    "type": "Reconciliation",
+    "referenceId": "RECON-003",
+    "title": "AR Reconciliation - $250K Variance",
+    "description": "Two unreconciled items remaining. Need to investigate before close.",
+    "module": "Reconciliations",
+    "url": "/recons/RECON-003",
+    "pinnedAt": "2024-12-13T16:30:00Z",
+    "color": "red"
+  },
+  {
+    "id": "PIN-007",
+    "userId": "USR-002",
+    "type": "CloseTask",
+    "referenceId": "CLT-006",
+    "title": "Revenue Recognition Review - Not Started",
+    "description": "ASC 606 review pending. Blocked by adjusting entries completion.",
+    "module": "Close",
+    "url": "/close/tasks/CLT-006",
+    "pinnedAt": "2024-12-13T09:00:00Z",
+    "color": "orange"
+  },
+  {
+    "id": "PIN-008",
+    "userId": "USR-004",
+    "type": "Reconciliation",
+    "referenceId": "RECON-004",
+    "title": "IC Recon - Meeru Europe $150K Variance",
+    "description": "One unmatched intercompany transaction. Awaiting Europe team confirmation.",
+    "module": "Reconciliations",
+    "url": "/recons/RECON-004",
+    "pinnedAt": "2024-12-13T14:30:00Z",
+    "color": "yellow"
+  }
+]

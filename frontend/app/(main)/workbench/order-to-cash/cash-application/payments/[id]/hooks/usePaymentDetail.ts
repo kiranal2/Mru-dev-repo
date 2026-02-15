@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { cashAppStore } from "@/lib/cash-app-store";
+import { useCashPayment } from "@/hooks/data/use-cash-payments";
 import { Payment } from "@/lib/cash-app-types";
 import { JEDraft, JEDraftTemplateRecord } from "@/lib/cash-app-types";
 import { timelineStore } from "@/lib/timeline-store";
@@ -22,6 +23,8 @@ export function usePaymentDetail() {
   const paymentId = params?.id as string;
   const { user } = useAuth();
 
+  // Bridge: use data hook for fetch lifecycle, store for rich Payment objects
+  const { loading: dataLoading, error: dataError, refetch: refetchPayment } = useCashPayment(paymentId);
   const [payment, setPayment] = useState<Payment | null>(null);
   const [showActionModal, setShowActionModal] = useState(false);
   const [currentAction, setCurrentAction] = useState<string>("");
@@ -725,6 +728,9 @@ export function usePaymentDetail() {
     router,
     user,
     payment,
+    dataLoading,
+    dataError,
+    refetchPayment,
     timelineRefreshKey,
 
     // Modal state

@@ -1,0 +1,122 @@
+{
+  "stampDutyRates": {
+    "saleDeed": {
+      "general": 6.0,
+      "womanBuyer": 5.0,
+      "scSt": 4.0,
+      "agriculturalLand": 5.0,
+      "description": "Stamp duty rates as percentage of transaction value"
+    },
+    "giftDeed": {
+      "familyMember": 2.0,
+      "nonFamilyMember": 6.0,
+      "description": "Gift deed rates; reduced rate for blood relatives"
+    },
+    "mortgageDeed": {
+      "withPossession": 5.0,
+      "withoutPossession": 1.0,
+      "equitableMortgage": 0.5,
+      "description": "Mortgage deed stamp duty based on possession type"
+    },
+    "leaseDeed": {
+      "upTo5Years": 3.0,
+      "above5Years": 6.0,
+      "perpetualLease": 6.0,
+      "description": "Lease deed rates based on lease duration"
+    },
+    "partitionDeed": {
+      "familyPartition": 2.0,
+      "otherPartition": 4.0,
+      "description": "Partition deed rates for family and non-family"
+    }
+  },
+  "registrationFeeSlabs": [
+    { "minValueInr": 0, "maxValueInr": 500000, "feePercent": 0.5, "minFeeInr": 1000, "maxFeeInr": null },
+    { "minValueInr": 500001, "maxValueInr": 1000000, "feePercent": 0.5, "minFeeInr": 2500, "maxFeeInr": null },
+    { "minValueInr": 1000001, "maxValueInr": 2000000, "feePercent": 0.5, "minFeeInr": 5000, "maxFeeInr": null },
+    { "minValueInr": 2000001, "maxValueInr": 5000000, "feePercent": 0.5, "minFeeInr": 10000, "maxFeeInr": null },
+    { "minValueInr": 5000001, "maxValueInr": 10000000, "feePercent": 1.0, "minFeeInr": 25000, "maxFeeInr": null },
+    { "minValueInr": 10000001, "maxValueInr": null, "feePercent": 1.0, "minFeeInr": 50000, "maxFeeInr": 200000 }
+  ],
+  "transferDutyRate": {
+    "ratePercent": 1.5,
+    "description": "Transfer duty applicable on all property transfers",
+    "applicableTo": ["Sale Deed", "Gift Deed", "Exchange Deed"]
+  },
+  "thresholds": {
+    "mvDeviationHighRisk": 20.0,
+    "mvDeviationMediumRisk": 10.0,
+    "mvDeviationLowRisk": 5.0,
+    "challanDelayGraceDays": 7,
+    "challanDelayHighDays": 30,
+    "challanDelayMediumDays": 15,
+    "slaDefaultDays": 14,
+    "slaCriticalDays": 21,
+    "highValueTransactionInr": 5000000,
+    "tdsPanThresholdInr": 1000000,
+    "tdsSection194IAThresholdInr": 5000000,
+    "minimumGapForCaseInr": 5000,
+    "riskScoreHighThreshold": 70,
+    "riskScoreMediumThreshold": 40,
+    "confidenceHighThreshold": 80,
+    "confidenceMediumThreshold": 60
+  },
+  "rulePhases": {
+    "phase1": {
+      "name": "Core Revenue Assurance",
+      "description": "Fundamental valuation and stamp duty checks",
+      "startDate": "2024-01-01",
+      "ruleCount": 12
+    },
+    "phase2": {
+      "name": "Extended Compliance",
+      "description": "Advanced compliance, operational, and pattern-based checks",
+      "startDate": "2024-07-01",
+      "ruleCount": 8
+    },
+    "phase3": {
+      "name": "Predictive Analytics",
+      "description": "ML-based pattern detection and predictive risk scoring",
+      "startDate": "2025-01-01",
+      "ruleCount": 0,
+      "status": "Planned"
+    }
+  },
+  "holidays2024": [
+    { "date": "2024-01-15", "name": "Sankranti" },
+    { "date": "2024-01-26", "name": "Republic Day" },
+    { "date": "2024-03-25", "name": "Holi" },
+    { "date": "2024-03-29", "name": "Good Friday" },
+    { "date": "2024-04-11", "name": "Ugadi" },
+    { "date": "2024-04-14", "name": "Ambedkar Jayanti" },
+    { "date": "2024-04-17", "name": "Ram Navami" },
+    { "date": "2024-05-23", "name": "Buddha Purnima" },
+    { "date": "2024-06-17", "name": "Eid-ul-Adha" },
+    { "date": "2024-07-17", "name": "Muharram" },
+    { "date": "2024-08-15", "name": "Independence Day" },
+    { "date": "2024-09-16", "name": "Milad-un-Nabi" },
+    { "date": "2024-10-02", "name": "Gandhi Jayanti" },
+    { "date": "2024-10-12", "name": "Dussehra" },
+    { "date": "2024-10-31", "name": "Diwali (Naraka Chaturdashi)" },
+    { "date": "2024-11-01", "name": "Diwali (Amavasya)" },
+    { "date": "2024-11-15", "name": "Guru Nanak Jayanti" },
+    { "date": "2024-12-25", "name": "Christmas" }
+  ],
+  "zones": [
+    { "code": "South", "districts": ["Krishna", "Guntur", "Chittoor", "Prakasam", "Nellore"] },
+    { "code": "North", "districts": ["Visakhapatnam", "East Godavari", "West Godavari"] },
+    { "code": "Central", "districts": ["Kurnool", "Anantapur"] }
+  ],
+  "documentTypes": [
+    { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
+    { "tranMajCode": "02", "tranMinCode": "01", "tranDesc": "Gift Deed", "abDesc": "Gift" },
+    { "tranMajCode": "03", "tranMinCode": "01", "tranDesc": "Mortgage Deed", "abDesc": "Mortgage" },
+    { "tranMajCode": "04", "tranMinCode": "01", "tranDesc": "Lease Deed", "abDesc": "Lease" },
+    { "tranMajCode": "05", "tranMinCode": "01", "tranDesc": "Partition Deed", "abDesc": "Partition" }
+  ],
+  "exportFormats": ["CSV", "PDF", "XLSX", "JSON"],
+  "defaultCurrency": "INR",
+  "currencySymbol": "₹",
+  "version": "1.0.0",
+  "lastUpdated": "2024-12-01T00:00:00Z"
+}

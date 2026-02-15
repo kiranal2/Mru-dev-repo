@@ -11,6 +11,8 @@ import {
   DOORDASH_DATA,
   WOLT_DATA,
 } from "../constants";
+import { useBalanceSheet as useBalanceSheetData } from "@/hooks/data";
+import type { BalanceSheetNode } from "@/lib/data/types";
 
 // Helper to get all leaf nodes (selectable items)
 const getLeafNodes = (
@@ -58,8 +60,30 @@ const filterSubsidiaryNodes = (nodes: SubsidiaryNode[], search: string): Subsidi
   return filtered;
 };
 
+// Transform BalanceSheetNode[] from the data layer into FinancialRow[] for the grid
+function transformBalanceSheetNodes(nodes: BalanceSheetNode[]): FinancialRow[] {
+  return nodes.map((node) => {
+    const row: FinancialRow = {
+      financialRow: node.label,
+      level: node.level,
+      group: node.group,
+      expanded: node.isSummary,
+    };
+    // Map period-keyed values to q*_* fields
+    Object.entries(node.values).forEach(([period, value]) => {
+      if (value !== null) {
+        (row as any)[period] = value;
+      }
+    });
+    return row;
+  });
+}
+
 export function useBalanceSheet() {
   const gridRef = useRef<AgGridReact>(null);
+
+  // Fetch data from the new data layer
+  const { data: balanceSheetNodes, loading: dataLoading, error: dataError } = useBalanceSheetData();
 
   // Applied filter states
   const [view, setView] = useState<ViewMode>(defaultFilters.defaultView);
@@ -202,12 +226,27 @@ export function useBalanceSheet() {
     [subsidiarySearch]
   );
 
+  // Transform data-layer nodes into grid-compatible rows
+  const dataLayerRows = useMemo(() => {
+    if (balanceSheetNodes.length > 0) {
+      return transformBalanceSheetNodes(balanceSheetNodes);
+    }
+    return null;
+  }, [balanceSheetNodes]);
+
   // Filter the data based on selected filters
+  // Prefer data-layer data when available; fall back to inline constants during loading or error
   const filteredData = useMemo(() => {
     if (subsidiaries.length === 0) {
       return [];
     }
 
+    // Use data-layer data when available
+    if (dataLayerRows && dataLayerRows.length > 0) {
+      return [...dataLayerRows];
+    }
+
+    // Fallback to inline mock data
     if (
       subsidiaries.includes("BetaFoods, Inc. (Consolidated)") &&
       !subsidiaries.includes("Averra Oy (Consolidated)")
@@ -221,7 +260,7 @@ export function useBalanceSheet() {
     } else {
       return [...DOORDASH_DATA];
     }
-  }, [subsidiaries, asOfPeriods]);
+  }, [subsidiaries, asOfPeriods, dataLayerRows]);
 
   // Sync pending states when applied filters change
   useEffect(() => {
@@ -252,6 +291,10 @@ export function useBalanceSheet() {
   return {
     // Refs
     gridRef,
+
+    // Data loading states
+    dataLoading,
+    dataError,
 
     // Applied filters
     view,

@@ -1,0 +1,727 @@
+[
+  {
+    "id": "INV-001",
+    "invoiceNumber": "INV-2024-10001",
+    "type": "Invoice",
+    "customerId": "C-AWS",
+    "customerName": "Amazon Web Services",
+    "issueDate": "2024-10-15",
+    "dueDate": "2024-11-14",
+    "amount": 30150.50,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Cloud Infrastructure Consulting - Oct 2024", "quantity": 1, "unitPrice": 25000.00, "amount": 25000.00 },
+      { "description": "Support & Maintenance", "quantity": 1, "unitPrice": 5150.50, "amount": 5150.50 }
+    ],
+    "paymentIds": ["PAY-001"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-002",
+    "invoiceNumber": "INV-2024-10002",
+    "type": "Invoice",
+    "customerId": "C-AWS",
+    "customerName": "Amazon Web Services",
+    "issueDate": "2024-10-20",
+    "dueDate": "2024-11-19",
+    "amount": 15080.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Data Migration Services", "quantity": 40, "unitPrice": 377.00, "amount": 15080.00 }
+    ],
+    "paymentIds": ["PAY-001"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-003",
+    "invoiceNumber": "INV-2024-10003",
+    "type": "Invoice",
+    "customerId": "C-MSFT",
+    "customerName": "Microsoft Corporation",
+    "issueDate": "2024-10-01",
+    "dueDate": "2024-10-31",
+    "amount": 50000.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Enterprise License - Q4 2024", "quantity": 1, "unitPrice": 50000.00, "amount": 50000.00 }
+    ],
+    "paymentIds": ["PAY-002"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-004",
+    "invoiceNumber": "INV-2024-10004",
+    "type": "Invoice",
+    "customerId": "C-MSFT",
+    "customerName": "Microsoft Corporation",
+    "issueDate": "2024-10-15",
+    "dueDate": "2024-11-14",
+    "amount": 45000.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Professional Services - Azure Integration", "quantity": 150, "unitPrice": 300.00, "amount": 45000.00 }
+    ],
+    "paymentIds": ["PAY-002"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-005",
+    "invoiceNumber": "INV-2024-10005",
+    "type": "Invoice",
+    "customerId": "C-MSFT",
+    "customerName": "Microsoft Corporation",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-11-30",
+    "amount": 33750.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "API Integration Services", "quantity": 1, "unitPrice": 33750.00, "amount": 33750.00 }
+    ],
+    "paymentIds": ["PAY-002"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-006",
+    "invoiceNumber": "INV-2024-10006",
+    "type": "Invoice",
+    "customerId": "C-ACME",
+    "customerName": "Acme Corporation",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-12-01",
+    "amount": 8920.75,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "SaaS Subscription - November", "quantity": 1, "unitPrice": 7500.00, "amount": 7500.00 },
+      { "description": "Additional Users (15)", "quantity": 15, "unitPrice": 94.72, "amount": 1420.75 }
+    ],
+    "paymentIds": ["PAY-003"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-007",
+    "invoiceNumber": "INV-2024-10007",
+    "type": "Invoice",
+    "customerId": "C-SFDC",
+    "customerName": "Salesforce Inc",
+    "issueDate": "2024-10-01",
+    "dueDate": "2024-10-31",
+    "amount": 75000.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Platform Integration - Phase 1", "quantity": 1, "unitPrice": 75000.00, "amount": 75000.00 }
+    ],
+    "paymentIds": ["PAY-004"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-008",
+    "invoiceNumber": "INV-2024-10008",
+    "type": "Invoice",
+    "customerId": "C-SFDC",
+    "customerName": "Salesforce Inc",
+    "issueDate": "2024-10-15",
+    "dueDate": "2024-11-14",
+    "amount": 62500.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Platform Integration - Phase 2", "quantity": 1, "unitPrice": 62500.00, "amount": 62500.00 }
+    ],
+    "paymentIds": ["PAY-004"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-009",
+    "invoiceNumber": "INV-2024-10009",
+    "type": "Invoice",
+    "customerId": "C-SFDC",
+    "customerName": "Salesforce Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-11-30",
+    "amount": 62500.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Platform Integration - Phase 3", "quantity": 1, "unitPrice": 62500.00, "amount": 62500.00 }
+    ],
+    "paymentIds": ["PAY-004"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-010",
+    "invoiceNumber": "INV-2024-10010",
+    "type": "Invoice",
+    "customerId": "C-SFDC",
+    "customerName": "Salesforce Inc",
+    "issueDate": "2024-11-15",
+    "dueDate": "2024-12-15",
+    "amount": 50000.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Training & Onboarding", "quantity": 1, "unitPrice": 50000.00, "amount": 50000.00 }
+    ],
+    "paymentIds": ["PAY-004"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-011",
+    "invoiceNumber": "INV-2024-10011",
+    "type": "Invoice",
+    "customerId": "C-ORCL",
+    "customerName": "Oracle Corporation",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-12-01",
+    "amount": 10240.25,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Database Optimization Services", "quantity": 1, "unitPrice": 10240.25, "amount": 10240.25 }
+    ],
+    "paymentIds": ["PAY-005"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-012",
+    "invoiceNumber": "INV-2024-10012",
+    "type": "Invoice",
+    "customerId": "C-ORCL",
+    "customerName": "Oracle Corporation",
+    "issueDate": "2024-11-15",
+    "dueDate": "2024-12-15",
+    "amount": 5100.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Monthly Support Plan", "quantity": 1, "unitPrice": 5100.00, "amount": 5100.00 }
+    ],
+    "paymentIds": ["PAY-005"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-013",
+    "invoiceNumber": "INV-2024-10013",
+    "type": "CreditMemo",
+    "customerId": "C-IBM",
+    "customerName": "IBM Corporation",
+    "issueDate": "2024-11-10",
+    "dueDate": null,
+    "amount": -2500.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Applied",
+    "lineItems": [
+      { "description": "Credit - Service Level Agreement Penalty", "quantity": 1, "unitPrice": -2500.00, "amount": -2500.00 }
+    ],
+    "paymentIds": ["PAY-006"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-014",
+    "invoiceNumber": "INV-2024-10014",
+    "type": "Invoice",
+    "customerId": "C-IBM",
+    "customerName": "IBM Corporation",
+    "issueDate": "2024-10-01",
+    "dueDate": "2024-10-31",
+    "amount": 70000.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Managed Services - October", "quantity": 1, "unitPrice": 70000.00, "amount": 70000.00 }
+    ],
+    "paymentIds": ["PAY-006"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-015",
+    "invoiceNumber": "INV-2024-10015",
+    "type": "Invoice",
+    "customerId": "C-STRP",
+    "customerName": "Stripe Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-12-01",
+    "amount": 3200.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Payment Processing Module", "quantity": 1, "unitPrice": 3200.00, "amount": 3200.00 }
+    ],
+    "paymentIds": ["PAY-007"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-016",
+    "invoiceNumber": "INV-2024-10016",
+    "type": "Invoice",
+    "customerId": "C-GOOG",
+    "customerName": "Google LLC",
+    "issueDate": "2024-10-15",
+    "dueDate": "2024-11-14",
+    "amount": 92100.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Cloud Migration Services", "quantity": 1, "unitPrice": 72100.00, "amount": 72100.00 },
+      { "description": "Security Audit", "quantity": 1, "unitPrice": 20000.00, "amount": 20000.00 }
+    ],
+    "paymentIds": ["PAY-008"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-017",
+    "invoiceNumber": "INV-2024-10017",
+    "type": "Invoice",
+    "customerId": "C-SNOW",
+    "customerName": "ServiceNow Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-12-01",
+    "amount": 21450.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "ITSM Integration Module", "quantity": 1, "unitPrice": 21450.00, "amount": 21450.00 }
+    ],
+    "paymentIds": ["PAY-009"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-018",
+    "invoiceNumber": "INV-2024-10018",
+    "type": "Invoice",
+    "customerId": "C-ADBE",
+    "customerName": "Adobe Inc",
+    "issueDate": "2024-10-01",
+    "dueDate": "2024-10-31",
+    "amount": 54000.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Creative Suite Enterprise License", "quantity": 200, "unitPrice": 270.00, "amount": 54000.00 }
+    ],
+    "paymentIds": ["PAY-010"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-019",
+    "invoiceNumber": "INV-2024-10019",
+    "type": "CreditMemo",
+    "customerId": "C-META",
+    "customerName": "Meta Platforms Inc",
+    "issueDate": "2024-11-20",
+    "dueDate": null,
+    "amount": -4400.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Applied",
+    "lineItems": [
+      { "description": "Credit - Volume Discount Adjustment", "quantity": 1, "unitPrice": -4400.00, "amount": -4400.00 }
+    ],
+    "paymentIds": ["PAY-011"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-020",
+    "invoiceNumber": "INV-2024-10020",
+    "type": "Invoice",
+    "customerId": "C-ZM",
+    "customerName": "Zoom Video Communications",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-12-01",
+    "amount": 13250.00,
+    "amountDue": 500.00,
+    "currency": "USD",
+    "status": "PartiallyPaid",
+    "lineItems": [
+      { "description": "Video Conferencing Integration", "quantity": 1, "unitPrice": 13250.00, "amount": 13250.00 }
+    ],
+    "paymentIds": ["PAY-013"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-021",
+    "invoiceNumber": "INV-2024-10021",
+    "type": "Invoice",
+    "customerId": "C-CSCO",
+    "customerName": "Cisco Systems Inc",
+    "issueDate": "2024-10-15",
+    "dueDate": "2024-11-14",
+    "amount": 87300.00,
+    "amountDue": 87300.00,
+    "currency": "USD",
+    "status": "Open",
+    "lineItems": [
+      { "description": "Network Security Assessment", "quantity": 1, "unitPrice": 55000.00, "amount": 55000.00 },
+      { "description": "Firewall Configuration", "quantity": 1, "unitPrice": 32300.00, "amount": 32300.00 }
+    ],
+    "paymentIds": [],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-022",
+    "invoiceNumber": "INV-2024-10022",
+    "type": "CreditMemo",
+    "customerId": "C-CSCO",
+    "customerName": "Cisco Systems Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": null,
+    "amount": -5200.00,
+    "amountDue": -5200.00,
+    "currency": "USD",
+    "status": "Open",
+    "lineItems": [
+      { "description": "Credit - Return of Equipment", "quantity": 1, "unitPrice": -5200.00, "amount": -5200.00 }
+    ],
+    "paymentIds": [],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-023",
+    "invoiceNumber": "INV-2024-10023",
+    "type": "Invoice",
+    "customerId": "C-TWLO",
+    "customerName": "Twilio Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-12-01",
+    "amount": 2800.00,
+    "amountDue": 500.00,
+    "currency": "USD",
+    "status": "PartiallyPaid",
+    "lineItems": [
+      { "description": "Communication APIs - Monthly", "quantity": 1, "unitPrice": 2800.00, "amount": 2800.00 }
+    ],
+    "paymentIds": ["PAY-017"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-024",
+    "invoiceNumber": "INV-2024-10024",
+    "type": "Invoice",
+    "customerId": "C-HUBS",
+    "customerName": "HubSpot Inc",
+    "issueDate": "2024-10-15",
+    "dueDate": "2024-11-14",
+    "amount": 18200.75,
+    "amountDue": 18200.75,
+    "currency": "USD",
+    "status": "Open",
+    "lineItems": [
+      { "description": "Marketing Automation Setup", "quantity": 1, "unitPrice": 18200.75, "amount": 18200.75 }
+    ],
+    "paymentIds": [],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-025",
+    "invoiceNumber": "INV-2024-10025",
+    "type": "Invoice",
+    "customerId": "C-HUBS",
+    "customerName": "HubSpot Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-11-30",
+    "amount": 15250.00,
+    "amountDue": 15250.00,
+    "currency": "USD",
+    "status": "Open",
+    "lineItems": [
+      { "description": "CRM Integration - Phase 2", "quantity": 1, "unitPrice": 15250.00, "amount": 15250.00 }
+    ],
+    "paymentIds": [],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-026",
+    "invoiceNumber": "INV-2024-10026",
+    "type": "CreditMemo",
+    "customerId": "C-PLTR",
+    "customerName": "Palantir Technologies Inc",
+    "issueDate": "2024-11-15",
+    "dueDate": null,
+    "amount": -1200.00,
+    "amountDue": -1200.00,
+    "currency": "USD",
+    "status": "Open",
+    "lineItems": [
+      { "description": "Credit - Billing Error Correction", "quantity": 1, "unitPrice": -1200.00, "amount": -1200.00 }
+    ],
+    "paymentIds": [],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-027",
+    "invoiceNumber": "INV-2024-10027",
+    "type": "Invoice",
+    "customerId": "C-PLTR",
+    "customerName": "Palantir Technologies Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-12-01",
+    "amount": 18600.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Overpaid",
+    "lineItems": [
+      { "description": "Data Analytics Platform License", "quantity": 1, "unitPrice": 18600.00, "amount": 18600.00 }
+    ],
+    "paymentIds": ["PAY-019"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-028",
+    "invoiceNumber": "INV-2024-10028",
+    "type": "Invoice",
+    "customerId": "C-SAP",
+    "customerName": "SAP America Inc",
+    "issueDate": "2024-10-01",
+    "dueDate": "2024-10-31",
+    "amount": 72000.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "ERP Integration - Phase 1", "quantity": 1, "unitPrice": 72000.00, "amount": 72000.00 }
+    ],
+    "paymentIds": ["PAY-021"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-029",
+    "invoiceNumber": "INV-2024-10029",
+    "type": "Invoice",
+    "customerId": "C-SAP",
+    "customerName": "SAP America Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-11-30",
+    "amount": 40000.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "ERP Integration - Phase 2", "quantity": 1, "unitPrice": 40000.00, "amount": 40000.00 }
+    ],
+    "paymentIds": ["PAY-021"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-030",
+    "invoiceNumber": "INV-2024-10030",
+    "type": "Invoice",
+    "customerId": "C-DDOG",
+    "customerName": "Datadog Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-12-01",
+    "amount": 28400.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Monitoring & Observability Suite", "quantity": 1, "unitPrice": 28400.00, "amount": 28400.00 }
+    ],
+    "paymentIds": ["PAY-022"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-031",
+    "invoiceNumber": "INV-2024-10031",
+    "type": "Invoice",
+    "customerId": "C-CRWD",
+    "customerName": "CrowdStrike Inc",
+    "issueDate": "2024-10-15",
+    "dueDate": "2024-11-14",
+    "amount": 61200.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Endpoint Security Platform", "quantity": 1, "unitPrice": 61200.00, "amount": 61200.00 }
+    ],
+    "paymentIds": ["PAY-023"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-032",
+    "invoiceNumber": "INV-2024-10032",
+    "type": "CreditMemo",
+    "customerId": "C-TEAM",
+    "customerName": "Atlassian Corporation",
+    "issueDate": "2024-12-01",
+    "dueDate": null,
+    "amount": -150.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Applied",
+    "lineItems": [
+      { "description": "Credit - Promo Discount", "quantity": 1, "unitPrice": -150.00, "amount": -150.00 }
+    ],
+    "paymentIds": ["PAY-024"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-033",
+    "invoiceNumber": "INV-2024-10033",
+    "type": "Invoice",
+    "customerId": "C-NFLX",
+    "customerName": "Netflix Inc",
+    "issueDate": "2024-10-01",
+    "dueDate": "2024-10-31",
+    "amount": 75000.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Content Delivery Platform - Q4", "quantity": 1, "unitPrice": 75000.00, "amount": 75000.00 }
+    ],
+    "paymentIds": ["PAY-025"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-034",
+    "invoiceNumber": "INV-2024-10034",
+    "type": "Invoice",
+    "customerId": "C-NFLX",
+    "customerName": "Netflix Inc",
+    "issueDate": "2024-10-15",
+    "dueDate": "2024-11-14",
+    "amount": 64500.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Streaming Analytics Module", "quantity": 1, "unitPrice": 64500.00, "amount": 64500.00 }
+    ],
+    "paymentIds": ["PAY-025"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-035",
+    "invoiceNumber": "INV-2024-10035",
+    "type": "Invoice",
+    "customerId": "C-NFLX",
+    "customerName": "Netflix Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-11-30",
+    "amount": 50000.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Recommendation Engine Integration", "quantity": 1, "unitPrice": 50000.00, "amount": 50000.00 }
+    ],
+    "paymentIds": ["PAY-025"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-036",
+    "invoiceNumber": "INV-2024-10036",
+    "type": "Invoice",
+    "customerId": "C-UBER",
+    "customerName": "Uber Technologies Inc",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-12-01",
+    "amount": 42300.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Ride Analytics Dashboard", "quantity": 1, "unitPrice": 42300.00, "amount": 42300.00 }
+    ],
+    "paymentIds": ["PAY-026"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-037",
+    "invoiceNumber": "INV-2024-10037",
+    "type": "Invoice",
+    "customerId": "C-PANW",
+    "customerName": "Palo Alto Networks Inc",
+    "issueDate": "2024-10-15",
+    "dueDate": "2024-11-14",
+    "amount": 73800.00,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Paid",
+    "lineItems": [
+      { "description": "Zero Trust Architecture Consulting", "quantity": 1, "unitPrice": 73800.00, "amount": 73800.00 }
+    ],
+    "paymentIds": ["PAY-027"],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-038",
+    "invoiceNumber": "INV-2024-10038",
+    "type": "Invoice",
+    "customerId": "C-SQ",
+    "customerName": "Block Inc",
+    "issueDate": "2024-11-15",
+    "dueDate": "2024-12-15",
+    "amount": 8250.00,
+    "amountDue": 8250.00,
+    "currency": "USD",
+    "status": "Open",
+    "lineItems": [
+      { "description": "Payment Processing SDK", "quantity": 1, "unitPrice": 8250.00, "amount": 8250.00 }
+    ],
+    "paymentIds": [],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-039",
+    "invoiceNumber": "INV-2024-10039",
+    "type": "Invoice",
+    "customerId": "C-VMW",
+    "customerName": "VMware by Broadcom",
+    "issueDate": "2024-11-01",
+    "dueDate": "2024-12-01",
+    "amount": 156200.00,
+    "amountDue": 156200.00,
+    "currency": "USD",
+    "status": "Open",
+    "lineItems": [
+      { "description": "Virtualization Platform License", "quantity": 1, "unitPrice": 120000.00, "amount": 120000.00 },
+      { "description": "Implementation Services", "quantity": 1, "unitPrice": 36200.00, "amount": 36200.00 }
+    ],
+    "paymentIds": [],
+    "subsidiary": "Meeru Inc"
+  },
+  {
+    "id": "INV-040",
+    "invoiceNumber": "INV-2024-10040",
+    "type": "CreditMemo",
+    "customerId": "C-WDAY",
+    "customerName": "Workday Inc",
+    "issueDate": "2024-12-01",
+    "dueDate": null,
+    "amount": -3100.50,
+    "amountDue": 0,
+    "currency": "USD",
+    "status": "Applied",
+    "lineItems": [
+      { "description": "Credit - Contract Amendment Adjustment", "quantity": 1, "unitPrice": -3100.50, "amount": -3100.50 }
+    ],
+    "paymentIds": ["PAY-012"],
+    "subsidiary": "Meeru Inc"
+  }
+]

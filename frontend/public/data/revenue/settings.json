@@ -1,0 +1,112 @@
+{
+  "general": {
+    "moduleName": "Enterprise Revenue Assurance",
+    "version": "2.4.1",
+    "currency": "USD",
+    "timezone": "America/New_York",
+    "fiscalYearStart": "January",
+    "dataRetentionDays": 730,
+    "lastConfigUpdate": "2024-12-01T00:00:00Z"
+  },
+  "tolerances": {
+    "priceVarianceThresholdPct": 5,
+    "usageMeteringThresholdPct": 3,
+    "fxRateVarianceThresholdPct": 2,
+    "bundleDiscountTolerancePct": 2,
+    "taxCalculationToleranceUsd": 1,
+    "billingCycleGraceDays": 5,
+    "unbilledRevenueAgingDays": 30,
+    "commissionRateTolerancePct": 1
+  },
+  "thresholds": {
+    "criticalRiskScoreMin": 85,
+    "highRiskScoreMin": 65,
+    "mediumRiskScoreMin": 40,
+    "lowRiskScoreMax": 39,
+    "autoEscalationAmountUsd": 50000,
+    "managerApprovalDiscountPct": 15,
+    "vpApprovalDiscountPct": 25,
+    "maxDiscountWithoutApprovalUsd": 10000,
+    "slaCreditCapMonths": 1,
+    "duplicateInvoiceWindowHours": 24
+  },
+  "notifications": {
+    "emailEnabled": true,
+    "slackEnabled": true,
+    "slackChannel": "#revenue-assurance-alerts",
+    "emailRecipients": [
+      { "name": "Sarah Chen", "email": "sarah.chen@company.com", "role": "Revenue Operations Lead", "alertLevel": "All" },
+      { "name": "James Rodriguez", "email": "james.rodriguez@company.com", "role": "Senior Revenue Analyst", "alertLevel": "All" },
+      { "name": "Emily Watson", "email": "emily.watson@company.com", "role": "Billing Operations Manager", "alertLevel": "High" },
+      { "name": "Michael Torres", "email": "michael.torres@company.com", "role": "Revenue Analyst", "alertLevel": "High" },
+      { "name": "David Park", "email": "david.park@company.com", "role": "VP Revenue Operations", "alertLevel": "Critical" }
+    ],
+    "digestFrequency": "Daily",
+    "digestTime": "08:00",
+    "realTimeAlerts": {
+      "criticalCases": true,
+      "highValueLeakage": true,
+      "highValueThresholdUsd": 25000,
+      "duplicateInvoices": true,
+      "unapprovedDiscounts": true,
+      "missedBillingCycles": true
+    },
+    "weeklyReportEnabled": true,
+    "weeklyReportDay": "Monday",
+    "weeklyReportTime": "09:00"
+  },
+  "automation": {
+    "autoDetectionEnabled": true,
+    "detectionSchedule": "Every 6 hours",
+    "autoAssignmentEnabled": true,
+    "assignmentRules": [
+      { "category": "Pricing", "defaultAssignee": "Sarah Chen", "defaultTeam": "Revenue Operations" },
+      { "category": "Billing", "defaultAssignee": "Emily Watson", "defaultTeam": "Billing Operations" },
+      { "category": "Contract", "defaultAssignee": "Michael Torres", "defaultTeam": "Contract Management" },
+      { "category": "Discount", "defaultAssignee": "Sarah Chen", "defaultTeam": "Revenue Operations" },
+      { "category": "Subscription", "defaultAssignee": "Emily Watson", "defaultTeam": "Billing Operations" },
+      { "category": "Commission", "defaultAssignee": "Sarah Chen", "defaultTeam": "Sales Compensation" },
+      { "category": "Recognition", "defaultAssignee": "James Rodriguez", "defaultTeam": "Revenue Accounting" }
+    ],
+    "autoEscalation": {
+      "enabled": true,
+      "escalateAfterDays": 14,
+      "escalateTo": "David Park",
+      "escalateIfAmountAboveUsd": 50000
+    },
+    "falsePositiveThreshold": 3,
+    "autoCloseRecoveredAfterDays": 30
+  },
+  "integrations": {
+    "crm": { "provider": "Salesforce", "syncFrequency": "Real-time", "lastSync": "2024-12-12T23:45:00Z", "status": "Connected" },
+    "billing": { "provider": "Zuora", "syncFrequency": "Every 4 hours", "lastSync": "2024-12-12T20:00:00Z", "status": "Connected" },
+    "erp": { "provider": "NetSuite", "syncFrequency": "Daily", "lastSync": "2024-12-12T06:00:00Z", "status": "Connected" },
+    "cpq": { "provider": "Salesforce CPQ", "syncFrequency": "Real-time", "lastSync": "2024-12-12T23:30:00Z", "status": "Connected" },
+    "usageMetering": { "provider": "Custom Pipeline", "syncFrequency": "Hourly", "lastSync": "2024-12-12T23:00:00Z", "status": "Connected" },
+    "commissions": { "provider": "Xactly", "syncFrequency": "Daily", "lastSync": "2024-12-12T07:00:00Z", "status": "Connected" }
+  },
+  "display": {
+    "defaultDashboardView": "Overview",
+    "casesPerPage": 25,
+    "defaultSortField": "riskScore",
+    "defaultSortOrder": "Descending",
+    "showAiExplanations": true,
+    "showRiskScoreBadges": true,
+    "enableDarkMode": false,
+    "dateFormat": "MM/DD/YYYY",
+    "numberFormat": "en-US",
+    "currencySymbol": "$"
+  },
+  "compliance": {
+    "asc606Enabled": true,
+    "soxAuditTrailEnabled": true,
+    "dataEncryptionAtRest": true,
+    "dataEncryptionInTransit": true,
+    "roleBasedAccessControl": true,
+    "sessionTimeoutMinutes": 30,
+    "mfaRequired": true,
+    "auditLogRetentionDays": 2555,
+    "gdprCompliant": true,
+    "soc2Certified": true
+  }
+}

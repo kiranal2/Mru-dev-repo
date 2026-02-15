@@ -1,0 +1,74 @@
+[
+  {
+    "id": "PAT-001",
+    "type": "spike",
+    "metric": "Revenue Gap",
+    "office": "SR01",
+    "period": "Dec 2024",
+    "magnitude": "+52%",
+    "explanation": "Vijayawada Central saw a 52% increase in revenue gap cases, driven by new Sale Deed registrations."
+  },
+  {
+    "id": "PAT-002",
+    "type": "trend",
+    "metric": "Market Value Deviation",
+    "office": "SR10",
+    "period": "Oct-Dec 2024",
+    "magnitude": "+38%",
+    "explanation": "Anantapur Main experienced a sustained 38% rise in market value deviation over Q4, linked to agricultural land undervaluation."
+  },
+  {
+    "id": "PAT-003",
+    "type": "anomaly",
+    "metric": "Exemption Claims",
+    "office": "SR05",
+    "period": "Nov 2024",
+    "magnitude": "3x baseline",
+    "explanation": "Visakhapatnam Port recorded three times the normal exemption claim volume, with multiple invalid SC/ST and family transfer claims."
+  },
+  {
+    "id": "PAT-004",
+    "type": "cluster",
+    "metric": "Prohibited Land Registrations",
+    "office": "SR06",
+    "period": "Dec 2024",
+    "magnitude": "4 cases",
+    "explanation": "Rajahmundry Central had a cluster of 4 prohibited land registrations in the Godavari mangrove protection zone within a single month."
+  },
+  {
+    "id": "PAT-005",
+    "type": "decline",
+    "metric": "Challan Reconciliation Time",
+    "office": "SR02",
+    "period": "Sep-Dec 2024",
+    "magnitude": "-25%",
+    "explanation": "Guntur Main improved challan reconciliation turnaround by 25% over the quarter following process automation deployment."
+  },
+  {
+    "id": "PAT-006",
+    "type": "spike",
+    "metric": "Holiday Fee Non-Collection",
+    "office": "SR09",
+    "period": "Jan 2024",
+    "magnitude": "+80%",
+    "explanation": "Nellore City missed holiday surcharges on 80% more registrations during the Sankranti festival week compared to prior year."
+  },
+  {
+    "id": "PAT-007",
+    "type": "seasonal",
+    "metric": "High-Risk Cases",
+    "office": "SR03",
+    "period": "Q4 2024",
+    "magnitude": "+65%",
+    "explanation": "Tirupati Urban showed a seasonal 65% uptick in high-risk cases during Q4, coinciding with temple town real estate demand surge."
+  },
+  {
+    "id": "PAT-008",
+    "type": "outlier",
+    "metric": "Stamp Duty Short Collection",
+    "office": "SR08",
+    "period": "Nov 2024",
+    "magnitude": "2.1x avg",
+    "explanation": "Ongole Main had stamp duty short-collection amounts 2.1 times the state average, primarily due to incorrect rate slab application on lease deeds."
+  }
+]

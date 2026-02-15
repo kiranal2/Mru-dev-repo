@@ -13,6 +13,8 @@ import { Download, TrendingUp, TrendingDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import Breadcrumb from '@/components/layout/breadcrumb';
+import { useFluxAnalysis } from '@/hooks/data';
+import type { FluxVariance } from '@/lib/data/types';
 
 const ENTITIES = ['All Entities', 'US-Parent', 'EMEA-GmbH', 'APAC-Pte'];
 const CUSTOMERS = [
@@ -71,7 +73,29 @@ const generateSyntheticData = (): Transaction[] => {
   return facts;
 };
 
+// Transform FluxVariance[] into GroupedData[] for the variance display
+function transformFluxToGrouped(variances: FluxVariance[]): GroupedData[] {
+  return variances.map((v) => ({
+    key: v.accountName,
+    current: v.currentPeriod,
+    prior: v.priorPeriod,
+    varDollar: v.varianceAmount,
+    varPct: v.variancePct / 100,
+  }));
+}
+
 export default function OneClickVariancePage() {
+  // Fetch data from the new data layer
+  const { data: fluxVariances, loading: dataLoading, error: dataError } = useFluxAnalysis();
+
+  // Transform flux data into grouped format for direct use
+  const fluxGrouped = useMemo(() => {
+    if (fluxVariances.length > 0) {
+      return transformFluxToGrouped(fluxVariances);
+    }
+    return null;
+  }, [fluxVariances]);
+
   const [facts] = useState<Transaction[]>(() => generateSyntheticData());
 
   const today = new Date();
@@ -228,17 +252,23 @@ export default function OneClickVariancePage() {
     return `${(n * 100).toFixed(1)}%`;
   };
 
-  const topMovers = analysis?.groups
+  // Use analysis groups if available, otherwise fall back to flux data layer
+  const effectiveGroups = analysis?.groups || fluxGrouped || [];
+
+  const topMovers = effectiveGroups
     .filter(g => g.varDollar > 0)
     .sort((a, b) => b.varDollar - a.varDollar)
-    .slice(0, 10) || [];
+    .slice(0, 10);
 
-  const bottomMovers = analysis?.groups
+  const bottomMovers = effectiveGroups
     .filter(g => g.varDollar < 0)
     .sort((a, b) => a.varDollar - b.varDollar)
-    .slice(0, 10) || [];
+    .slice(0, 10);
 
-  const totals = analysis?.totals || { current: 0, prior: 0 };
+  const totals = analysis?.totals || (fluxGrouped ? {
+    current: fluxGrouped.reduce((sum, g) => sum + g.current, 0),
+    prior: fluxGrouped.reduce((sum, g) => sum + g.prior, 0),
+  } : { current: 0, prior: 0 });
   const totalVarDollar = totals.current - totals.prior;
   const totalVarPct = totals.prior === 0 ? 0 : totalVarDollar / totals.prior;
 
@@ -251,6 +281,17 @@ export default function OneClickVariancePage() {
         <p className="text-sm text-[#606060]">Pull cross-system data by entity, customer, and period. Choose MoM, QoQ, or YoY and get instant variance results with top and bottom movers. Download details to CSV.</p>
         <div className="border-b border-[#B7B7B7] mt-4"></div>
       </header>
+
+      {dataLoading && (
+        <div className="flex items-center justify-center py-4 px-6">
+          <div className="text-sm text-slate-500">Loading variance data from data layer...</div>
+        </div>
+      )}
+      {dataError && (
+        <div className="flex items-center justify-center py-4 px-6">
+          <div className="text-sm text-red-500">Error loading data: {dataError}</div>
+        </div>
+      )}
 
       <div className="flex-1 flex overflow-hidden">
         <aside className="w-[320px] flex-shrink-0 overflow-y-auto scrollbar-hide py-6 pl-6">

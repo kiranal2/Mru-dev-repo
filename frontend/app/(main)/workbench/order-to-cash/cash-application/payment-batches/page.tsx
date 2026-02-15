@@ -5,10 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cashAppStore } from "@/lib/cash-app-store";
+import { useCashPayments } from "@/hooks/data/use-cash-payments";
 import { Layers, Calendar, DollarSign, FileText } from "lucide-react";
 
 export default function PaymentBatchesPage() {
   const router = useRouter();
+  // Bridge: data hook for fetch lifecycle, store for rich batch objects
+  const { loading: dataLoading, error: dataError } = useCashPayments();
   const batches = cashAppStore.getPaymentBatches();
 
   const formatCurrency = (amount: number) => {

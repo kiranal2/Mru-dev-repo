@@ -1,0 +1,347 @@
+[
+  {
+    "id": "JE-001",
+    "entryNumber": "JE-2024-12-001",
+    "date": "2024-12-01",
+    "description": "Record revenue from Amazon Web Services - Cloud Infrastructure Consulting",
+    "type": "Standard",
+    "status": "Posted",
+    "createdBy": "USR-003",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "1100", "accountName": "Accounts Receivable", "debit": 45230.50, "credit": 0, "department": "Revenue Operations" },
+      { "accountNumber": "4000", "accountName": "Product Revenue", "debit": 0, "credit": 45230.50, "department": "Product" }
+    ],
+    "createdAt": "2024-12-01T08:30:00Z",
+    "postedAt": "2024-12-01T09:00:00Z"
+  },
+  {
+    "id": "JE-002",
+    "entryNumber": "JE-2024-12-002",
+    "date": "2024-12-01",
+    "description": "Cash receipt - Amazon Web Services payment PAY-001",
+    "type": "Standard",
+    "status": "Posted",
+    "createdBy": "USR-003",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "1000", "accountName": "Cash", "debit": 45230.50, "credit": 0, "department": "Corporate" },
+      { "accountNumber": "1100", "accountName": "Accounts Receivable", "debit": 0, "credit": 45230.50, "department": "Revenue Operations" }
+    ],
+    "createdAt": "2024-12-01T10:00:00Z",
+    "postedAt": "2024-12-01T10:30:00Z"
+  },
+  {
+    "id": "JE-003",
+    "entryNumber": "JE-2024-12-003",
+    "date": "2024-12-01",
+    "description": "Cash receipt - Microsoft Corporation wire transfer PAY-002",
+    "type": "Standard",
+    "status": "Posted",
+    "createdBy": "USR-004",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "1000", "accountName": "Cash", "debit": 128750.00, "credit": 0, "department": "Corporate" },
+      { "accountNumber": "1100", "accountName": "Accounts Receivable", "debit": 0, "credit": 128750.00, "department": "Revenue Operations" }
+    ],
+    "createdAt": "2024-12-01T11:00:00Z",
+    "postedAt": "2024-12-01T11:30:00Z"
+  },
+  {
+    "id": "JE-004",
+    "entryNumber": "JE-2024-12-004",
+    "date": "2024-12-02",
+    "description": "Cash receipt - Salesforce wire transfer PAY-004",
+    "type": "Standard",
+    "status": "Posted",
+    "createdBy": "USR-004",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "1000", "accountName": "Cash", "debit": 250000.00, "credit": 0, "department": "Corporate" },
+      { "accountNumber": "1100", "accountName": "Accounts Receivable", "debit": 0, "credit": 250000.00, "department": "Revenue Operations" }
+    ],
+    "createdAt": "2024-12-02T12:00:00Z",
+    "postedAt": "2024-12-02T12:30:00Z"
+  },
+  {
+    "id": "JE-005",
+    "entryNumber": "JE-2024-12-005",
+    "date": "2024-12-03",
+    "description": "IBM credit memo - SLA penalty credit applied",
+    "type": "Standard",
+    "status": "Posted",
+    "createdBy": "USR-003",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "4000", "accountName": "Product Revenue", "debit": 2500.00, "credit": 0, "department": "Product" },
+      { "accountNumber": "1100", "accountName": "Accounts Receivable", "debit": 0, "credit": 2500.00, "department": "Revenue Operations" }
+    ],
+    "createdAt": "2024-12-03T09:00:00Z",
+    "postedAt": "2024-12-03T09:30:00Z"
+  },
+  {
+    "id": "JE-006",
+    "entryNumber": "JE-2024-12-006",
+    "date": "2024-12-05",
+    "description": "Accrued salaries and benefits - December first half",
+    "type": "Recurring",
+    "status": "Posted",
+    "createdBy": "USR-005",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "6200", "accountName": "General & Administrative", "debit": 4200000, "credit": 0, "department": "Corporate" },
+      { "accountNumber": "6000", "accountName": "Research & Development", "debit": 7500000, "credit": 0, "department": "Engineering" },
+      { "accountNumber": "6100", "accountName": "Sales & Marketing", "debit": 3800000, "credit": 0, "department": "Sales" },
+      { "accountNumber": "2100", "accountName": "Accrued Salaries & Benefits", "debit": 0, "credit": 15500000, "department": "Human Resources" }
+    ],
+    "createdAt": "2024-12-05T06:00:00Z",
+    "postedAt": "2024-12-05T07:00:00Z"
+  },
+  {
+    "id": "JE-007",
+    "entryNumber": "JE-2024-12-007",
+    "date": "2024-12-05",
+    "description": "Depreciation expense - December",
+    "type": "Recurring",
+    "status": "Posted",
+    "createdBy": "USR-005",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "6300", "accountName": "Depreciation & Amortization", "debit": 2083333, "credit": 0, "department": "Corporate" },
+      { "accountNumber": "1510", "accountName": "Accumulated Depreciation - PP&E", "debit": 0, "credit": 2083333, "department": "Facilities" }
+    ],
+    "createdAt": "2024-12-05T06:15:00Z",
+    "postedAt": "2024-12-05T07:15:00Z"
+  },
+  {
+    "id": "JE-008",
+    "entryNumber": "JE-2024-12-008",
+    "date": "2024-12-08",
+    "description": "Zoom early payment discount - write-off approved",
+    "type": "Standard",
+    "status": "Posted",
+    "createdBy": "USR-003",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "6100", "accountName": "Sales & Marketing", "debit": 500.00, "credit": 0, "department": "Sales" },
+      { "accountNumber": "1100", "accountName": "Accounts Receivable", "debit": 0, "credit": 500.00, "department": "Revenue Operations" }
+    ],
+    "createdAt": "2024-12-08T10:00:00Z",
+    "postedAt": "2024-12-08T10:30:00Z"
+  },
+  {
+    "id": "JE-009",
+    "entryNumber": "JE-2024-12-009",
+    "date": "2024-12-10",
+    "description": "Deferred revenue recognition - Netflix Q4 service delivery",
+    "type": "Standard",
+    "status": "Posted",
+    "createdBy": "USR-004",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "2200", "accountName": "Deferred Revenue - Current", "debit": 15000000, "credit": 0, "department": "Revenue Operations" },
+      { "accountNumber": "4100", "accountName": "Services Revenue", "debit": 0, "credit": 15000000, "department": "Professional Services" }
+    ],
+    "createdAt": "2024-12-10T08:00:00Z",
+    "postedAt": "2024-12-10T09:00:00Z"
+  },
+  {
+    "id": "JE-010",
+    "entryNumber": "JE-2024-12-010",
+    "date": "2024-12-10",
+    "description": "Bad debt expense adjustment - quarterly review",
+    "type": "Adjusting",
+    "status": "Posted",
+    "createdBy": "USR-005",
+    "approvedBy": "USR-001",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "6200", "accountName": "General & Administrative", "debit": 1500000, "credit": 0, "department": "Corporate" },
+      { "accountNumber": "1110", "accountName": "Allowance for Doubtful Accounts", "debit": 0, "credit": 1500000, "department": "Revenue Operations" }
+    ],
+    "createdAt": "2024-12-10T14:00:00Z",
+    "postedAt": "2024-12-10T15:00:00Z"
+  },
+  {
+    "id": "JE-011",
+    "entryNumber": "JE-2024-12-011",
+    "date": "2024-12-11",
+    "description": "Intercompany transfer - Meeru Inc to Meeru Europe",
+    "type": "Intercompany",
+    "status": "Posted",
+    "createdBy": "USR-004",
+    "approvedBy": "USR-001",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "1900", "accountName": "Intercompany Receivable", "debit": 5000000, "credit": 0, "department": "Corporate" },
+      { "accountNumber": "1000", "accountName": "Cash", "debit": 0, "credit": 5000000, "department": "Corporate" }
+    ],
+    "createdAt": "2024-12-11T10:00:00Z",
+    "postedAt": "2024-12-11T11:00:00Z"
+  },
+  {
+    "id": "JE-012",
+    "entryNumber": "JE-2024-12-012",
+    "date": "2024-12-12",
+    "description": "Foreign exchange revaluation - EUR denominated assets",
+    "type": "Adjusting",
+    "status": "Posted",
+    "createdBy": "USR-005",
+    "approvedBy": "USR-001",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "7100", "accountName": "FX Gain/Loss", "debit": 350000, "credit": 0, "department": "Treasury" },
+      { "accountNumber": "1800", "accountName": "Long-Term Investments", "debit": 0, "credit": 350000, "department": "Treasury" }
+    ],
+    "createdAt": "2024-12-12T16:00:00Z",
+    "postedAt": "2024-12-12T17:00:00Z"
+  },
+  {
+    "id": "JE-013",
+    "entryNumber": "JE-2024-12-013",
+    "date": "2024-12-13",
+    "description": "Prepaid insurance amortization - December",
+    "type": "Recurring",
+    "status": "Posted",
+    "createdBy": "USR-005",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "6200", "accountName": "General & Administrative", "debit": 250000, "credit": 0, "department": "Corporate" },
+      { "accountNumber": "1300", "accountName": "Prepaid Expenses", "debit": 0, "credit": 250000, "department": "Corporate" }
+    ],
+    "createdAt": "2024-12-13T06:00:00Z",
+    "postedAt": "2024-12-13T07:00:00Z"
+  },
+  {
+    "id": "JE-014",
+    "entryNumber": "JE-2024-12-014",
+    "date": "2024-12-13",
+    "description": "Interest accrual on long-term debt - December",
+    "type": "Recurring",
+    "status": "Posted",
+    "createdBy": "USR-005",
+    "approvedBy": "USR-002",
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "7100", "accountName": "Interest Expense", "debit": 1250000, "credit": 0, "department": "Treasury" },
+      { "accountNumber": "2110", "accountName": "Accrued Expenses - Other", "debit": 0, "credit": 1250000, "department": "Corporate" }
+    ],
+    "createdAt": "2024-12-13T06:30:00Z",
+    "postedAt": "2024-12-13T07:30:00Z"
+  },
+  {
+    "id": "JE-015",
+    "entryNumber": "JE-2024-12-015",
+    "date": "2024-12-13",
+    "description": "Reclassify short-term portion of long-term debt",
+    "type": "Adjusting",
+    "status": "PendingApproval",
+    "createdBy": "USR-005",
+    "approvedBy": null,
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "2500", "accountName": "Long-Term Debt", "debit": 12500000, "credit": 0, "department": "Treasury" },
+      { "accountNumber": "2300", "accountName": "Current Portion of Long-Term Debt", "debit": 0, "credit": 12500000, "department": "Treasury" }
+    ],
+    "createdAt": "2024-12-13T14:00:00Z",
+    "postedAt": null
+  },
+  {
+    "id": "JE-016",
+    "entryNumber": "JE-2024-12-016",
+    "date": "2024-12-13",
+    "description": "Stock-based compensation expense - December",
+    "type": "Recurring",
+    "status": "PendingApproval",
+    "createdBy": "USR-005",
+    "approvedBy": null,
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "6000", "accountName": "Research & Development", "debit": 3500000, "credit": 0, "department": "Engineering" },
+      { "accountNumber": "6100", "accountName": "Sales & Marketing", "debit": 1800000, "credit": 0, "department": "Sales" },
+      { "accountNumber": "6200", "accountName": "General & Administrative", "debit": 1200000, "credit": 0, "department": "Corporate" },
+      { "accountNumber": "3100", "accountName": "Additional Paid-In Capital", "debit": 0, "credit": 6500000, "department": "Corporate" }
+    ],
+    "createdAt": "2024-12-13T15:00:00Z",
+    "postedAt": null
+  },
+  {
+    "id": "JE-017",
+    "entryNumber": "JE-2024-12-017",
+    "date": "2024-12-13",
+    "description": "Income tax provision - Q4 estimated",
+    "type": "Adjusting",
+    "status": "Draft",
+    "createdBy": "USR-005",
+    "approvedBy": null,
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "7100", "accountName": "Income Tax Expense", "debit": 7000000, "credit": 0, "department": "Tax" },
+      { "accountNumber": "2700", "accountName": "Deferred Tax Liabilities", "debit": 0, "credit": 2000000, "department": "Tax" },
+      { "accountNumber": "2400", "accountName": "Income Tax Payable", "debit": 0, "credit": 5000000, "department": "Tax" }
+    ],
+    "createdAt": "2024-12-13T16:00:00Z",
+    "postedAt": null
+  },
+  {
+    "id": "JE-018",
+    "entryNumber": "JE-2024-12-018",
+    "date": "2024-12-13",
+    "description": "Lease liability adjustment - new office lease",
+    "type": "Standard",
+    "status": "Draft",
+    "createdBy": "USR-004",
+    "approvedBy": null,
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "1500", "accountName": "Right-of-Use Asset", "debit": 8500000, "credit": 0, "department": "Facilities" },
+      { "accountNumber": "2800", "accountName": "Lease Liability", "debit": 0, "credit": 8500000, "department": "Corporate" }
+    ],
+    "createdAt": "2024-12-13T16:30:00Z",
+    "postedAt": null
+  },
+  {
+    "id": "JE-019",
+    "entryNumber": "JE-2024-12-019",
+    "date": "2024-12-13",
+    "description": "Inventory write-down - obsolete components",
+    "type": "Adjusting",
+    "status": "Draft",
+    "createdBy": "USR-003",
+    "approvedBy": null,
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "5000", "accountName": "Cost of Product Revenue", "debit": 750000, "credit": 0, "department": "Product" },
+      { "accountNumber": "1200", "accountName": "Inventory - Raw Materials", "debit": 0, "credit": 750000, "department": "Supply Chain" }
+    ],
+    "createdAt": "2024-12-13T17:00:00Z",
+    "postedAt": null
+  },
+  {
+    "id": "JE-020",
+    "entryNumber": "JE-2024-12-020",
+    "date": "2024-12-13",
+    "description": "Reversal - Misclassified expense from November",
+    "type": "Reversing",
+    "status": "PendingApproval",
+    "createdBy": "USR-003",
+    "approvedBy": null,
+    "subsidiary": "Meeru Inc",
+    "lines": [
+      { "accountNumber": "6100", "accountName": "Sales & Marketing", "debit": 0, "credit": 125000, "department": "Sales" },
+      { "accountNumber": "6000", "accountName": "Research & Development", "debit": 125000, "credit": 0, "department": "Engineering" }
+    ],
+    "createdAt": "2024-12-13T17:30:00Z",
+    "postedAt": null
+  }
+]

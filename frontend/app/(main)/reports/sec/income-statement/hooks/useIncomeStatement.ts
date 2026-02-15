@@ -3,6 +3,27 @@
 import { useState, useMemo, useEffect } from "react";
 import { FinancialRow, PeriodNode, SubsidiaryNode } from "../types";
 import { MOCK_DATA, WOLT_DATA, PERIOD_STRUCTURE, SUBSIDIARY_STRUCTURE } from "../constants";
+import { useIncomeStatement as useIncomeStatementData } from "@/hooks/data";
+import type { IncomeStatementLine } from "@/lib/data/types";
+
+// Transform IncomeStatementLine[] from the data layer into FinancialRow[] for the grid
+function transformIncomeStatementLines(lines: IncomeStatementLine[]): FinancialRow[] {
+  return lines.map((line) => {
+    const row: FinancialRow = {
+      financialRow: line.label,
+      level: line.level,
+      group: line.group,
+      expanded: line.isSummary,
+    };
+    // Map period-keyed values to dynamic fields
+    Object.entries(line.values).forEach(([period, value]) => {
+      if (value !== null) {
+        (row as any)[period] = value;
+      }
+    });
+    return row;
+  });
+}
 
 // Filter period nodes based on search
 const filterPeriodNodes = (nodes: PeriodNode[], search: string): PeriodNode[] => {
@@ -35,6 +56,9 @@ const filterSubsidiaryNodes = (nodes: SubsidiaryNode[], search: string): Subsidi
 };
 
 export function useIncomeStatement() {
+  // Fetch data from the new data layer
+  const { data: incomeStatementLines, loading: dataLoading, error: dataError } = useIncomeStatementData();
+
   const [view, setView] = useState<"consolidated" | "comparative" | "trended">("comparative");
   const [asOfPeriods, setAsOfPeriods] = useState<string[]>(["Q1 2024", "Q2 2024"]);
   const [subsidiaries, setSubsidiaries] = useState<string[]>([
@@ -171,12 +195,27 @@ export function useIncomeStatement() {
     setSubsidiaryPopoverOpen(false);
   };
 
+  // Transform data-layer lines into grid-compatible rows
+  const dataLayerRows = useMemo(() => {
+    if (incomeStatementLines.length > 0) {
+      return transformIncomeStatementLines(incomeStatementLines);
+    }
+    return null;
+  }, [incomeStatementLines]);
+
   // Filter the data based on selected filters (View, As Of, Subsidiary)
+  // Prefer data-layer data when available; fall back to inline constants
   const filteredData = useMemo(() => {
     if (subsidiaries.length === 0) {
       return [];
     }
 
+    // Use data-layer data when available
+    if (dataLayerRows && dataLayerRows.length > 0) {
+      return [...dataLayerRows];
+    }
+
+    // Fallback to inline mock data
     if (
       subsidiaries.includes("BetaFoods, Inc. (Consolidated)") &&
       !subsidiaries.includes("Averra Oy (Consolidated)")
@@ -190,7 +229,7 @@ export function useIncomeStatement() {
     } else {
       return [...MOCK_DATA];
     }
-  }, [subsidiaries, asOfPeriods]);
+  }, [subsidiaries, asOfPeriods, dataLayerRows]);
 
   // Sync pending states when applied filters change
   useEffect(() => {
@@ -212,6 +251,10 @@ export function useIncomeStatement() {
   }, [pendingView, pendingPeriods.length]);
 
   return {
+    // Data loading states
+    dataLoading,
+    dataError,
+
     // Applied states
     view,
     asOfPeriods,

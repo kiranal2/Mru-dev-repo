@@ -7,6 +7,10 @@ import { IncomeStatementGrid } from "./components/IncomeStatementGrid";
 
 export default function IncomeStatementPage() {
   const {
+    // Data loading states
+    dataLoading,
+    dataError,
+
     // Applied states
     asOfPeriods,
     subsidiaries,
@@ -89,6 +93,18 @@ export default function IncomeStatementPage() {
         setDisplayMode={setDisplayMode}
         handleApplyFilters={handleApplyFilters}
       />
+
+      {/* Loading / Error States */}
+      {dataLoading && (
+        <div className="flex items-center justify-center py-12 px-6">
+          <div className="text-sm text-slate-500">Loading income statement data...</div>
+        </div>
+      )}
+      {dataError && (
+        <div className="flex items-center justify-center py-4 px-6">
+          <div className="text-sm text-red-500">Error: {dataError}</div>
+        </div>
+      )}
 
       {/* AG Grid */}
       <IncomeStatementGrid

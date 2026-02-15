@@ -40,6 +40,7 @@ import {
   Paperclip,
 } from "lucide-react";
 import { cashAppStore } from "@/lib/cash-app-store";
+import { useCashPayments } from "@/hooks/data/use-cash-payments";
 import { EmailExtraction, RawEmailMessage } from "@/lib/cash-app-types";
 
 const ANALYSTS = ["Sarah Chen", "Michael Roberts", "Jessica Martinez", "David Kim", "Emily Taylor"];
@@ -47,6 +48,8 @@ const LABELS = ["Dispute", "Escalation", "Follow-up"];
 
 export default function EmailInboxPage() {
   const router = useRouter();
+  // Bridge: data hook for fetch lifecycle; store for rich email inbox data
+  const { loading: dataLoading, error: dataError } = useCashPayments();
   const [emails, setEmails] = useState<RawEmailMessage[]>(cashAppStore.getEmailInboxMessages());
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);

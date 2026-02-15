@@ -30,6 +30,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { cashAppStore } from "@/lib/cash-app-store";
+import { useCashRemittances } from "@/hooks/data/use-cash-remittances";
+import { useCashPayments } from "@/hooks/data/use-cash-payments";
 import type { Payment, Remittance, RemittanceValidationStatus } from "@/lib/cash-app-types";
 import {
   AlertCircle,
@@ -66,6 +68,9 @@ const linkLabelMap = {
 
 export default function RemittancesListPage() {
   const router = useRouter();
+  // Bridge: data hooks for fetch lifecycle, store for rich data objects
+  const { loading: remittancesLoading, error: remittancesError } = useCashRemittances();
+  const { loading: paymentsLoading, error: paymentsError } = useCashPayments();
   const [remittances, setRemittances] = useState<Remittance[]>(cashAppStore.getRemittances());
   const [search, setSearch] = useState("");
   const [sourceFilter, setSourceFilter] = useState("All");

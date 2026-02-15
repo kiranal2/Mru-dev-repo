@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { cashAppStore } from "@/lib/cash-app-store";
+import { useCashExceptions } from "@/hooks/data/use-cash-exceptions";
 import { Payment } from "@/lib/cash-app-types";
 import { Search, Check, X } from "lucide-react";
 import {
@@ -25,6 +26,8 @@ export default function ExceptionsPage() {
   const [reasonFilter, setReasonFilter] = useState<string>("all");
   const [resolutionFilter, setResolutionFilter] = useState<string>("OPEN");
 
+  // Bridge: data hook for fetch lifecycle, store for rich Payment objects
+  const { loading: dataLoading, error: dataError } = useCashExceptions();
   const payments = cashAppStore.getPayments().filter((p) => p.status === "Exception");
 
   const coreTypeOptions = [
@@ -244,6 +247,18 @@ export default function ExceptionsPage() {
       maximumFractionDigits: 0,
     }).format(amount);
   };
+
+  if (dataError) {
+    return (
+      <div className="h-full flex flex-col bg-gray-50">
+        <div className="px-6 pt-3 pb-6 flex-1 overflow-auto">
+          <div className="p-8 text-center">
+            <p className="text-sm text-red-600">Error loading exceptions: {dataError}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col bg-gray-50">

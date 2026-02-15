@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cashAppStore } from "@/lib/cash-app-store";
+import { useCashMatching } from "@/hooks/data/use-cash-matching";
+import { useCashPayments } from "@/hooks/data/use-cash-payments";
 import { Payment, EnhancedARItem, MatchingContext } from "@/lib/cash-app-types";
 import { CheckCircle2, Search, AlertCircle, X, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -51,6 +53,10 @@ export default function MatchingStudioPage() {
   const [sameEntity, setSameEntity] = useState(false);
   const [fromRemittance, setFromRemittance] = useState(false);
   const [likelyMatches, setLikelyMatches] = useState(false);
+
+  // Bridge: data hooks for fetch lifecycle, store for rich Payment objects
+  const { loading: paymentsLoading, error: paymentsError } = useCashPayments();
+  const { loading: matchingLoading, error: matchingError } = useCashMatching(paymentId || undefined);
 
   const [payments, setPayments] = useState<Payment[]>(() =>
     cashAppStore

@@ -23,6 +23,8 @@ import { FilterBar } from "./components/FilterBar";
 export default function BalanceSheetPage() {
   const {
     gridRef,
+    dataLoading,
+    dataError,
     view,
     asOfPeriods,
     subsidiaries,
@@ -126,6 +128,16 @@ export default function BalanceSheetPage() {
 
       {/* AG Grid */}
       <div className="flex-1 p-6 overflow-auto" style={{ minHeight: 0 }}>
+        {dataLoading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-sm text-slate-500">Loading balance sheet data...</div>
+          </div>
+        )}
+        {dataError && (
+          <div className="flex items-center justify-center py-4">
+            <div className="text-sm text-red-500">Error: {dataError}</div>
+          </div>
+        )}
         <div className="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
           <div
             className="ag-theme-alpine w-full overflow-x-auto"

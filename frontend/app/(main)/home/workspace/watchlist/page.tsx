@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   ChevronRight,
@@ -28,193 +28,65 @@ import {
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Breadcrumb from "@/components/layout/breadcrumb";
+import { useWatchlist } from "@/hooks/data";
+import type { WatchlistItem as DataWatchlistItem } from "@/lib/data/types";
+
+/** Transform a data-layer WatchlistItem into the WatchItem shape used by UI components */
+function transformToWatchItem(item: DataWatchlistItem): WatchItem {
+  const thresholdValue = item.threshold ?? 0;
+  const currentVal = typeof item.currentValue === 'number'
+    ? item.currentValue
+    : parseFloat(String(item.currentValue)) || 0;
+
+  let status: WatchItem['status'] = 'ok';
+  if (item.status === 'Alert') status = 'breached';
+  else if (item.status === 'Warning') status = 'breached';
+  else status = 'ok';
+
+  return {
+    id: item.id,
+    title: item.label,
+    watch_type: 'ar_open_amount',
+    entity_id: item.entityId,
+    entity_name: item.entityType || item.module,
+    params: { status: item.status },
+    operator: item.thresholdDirection === 'below' ? '<' : '>',
+    threshold_value: thresholdValue,
+    metric: {
+      agg: 'sum',
+      field: 'amount',
+      label: item.description || item.label,
+      where: {},
+    },
+    bucket: null,
+    currency: 'USD',
+    last_value: currentVal,
+    last_evaluated_at: item.lastChecked,
+    status,
+    notify_channels: ['in_app'],
+    recipients: null,
+    is_active: true,
+    created_at: item.createdAt,
+    updated_at: item.lastChecked,
+  };
+}
 
 function WatchlistPageContent() {
-  // Dummy data for watchlist
-  const dummyWatches: WatchItem[] = [
-    {
-      id: "00000000-0000-0000-0000-000000000004",
-      title: "MarketSpan: Open AR > $200.00K",
-      watch_type: "ar_open_amount",
-      entity_id: "MarketSpan",
-      entity_name: "MarketSpan",
-      params: {
-        as_of: "2024-12-31",
-        status: "Open",
-      },
-      operator: ">",
-      threshold_value: 200000,
-      metric: {
-        agg: "sum",
-        field: "amount",
-        label: "Open AR total",
-        where: {},
-      },
-      bucket: null,
-      currency: "USD",
-      last_value: 272780,
-      last_evaluated_at: "2025-10-23T17:22:20.912+00:00",
-      status: "breached",
-      notify_channels: ["in_app"],
-      recipients: null,
-      is_active: true,
-      created_at: "2025-10-21T14:38:31.632773+00:00",
-      updated_at: "2025-10-23T17:22:21.098788+00:00",
-    },
-    {
-      id: "00000000-0000-0000-0000-000000000002",
-      title: "Tesla Motors: Open AR > $1.00M",
-      watch_type: "ar_open_amount",
-      entity_id: "tesla",
-      entity_name: "Tesla Motors",
-      params: {
-        as_of: "2024-12-31",
-        status: "Open",
-      },
-      operator: ">",
-      threshold_value: 1000000,
-      metric: {
-        agg: "sum",
-        field: "amount",
-        label: "Open AR total",
-        where: {},
-      },
-      bucket: null,
-      currency: "USD",
-      last_value: 850000,
-      last_evaluated_at: "2025-10-23T14:08:31.632773+00:00",
-      status: "ok",
-      notify_channels: ["in_app"],
-      recipients: null,
-      is_active: true,
-      created_at: "2025-10-20T14:38:31.632773+00:00",
-      updated_at: "2025-10-23T14:08:31.632773+00:00",
-    },
-    {
-      id: "00000000-0000-0000-0000-000000000001",
-      title: "Amazon Inc: Open AR > $5.00M",
-      watch_type: "ar_open_amount",
-      entity_id: "Amazon",
-      entity_name: "Amazon Inc",
-      params: {
-        as_of: "2024-12-31",
-        status: "Open",
-      },
-      operator: ">",
-      threshold_value: 5000000,
-      metric: {
-        agg: "sum",
-        field: "amount",
-        label: "Open AR total",
-        where: {},
-      },
-      bucket: null,
-      currency: "USD",
-      last_value: 6880000,
-      last_evaluated_at: "2025-10-23T12:38:31.632773+00:00",
-      status: "ok",
-      notify_channels: ["in_app"],
-      recipients: null,
-      is_active: true,
-      created_at: "2025-10-18T14:38:31.632773+00:00",
-      updated_at: "2025-10-23T12:38:31.632773+00:00",
-    },
-    {
-      id: "00000000-0000-0000-0000-000000000005",
-      title: "Microsoft Corp: AR in >90 > $300.00K",
-      watch_type: "ar_aged_into_bucket",
-      entity_id: "microsoft",
-      entity_name: "Microsoft Corp",
-      params: {
-        as_of: "2024-12-31",
-        status: "Open",
-      },
-      operator: ">",
-      threshold_value: 300000,
-      metric: {
-        agg: "sum",
-        field: "amount",
-        label: "AR in >90",
-        where: {
-          ageBucket: "gt_90",
-        },
-      },
-      bucket: "gt_90",
-      currency: "USD",
-      last_value: 285000,
-      last_evaluated_at: "2025-10-23T10:38:31.632773+00:00",
-      status: "breached",
-      notify_channels: ["in_app"],
-      recipients: null,
-      is_active: true,
-      created_at: "2025-10-17T14:38:31.632773+00:00",
-      updated_at: "2025-10-23T10:38:31.632773+00:00",
-    },
-    {
-      id: "00000000-0000-0000-0000-000000000003",
-      title: "Apple Inc: AR in >90 > $500.00K",
-      watch_type: "ar_aged_into_bucket",
-      entity_id: "apple",
-      entity_name: "Apple Inc",
-      params: {
-        as_of: "2024-12-31",
-        status: "Open",
-      },
-      operator: ">",
-      threshold_value: 500000,
-      metric: {
-        agg: "sum",
-        field: "amount",
-        label: "AR in >90",
-        where: {
-          ageBucket: "gt_90",
-        },
-      },
-      bucket: "gt_90",
-      currency: "USD",
-      last_value: 672000,
-      last_evaluated_at: "2025-10-22T14:38:31.632773+00:00",
-      status: "breached",
-      notify_channels: ["in_app"],
-      recipients: null,
-      is_active: true,
-      created_at: "2025-10-16T14:38:31.632773+00:00",
-      updated_at: "2025-10-22T14:38:31.632773+00:00",
-    },
-    {
-      id: "00000000-0000-0000-0000-000000000006",
-      title: "Amazon: Open AR > $2.00M",
-      watch_type: "ar_open_amount",
-      entity_id: "amazon",
-      entity_name: "Amazon",
-      params: {
-        as_of: "2024-12-31",
-        status: "Open",
-      },
-      operator: ">",
-      threshold_value: 2000000,
-      metric: {
-        agg: "sum",
-        field: "amount",
-        label: "Open AR total",
-        where: {},
-      },
-      bucket: null,
-      currency: "USD",
-      last_value: 2500000,
-      last_evaluated_at: "2025-10-20T14:38:31.632773+00:00",
-      status: "muted",
-      notify_channels: ["in_app"],
-      recipients: null,
-      is_active: true,
-      created_at: "2025-10-13T14:38:31.632773+00:00",
-      updated_at: "2025-10-20T14:38:31.632773+00:00",
-    },
-  ];
+  const { data: rawWatchlist, loading: hookLoading, error: hookError, removeItem } = useWatchlist();
 
-  const [watches, setWatches] = useState<WatchItem[]>(dummyWatches);
+  // Transform data-layer items into WatchItem shape for UI
+  const initialWatches = useMemo(() => rawWatchlist.map(transformToWatchItem), [rawWatchlist]);
+
+  const [watches, setWatches] = useState<WatchItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState<string | null>(null);
+
+  // Sync hook data into local state for mutation support
+  useEffect(() => {
+    if (!hookLoading) {
+      setWatches(initialWatches);
+    }
+  }, [initialWatches, hookLoading]);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -343,10 +215,18 @@ function WatchlistPageContent() {
     }
   };
 
-  if (loading) {
+  if (loading || hookLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-slate-600">Loading...</div>
+      </div>
+    );
+  }
+
+  if (hookError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-red-500">Error: {hookError}</div>
       </div>
     );
   }

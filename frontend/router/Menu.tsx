@@ -53,12 +53,16 @@ export const Menu: MenuItem[] = [
     permission: "order_to_cash",
     tabsList: [
       {
-        path: "workbench/order-to-cash/cash-collection",
-        permission: "cash_collection",
-      },
-      {
         path: "workbench/order-to-cash/cash-application",
         permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/merchant-dashboard",
+        permission: "merchant_dashboard",
+      },
+      {
+        path: "workbench/order-to-cash/cash-collection",
+        permission: "cash_collection",
       },
       {
         path: "workbench/order-to-cash/disputes",
@@ -148,6 +152,38 @@ export const Menu: MenuItem[] = [
       { path: "workbench/revenue-leakage/exports", permission: "exports" },
       { path: "workbench/revenue-leakage/settings", permission: "settings" },
       { path: "workbench/revenue-leakage/admin", permission: "revenue_leakage" },
+    ],
+  },
+  {
+    path: "igrs/revenue-assurance",
+    permission: "igrs_revenue_assurance",
+    tabsList: [
+      { path: "igrs/revenue-assurance/overview", permission: "igrs_overview" },
+      { path: "igrs/revenue-assurance/cases", permission: "igrs_cases" },
+      { path: "igrs/revenue-assurance/rules", permission: "igrs_rules" },
+      { path: "igrs/revenue-assurance/insights", permission: "igrs_insights" },
+      { path: "igrs/revenue-assurance/ai-chat", permission: "igrs_ai_chat" },
+      { path: "igrs/revenue-assurance/mv-trends", permission: "igrs_mv_trends" },
+      { path: "igrs/revenue-assurance/patterns", permission: "igrs_patterns" },
+      { path: "igrs/revenue-assurance/exports", permission: "igrs_exports" },
+      { path: "igrs/revenue-assurance/admin", permission: "igrs_admin" },
+      { path: "igrs/revenue-assurance/settings", permission: "igrs_settings" },
+    ],
+  },
+  {
+    path: "revenue-assurance",
+    permission: "revenue_assurance",
+    tabsList: [
+      { path: "revenue-assurance/overview", permission: "ra_overview" },
+      { path: "revenue-assurance/cases", permission: "ra_cases" },
+      { path: "revenue-assurance/rules", permission: "ra_rules" },
+      { path: "revenue-assurance/customers", permission: "ra_customers" },
+      { path: "revenue-assurance/contracts", permission: "ra_contracts" },
+      { path: "revenue-assurance/insights", permission: "ra_insights" },
+      { path: "revenue-assurance/ai-chat", permission: "ra_ai_chat" },
+      { path: "revenue-assurance/patterns", permission: "ra_patterns" },
+      { path: "revenue-assurance/exports", permission: "ra_exports" },
+      { path: "revenue-assurance/settings", permission: "ra_settings" },
     ],
   },
   {
