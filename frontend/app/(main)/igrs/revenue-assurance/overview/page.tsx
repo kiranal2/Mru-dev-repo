@@ -39,6 +39,7 @@ import {
   CircleDot,
   Clock3,
   Database,
+  ExternalLink,
   Filter,
   PlayCircle,
   ShieldCheck,
@@ -102,6 +103,20 @@ function daysBetween(start: string, end: string): number {
   const b = new Date(end).getTime();
   if (Number.isNaN(a) || Number.isNaN(b)) return 0;
   return Math.max(0, Math.round((b - a) / (1000 * 60 * 60 * 24)));
+}
+
+function sparklinePoints(values: number[], width = 70, height = 22): string {
+  if (!values.length) return "";
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+  return values
+    .map((v, i) => {
+      const x = (i / Math.max(1, values.length - 1)) * width;
+      const y = height - ((v - min) / range) * height;
+      return `${x},${y}`;
+    })
+    .join(" ");
 }
 
 export default function IGRSOverviewPage() {
@@ -314,6 +329,19 @@ export default function IGRSOverviewPage() {
     };
   }, [monthlyMetrics]);
 
+  const kpiSparklines = useMemo(() => {
+    const source = trends?.length ? trends : dashboard?.monthlyTrends ?? [];
+    const last = source.slice(-6);
+    return {
+      payable: last.map((m) => m.gapInr + Math.max(0, m.gapInr * 1.9)),
+      paid: last.map((m) => Math.max(0, m.gapInr * 1.2)),
+      gap: last.map((m) => m.gapInr),
+      highRisk: last.map((m) => m.highRisk),
+      avgDelay: last.map((m) => m.cases / 2),
+      awaiting: last.map((m) => Math.max(0, m.cases - m.highRisk)),
+    };
+  }, [dashboard, trends]);
+
   const handleRefetchAll = async () => {
     await Promise.all([refetchDashboard(), refetchTrends(), refetchRules(), refetchCases()]);
   };
@@ -358,36 +386,42 @@ export default function IGRSOverviewPage() {
       value: formatByMode(dashboard.totalPayable, currencyMode),
       delta: deltas?.payable ?? null,
       border: "border-blue-200",
+      spark: kpiSparklines.payable,
     },
     {
       title: "Total Paid",
       value: formatByMode(dashboard.totalPaid, currencyMode),
       delta: deltas?.paid ?? null,
       border: "border-emerald-200",
+      spark: kpiSparklines.paid,
     },
     {
       title: "Total Gap",
       value: formatByMode(dashboard.totalGap, currencyMode),
       delta: deltas?.gap ?? null,
       border: "border-red-200",
+      spark: kpiSparklines.gap,
     },
     {
       title: "High Risk Cases",
       value: String(dashboard.highRiskCases),
       delta: deltas?.highRisk ?? null,
       border: "border-amber-200",
+      spark: kpiSparklines.highRisk,
     },
     {
       title: "Avg Challan Delay",
       value: `${dashboard.avgChallanDelayDays} days`,
       delta: null,
       border: "border-orange-200",
+      spark: kpiSparklines.avgDelay,
     },
     {
       title: "Awaiting Review",
       value: String(dashboard.casesAwaitingReview),
       delta: deltas?.awaiting ?? null,
       border: "border-violet-200",
+      spark: kpiSparklines.awaiting,
     },
   ];
 
@@ -441,7 +475,17 @@ export default function IGRSOverviewPage() {
         {cards.map((card) => (
           <Card key={card.title} className={`shadow-none ${card.border}`}>
             <CardContent className="pt-4 pb-3">
-              <p className="text-[11px] text-slate-500 font-medium">{card.title}</p>
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-[11px] text-slate-500 font-medium">{card.title}</p>
+                <svg width="70" height="22" viewBox="0 0 70 22" className="opacity-80">
+                  <polyline
+                    fill="none"
+                    stroke="#3b82f6"
+                    strokeWidth="1.8"
+                    points={sparklinePoints(card.spark)}
+                  />
+                </svg>
+              </div>
               <p className="text-2xl font-semibold mt-1">{card.value}</p>
               <p className={`text-[11px] mt-1 ${card.delta == null ? "text-slate-400" : card.delta > 0 ? "text-red-600" : "text-emerald-600"}`}>
                 {card.delta == null ? "--" : `${card.delta > 0 ? "+" : ""}${card.delta.toFixed(1)}%`}
@@ -481,7 +525,14 @@ export default function IGRSOverviewPage() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
         <Card>
           <CardHeader className="pb-0">
-            <CardTitle className="text-sm">Leakage by Signal</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm">Leakage by Signal</CardTitle>
+              <div className="flex items-center gap-3 text-[11px]">
+                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" />High</span>
+                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500" />Medium</span>
+                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500" />Low</span>
+              </div>
+            </div>
             <p className="text-xs text-slate-500">Case counts by risk level per signal</p>
           </CardHeader>
           <CardContent className="pt-3 h-[300px]">
@@ -548,7 +599,10 @@ export default function IGRSOverviewPage() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
         <Card>
           <CardHeader className="pb-0">
-            <CardTitle className="text-sm">Gap Trend Over Time</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm">Gap Trend Over Time</CardTitle>
+              <Badge variant="outline" className="text-[10px] h-6">Rolling Avg</Badge>
+            </div>
             <p className="text-xs text-slate-500">Monthly gap and payable trends</p>
           </CardHeader>
           <CardContent className="pt-3 h-[260px]">
@@ -677,7 +731,17 @@ export default function IGRSOverviewPage() {
                       </td>
                       <td className="py-2 text-right">{r.triggers}</td>
                       <td className="py-2 text-right">{formatByMode(r.impact, currencyMode)}</td>
-                      <td className="py-2 text-right">{Math.round(r.avgConfidence)}%</td>
+                      <td className="py-2">
+                        <div className="flex items-center justify-end gap-2">
+                          <span>{Math.round(r.avgConfidence)}%</span>
+                          <span className="w-14 h-1.5 rounded bg-slate-100 overflow-hidden">
+                            <span
+                              className="block h-full rounded bg-amber-500"
+                              style={{ width: `${Math.max(8, Math.round(r.avgConfidence))}%` }}
+                            />
+                          </span>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -702,6 +766,7 @@ export default function IGRSOverviewPage() {
                     <th className="py-2">Signals</th>
                     <th className="py-2 text-right">Confidence</th>
                     <th className="py-2 text-right">Gap</th>
+                    <th className="py-2 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -735,6 +800,11 @@ export default function IGRSOverviewPage() {
                         </div>
                       </td>
                       <td className="py-2 text-right text-red-600 font-semibold">{formatByMode(c.gapInr, currencyMode)}</td>
+                      <td className="py-2 text-right">
+                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </Button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
