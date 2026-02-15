@@ -101,6 +101,9 @@ export const igrsRevenue = {
     items = applySearch(items as unknown as Record<string, unknown>[], filters?.search) as unknown as IGRSCase[];
     items = applyArrayFilter(items, 'status', filters?.status);
     items = applyArrayFilter(items, 'riskLevel', filters?.riskLevel);
+    if (filters?.signals?.length) {
+      items = items.filter(c => c.leakageSignals.some(s => filters.signals!.includes(s)));
+    }
     if (filters?.office?.length) {
       items = items.filter(c => filters.office!.includes(c.office.srCode));
     }

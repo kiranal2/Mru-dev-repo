@@ -1,88 +1,68 @@
 {
-  "summary": {
-    "totalCases": 25,
-    "totalGapInr": 4085000,
-    "totalPayableInr": 15230000,
-    "totalPaidInr": 11145000,
-    "avgGapInr": 163400,
-    "avgRiskScore": 62.6,
-    "avgConfidence": 76.4,
-    "currency": "INR"
-  },
-  "byStatus": {
-    "New": { "count": 8, "gapInr": 1866000 },
-    "In Review": { "count": 6, "gapInr": 769000 },
-    "Confirmed": { "count": 5, "gapInr": 1388000 },
-    "Resolved": { "count": 4, "gapInr": 143000 },
-    "Rejected": { "count": 2, "gapInr": 15000 }
-  },
-  "byRiskLevel": {
-    "High": { "count": 8, "gapInr": 3140000, "avgRiskScore": 86.0 },
-    "Medium": { "count": 10, "gapInr": 874000, "avgRiskScore": 57.3 },
-    "Low": { "count": 7, "gapInr": 87000, "avgRiskScore": 31.3 }
-  },
-  "bySignalType": {
-    "RevenueGap": { "count": 18, "description": "Revenue gap identified between payable and paid amounts" },
-    "MarketValueRisk": { "count": 10, "description": "Market value deviation beyond threshold" },
-    "ChallanDelay": { "count": 8, "description": "Delayed challan payment or reconciliation" },
-    "ExemptionRisk": { "count": 5, "description": "Suspicious or invalid exemption claims" },
-    "DataIntegrity": { "count": 6, "description": "Data field mismatches across systems" },
-    "HolidayFee": { "count": 5, "description": "Missing holiday processing surcharge" },
-    "ProhibitedLand": { "count": 2, "description": "Registration in prohibited or restricted zones" }
-  },
-  "byDocType": {
-    "Sale Deed": { "count": 13, "gapInr": 3367000, "avgGapInr": 259000 },
-    "Gift Deed": { "count": 4, "gapInr": 282000, "avgGapInr": 70500 },
-    "Mortgage Deed": { "count": 3, "gapInr": 142000, "avgGapInr": 47333 },
-    "Lease Deed": { "count": 3, "gapInr": 101000, "avgGapInr": 33667 },
-    "Partition Deed": { "count": 2, "gapInr": 24000, "avgGapInr": 12000 }
-  },
-  "byZone": {
-    "South": { "count": 13, "gapInr": 2109000, "offices": ["SR01", "SR02", "SR03", "SR08", "SR09"] },
-    "North": { "count": 8, "gapInr": 1416000, "offices": ["SR05", "SR06", "SR07"] },
-    "Central": { "count": 4, "gapInr": 934000, "offices": ["SR04", "SR10"] }
-  },
-  "byDistrict": [
-    { "district": "Krishna", "totalCases": 3, "gapInr": 363000, "srCode": "SR01" },
-    { "district": "Guntur", "totalCases": 3, "gapInr": 607000, "srCode": "SR02" },
-    { "district": "Chittoor", "totalCases": 3, "gapInr": 512000, "srCode": "SR03" },
-    { "district": "Kurnool", "totalCases": 2, "gapInr": 104000, "srCode": "SR04" },
-    { "district": "Visakhapatnam", "totalCases": 3, "gapInr": 471000, "srCode": "SR05" },
-    { "district": "East Godavari", "totalCases": 3, "gapInr": 610000, "srCode": "SR06" },
-    { "district": "West Godavari", "totalCases": 2, "gapInr": 335000, "srCode": "SR07" },
-    { "district": "Prakasam", "totalCases": 2, "gapInr": 203000, "srCode": "SR08" },
-    { "district": "Nellore", "totalCases": 2, "gapInr": 50000, "srCode": "SR09" },
-    { "district": "Anantapur", "totalCases": 2, "gapInr": 830000, "srCode": "SR10" }
+  "totalPayable": 15230000,
+  "totalPaid": 11145000,
+  "totalGap": 4085000,
+  "highRiskCases": 8,
+  "avgChallanDelayDays": 12,
+  "casesAwaitingReview": 14,
+  "leakageBySignal": [
+    { "signal": "RevenueGap", "high": 7, "medium": 8, "low": 3 },
+    { "signal": "MarketValueRisk", "high": 4, "medium": 4, "low": 2 },
+    { "signal": "ChallanDelay", "high": 2, "medium": 4, "low": 2 },
+    { "signal": "ExemptionRisk", "high": 2, "medium": 2, "low": 1 },
+    { "signal": "DataIntegrity", "high": 1, "medium": 3, "low": 2 },
+    { "signal": "HolidayFee", "high": 1, "medium": 2, "low": 2 },
+    { "signal": "ProhibitedLand", "high": 1, "medium": 1, "low": 0 }
   ],
-  "recoveryMetrics": {
-    "totalRecoveredInr": 80000,
-    "recoveryRate": 1.96,
-    "pendingRecoveryInr": 4005000,
-    "confirmedForRecoveryInr": 1388000,
-    "rejectedAsValidInr": 15000
-  },
-  "slaMetrics": {
+  "topOfficesByGap": [
+    { "srCode": "SR10", "srName": "Anantapur SRO", "gapInr": 830000, "cases": 2 },
+    { "srCode": "SR06", "srName": "East Godavari SRO", "gapInr": 610000, "cases": 3 },
+    { "srCode": "SR02", "srName": "Guntur SRO", "gapInr": 607000, "cases": 3 },
+    { "srCode": "SR03", "srName": "Chittoor SRO", "gapInr": 512000, "cases": 3 },
+    { "srCode": "SR05", "srName": "Visakhapatnam SRO", "gapInr": 471000, "cases": 3 },
+    { "srCode": "SR01", "srName": "Krishna SRO", "gapInr": 363000, "cases": 3 },
+    { "srCode": "SR07", "srName": "West Godavari SRO", "gapInr": 335000, "cases": 2 },
+    { "srCode": "SR08", "srName": "Prakasam SRO", "gapInr": 203000, "cases": 2 }
+  ],
+  "slaSummary": {
     "withinSla": 22,
-    "slaBreached": 3,
-    "avgAgeingDays": 10,
-    "ageingDistribution": {
+    "breached": 3,
+    "ageingBuckets": {
       "0-7d": 5,
       "8-14d": 18,
       "15-21d": 2,
       "21d+": 0
     }
   },
-  "rulePerformance": {
-    "topTriggeringRules": [
-      { "ruleId": "R-VAL-001", "name": "Market Value Gap", "triggerCount": 7, "totalImpactInr": 2135000 },
-      { "ruleId": "R-SD-001", "name": "Challan Payment Delay", "triggerCount": 5, "totalImpactInr": 180000 },
-      { "ruleId": "R-EXM-001", "name": "Invalid Exemption Claim", "triggerCount": 3, "totalImpactInr": 575000 },
-      { "ruleId": "R-CMP-003", "name": "Prohibited Property Registration", "triggerCount": 2, "totalImpactInr": 790000 },
-      { "ruleId": "R-OPS-001", "name": "Holiday Registration Fee", "triggerCount": 3, "totalImpactInr": 117000 }
-    ],
-    "totalActiveRules": 20,
-    "enabledRules": 20,
-    "avgConfidenceAllRules": 76.4
+  "exemptionSummary": {
+    "totalExemptions": 5,
+    "totalAmount": 1250000,
+    "failedEligibility": 2,
+    "repeatOffenders": 1
   },
-  "lastRefreshed": "2025-01-05T00:00:00Z"
+  "rulesHealth": {
+    "enabled": 20,
+    "lastRun": "2025-01-04T22:00:00Z",
+    "failures": 0
+  },
+  "monthlyTrends": [
+    { "month": "2024-07", "cases": 16, "gapInr": 250000, "highRisk": 5 },
+    { "month": "2024-08", "cases": 22, "gapInr": 380000, "highRisk": 8 },
+    { "month": "2024-09", "cases": 19, "gapInr": 310000, "highRisk": 6 },
+    { "month": "2024-10", "cases": 25, "gapInr": 420000, "highRisk": 9 },
+    { "month": "2024-11", "cases": 21, "gapInr": 355000, "highRisk": 7 },
+    { "month": "2024-12", "cases": 28, "gapInr": 485000, "highRisk": 10 }
+  ],
+  "highlights": [
+    { "icon": "alert", "text": "Total revenue gap of ₹40.85L across 25 cases — 8 classified as high risk." },
+    { "icon": "trending-up", "text": "December saw peak activity: 28 cases and ₹4.85L gap, driven by year-end registrations." },
+    { "icon": "alert", "text": "Anantapur SRO (SR10) leads with ₹8.30L gap — primarily large-value sale deed discrepancies." },
+    { "icon": "info", "text": "Revenue gap and market value risk are the dominant signal types, accounting for 28 of 54 signals." },
+    { "icon": "trending-up", "text": "SLA compliance at 88% — 3 cases breached target, all in Confirmed status awaiting recovery." },
+    { "icon": "alert", "text": "2 exemption claims failed eligibility checks — potential revenue loss of ₹12.5L in exempted amount." },
+    { "icon": "info", "text": "All 20 detection rules active with 0 failures in the last run — engine healthy." },
+    { "icon": "trending-up", "text": "High-risk case count rising: +43% from Q3 to Q4 2024, correlating with increased sale deed volumes." }
+  ],
+  "lastRefresh": "2025-01-05T00:00:00Z",
+  "syncStatus": "Healthy"
 }
