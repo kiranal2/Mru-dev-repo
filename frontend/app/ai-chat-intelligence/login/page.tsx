@@ -231,7 +231,7 @@ export default function AIChatIntelligenceLoginPage() {
       await new Promise((r) => setTimeout(r, stage.duration));
     }
 
-    router.push("/workbench/revenue-leakage/ai-chat");
+    router.push("/igrs/revenue-assurance/ai-chat");
   };
 
   return (

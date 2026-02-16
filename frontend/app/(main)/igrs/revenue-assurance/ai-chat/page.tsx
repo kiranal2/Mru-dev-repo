@@ -86,6 +86,15 @@ const SUGGESTED_PROMPTS = [
   "Cases with market value deviation in East Godavari",
 ];
 
+const DYNAMIC_SAMPLE_PROMPTS = [
+  "Show high risk cases in Visakhapatnam with gap above 1 lakh",
+  "List SLA-breached cases from the last 30 days in North zone",
+  "Compare payment gaps across top 10 offices this month",
+  "Show exemption risk cases in Srikakulam with confidence above 80%",
+  "Find prohibited land matches and estimated impact by district",
+  "Show challan delays above 7 days for pending review cases",
+];
+
 const PROMPT_CATALOG: PromptSuggestion[] = [
   { text: "Show me the overall revenue leakage summary", category: "Summary" },
   { text: "Show overall leakage summary", category: "Summary" },
@@ -200,6 +209,7 @@ export default function AIChatPage() {
   const [suggestions, setSuggestions] = useState<PromptSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIdx, setSelectedSuggestionIdx] = useState(-1);
+  const [samplePromptIdx, setSamplePromptIdx] = useState(0);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -208,6 +218,14 @@ export default function AIChatPage() {
       setDistrictOptions(getAvailableDistricts(cases));
     });
   }, []);
+
+  useEffect(() => {
+    if (!showPlaceholder || messages.length > 0) return;
+    const interval = setInterval(() => {
+      setSamplePromptIdx((prev) => (prev + 1) % DYNAMIC_SAMPLE_PROMPTS.length);
+    }, 3600);
+    return () => clearInterval(interval);
+  }, [showPlaceholder, messages.length]);
 
   const submitPrompt = async (text: string) => {
     if (!text.trim()) return;
@@ -361,84 +379,99 @@ export default function AIChatPage() {
             </div>
 
             <div className="w-full max-w-[720px] mb-4 relative">
-              <div
-                className="h-[132px] border border-[#CFE4EA] bg-white rounded-[12px] p-4 relative hover:border-[#6B7EF3] hover:shadow-lg transition-all duration-300 ease-out focus-within:border-[#6B7EF3] focus-within:shadow-lg focus-within:ring-2 focus-within:ring-[#6B7EF3]/20"
-                style={{ boxShadow: "0 4px 8px 0 rgba(14, 42, 82, 0.06)" }}
-              >
-                {showPlaceholder && (
-                  <div className="absolute top-4 left-4 right-4 flex items-center gap-2 pointer-events-none z-10">
-                    <Sparkles size={12} className="text-slate-400" />
-                    <span className="text-[13px] text-slate-400">
-                      Sample prompt: Show revenue leakage summary for Visakhapatnam from Feb 1 to
-                      Feb 12
-                    </span>
-                  </div>
-                )}
+              <div className="relative rounded-[14px] p-[1.5px]">
+                <div className="pointer-events-none absolute inset-0 rounded-[14px] overflow-hidden">
+                  <div
+                    className="absolute inset-[-70%] opacity-70"
+                    style={{
+                      background:
+                        "conic-gradient(from 0deg, rgba(107,126,243,0.46), rgba(56,189,248,0.3), rgba(16,185,129,0.26), rgba(236,72,153,0.18), rgba(107,126,243,0.46))",
+                      animation: "border-run 8s linear infinite",
+                    }}
+                  />
+                </div>
 
-                <textarea
-                  value={composerValue}
-                  onChange={handleTextareaChange}
-                  onFocus={() => setShowPlaceholder(false)}
-                  onBlur={() => {
-                    if (!composerValue.trim()) setShowPlaceholder(true);
-                    setTimeout(() => setShowSuggestions(false), 200);
-                  }}
-                  onKeyDown={handleSuggestionKeyDown}
-                  className="w-full flex-1 resize-none border-none outline-none text-slate-900 text-sm transition-all duration-200 pt-7"
-                  style={{ height: "calc(100% - 40px)" }}
-                  aria-label="Enter your audit query"
-                />
+                <div
+                  className="group h-[132px] bg-white rounded-[12px] p-4 relative overflow-hidden hover:shadow-lg transition-all duration-300 ease-out focus-within:shadow-lg focus-within:ring-2 focus-within:ring-[#6B7EF3]/20"
+                  style={{ boxShadow: "0 4px 8px 0 rgba(14, 42, 82, 0.06)" }}
+                >
+                  {showPlaceholder && (
+                    <div className="absolute top-4 left-4 right-4 flex items-center gap-2 pointer-events-none z-10">
+                      <Sparkles size={12} className="text-slate-400" />
+                      <span
+                        key={`sample-${samplePromptIdx}`}
+                        className="text-[13px] text-slate-400 animate-[prompt-fade-slide_0.4s_ease-out]"
+                      >
+                        Sample prompt: {DYNAMIC_SAMPLE_PROMPTS[samplePromptIdx]}
+                      </span>
+                    </div>
+                  )}
 
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Tooltip delayDuration={150}>
-                      <TooltipTrigger asChild>
-                        <CircularButton
-                          icon={<Clock size={14} />}
-                          aria-label="History"
-                          onClick={() => toast.message("History view is not enabled yet")}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent side="top">History</TooltipContent>
-                    </Tooltip>
-                    <Tooltip delayDuration={150}>
-                      <TooltipTrigger asChild>
-                        <CircularButton
-                          icon={<Star size={14} />}
-                          aria-label="Favorites"
-                          onClick={() => toast.message("Favorite prompts are not enabled yet")}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent side="top">Favorites</TooltipContent>
-                    </Tooltip>
-                    <Tooltip delayDuration={150}>
-                      <TooltipTrigger asChild>
-                        <CircularButton
-                          icon={<Lightbulb size={14} />}
-                          aria-label="Suggested Prompts"
-                          onClick={() => {
-                            if (composerValue.length >= 2) {
-                              const filtered = filterSuggestions(composerValue);
-                              setSuggestions(filtered);
-                              setShowSuggestions(filtered.length > 0);
-                            }
-                          }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent side="top">Suggested Prompts</TooltipContent>
-                    </Tooltip>
+                  <textarea
+                    value={composerValue}
+                    onChange={handleTextareaChange}
+                    onFocus={() => setShowPlaceholder(false)}
+                    onBlur={() => {
+                      if (!composerValue.trim()) setShowPlaceholder(true);
+                      setTimeout(() => setShowSuggestions(false), 200);
+                    }}
+                    onKeyDown={handleSuggestionKeyDown}
+                    className="w-full flex-1 resize-none border-none outline-none text-slate-900 text-sm transition-all duration-200 pt-0"
+                    style={{ height: "calc(100% - 40px)" }}
+                    aria-label="Enter your audit query"
+                  />
+
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Tooltip delayDuration={150}>
+                        <TooltipTrigger asChild>
+                          <CircularButton
+                            icon={<Clock size={14} />}
+                            aria-label="History"
+                            onClick={() => toast.message("History view is not enabled yet")}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent side="top">History</TooltipContent>
+                      </Tooltip>
+                      <Tooltip delayDuration={150}>
+                        <TooltipTrigger asChild>
+                          <CircularButton
+                            icon={<Star size={14} />}
+                            aria-label="Favorites"
+                            onClick={() => toast.message("Favorite prompts are not enabled yet")}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent side="top">Favorites</TooltipContent>
+                      </Tooltip>
+                      <Tooltip delayDuration={150}>
+                        <TooltipTrigger asChild>
+                          <CircularButton
+                            icon={<Lightbulb size={14} />}
+                            aria-label="Suggested Prompts"
+                            onClick={() => {
+                              if (composerValue.length >= 2) {
+                                const filtered = filterSuggestions(composerValue);
+                                setSuggestions(filtered);
+                                setShowSuggestions(filtered.length > 0);
+                              }
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent side="top">Suggested Prompts</TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <button
+                      onClick={handleSendClick}
+                      className="w-8 h-8 rounded-full border border-slate-200 bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#6B7EF3] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group"
+                      aria-label="Send prompt"
+                      disabled={isLoading || !composerValue.trim()}
+                    >
+                      <ArrowRight
+                        size={18}
+                        className="text-slate-400 group-hover:text-white transition-colors duration-200"
+                      />
+                    </button>
                   </div>
-                  <button
-                    onClick={handleSendClick}
-                    className="w-8 h-8 rounded-full border border-slate-200 bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#6B7EF3] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group"
-                    aria-label="Send prompt"
-                    disabled={isLoading || !composerValue.trim()}
-                  >
-                    <ArrowRight
-                      size={18}
-                      className="text-slate-400 group-hover:text-white transition-colors duration-200"
-                    />
-                  </button>
                 </div>
               </div>
 
@@ -620,6 +653,26 @@ export default function AIChatPage() {
               ? "Assistant returned warning response"
               : "Assistant ready"}
         </div>
+        <style jsx global>{`
+          @keyframes prompt-fade-slide {
+            0% {
+              opacity: 0;
+              transform: translateY(4px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          @keyframes border-run {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
       </div>
     </TooltipProvider>
   );
