@@ -80,6 +80,9 @@ export default function PaymentsQueuePage() {
       SettlementPending: "secondary",
       PendingToPost: "secondary",
       Posted: "default",
+      Reconciled: "default",
+      Void: "outline",
+      Failed: "destructive",
       NonAR: "outline",
     };
     return <Badge variant={variants[status]}>{status}</Badge>;
@@ -184,6 +187,7 @@ export default function PaymentsQueuePage() {
               q.filters.status === "Exception" ||
               q.isCriticalFilterActive ||
               q.filters.status === "PendingToPost" ||
+              q.filters.status === "SettlementPending" ||
               q.activeSignalFilter) && (
               <div className="flex items-center gap-2 pl-1">
                 {q.activeSegment && (
@@ -194,7 +198,9 @@ export default function PaymentsQueuePage() {
                         ? "Match Type"
                         : q.filters.status === "Exception"
                           ? "Exception Type"
-                          : "Post Status"}
+                          : q.filters.status === "SettlementPending"
+                            ? "Settlement Status"
+                            : "Post Status"}
                     :
                   </span>
                 )}
@@ -226,6 +232,15 @@ export default function PaymentsQueuePage() {
                 {q.filters.status === "PendingToPost" && (
                   <CashAppContextualSubFilters
                     context="pendingToPost"
+                    counts={q.contextualSubFilterCounts}
+                    activeFilter={q.activeContextualFilter}
+                    onFilterClick={q.handleContextualFilterClick}
+                    onClearFilter={q.handleClearContextualFilter}
+                  />
+                )}
+                {q.filters.status === "SettlementPending" && (
+                  <CashAppContextualSubFilters
+                    context="settlementPending"
                     counts={q.contextualSubFilterCounts}
                     activeFilter={q.activeContextualFilter}
                     onFilterClick={q.handleContextualFilterClick}

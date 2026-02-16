@@ -55,7 +55,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   // Load persisted rail selection from localStorage
   useEffect(() => {
     const savedRailItem = localStorage.getItem("meeru-selected-rail");
-    if (savedRailItem && ["home", "automation", "reports", "workbench", "igrs", "revenue-assurance"].includes(savedRailItem)) {
+    if (savedRailItem && ["home", "automation", "reports", "workbench", "igrs", "admin"].includes(savedRailItem)) {
       setSelectedRailItem(savedRailItem as RailItem);
     }
   }, []);
@@ -85,14 +85,14 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
         setSelectedRailItem("home");
       } else if (pathname.startsWith("/automation/")) {
         setSelectedRailItem("automation");
-      } else if (pathname.startsWith("/igrs/")) {
-        setSelectedRailItem("igrs");
-      } else if (pathname.startsWith("/revenue-assurance/")) {
-        setSelectedRailItem("revenue-assurance");
-      } else if (pathname.startsWith("/workbench/")) {
-        setSelectedRailItem("workbench");
       } else if (pathname.startsWith("/reports/")) {
         setSelectedRailItem("reports");
+      } else if (pathname.startsWith("/workbench/")) {
+        setSelectedRailItem("workbench");
+      } else if (pathname.startsWith("/igrs/")) {
+        setSelectedRailItem("igrs");
+      } else if (pathname.startsWith("/admin/")) {
+        setSelectedRailItem("admin");
       }
     }
   }, [pathname]);
@@ -112,11 +112,11 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     setHoveredRailItem(item);
     const defaultRoutes: Record<RailItem, string> = {
       home: "/home/command-center",
-      automation: "/automation/autonomy-studio",
-      igrs: "/igrs/revenue-assurance/overview",
-      "revenue-assurance": "/revenue-assurance/overview",
-      workbench: "/workbench/order-to-cash/cash-application",
+      automation: "/automation/data-templates",
       reports: "/reports/sec/balance-sheet",
+      workbench: "/workbench/order-to-cash/cash-application",
+      igrs: "/igrs/revenue-assurance/overview",
+      admin: "/admin/users",
     };
     const route = defaultRoutes[item];
     startTransition(() => {
@@ -139,18 +139,18 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     } else if (route.startsWith("/automation/")) {
       railItem = "automation";
       setSelectedRailItem("automation");
-    } else if (route.startsWith("/igrs/")) {
-      railItem = "igrs";
-      setSelectedRailItem("igrs");
-    } else if (route.startsWith("/revenue-assurance/")) {
-      railItem = "revenue-assurance";
-      setSelectedRailItem("revenue-assurance");
-    } else if (route.startsWith("/workbench/")) {
-      railItem = "workbench";
-      setSelectedRailItem("workbench");
     } else if (route.startsWith("/reports/")) {
       railItem = "reports";
       setSelectedRailItem("reports");
+    } else if (route.startsWith("/workbench/")) {
+      railItem = "workbench";
+      setSelectedRailItem("workbench");
+    } else if (route.startsWith("/igrs/")) {
+      railItem = "igrs";
+      setSelectedRailItem("igrs");
+    } else if (route.startsWith("/admin/")) {
+      railItem = "admin";
+      setSelectedRailItem("admin");
     }
 
     // Keep the hoveredRailItem set to the clicked rail item to maintain panel visibility

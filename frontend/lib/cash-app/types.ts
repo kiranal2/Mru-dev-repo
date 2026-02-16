@@ -5,6 +5,9 @@ export type PaymentStatus =
   | "SettlementPending"
   | "PendingToPost"
   | "Posted"
+  | "Reconciled"
+  | "Void"
+  | "Failed"
   | "NonAR";
 
 export type ExceptionType =

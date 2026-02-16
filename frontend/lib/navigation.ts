@@ -10,34 +10,39 @@ import {
   Banknote,
   BarChart3,
   Focus as Abacus,
-  Type,
-  Video,
-  MousePointerClick,
   TrendingUp,
   Wallet,
   Settings,
   CreditCard,
   ShoppingBag,
-  Coins,
-  Receipt,
   Package,
   LayoutGrid,
   BookOpen,
   Activity,
   FileSpreadsheet,
   Shield,
-  Building2,
-  DollarSign,
   Users,
   FileCheck,
   Brain,
   MessageCircle,
   Map,
   Download,
+  Play,
+  CheckSquare,
+  GitBranch,
+  ListTodo,
+  Layers,
+  Sparkles,
+  Cog,
+  Link2,
+  ClipboardList,
+  BookOpenText,
+  Workflow,
+  RefreshCw,
   Landmark,
 } from "lucide-react";
 
-type RailItem = "home" | "automation" | "workbench" | "reports" | "igrs" | "revenue-assurance";
+type RailItem = "home" | "automation" | "reports" | "workbench" | "igrs" | "admin";
 
 type NavigationItem = {
   id: string;
@@ -48,6 +53,7 @@ type NavigationItem = {
 };
 
 export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
+  // ─── HOME ─────────────────────────────────────────────
   home: [
     {
       id: "command-center",
@@ -56,274 +62,90 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       route: "/home/command-center",
     },
     {
-      id: "dynamic-sheets",
-      label: "Dynamic Sheets",
-      icon: React.createElement(FileSpreadsheet, { size: 18 }),
-      route: "/home/dynamic-sheets",
+      id: "my-workspace",
+      label: "My Workspace",
+      icon: React.createElement(FolderKanban, { size: 18 }),
+      route: "/home/workspace/my-workspace",
     },
     {
-      id: "workspace",
-      label: "Workspace",
+      id: "workspace-2",
+      label: "My Workspace 2",
       icon: React.createElement(FolderKanban, { size: 18 }),
-      route: "/home/workspace",
-      children: [
-        {
-          id: "my-workspace",
-          label: "My Workspace",
-          icon: React.createElement(FolderKanban, { size: 16 }),
-          route: "/home/workspace/my-workspace",
-        },
-        {
-          id: "live-pins",
-          label: "Live Pins",
-          icon: React.createElement(Pin, { size: 16 }),
-          route: "/home/workspace/live-pins",
-        },
-        {
-          id: "watchlist",
-          label: "Watchlist",
-          icon: React.createElement(Eye, { size: 16 }),
-          route: "/home/workspace/watchlist",
-        },
-        {
-          id: "data-template",
-          label: "Data template",
-          icon: React.createElement(FileSpreadsheet, { size: 16 }),
-          route: "/home/workspace/data-template",
-        },
-      ],
+      route: "/home/workspace/workspace-2",
     },
-  ],
-  automation: [
+    {
+      id: "live-pins",
+      label: "Live Pins",
+      icon: React.createElement(Pin, { size: 18 }),
+      route: "/home/workspace/live-pins",
+    },
+    {
+      id: "watchlist",
+      label: "Watchlist",
+      icon: React.createElement(Eye, { size: 18 }),
+      route: "/home/workspace/watchlist",
+    },
     {
       id: "autonomy-studio",
       label: "Autonomy Studio",
-      icon: React.createElement(FileText, { size: 18 }),
-      route: "/automation/autonomy-studio",
+      icon: React.createElement(Sparkles, { size: 18 }),
+      route: "/home/autonomy-studio",
+    },
+    {
+      id: "narratives",
+      label: "Narratives",
+      icon: React.createElement(BookOpenText, { size: 18 }),
+      route: "/home/narratives",
+    },
+    {
+      id: "process-to-automation",
+      label: "Process-to-Automation",
+      icon: React.createElement(Workflow, { size: 18 }),
+      route: "/home/process-to-automation",
     },
   ],
-  igrs: [
+
+  // ─── AUTOMATION ───────────────────────────────────────
+  automation: [
     {
-      id: "igrs-revenue-assurance",
-      label: "Revenue Assurance",
-      icon: React.createElement(Landmark, { size: 18 }),
-      route: "/igrs/revenue-assurance",
-      children: [
-        {
-          id: "igrs-overview",
-          label: "Overview",
-          icon: React.createElement(BarChart3, { size: 16 }),
-          route: "/igrs/revenue-assurance/overview",
-        },
-        {
-          id: "igrs-cases",
-          label: "Cases",
-          icon: React.createElement(FileCheck, { size: 16 }),
-          route: "/igrs/revenue-assurance/cases",
-        },
-        {
-          id: "igrs-rules",
-          label: "Rules",
-          icon: React.createElement(Shield, { size: 16 }),
-          route: "/igrs/revenue-assurance/rules",
-        },
-        {
-          id: "igrs-insights",
-          label: "Insights",
-          icon: React.createElement(Brain, { size: 16 }),
-          route: "/igrs/revenue-assurance/insights",
-        },
-        {
-          id: "igrs-ai-chat",
-          label: "AI Chat",
-          icon: React.createElement(MessageCircle, { size: 16 }),
-          route: "/igrs/revenue-assurance/ai-chat",
-        },
-        {
-          id: "igrs-mv-trends",
-          label: "MV Trends",
-          icon: React.createElement(Map, { size: 16 }),
-          route: "/igrs/revenue-assurance/mv-trends",
-        },
-        {
-          id: "igrs-patterns",
-          label: "Patterns",
-          icon: React.createElement(TrendingUp, { size: 16 }),
-          route: "/igrs/revenue-assurance/patterns",
-        },
-        {
-          id: "igrs-exports",
-          label: "Exports",
-          icon: React.createElement(Download, { size: 16 }),
-          route: "/igrs/revenue-assurance/exports",
-        },
-        {
-          id: "igrs-admin",
-          label: "Admin",
-          icon: React.createElement(Users, { size: 16 }),
-          route: "/igrs/revenue-assurance/admin",
-        },
-        {
-          id: "igrs-settings",
-          label: "Settings",
-          icon: React.createElement(Settings, { size: 16 }),
-          route: "/igrs/revenue-assurance/settings",
-        },
-      ],
+      id: "data-templates",
+      label: "Data Templates",
+      icon: React.createElement(FileSpreadsheet, { size: 18 }),
+      route: "/automation/data-templates",
+    },
+    {
+      id: "all-runs",
+      label: "All Runs",
+      icon: React.createElement(Play, { size: 18 }),
+      route: "/automation/all-runs",
+    },
+    {
+      id: "reconciliation",
+      label: "Reconciliation",
+      icon: React.createElement(RefreshCw, { size: 18 }),
+      route: "/automation/reconciliation",
+    },
+    {
+      id: "worklist",
+      label: "Worklist",
+      icon: React.createElement(CheckSquare, { size: 18 }),
+      route: "/automation/worklist",
+    },
+    {
+      id: "workflow",
+      label: "Workflow",
+      icon: React.createElement(GitBranch, { size: 18 }),
+      route: "/automation/workflow",
+    },
+    {
+      id: "taskflow",
+      label: "TaskFlow",
+      icon: React.createElement(ListTodo, { size: 18 }),
+      route: "/automation/taskflow",
     },
   ],
-  "revenue-assurance": [
-    {
-      id: "ra-overview",
-      label: "Overview",
-      icon: React.createElement(BarChart3, { size: 18 }),
-      route: "/revenue-assurance/overview",
-    },
-    {
-      id: "ra-cases",
-      label: "Cases",
-      icon: React.createElement(FileCheck, { size: 18 }),
-      route: "/revenue-assurance/cases",
-    },
-    {
-      id: "ra-rules",
-      label: "Rules",
-      icon: React.createElement(Shield, { size: 18 }),
-      route: "/revenue-assurance/rules",
-    },
-    {
-      id: "ra-customers",
-      label: "Customers",
-      icon: React.createElement(Users, { size: 18 }),
-      route: "/revenue-assurance/customers",
-    },
-    {
-      id: "ra-contracts",
-      label: "Contracts",
-      icon: React.createElement(FileText, { size: 18 }),
-      route: "/revenue-assurance/contracts",
-    },
-    {
-      id: "ra-insights",
-      label: "Insights",
-      icon: React.createElement(Brain, { size: 18 }),
-      route: "/revenue-assurance/insights",
-    },
-    {
-      id: "ra-ai-chat",
-      label: "AI Chat",
-      icon: React.createElement(MessageCircle, { size: 18 }),
-      route: "/revenue-assurance/ai-chat",
-    },
-    {
-      id: "ra-patterns",
-      label: "Patterns",
-      icon: React.createElement(TrendingUp, { size: 18 }),
-      route: "/revenue-assurance/patterns",
-    },
-    {
-      id: "ra-exports",
-      label: "Exports",
-      icon: React.createElement(Download, { size: 18 }),
-      route: "/revenue-assurance/exports",
-    },
-    {
-      id: "ra-settings",
-      label: "Settings",
-      icon: React.createElement(Settings, { size: 18 }),
-      route: "/revenue-assurance/settings",
-    },
-  ],
-  workbench: [
-    {
-      id: "order-to-cash",
-      label: "Order-to-Cash",
-      icon: React.createElement(CreditCard, { size: 18 }),
-      route: "/workbench/order-to-cash",
-      children: [
-        {
-          id: "cash-application",
-          label: "Cash Application",
-          icon: React.createElement(LayoutGrid, { size: 16 }),
-          route: "/workbench/order-to-cash/cash-application",
-        },
-        {
-          id: "merchant-dashboard",
-          label: "Merchant Dashboard",
-          icon: React.createElement(ShoppingBag, { size: 16 }),
-          route: "/workbench/order-to-cash/merchant-dashboard",
-        },
-        {
-          id: "collection-dashboard",
-          label: "Collection Dashboard",
-          icon: React.createElement(Wallet, { size: 16 }),
-          route: "/workbench/order-to-cash/cash-collection",
-        },
-      ],
-    },
-    {
-      id: "procure-to-pay",
-      label: "Procure-to-Pay & Spend",
-      icon: React.createElement(ShoppingBag, { size: 18 }),
-      route: "/workbench/procure-to-pay",
-      children: [
-        {
-          id: "saas-renewal",
-          label: "SaaS Renewal Workbench",
-          icon: React.createElement(Calculator, { size: 16 }),
-          route: "/workbench/procure-to-pay/saas-renewal",
-        },
-      ],
-    },
-    {
-      id: "record-to-report",
-      label: "Record-to-Report",
-      icon: React.createElement(FileText, { size: 18 }),
-      route: "/workbench/record-to-report",
-      children: [
-        {
-          id: "close",
-          label: "Close Workbench",
-          icon: React.createElement(FileText, { size: 16 }),
-          route: "/workbench/record-to-report/close",
-        },
-        {
-          id: "reconciliations",
-          label: "Reconciliations Workbench",
-          icon: React.createElement(Calculator, { size: 16 }),
-          route: "/workbench/record-to-report/reconciliations",
-        },
-      ],
-    },
-    {
-      id: "supply-chain-finance",
-      label: "Supply Chain Finance",
-      icon: React.createElement(Package, { size: 18 }),
-      route: "/workbench/supply-chain-finance",
-      children: [
-        {
-          id: "mrp",
-          label: "MRP Workbench",
-          icon: React.createElement(Package, { size: 16 }),
-          route: "/workbench/supply-chain-finance/mrp",
-        },
-      ],
-    },
-    {
-      id: "revenue-leakage",
-      label: "Revenue Leakage (Legacy)",
-      icon: React.createElement(Shield, { size: 18 }),
-      route: "/workbench/revenue-leakage",
-      children: [
-        {
-          id: "overview",
-          label: "Overview",
-          icon: React.createElement(Shield, { size: 16 }),
-          route: "/workbench/revenue-leakage/overview",
-        },
-      ],
-    },
-  ],
+
+  // ─── REPORTS ──────────────────────────────────────────
   reports: [
     {
       id: "sec-reports",
@@ -384,6 +206,214 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
           route: "/reports/analysis/flux-analysis",
         },
       ],
+    },
+  ],
+
+  // ─── WORKBENCH ────────────────────────────────────────
+  workbench: [
+    {
+      id: "order-to-cash",
+      label: "Order-to-Cash",
+      icon: React.createElement(CreditCard, { size: 18 }),
+      route: "/workbench/order-to-cash",
+      children: [
+        {
+          id: "cash-collection",
+          label: "Cash Collection Workbench",
+          icon: React.createElement(Wallet, { size: 16 }),
+          route: "/workbench/order-to-cash/cash-collection",
+        },
+        {
+          id: "cash-application",
+          label: "Cash Application Workbench",
+          icon: React.createElement(LayoutGrid, { size: 16 }),
+          route: "/workbench/order-to-cash/cash-application",
+        },
+      ],
+    },
+    {
+      id: "procure-to-pay",
+      label: "Procure-to-Pay & Spend",
+      icon: React.createElement(ShoppingBag, { size: 18 }),
+      route: "/workbench/procure-to-pay",
+      children: [
+        {
+          id: "saas-renewal",
+          label: "SaaS Renewal Workbench",
+          icon: React.createElement(Calculator, { size: 16 }),
+          route: "/workbench/procure-to-pay/saas-renewal",
+        },
+      ],
+    },
+    {
+      id: "record-to-report",
+      label: "Record-to-Report",
+      icon: React.createElement(FileText, { size: 18 }),
+      route: "/workbench/record-to-report",
+      children: [
+        {
+          id: "close",
+          label: "Close Workbench",
+          icon: React.createElement(FileCheck, { size: 16 }),
+          route: "/workbench/record-to-report/close",
+        },
+        {
+          id: "reconciliations",
+          label: "Reconciliations Workbench",
+          icon: React.createElement(Calculator, { size: 16 }),
+          route: "/workbench/record-to-report/reconciliations",
+        },
+      ],
+    },
+    {
+      id: "supply-chain-finance",
+      label: "Supply Chain Finance",
+      icon: React.createElement(Package, { size: 18 }),
+      route: "/workbench/supply-chain-finance",
+      children: [
+        {
+          id: "mrp",
+          label: "MRP Workbench",
+          icon: React.createElement(Package, { size: 16 }),
+          route: "/workbench/supply-chain-finance/mrp",
+        },
+      ],
+    },
+    {
+      id: "revenue-leakage",
+      label: "Revenue Leakage",
+      icon: React.createElement(Shield, { size: 18 }),
+      route: "/workbench/revenue-leakage",
+      children: [
+        {
+          id: "rl-ai-chat",
+          label: "AI Chat",
+          icon: React.createElement(MessageCircle, { size: 16 }),
+          route: "/workbench/revenue-leakage/ai-chat",
+        },
+        {
+          id: "rl-overview",
+          label: "Overview",
+          icon: React.createElement(BarChart3, { size: 16 }),
+          route: "/workbench/revenue-leakage/overview",
+        },
+        {
+          id: "rl-cases",
+          label: "Cases",
+          icon: React.createElement(FileCheck, { size: 16 }),
+          route: "/workbench/revenue-leakage/cases",
+        },
+        {
+          id: "rl-rules",
+          label: "Rules",
+          icon: React.createElement(Shield, { size: 16 }),
+          route: "/workbench/revenue-leakage/rules",
+        },
+        {
+          id: "rl-insights",
+          label: "Insights",
+          icon: React.createElement(Brain, { size: 16 }),
+          route: "/workbench/revenue-leakage/insights",
+        },
+        {
+          id: "rl-mv-trends",
+          label: "MV Trends",
+          icon: React.createElement(Map, { size: 16 }),
+          route: "/workbench/revenue-leakage/mv-trends",
+        },
+        {
+          id: "rl-exports",
+          label: "Exports",
+          icon: React.createElement(Download, { size: 16 }),
+          route: "/workbench/revenue-leakage/exports",
+        },
+      ],
+    },
+  ],
+
+  // ─── IGRS ───────────────────────────────────────────────
+  igrs: [
+    {
+      id: "igrs-overview",
+      label: "Overview",
+      icon: React.createElement(BarChart3, { size: 18 }),
+      route: "/igrs/revenue-assurance/overview",
+    },
+    {
+      id: "igrs-cases",
+      label: "Cases",
+      icon: React.createElement(FileCheck, { size: 18 }),
+      route: "/igrs/revenue-assurance/cases",
+    },
+    {
+      id: "igrs-rules",
+      label: "Rules",
+      icon: React.createElement(Shield, { size: 18 }),
+      route: "/igrs/revenue-assurance/rules",
+    },
+    {
+      id: "igrs-insights",
+      label: "Insights",
+      icon: React.createElement(Brain, { size: 18 }),
+      route: "/igrs/revenue-assurance/insights",
+    },
+    {
+      id: "igrs-mv-trends",
+      label: "MV Trends",
+      icon: React.createElement(Map, { size: 18 }),
+      route: "/igrs/revenue-assurance/mv-trends",
+    },
+    {
+      id: "igrs-exports",
+      label: "Exports",
+      icon: React.createElement(Download, { size: 18 }),
+      route: "/igrs/revenue-assurance/exports",
+    },
+    {
+      id: "igrs-ai-chat",
+      label: "AI Chat",
+      icon: React.createElement(MessageCircle, { size: 18 }),
+      route: "/igrs/revenue-assurance/ai-chat",
+    },
+    {
+      id: "igrs-settings",
+      label: "Settings",
+      icon: React.createElement(Cog, { size: 18 }),
+      route: "/igrs/revenue-assurance/settings",
+    },
+    {
+      id: "igrs-admin",
+      label: "Admin",
+      icon: React.createElement(Users, { size: 18 }),
+      route: "/igrs/revenue-assurance/admin",
+    },
+  ],
+
+  // ─── ADMIN ────────────────────────────────────────────
+  admin: [
+    {
+      id: "users",
+      label: "Users & Roles",
+      icon: React.createElement(Users, { size: 18 }),
+      route: "/admin/users",
+    },
+    {
+      id: "integrations",
+      label: "Integrations",
+      icon: React.createElement(Link2, { size: 18 }),
+      route: "/admin/integrations",
+    },
+    {
+      id: "audit-log",
+      label: "Audit Log",
+      icon: React.createElement(ClipboardList, { size: 18 }),
+      route: "/admin/audit-log",
+    },
+    {
+      id: "settings",
+      label: "System Settings",
+      icon: React.createElement(Cog, { size: 18 }),
+      route: "/admin/settings",
     },
   ],
 };

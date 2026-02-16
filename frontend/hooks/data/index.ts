@@ -10,6 +10,8 @@ export { useIGRSOffices } from "./use-igrs-offices";
 export { useIGRSTrends } from "./use-igrs-trends";
 export { useIGRSPatterns } from "./use-igrs-patterns";
 export { useIGRSMVHotspots } from "./use-igrs-mv-hotspots";
+export { useIGRSExports } from "./use-igrs-exports";
+export { useIGRSSettings } from "./use-igrs-settings";
 
 // Enterprise Revenue Assurance
 export { useRevenueCases, useRevenueCase, useRevenueCaseMutation } from "./use-revenue-cases";

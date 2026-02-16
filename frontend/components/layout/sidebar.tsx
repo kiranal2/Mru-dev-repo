@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Home, BarChart3, RefreshCw, UserCircle2, Settings, LogOut, LayoutGrid, Landmark, DollarSign } from 'lucide-react';
+import { Home, BarChart3, RefreshCw, UserCircle2, Settings, LogOut, LayoutGrid, Shield, Landmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RailItem } from '@/lib/navigation';
 
@@ -84,7 +84,7 @@ export default function Sidebar({
             <TooltipTrigger asChild>
               <RailButton
                 icon={<RefreshCw size={22} />}
-                label="Automate"
+                label="Automation"
                 isSelected={getRailItemSelectedState('automation')}
                 isCollapsed={isCollapsed}
                 onClick={() => onRailItemClick('automation')}
@@ -94,7 +94,45 @@ export default function Sidebar({
             </TooltipTrigger>
             {isCollapsed && (
               <TooltipContent side="right" align="center" sideOffset={8}>
-                Automate
+                Automation
+              </TooltipContent>
+            )}
+          </Tooltip>
+
+          <Tooltip delayDuration={150}>
+            <TooltipTrigger asChild>
+              <RailButton
+                icon={<BarChart3 size={22} />}
+                label="Reports"
+                isSelected={getRailItemSelectedState('reports')}
+                isCollapsed={isCollapsed}
+                onClick={() => onRailItemClick('reports')}
+                onMouseEnter={() => onRailItemHover('reports')}
+                onMouseLeave={() => onRailItemHover(null)}
+              />
+            </TooltipTrigger>
+            {isCollapsed && (
+              <TooltipContent side="right" align="center" sideOffset={8}>
+                Reports
+              </TooltipContent>
+            )}
+          </Tooltip>
+
+          <Tooltip delayDuration={150}>
+            <TooltipTrigger asChild>
+              <RailButton
+                icon={<LayoutGrid size={22} />}
+                label="Workbench"
+                isSelected={getRailItemSelectedState('workbench')}
+                isCollapsed={isCollapsed}
+                onClick={() => onRailItemClick('workbench')}
+                onMouseEnter={() => onRailItemHover('workbench')}
+                onMouseLeave={() => onRailItemHover(null)}
+              />
+            </TooltipTrigger>
+            {isCollapsed && (
+              <TooltipContent side="right" align="center" sideOffset={8}>
+                Workbench
               </TooltipContent>
             )}
           </Tooltip>
@@ -121,56 +159,18 @@ export default function Sidebar({
           <Tooltip delayDuration={150}>
             <TooltipTrigger asChild>
               <RailButton
-                icon={<DollarSign size={22} />}
-                label="Revenue"
-                isSelected={getRailItemSelectedState('revenue-assurance')}
+                icon={<Shield size={22} />}
+                label="Admin"
+                isSelected={getRailItemSelectedState('admin')}
                 isCollapsed={isCollapsed}
-                onClick={() => onRailItemClick('revenue-assurance')}
-                onMouseEnter={() => onRailItemHover('revenue-assurance')}
+                onClick={() => onRailItemClick('admin')}
+                onMouseEnter={() => onRailItemHover('admin')}
                 onMouseLeave={() => onRailItemHover(null)}
               />
             </TooltipTrigger>
             {isCollapsed && (
               <TooltipContent side="right" align="center" sideOffset={8}>
-                Revenue Assurance
-              </TooltipContent>
-            )}
-          </Tooltip>
-
-          <Tooltip delayDuration={150}>
-            <TooltipTrigger asChild>
-              <RailButton
-                icon={<LayoutGrid size={22} />}
-                label="WorkBench"
-                isSelected={getRailItemSelectedState('workbench')}
-                isCollapsed={isCollapsed}
-                onClick={() => onRailItemClick('workbench')}
-                onMouseEnter={() => onRailItemHover('workbench')}
-                onMouseLeave={() => onRailItemHover(null)}
-              />
-            </TooltipTrigger>
-            {isCollapsed && (
-              <TooltipContent side="right" align="center" sideOffset={8}>
-                WorkBench
-              </TooltipContent>
-            )}
-          </Tooltip>
-
-          <Tooltip delayDuration={150}>
-            <TooltipTrigger asChild>
-              <RailButton
-                icon={<BarChart3 size={22} />}
-                label="Reports"
-                isSelected={getRailItemSelectedState('reports')}
-                isCollapsed={isCollapsed}
-                onClick={() => onRailItemClick('reports')}
-                onMouseEnter={() => onRailItemHover('reports')}
-                onMouseLeave={() => onRailItemHover(null)}
-              />
-            </TooltipTrigger>
-            {isCollapsed && (
-              <TooltipContent side="right" align="center" sideOffset={8}>
-                Financials
+                Admin
               </TooltipContent>
             )}
           </Tooltip>

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface SubFilterChipsProps {
-  context: "exceptions" | "critical" | "pendingToPost";
+  context: "exceptions" | "critical" | "pendingToPost" | "settlementPending";
   counts: Record<string, number> | any;
   activeFilter: string;
   onFilterClick: (filter: string) => void;
@@ -98,6 +98,18 @@ export function CashAppContextualSubFilters({
             count: counts.bankMatchPending || 0,
           },
         ],
+      };
+    }
+
+    if (context === "settlementPending") {
+      return {
+        visible: [
+          { label: "Awaiting", filter: "AWAITING_SETTLEMENT", count: counts.awaitingSettlement || 0 },
+          { label: "In Progress", filter: "SETTLEMENT_IN_PROGRESS", count: counts.settlementInProgress || 0 },
+          { label: "Delayed", filter: "SETTLEMENT_DELAYED", count: counts.settlementDelayed || 0 },
+          { label: "Failed", filter: "SETTLEMENT_FAILED", count: counts.settlementFailed || 0 },
+        ],
+        more: [],
       };
     }
 
