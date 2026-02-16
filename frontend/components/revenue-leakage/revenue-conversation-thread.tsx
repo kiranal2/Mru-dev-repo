@@ -29,6 +29,7 @@ interface RevenueConversationThreadProps {
   isLoading?: boolean;
   zoneOptions?: string[];
   districtOptions?: string[];
+  expandPath?: string;
 }
 
 export function RevenueConversationThread({
@@ -37,6 +38,7 @@ export function RevenueConversationThread({
   isLoading,
   zoneOptions,
   districtOptions,
+  expandPath,
 }: RevenueConversationThreadProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -104,6 +106,7 @@ export function RevenueConversationThread({
                     meta={metadata.presentation.meta}
                     rows={metadata.presentation.rows}
                     filters={metadata.presentation.filters}
+                    expandPath={expandPath}
                   />
                 </div>
               )}

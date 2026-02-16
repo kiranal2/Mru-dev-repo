@@ -69,9 +69,16 @@ interface RevenueResultCardProps {
   meta: { as_of: string; row_count: number; duration_ms?: number };
   rows: RevenueResultRow[];
   filters: Record<string, string>;
+  expandPath?: string;
 }
 
-export function RevenueResultCard({ summary, meta, rows, filters }: RevenueResultCardProps) {
+export function RevenueResultCard({
+  summary,
+  meta,
+  rows,
+  filters,
+  expandPath = "/workbench/revenue-leakage/cases",
+}: RevenueResultCardProps) {
   const router = useRouter();
   const [isExpanding, setIsExpanding] = useState(false);
 
@@ -85,7 +92,7 @@ export function RevenueResultCard({ summary, meta, rows, filters }: RevenueResul
     });
     // Show loading animation then navigate
     setTimeout(() => {
-      router.push(`/workbench/revenue-leakage/cases?${params.toString()}`);
+      router.push(`${expandPath}?${params.toString()}`);
     }, 1800);
   };
 
