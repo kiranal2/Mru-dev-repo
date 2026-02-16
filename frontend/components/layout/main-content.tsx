@@ -18,12 +18,16 @@ export default function MainContent({
 }: MainContentProps) {
   return (
     <main className={cn(
-      "flex-1 flex flex-col h-[calc(100vh-65px)] overflow-y-auto scrollbar-hide",
-      loadingState === 'loading' 
-        ? "transition-all duration-300 ease-out opacity-0 translate-y-8" 
+      "flex-1 flex flex-col h-[calc(100vh-65px)] overflow-y-auto",
+      loadingState === 'loading'
+        ? "transition-all duration-300 ease-out opacity-0 translate-y-8"
         : "transition-none opacity-100 translate-y-0",
       className
-    )}>
+    )}
+    style={{
+      background: 'linear-gradient(180deg, #FAFBFD 0%, #F5F7FA 100%)',
+    }}
+    >
       {/* Content Area */}
       <div className="flex-1 h-full">
         {children}

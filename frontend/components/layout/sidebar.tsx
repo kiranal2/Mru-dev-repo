@@ -50,12 +50,16 @@ export default function Sidebar({
 
   return (
     <aside className={cn(
-        "bg-[#F2FDFF] flex flex-col pt-4 relative",
+        "flex flex-col pt-4 relative border-r border-[#0A3B77]/5",
         isCollapsed ? "w-[72px]" : "w-[72px]",
-        loadingState === 'loading' 
-          ? "transition-all duration-300 ease-out opacity-0 -translate-x-4" 
+        loadingState === 'loading'
+          ? "transition-all duration-300 ease-out opacity-0 -translate-x-4"
           : "transition-none opacity-100 translate-x-0"
-      )}>
+      )}
+      style={{
+        background: 'linear-gradient(180deg, #F2FDFF 0%, #E8F4FF 40%, #DCEEFF 100%)',
+      }}
+    >
         <nav className="flex flex-col gap-1" role="navigation" aria-label="Main navigation">
           <Tooltip delayDuration={150}>
             <TooltipTrigger asChild>
@@ -177,44 +181,52 @@ export default function Sidebar({
           <Tooltip delayDuration={150}>
             <TooltipTrigger asChild>
               <button
-                className="text-[#0A3B77] hover:bg-[#CDE4FF] transition-colors duration-200 p-2 rounded-lg relative"
-                style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
+                className="text-[#0A3B77]/70 hover:text-[#0A3B77] hover:bg-white/40 transition-all duration-200 p-2 rounded-lg relative group"
+                style={{ outline: 'none', border: 'none' }}
                 aria-label="User profile"
                 onClick={(e) => {
                   e.stopPropagation();
                   onUserMenuToggle();
                 }}
               >
-                <UserCircle2 size={22} />
+                <UserCircle2 size={22} className="transition-transform duration-200 group-hover:scale-105" />
                 {showUserMenu && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-[#F2FDFF] rounded-lg py-2 z-50" style={{ outline: 'none', border: 'none', boxShadow: 'none' }}>
-                    <div className="px-4 py-2">
-                      <p className="text-sm font-medium text-[#0A3B77]">{user?.name || 'User'}</p>
-                      <p className="text-xs text-[#0A3B77] opacity-70">{user?.email}</p>
+                  <div
+                    className="absolute left-full top-auto bottom-0 ml-2 w-52 rounded-xl py-2 z-50 shadow-elevation-3 border border-white/60 animate-scale-in"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(242,253,255,0.95) 100%)',
+                      backdropFilter: 'blur(12px)',
+                    }}
+                  >
+                    <div className="px-4 py-2.5 border-b border-[#0A3B77]/5">
+                      <p className="text-sm font-semibold text-[#0A3B77]">{user?.name || 'User'}</p>
+                      <p className="text-xs text-[#0A3B77]/60 mt-0.5">{user?.email}</p>
                     </div>
-                    <button
-                      className="w-full px-4 py-2 text-left text-sm text-[#0A3B77] hover:bg-[#CDE4FF] flex items-center transition-colors"
-                      style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onUserMenuClose();
-                      }}
-                    >
-                      <Settings className="w-4 h-4 mr-2" />
-                      Settings
-                    </button>
-                    <button
-                      className="w-full px-4 py-2 text-left text-sm text-[#0A3B77] hover:bg-[#CDE4FF] flex items-center transition-colors"
-                      style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        logout();
-                        onUserMenuClose();
-                      }}
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Logout
-                    </button>
+                    <div className="py-1">
+                      <button
+                        className="w-full px-4 py-2 text-left text-sm text-[#0A3B77]/80 hover:text-[#0A3B77] hover:bg-[#0A3B77]/5 flex items-center transition-all duration-150 rounded-md mx-1"
+                        style={{ outline: 'none', border: 'none', width: 'calc(100% - 8px)' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onUserMenuClose();
+                        }}
+                      >
+                        <Settings className="w-4 h-4 mr-2.5" />
+                        Settings
+                      </button>
+                      <button
+                        className="w-full px-4 py-2 text-left text-sm text-red-600/80 hover:text-red-600 hover:bg-red-50 flex items-center transition-all duration-150 rounded-md mx-1"
+                        style={{ outline: 'none', border: 'none', width: 'calc(100% - 8px)' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          logout();
+                          onUserMenuClose();
+                        }}
+                      >
+                        <LogOut className="w-4 h-4 mr-2.5" />
+                        Logout
+                      </button>
+                    </div>
                   </div>
                 )}
               </button>
@@ -245,17 +257,40 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={cn(
-        "flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-colors duration-200 relative",
-        isSelected 
-          ? "text-[#0A3B77] bg-[#CDE4FF]" 
-          : "text-[#0A3B77] hover:bg-[#CDE4FF]"
+        "flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg relative group",
+        "transition-all duration-200 ease-out",
+        isSelected
+          ? "text-[#0A3B77] bg-white/70 shadow-elevation-1"
+          : "text-[#0A3B77]/70 hover:text-[#0A3B77] hover:bg-white/40"
       )}
-      style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
+      style={{ outline: 'none', border: 'none' }}
       aria-label={label}
       aria-current={isSelected ? "page" : undefined}
     >
-      {icon}
-      {!isCollapsed && <span className="text-xs">{label}</span>}
+      {/* Active indicator bar */}
+      <span
+        className={cn(
+          "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full transition-all duration-300",
+          isSelected
+            ? "h-[60%] opacity-100"
+            : "h-0 opacity-0 group-hover:h-[40%] group-hover:opacity-50"
+        )}
+        style={{ background: 'var(--gradient-primary)' }}
+      />
+      <span className={cn(
+        "transition-transform duration-200",
+        isSelected ? "scale-110" : "group-hover:scale-105"
+      )}>
+        {icon}
+      </span>
+      {!isCollapsed && (
+        <span className={cn(
+          "text-[10px] font-medium transition-opacity duration-200",
+          isSelected ? "opacity-100" : "opacity-70 group-hover:opacity-100"
+        )}>
+          {label}
+        </span>
+      )}
     </button>
   );
 }

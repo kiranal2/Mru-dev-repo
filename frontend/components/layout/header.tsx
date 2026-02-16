@@ -12,34 +12,39 @@ interface HeaderProps {
 export default function Header({ loadingState }: HeaderProps) {
   return (
     <>
-      {/* Top border line */}
-      <div className="h-px w-full" style={{ backgroundColor: "rgba(14, 42, 82, 0.16)" }} />
+      {/* Top gradient accent line */}
+      <div className="h-[2px] w-full" style={{ background: 'var(--gradient-primary)' }} />
 
       {/* Top App Bar */}
       <header
         className={cn(
-          "h-14 bg-transparent border-b border-[rgba(14,42,82,0.16)] flex items-center justify-between px-6",
+          "h-14 flex items-center justify-between px-6 border-b border-[rgba(14,42,82,0.06)]",
           loadingState === "loading"
             ? "transition-all duration-300 ease-out opacity-0 -translate-y-4"
             : "transition-none opacity-100 translate-y-0"
         )}
+        style={{
+          background: 'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(248,251,255,1) 100%)',
+        }}
       >
         <div className="flex items-center">
           <img src="/meeru-logo.png" alt="Meeru AI Logo" className="h-8 w-auto object-contain" />
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
-            className="text-[#7C8A9A] hover:text-[#334155] hover:scale-110 transition-all duration-200 ease-out"
+            className="text-[#7C8A9A] hover:text-[#0A3B77] hover:bg-[#0A3B77]/5 p-2 rounded-lg transition-all duration-200 ease-out-expo"
             aria-label="Help"
           >
-            <CircleHelp size={22} />
+            <CircleHelp size={20} />
           </button>
           <button
-            className="text-[#7C8A9A] hover:text-[#334155] hover:scale-110 transition-all duration-200 ease-out"
+            className="text-[#7C8A9A] hover:text-[#0A3B77] hover:bg-[#0A3B77]/5 p-2 rounded-lg transition-all duration-200 ease-out-expo relative"
             aria-label="Notifications"
           >
-            <Bell size={22} />
+            <Bell size={20} />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gradient-to-r from-red-500 to-rose-400 animate-breathing" />
           </button>
+          <div className="w-px h-6 bg-[#0A3B77]/8 mx-1" />
           <UserMenu />
         </div>
       </header>
