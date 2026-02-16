@@ -159,6 +159,7 @@ export default function PatternsPage() {
 
   const loading = patterns.loading || hotspots.loading || offices.loading || trends.loading;
   const error = patterns.error || hotspots.error || offices.error || trends.error;
+  const patternData = patterns.data;
 
   // ── Computed KPIs ──
   const kpis = useMemo(() => {
@@ -237,6 +238,16 @@ export default function PatternsPage() {
     trends.refetch();
   };
 
+  // ── Pattern type grouping ──
+  const patternTypes = useMemo(() => {
+    const grouped: Record<string, typeof patternData> = {};
+    patternData.forEach((p) => {
+      if (!grouped[p.type]) grouped[p.type] = [];
+      grouped[p.type].push(p);
+    });
+    return grouped;
+  }, [patternData]);
+
   if (loading && !hotspots.data.length)
     return (
       <div className="p-6">
@@ -263,16 +274,6 @@ export default function PatternsPage() {
         </div>
       </div>
     );
-
-  // ── Pattern type grouping ──
-  const patternTypes = useMemo(() => {
-    const grouped: Record<string, typeof patterns.data> = {};
-    patterns.data.forEach((p) => {
-      if (!grouped[p.type]) grouped[p.type] = [];
-      grouped[p.type].push(p);
-    });
-    return grouped;
-  }, [patterns.data]);
 
   const typeColors: Record<string, { border: string; badge: string }> = {
     spike: { border: "border-l-red-500", badge: "bg-red-100 text-red-700" },
@@ -492,7 +493,7 @@ export default function PatternsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {patterns.data.map((pattern) => {
+          {patternData.map((pattern) => {
             const colors = typeColors[pattern.type] || {
               border: "border-l-slate-400",
               badge: "bg-slate-100 text-slate-700",

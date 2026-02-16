@@ -358,6 +358,12 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       route: "/igrs/revenue-assurance/insights",
     },
     {
+      id: "igrs-patterns",
+      label: "Patterns",
+      icon: React.createElement(Map, { size: 18 }),
+      route: "/igrs/revenue-assurance/patterns",
+    },
+    {
       id: "igrs-mv-trends",
       label: "MV Trends",
       icon: React.createElement(Map, { size: 18 }),
