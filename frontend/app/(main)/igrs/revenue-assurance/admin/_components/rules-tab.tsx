@@ -62,7 +62,7 @@ function categoryColor(category: string): string {
   return colors[category] ?? "bg-gray-100 text-gray-800 border-gray-200";
 }
 
-export default function RulesPage() {
+export function RulesTab() {
   const { data: rules, loading, error, refetch } = useIGRSRules();
   const { toggleRule, loading: toggling } = useIGRSRuleMutation();
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -70,23 +70,19 @@ export default function RulesPage() {
 
   if (loading)
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3" />
-          <div className="h-64 bg-gray-200 rounded" />
-        </div>
+      <div className="animate-pulse space-y-4">
+        <div className="h-8 bg-gray-200 rounded w-1/3" />
+        <div className="h-64 bg-gray-200 rounded" />
       </div>
     );
 
   if (error)
     return (
-      <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-700">{error}</p>
-          <button onClick={refetch} className="mt-2 text-sm text-red-600 underline">
-            Retry
-          </button>
-        </div>
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <p className="text-red-700">{error}</p>
+        <button onClick={refetch} className="mt-2 text-sm text-red-600 underline">
+          Retry
+        </button>
       </div>
     );
 
@@ -108,9 +104,9 @@ export default function RulesPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Rules Engine</h1>
+        <h2 className="text-xl font-semibold">Rules Engine</h2>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <span>
             {enabledCount} enabled / {disabledCount} disabled

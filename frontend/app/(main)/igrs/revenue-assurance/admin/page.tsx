@@ -15,6 +15,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RulesTab } from "./_components/rules-tab";
+import { ExportsTab } from "./_components/exports-tab";
+import { SettingsTab } from "./_components/settings-tab";
 
 export default function AdminPage() {
   const {
@@ -83,6 +86,9 @@ export default function AdminPage() {
         <TabsList>
           <TabsTrigger value="users">User Management</TabsTrigger>
           <TabsTrigger value="audit">Audit Log</TabsTrigger>
+          <TabsTrigger value="rules">Rules</TabsTrigger>
+          <TabsTrigger value="exports">Exports</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
         {/* User Management */}
@@ -231,6 +237,20 @@ export default function AdminPage() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+        {/* Rules */}
+        <TabsContent value="rules">
+          <RulesTab />
+        </TabsContent>
+
+        {/* Exports */}
+        <TabsContent value="exports">
+          <ExportsTab />
+        </TabsContent>
+
+        {/* Settings */}
+        <TabsContent value="settings">
+          <SettingsTab />
         </TabsContent>
       </Tabs>
     </div>

@@ -57,7 +57,7 @@ const EXPORT_TYPES = [
   "OfficeAnalysis-CSV",
 ];
 
-export default function ExportsPage() {
+export function ExportsTab() {
   const { data: hookExports, loading, error } = useIGRSExports();
   const [exports, setExports] = useState<ExportRecord[]>([]);
 
@@ -115,23 +115,19 @@ export default function ExportsPage() {
 
   if (loading) {
     return (
-      <div className="p-6">
-        <p className="text-sm text-muted-foreground">Loading exports...</p>
-      </div>
+      <p className="text-sm text-muted-foreground">Loading exports...</p>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6">
-        <p className="text-sm text-red-600">Error loading exports: {error}</p>
-      </div>
+      <p className="text-sm text-red-600">Error loading exports: {error}</p>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Export Management</h1>
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold">Export Management</h2>
 
       {/* New Export */}
       <Card>

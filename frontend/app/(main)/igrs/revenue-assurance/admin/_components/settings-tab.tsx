@@ -14,22 +14,18 @@ import { Separator } from "@/components/ui/separator";
 import { formatINR } from "@/lib/data/utils/format-currency";
 import { useIGRSSettings } from "@/hooks/data/use-igrs-settings";
 
-export default function SettingsPage() {
+export function SettingsTab() {
   const { data: settings, loading, error } = useIGRSSettings();
 
   if (loading) {
     return (
-      <div className="p-6">
-        <p className="text-sm text-muted-foreground">Loading settings...</p>
-      </div>
+      <p className="text-sm text-muted-foreground">Loading settings...</p>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6">
-        <p className="text-sm text-red-600">Error loading settings: {error}</p>
-      </div>
+      <p className="text-sm text-red-600">Error loading settings: {error}</p>
     );
   }
 
@@ -60,9 +56,9 @@ export default function SettingsPage() {
   });
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Settings</h1>
+        <h2 className="text-xl font-semibold">Settings</h2>
         <Badge variant="outline">Read-Only</Badge>
       </div>
 

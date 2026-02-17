@@ -346,13 +346,7 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       icon: React.createElement(FileCheck, { size: 18 }),
       route: "/igrs/revenue-assurance/cases",
     },
-    {
-      id: "igrs-rules",
-      label: "Rules",
-      icon: React.createElement(Shield, { size: 18 }),
-      route: "/igrs/revenue-assurance/rules",
-    },
-    {
+{
       id: "igrs-insights",
       label: "Insights",
       icon: React.createElement(Brain, { size: 18 }),
@@ -370,13 +364,7 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       icon: React.createElement(Map, { size: 18 }),
       route: "/igrs/revenue-assurance/mv-trends",
     },
-    {
-      id: "igrs-exports",
-      label: "Exports",
-      icon: React.createElement(Download, { size: 18 }),
-      route: "/igrs/revenue-assurance/exports",
-    },
-    {
+{
       id: "igrs-governance",
       label: "Governance",
       icon: React.createElement(Building2, { size: 18 }),
@@ -394,13 +382,7 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       icon: React.createElement(MessageCircle, { size: 18 }),
       route: "/igrs/revenue-assurance/ai-chat",
     },
-    {
-      id: "igrs-settings",
-      label: "Settings",
-      icon: React.createElement(Cog, { size: 18 }),
-      route: "/igrs/revenue-assurance/settings",
-    },
-    {
+{
       id: "igrs-admin",
       label: "Admin",
       icon: React.createElement(Users, { size: 18 }),
