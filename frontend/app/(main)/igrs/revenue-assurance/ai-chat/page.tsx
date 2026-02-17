@@ -330,14 +330,59 @@ function CategoryChips({
 function TypingIndicator() {
   return (
     <div className="flex justify-start gap-2">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-        <Brain className="w-4 h-4 text-white" />
+      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-1">
+        <Brain className="w-4 h-4 text-white animate-pulse" />
       </div>
-      <div className="rounded-2xl px-4 py-3 bg-white border border-slate-200">
-        <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: "0ms" }} />
-          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: "150ms" }} />
-          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: "300ms" }} />
+      <div className="rounded-2xl px-4 py-4 max-w-[80%] bg-white border border-slate-200 space-y-3 min-w-[320px]">
+        {/* Thinking label */}
+        <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: "0ms" }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: "150ms" }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: "300ms" }} />
+          </div>
+          <span className="text-xs text-violet-500 font-medium animate-pulse">Analyzing...</span>
+        </div>
+
+        {/* Narrative text lines shimmer */}
+        <div className="space-y-2">
+          <div className="h-3.5 w-full rounded bg-slate-100 response-shimmer" />
+          <div className="h-3.5 w-[90%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: "100ms" }} />
+          <div className="h-3.5 w-[75%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: "200ms" }} />
+        </div>
+
+        {/* Table shimmer */}
+        <div className="rounded-lg border border-slate-100 overflow-hidden">
+          <div className="flex gap-1 p-2 bg-slate-50">
+            <div className="h-3 w-[25%] rounded bg-slate-200 response-shimmer" style={{ animationDelay: "150ms" }} />
+            <div className="h-3 w-[25%] rounded bg-slate-200 response-shimmer" style={{ animationDelay: "200ms" }} />
+            <div className="h-3 w-[25%] rounded bg-slate-200 response-shimmer" style={{ animationDelay: "250ms" }} />
+            <div className="h-3 w-[25%] rounded bg-slate-200 response-shimmer" style={{ animationDelay: "300ms" }} />
+          </div>
+          {Array.from({ length: 3 }).map((_, row) => (
+            <div key={row} className="flex gap-1 p-2 border-t border-slate-50">
+              <div className="h-2.5 w-[25%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: `${300 + row * 80}ms` }} />
+              <div className="h-2.5 w-[25%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: `${350 + row * 80}ms` }} />
+              <div className="h-2.5 w-[25%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: `${400 + row * 80}ms` }} />
+              <div className="h-2.5 w-[25%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: `${450 + row * 80}ms` }} />
+            </div>
+          ))}
+        </div>
+
+        {/* Key insight shimmer */}
+        <div className="rounded-lg border-l-4 border-l-violet-200 bg-violet-50/50 p-3 flex items-start gap-2">
+          <div className="w-3.5 h-3.5 rounded bg-violet-200 response-shimmer flex-shrink-0 mt-0.5" />
+          <div className="flex-1 space-y-1.5">
+            <div className="h-3 w-[85%] rounded bg-violet-100 response-shimmer" style={{ animationDelay: "500ms" }} />
+            <div className="h-3 w-[60%] rounded bg-violet-100 response-shimmer" style={{ animationDelay: "600ms" }} />
+          </div>
+        </div>
+
+        {/* Follow-up chips shimmer */}
+        <div className="flex gap-2 pt-1">
+          <div className="h-7 w-32 rounded-full bg-violet-50 response-shimmer" style={{ animationDelay: "650ms" }} />
+          <div className="h-7 w-40 rounded-full bg-violet-50 response-shimmer" style={{ animationDelay: "750ms" }} />
+          <div className="h-7 w-28 rounded-full bg-violet-50 response-shimmer" style={{ animationDelay: "850ms" }} />
         </div>
       </div>
     </div>
@@ -516,14 +561,21 @@ export default function AIChatPage() {
       content: prompt.promptText,
       timestamp: new Date().toISOString(),
     };
-    const aiMsg: ConversationMessage = {
-      id: `msg-${Date.now()}-ai`,
-      role: "ai",
-      content: prompt.response.narrative,
-      data: prompt.response,
-      timestamp: new Date().toISOString(),
-    };
-    setMessages((prev) => [...prev, userMsg, aiMsg]);
+
+    setMessages((prev) => [...prev, userMsg]);
+    setIsTyping(true);
+
+    setTimeout(() => {
+      const aiMsg: ConversationMessage = {
+        id: `msg-${Date.now()}-ai`,
+        role: "ai",
+        content: prompt.response.narrative,
+        data: prompt.response,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, aiMsg]);
+      setIsTyping(false);
+    }, 1500);
   }
 
   function handleNewChat() {
@@ -932,6 +984,22 @@ export default function AIChatPage() {
             100% {
               transform: rotate(360deg);
             }
+          }
+          @keyframes response-shimmer-sweep {
+            0%   { background-position: -300px 0; }
+            100% { background-position: 300px 0;  }
+          }
+          .response-shimmer {
+            background-image: linear-gradient(
+              90deg,
+              transparent 0%,
+              rgba(124,58,237,0.07) 40%,
+              rgba(124,58,237,0.12) 50%,
+              rgba(124,58,237,0.07) 60%,
+              transparent 100%
+            );
+            background-size: 300px 100%;
+            animation: response-shimmer-sweep 1.4s ease-in-out infinite;
           }
         `}</style>
       </div>
