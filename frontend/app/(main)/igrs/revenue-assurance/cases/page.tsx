@@ -65,7 +65,11 @@ type EscalateTarget =
   | "Revenue Audit Cell";
 
 const RISK_OPTIONS = ["High", "Medium", "Low"];
-const STATUS_OPTIONS = ["New", "In Review", "Confirmed", "Resolved", "Rejected"];
+const STATUS_OPTIONS = ["New", "In Review", "Resolved"] as const;
+const STATUS_NORMALIZATION: Record<string, (typeof STATUS_OPTIONS)[number]> = {
+  Confirmed: "In Review",
+  Rejected: "Resolved",
+};
 const SIGNAL_OPTIONS: Array<{ label: string; value: IGRSLeakageSignal }> = [
   { label: "Revenue Gap", value: "RevenueGap" },
   { label: "Challan Delay", value: "ChallanDelay" },
@@ -84,6 +88,40 @@ const SIGNAL_BADGES: Record<IGRSLeakageSignal, string> = {
   ProhibitedLand: "bg-pink-50 text-pink-700 border-pink-200",
   DataIntegrity: "bg-slate-100 text-slate-700 border-slate-200",
   HolidayFee: "bg-orange-50 text-orange-700 border-orange-200",
+};
+
+const SIGNAL_CHIP_STYLES: Record<
+  IGRSLeakageSignal,
+  { active: string; inactive: string }
+> = {
+  RevenueGap: {
+    active: "bg-red-100 text-red-700 border-red-300",
+    inactive: "bg-red-50 text-red-700 border-red-200",
+  },
+  ChallanDelay: {
+    active: "bg-amber-100 text-amber-700 border-amber-300",
+    inactive: "bg-amber-50 text-amber-700 border-amber-200",
+  },
+  ExemptionRisk: {
+    active: "bg-purple-100 text-purple-700 border-purple-300",
+    inactive: "bg-purple-50 text-purple-700 border-purple-200",
+  },
+  MarketValueRisk: {
+    active: "bg-blue-100 text-blue-700 border-blue-300",
+    inactive: "bg-blue-50 text-blue-700 border-blue-200",
+  },
+  ProhibitedLand: {
+    active: "bg-pink-100 text-pink-700 border-pink-300",
+    inactive: "bg-pink-50 text-pink-700 border-pink-200",
+  },
+  DataIntegrity: {
+    active: "bg-slate-200 text-slate-700 border-slate-300",
+    inactive: "bg-slate-100 text-slate-700 border-slate-200",
+  },
+  HolidayFee: {
+    active: "bg-orange-100 text-orange-700 border-orange-300",
+    inactive: "bg-orange-50 text-orange-700 border-orange-200",
+  },
 };
 
 const SIGNAL_LABELS: Record<IGRSLeakageSignal, string> = {
@@ -105,10 +143,30 @@ const RISK_BADGES: Record<string, string> = {
 const STATUS_BADGES: Record<string, string> = {
   New: "bg-blue-100 text-blue-700 border-blue-200",
   "In Review": "bg-amber-100 text-amber-700 border-amber-200",
-  Confirmed: "bg-purple-100 text-purple-700 border-purple-200",
   Resolved: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  Rejected: "bg-slate-100 text-slate-700 border-slate-200",
 };
+
+function normalizeAuditStatus(status: string): (typeof STATUS_OPTIONS)[number] {
+  return STATUS_NORMALIZATION[status] ?? (status as (typeof STATUS_OPTIONS)[number]);
+}
+
+function expandAuditStatuses(statuses: string[]): string[] {
+  const raw = new Set<string>();
+  for (const status of statuses) {
+    if (status === "In Review") {
+      raw.add("In Review");
+      raw.add("Confirmed");
+      continue;
+    }
+    if (status === "Resolved") {
+      raw.add("Resolved");
+      raw.add("Rejected");
+      continue;
+    }
+    raw.add(status);
+  }
+  return Array.from(raw);
+}
 
 function formatDocKey(caseItem: IGRSCase): string {
   return `${caseItem.documentKey.srCode}/${caseItem.documentKey.bookNo}/${caseItem.documentKey.doctNo}/${caseItem.documentKey.regYear}`;
@@ -153,18 +211,22 @@ function ChipToggle({
   active,
   label,
   onClick,
-  className,
+  activeClassName,
+  inactiveClassName,
 }: {
   active: boolean;
   label: string;
   onClick: () => void;
-  className?: string;
+  activeClassName?: string;
+  inactiveClassName?: string;
 }) {
   return (
     <button
-      className={`px-3 py-1 rounded-full border text-xs font-medium transition ${
-        active ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 border-slate-200"
-      } ${className ?? ""}`}
+      className={`px-2 py-0.5 rounded-full border text-[11px] font-medium transition-colors ${
+        active
+          ? (activeClassName ?? "bg-slate-100 text-slate-800 border-slate-300 shadow-sm")
+          : (inactiveClassName ?? "bg-white text-slate-600 border-slate-200 hover:bg-slate-50")
+      }`}
       onClick={onClick}
       type="button"
     >
@@ -201,6 +263,7 @@ function CaseDrawer({
   if (!caseItem) return null;
 
   const confidence = toConfidencePct(caseItem.confidence);
+  const auditStatus = normalizeAuditStatus(caseItem.status);
   const ageDays = caseItem.sla?.ageingDays ?? ageFromCreated(caseItem.createdAt);
   const ageBucket = caseItem.sla?.ageingBucket ?? (ageDays > 30 ? "30d+" : ageDays > 14 ? "15-30d" : ageDays > 7 ? "8-14d" : "0-7d");
   const slaBreached = caseItem.sla?.slaBreached ?? ageDays > 30;
@@ -230,8 +293,8 @@ function CaseDrawer({
                 <span className={`px-2.5 py-1 rounded text-xs font-bold border ${RISK_BADGES[caseItem.riskLevel]}`}>
                   {caseItem.riskLevel} Risk
                 </span>
-                <span className={`px-2.5 py-1 rounded text-xs font-bold border ${STATUS_BADGES[caseItem.status]}`}>
-                  {caseItem.status}
+                <span className={`px-2.5 py-1 rounded text-xs font-bold border ${STATUS_BADGES[auditStatus]}`}>
+                  {auditStatus}
                 </span>
                 <span className="px-2.5 py-1 rounded text-xs font-semibold bg-white/10 text-white border border-white/20">
                   {confidence}% conf.
@@ -250,7 +313,7 @@ function CaseDrawer({
             </div>
 
             <div className="mt-3 flex items-center gap-2 flex-wrap">
-              <Select value={caseItem.status} onValueChange={(v) => void onStatusChange(v)}>
+              <Select value={auditStatus} onValueChange={(v) => void onStatusChange(v)}>
                 <SelectTrigger className="h-8 w-[150px] text-xs bg-white/10 border-white/20 text-white">
                   <SelectValue />
                 </SelectTrigger>
@@ -550,11 +613,18 @@ export default function IGRSCasesPage() {
   const [statusFilters, setStatusFilters] = useState<string[]>([]);
   const [officeFilter, setOfficeFilter] = useState("all");
   const [districtFilter, setDistrictFilter] = useState("all");
+  const [zoneFilter, setZoneFilter] = useState("all");
   const [docTypeFilter, setDocTypeFilter] = useState("all");
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState<"all" | "urban" | "rural">("all");
+  const [landNatureFilter, setLandNatureFilter] = useState("all");
+  const [ownerFilter, setOwnerFilter] = useState("all");
   const [minGapFilter, setMinGapFilter] = useState<number | null>(null);
+  const [minImpactFilter, setMinImpactFilter] = useState<number | null>(null);
+  const [minConfidenceFilter, setMinConfidenceFilter] = useState<number | null>(null);
   const [dateFromFilter, setDateFromFilter] = useState<string | null>(null);
   const [dateToFilter, setDateToFilter] = useState<string | null>(null);
-  const [slaBreachedOnly, setSlaBreachedOnly] = useState(false);
+  const [slaStatusFilter, setSlaStatusFilter] = useState<"all" | "breached" | "within">("all");
+  const [ageingBucketFilter, setAgeingBucketFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -563,15 +633,18 @@ export default function IGRSCasesPage() {
   const { update, loading: mutating } = useIGRSCaseMutation();
 
   useEffect(() => {
+    const zone = searchParams.get("zone");
     const district = searchParams.get("district");
     const risk = searchParams.get("risk");
     const signal = searchParams.get("signal");
     const status = searchParams.get("status");
+    const assignedTo = searchParams.get("assignedTo") ?? searchParams.get("owner");
     const minGap = searchParams.get("minGap");
     const from = searchParams.get("from");
     const to = searchParams.get("to");
     const sla = searchParams.get("sla");
 
+    if (zone) setZoneFilter(zone);
     if (district) setDistrictFilter(district);
     if (risk) {
       const next = risk
@@ -591,17 +664,18 @@ export default function IGRSCasesPage() {
     if (status) {
       const next = status
         .split(",")
-        .map((v) => v.trim())
+        .map((v) => normalizeAuditStatus(v.trim()))
         .filter((v) => STATUS_OPTIONS.includes(v));
-      setStatusFilters(next);
+      setStatusFilters(Array.from(new Set(next)));
     }
+    if (assignedTo) setOwnerFilter(assignedTo);
     if (minGap) {
       const parsed = Number(minGap);
       setMinGapFilter(Number.isFinite(parsed) && parsed > 0 ? parsed : null);
     }
     if (from) setDateFromFilter(from);
     if (to) setDateToFilter(to);
-    if (sla === "breached") setSlaBreachedOnly(true);
+    if (sla === "breached" || sla === "within") setSlaStatusFilter(sla);
     setPage(1);
   }, [searchParams]);
 
@@ -611,9 +685,14 @@ export default function IGRSCasesPage() {
     search: search || undefined,
     riskLevel: riskFilters.length ? riskFilters : undefined,
     signals: signalFilters.length ? signalFilters : undefined,
-    status: statusFilters.length ? statusFilters : undefined,
+    status: statusFilters.length ? expandAuditStatuses(statusFilters) : undefined,
     office: officeFilter !== "all" ? [officeFilter] : undefined,
     district: districtFilter !== "all" ? [districtFilter] : undefined,
+    assignedTo:
+      ownerFilter !== "all" && ownerFilter !== "UNASSIGNED" ? ownerFilter : undefined,
+    minGap: minGapFilter ?? undefined,
+    dateFrom: dateFromFilter ?? undefined,
+    dateTo: dateToFilter ?? undefined,
     ...sortConfig,
     page,
     pageSize,
@@ -635,6 +714,23 @@ export default function IGRSCasesPage() {
       list = list.filter((c) => c.docType.tranDesc === docTypeFilter || c.docType.abDesc === docTypeFilter);
     }
 
+    if (zoneFilter !== "all") {
+      list = list.filter((c) => c.office.zone === zoneFilter);
+    }
+
+    if (ownerFilter !== "all") {
+      list = list.filter((c) => (c.assignedTo ?? "UNASSIGNED") === ownerFilter);
+    }
+
+    if (propertyTypeFilter !== "all") {
+      const expectUrban = propertyTypeFilter === "urban";
+      list = list.filter((c) => c.propertySummary.isUrban === expectUrban);
+    }
+
+    if (landNatureFilter !== "all") {
+      list = list.filter((c) => (c.propertySummary.landNature ?? "Unknown") === landNatureFilter);
+    }
+
     if (registrationRange !== "all") {
       const now = Date.now();
       const days = registrationRange === "30" ? 30 : 90;
@@ -646,6 +742,14 @@ export default function IGRSCasesPage() {
 
     if (minGapFilter != null) {
       list = list.filter((c) => c.gapInr >= minGapFilter);
+    }
+
+    if (minImpactFilter != null) {
+      list = list.filter((c) => c.impactAmountInr >= minImpactFilter);
+    }
+
+    if (minConfidenceFilter != null) {
+      list = list.filter((c) => toConfidencePct(c.confidence) >= minConfidenceFilter);
     }
 
     if (dateFromFilter) {
@@ -668,10 +772,21 @@ export default function IGRSCasesPage() {
       }
     }
 
-    if (slaBreachedOnly) {
+    if (slaStatusFilter !== "all") {
       list = list.filter((c) => {
         const ageDays = c.sla?.ageingDays ?? ageFromCreated(c.createdAt);
-        return c.sla?.slaBreached ?? ageDays > 30;
+        const breached = c.sla?.slaBreached ?? ageDays > 30;
+        return slaStatusFilter === "breached" ? breached : !breached;
+      });
+    }
+
+    if (ageingBucketFilter !== "all") {
+      list = list.filter((c) => {
+        const ageDays = c.sla?.ageingDays ?? ageFromCreated(c.createdAt);
+        const bucket =
+          c.sla?.ageingBucket ??
+          (ageDays > 30 ? "30d+" : ageDays > 14 ? "15-30d" : ageDays > 7 ? "8-14d" : "0-7d");
+        return bucket === ageingBucketFilter;
       });
     }
 
@@ -679,11 +794,18 @@ export default function IGRSCasesPage() {
   }, [
     rows,
     docTypeFilter,
+    zoneFilter,
+    ownerFilter,
+    propertyTypeFilter,
+    landNatureFilter,
     registrationRange,
     minGapFilter,
+    minImpactFilter,
+    minConfidenceFilter,
     dateFromFilter,
     dateToFilter,
-    slaBreachedOnly,
+    slaStatusFilter,
+    ageingBucketFilter,
   ]);
 
   const activeCase = useMemo(
@@ -698,13 +820,72 @@ export default function IGRSCasesPage() {
   }, [rows]);
 
   const districts = useMemo(() => Array.from(new Set(rows.map((r) => r.office.district))), [rows]);
+  const zones = useMemo(() => Array.from(new Set(rows.map((r) => r.office.zone))), [rows]);
   const docTypes = useMemo(() => Array.from(new Set(rows.map((r) => r.docType.tranDesc))), [rows]);
   const assignees = useMemo(
     () => Array.from(new Set(rows.map((r) => r.assignedTo).filter((v): v is string => !!v))),
     [rows]
   );
+  const landNatures = useMemo(
+    () => Array.from(new Set(rows.map((r) => r.propertySummary.landNature ?? "Unknown"))),
+    [rows]
+  );
+  const ageingBuckets = useMemo(() => {
+    const set = new Set<string>();
+    for (const r of rows) {
+      const ageDays = r.sla?.ageingDays ?? ageFromCreated(r.createdAt);
+      const bucket =
+        r.sla?.ageingBucket ??
+        (ageDays > 30 ? "30d+" : ageDays > 14 ? "15-30d" : ageDays > 7 ? "8-14d" : "0-7d");
+      set.add(bucket);
+    }
+    return Array.from(set);
+  }, [rows]);
 
   const allSelectedOnPage = visibleRows.length > 0 && visibleRows.every((r) => selectedIds.has(r.id));
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (search.trim()) count += 1;
+    if (registrationRange !== "all") count += 1;
+    if (riskFilters.length) count += riskFilters.length;
+    if (signalFilters.length) count += signalFilters.length;
+    if (statusFilters.length) count += statusFilters.length;
+    if (officeFilter !== "all") count += 1;
+    if (districtFilter !== "all") count += 1;
+    if (zoneFilter !== "all") count += 1;
+    if (docTypeFilter !== "all") count += 1;
+    if (propertyTypeFilter !== "all") count += 1;
+    if (landNatureFilter !== "all") count += 1;
+    if (ownerFilter !== "all") count += 1;
+    if (minGapFilter != null) count += 1;
+    if (minImpactFilter != null) count += 1;
+    if (minConfidenceFilter != null) count += 1;
+    if (dateFromFilter) count += 1;
+    if (dateToFilter) count += 1;
+    if (slaStatusFilter !== "all") count += 1;
+    if (ageingBucketFilter !== "all") count += 1;
+    return count;
+  }, [
+    search,
+    registrationRange,
+    riskFilters,
+    signalFilters,
+    statusFilters,
+    officeFilter,
+    districtFilter,
+    zoneFilter,
+    docTypeFilter,
+    propertyTypeFilter,
+    landNatureFilter,
+    ownerFilter,
+    minGapFilter,
+    minImpactFilter,
+    minConfidenceFilter,
+    dateFromFilter,
+    dateToFilter,
+    slaStatusFilter,
+    ageingBucketFilter,
+  ]);
 
   const toggleMulti = <T extends string>(current: T[], value: T): T[] =>
     current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
@@ -718,11 +899,18 @@ export default function IGRSCasesPage() {
     setStatusFilters([]);
     setOfficeFilter("all");
     setDistrictFilter("all");
+    setZoneFilter("all");
     setDocTypeFilter("all");
+    setPropertyTypeFilter("all");
+    setLandNatureFilter("all");
+    setOwnerFilter("all");
     setMinGapFilter(null);
+    setMinImpactFilter(null);
+    setMinConfidenceFilter(null);
     setDateFromFilter(null);
     setDateToFilter(null);
-    setSlaBreachedOnly(false);
+    setSlaStatusFilter("all");
+    setAgeingBucketFilter("all");
     setPage(1);
   };
 
@@ -842,102 +1030,295 @@ export default function IGRSCasesPage() {
 
   return (
     <div className="p-4 md:p-5 space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-[280px] flex-1 max-w-[420px]">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <Input
-            placeholder="Search Case ID, Doc Key, Party,"
-            className="pl-9 h-10"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-          />
-        </div>
+      <div className="space-y-1">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <div className="relative min-w-[260px] flex-1 max-w-[420px]">
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Input
+              placeholder="Search Case ID, Doc Key, Party..."
+              className="pl-8 h-8 text-sm bg-white"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+            />
+          </div>
 
-        <Button variant="outline" className="h-10" onClick={() => setShowMoreFilters((s) => !s)}>
-          <Filter className="w-4 h-4 mr-1" /> More Filters
-        </Button>
-
-        <Select value={registrationRange} onValueChange={(v) => setRegistrationRange(v)}>
-          <SelectTrigger className="h-10 w-[170px]">
-            <SelectValue placeholder="Registration" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Registration — All</SelectItem>
-            <SelectItem value="30">Registration — 30d</SelectItem>
-            <SelectItem value="90">Registration — 90d</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
-          <SelectTrigger className="h-10 w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="risk">Sort: Risk</SelectItem>
-            <SelectItem value="gap">Sort: Gap</SelectItem>
-            <SelectItem value="newest">Sort: Newest</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <div className="ml-auto flex items-center gap-1 border rounded-md p-1">
           <Button
-            size="icon"
-            variant={viewMode === "table" ? "secondary" : "ghost"}
-            className="h-8 w-8"
-            onClick={() => setViewMode("table")}
+            variant="outline"
+            className="h-8 text-xs border-slate-300 bg-white"
+            onClick={() => setShowMoreFilters((s) => !s)}
           >
-            <List className="w-4 h-4" />
+            <Filter className="w-3.5 h-3.5 mr-1" /> More Filters
+            {activeFilterCount > 0 && (
+              <span className="ml-1.5 min-w-5 h-5 px-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[11px] leading-5 text-center">
+                {activeFilterCount}
+              </span>
+            )}
           </Button>
-          <Button
-            size="icon"
-            variant={viewMode === "compact" ? "secondary" : "ghost"}
-            className="h-8 w-8"
-            onClick={() => setViewMode("compact")}
-          >
-            <LayoutGrid className="w-4 h-4" />
-          </Button>
+
+          <Select value={registrationRange} onValueChange={(v) => setRegistrationRange(v)}>
+            <SelectTrigger className="h-8 w-[160px] text-xs bg-white">
+              <SelectValue placeholder="Registration" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Registration — All</SelectItem>
+              <SelectItem value="30">Registration — 30d</SelectItem>
+              <SelectItem value="90">Registration — 90d</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
+            <SelectTrigger className="h-8 w-[128px] text-xs bg-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="risk">Sort: Risk</SelectItem>
+              <SelectItem value="gap">Sort: Gap</SelectItem>
+              <SelectItem value="newest">Sort: Newest</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <div className="ml-auto flex items-center gap-1">
+            <Button
+              size="icon"
+              variant={viewMode === "table" ? "secondary" : "ghost"}
+              className="h-8 w-8"
+              onClick={() => setViewMode("table")}
+            >
+              <List className="w-3.5 h-3.5" />
+            </Button>
+            <Button
+              size="icon"
+              variant={viewMode === "compact" ? "secondary" : "ghost"}
+              className="h-8 w-8"
+              onClick={() => setViewMode("compact")}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+            </Button>
+          </div>
         </div>
       </div>
 
-      {showMoreFilters && (
-        <Card>
-          <CardContent className="py-3 grid grid-cols-1 md:grid-cols-3 gap-2">
-            <Select value={officeFilter} onValueChange={(v) => setOfficeFilter(v)}>
-              <SelectTrigger><SelectValue placeholder="Office" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Offices</SelectItem>
-                {offices.map((o) => (
-                  <SelectItem key={o.code} value={o.code}>{o.code} · {o.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={districtFilter} onValueChange={(v) => setDistrictFilter(v)}>
-              <SelectTrigger><SelectValue placeholder="District" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Districts</SelectItem>
-                {districts.map((d) => (
-                  <SelectItem key={d} value={d}>{d}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={docTypeFilter} onValueChange={(v) => setDocTypeFilter(v)}>
-              <SelectTrigger><SelectValue placeholder="Doc Type" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Doc Types</SelectItem>
-                {docTypes.map((d) => (
-                  <SelectItem key={d} value={d}>{d}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
-      )}
+      <Sheet open={showMoreFilters} onOpenChange={setShowMoreFilters}>
+        <SheetContent side="right" className="w-[360px] sm:max-w-[360px] p-0 flex flex-col">
+          <SheetHeader className="px-5 py-4 border-b">
+            <SheetTitle className="text-2xl font-semibold">Filters</SheetTitle>
+          </SheetHeader>
 
-      <div className="flex flex-wrap items-center gap-3 text-xs">
-        <span className="font-semibold text-slate-500">RISK</span>
+          <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+            <section className="space-y-2.5">
+              <p className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">Location</p>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">Office</label>
+                <Select value={officeFilter} onValueChange={(v) => setOfficeFilter(v)}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Office" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Offices</SelectItem>
+                    {offices.map((o) => (
+                      <SelectItem key={o.code} value={o.code}>{o.code} · {o.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">District</label>
+                <Select value={districtFilter} onValueChange={(v) => setDistrictFilter(v)}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="District" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Districts</SelectItem>
+                    {districts.map((d) => (
+                      <SelectItem key={d} value={d}>{d}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">Zone</label>
+                <Select value={zoneFilter} onValueChange={(v) => setZoneFilter(v)}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Zone" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Zones</SelectItem>
+                    {zones.map((z) => (
+                      <SelectItem key={z} value={z}>{z}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </section>
+
+            <section className="space-y-2.5">
+              <p className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">Document & Property</p>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">Document Type</label>
+                <Select value={docTypeFilter} onValueChange={(v) => setDocTypeFilter(v)}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Doc Type" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Doc Types</SelectItem>
+                    {docTypes.map((d) => (
+                      <SelectItem key={d} value={d}>{d}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">Property Type</label>
+                <Select value={propertyTypeFilter} onValueChange={(v) => setPropertyTypeFilter(v as "all" | "urban" | "rural")}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="urban">Urban</SelectItem>
+                    <SelectItem value="rural">Rural</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">Land Nature</label>
+                <Select value={landNatureFilter} onValueChange={(v) => setLandNatureFilter(v)}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    {landNatures.map((n) => (
+                      <SelectItem key={n} value={n}>{n}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </section>
+
+            <section className="space-y-2.5">
+              <p className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">Assignment</p>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">Owner</label>
+                <Select value={ownerFilter} onValueChange={(v) => setOwnerFilter(v)}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Owner" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Owners</SelectItem>
+                    <SelectItem value="UNASSIGNED">Unassigned</SelectItem>
+                    {assignees.map((o) => (
+                      <SelectItem key={o} value={o}>{o}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </section>
+
+            <section className="space-y-2.5">
+              <p className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">Workflow</p>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">Status</label>
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                  {STATUS_OPTIONS.map((status) => (
+                    <ChipToggle
+                      key={status}
+                      label={status}
+                      active={statusFilters.includes(status)}
+                      onClick={() => {
+                        setStatusFilters((prev) => toggleMulti(prev, status));
+                        setPage(1);
+                      }}
+                      activeClassName={
+                        status === "New"
+                          ? "bg-blue-100 text-blue-700 border-blue-300"
+                          : status === "In Review"
+                            ? "bg-amber-100 text-amber-700 border-amber-300"
+                            : "bg-emerald-100 text-emerald-700 border-emerald-300"
+                      }
+                      inactiveClassName={
+                        status === "New"
+                          ? "bg-blue-50 text-blue-700 border-blue-200"
+                          : status === "In Review"
+                            ? "bg-amber-50 text-amber-700 border-amber-200"
+                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section className="space-y-2.5">
+              <p className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">Amounts</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <label className="text-xs text-slate-600">Min Gap (₹)</label>
+                  <Input
+                    type="number"
+                    className="h-9 text-sm"
+                    placeholder="e.g. 10000"
+                    value={minGapFilter ?? ""}
+                    onChange={(e) => setMinGapFilter(e.target.value ? Number(e.target.value) : null)}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs text-slate-600">Min Impact (₹)</label>
+                  <Input
+                    type="number"
+                    className="h-9 text-sm"
+                    placeholder="e.g. 50000"
+                    value={minImpactFilter ?? ""}
+                    onChange={(e) => setMinImpactFilter(e.target.value ? Number(e.target.value) : null)}
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section className="space-y-2.5">
+              <p className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">Confidence</p>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">Min Confidence (%)</label>
+                <Input
+                  type="number"
+                  className="h-9 text-sm"
+                  placeholder="e.g. 70"
+                  value={minConfidenceFilter ?? ""}
+                  onChange={(e) => setMinConfidenceFilter(e.target.value ? Number(e.target.value) : null)}
+                />
+              </div>
+            </section>
+
+            <section className="space-y-2.5">
+              <p className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">SLA & Ageing</p>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">SLA Status</label>
+                <Select value={slaStatusFilter} onValueChange={(v) => setSlaStatusFilter(v as "all" | "breached" | "within")}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="breached">Breached</SelectItem>
+                    <SelectItem value="within">Within SLA</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-slate-600">Ageing Bucket</label>
+                <Select value={ageingBucketFilter} onValueChange={(v) => setAgeingBucketFilter(v)}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    {ageingBuckets.map((b) => (
+                      <SelectItem key={b} value={b}>{b}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </section>
+          </div>
+
+          <div className="border-t px-5 py-3 flex items-center justify-end gap-2 bg-white">
+            <Button variant="outline" className="h-9" onClick={clearFilters}>
+              Reset All
+            </Button>
+            <Button className="h-9 bg-slate-900 hover:bg-slate-800" onClick={() => setShowMoreFilters(false)}>
+              Apply
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <div className="flex flex-wrap items-center gap-1.5 text-xs">
+        <span className="font-semibold text-[10px] tracking-wide text-slate-500">RISK</span>
         {RISK_OPTIONS.map((risk) => (
           <ChipToggle
             key={risk}
@@ -947,12 +1328,24 @@ export default function IGRSCasesPage() {
               setRiskFilters((prev) => toggleMulti(prev, risk));
               setPage(1);
             }}
-            className={risk === "High" ? "border-red-200 text-red-700" : risk === "Medium" ? "border-amber-200 text-amber-700" : "border-emerald-200 text-emerald-700"}
+            activeClassName={
+              risk === "High"
+                ? "bg-red-100 text-red-700 border-red-300"
+                : risk === "Medium"
+                  ? "bg-amber-100 text-amber-700 border-amber-300"
+                  : "bg-emerald-100 text-emerald-700 border-emerald-300"
+            }
+            inactiveClassName={
+              risk === "High"
+                ? "bg-red-50 text-red-600 border-red-200"
+                : risk === "Medium"
+                  ? "bg-amber-50 text-amber-700 border-amber-200"
+                  : "bg-emerald-50 text-emerald-700 border-emerald-200"
+            }
           />
         ))}
 
-        <span className="mx-1 text-slate-300">|</span>
-        <span className="font-semibold text-slate-500">SIGNAL</span>
+        <span className="ml-2 font-semibold text-[10px] tracking-wide text-slate-500">SIGNAL</span>
         {SIGNAL_OPTIONS.map((signal) => (
           <ChipToggle
             key={signal.value}
@@ -962,24 +1355,12 @@ export default function IGRSCasesPage() {
               setSignalFilters((prev) => toggleMulti(prev, signal.value));
               setPage(1);
             }}
+            activeClassName={SIGNAL_CHIP_STYLES[signal.value].active}
+            inactiveClassName={SIGNAL_CHIP_STYLES[signal.value].inactive}
           />
         ))}
 
-        <span className="mx-1 text-slate-300">|</span>
-        <span className="font-semibold text-slate-500">STATUS</span>
-        {STATUS_OPTIONS.map((status) => (
-          <ChipToggle
-            key={status}
-            label={status}
-            active={statusFilters.includes(status)}
-            onClick={() => {
-              setStatusFilters((prev) => toggleMulti(prev, status));
-              setPage(1);
-            }}
-          />
-        ))}
-
-        <Button variant="ghost" size="sm" className="text-xs ml-auto" onClick={clearFilters}>Reset Filters</Button>
+        <Button variant="ghost" size="sm" className="h-7 text-[11px] ml-auto px-2 text-slate-600" onClick={clearFilters}>Reset Filters</Button>
       </div>
 
       <Card>
@@ -1024,7 +1405,7 @@ export default function IGRSCasesPage() {
                   </tr>
                 )}
                 {visibleRows.map((c) => (
-                  <tr key={c.id} className="border-b hover:bg-slate-50/80">
+                  <tr key={c.id} className="border-b hover:bg-blue-50/40">
                     <td className="py-2 px-3 whitespace-nowrap">
                       <input
                         type="checkbox"
