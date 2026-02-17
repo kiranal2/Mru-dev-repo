@@ -8,7 +8,6 @@ const IGRS_TABS = [
   { label: "AI Chat", path: "/igrs/revenue-assurance/ai-chat" },
   { label: "Overview", path: "/igrs/revenue-assurance/overview" },
   { label: "Cases", path: "/igrs/revenue-assurance/cases" },
-  { label: "Rules", path: "/igrs/revenue-assurance/rules" },
   { label: "Insights", path: "/igrs/revenue-assurance/insights" },
   { label: "Patterns", path: "/igrs/revenue-assurance/patterns" },
   { label: "MV Trends", path: "/igrs/revenue-assurance/mv-trends" },
@@ -17,6 +16,7 @@ const IGRS_TABS = [
   { label: "AI Intelligence", path: "/igrs/revenue-assurance/ai-intelligence" },
   { label: "Settings", path: "/igrs/revenue-assurance/settings" },
   { label: "Admin", path: "/igrs/revenue-assurance/admin" },
+  { label: "Rules", path: "/igrs/revenue-assurance/rules" },
 ];
 
 export default function RevenueAssuranceLayout({
