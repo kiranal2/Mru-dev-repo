@@ -1583,6 +1583,5 @@ export interface AIIntelligenceMetadata {
     forecasting: "active" | "training" | "error";
     riskScoring: "active" | "training" | "error";
     integrityIndex: "active" | "training" | "error";
-    promptEngine: "active" | "maintenance" | "error";
   };
 }

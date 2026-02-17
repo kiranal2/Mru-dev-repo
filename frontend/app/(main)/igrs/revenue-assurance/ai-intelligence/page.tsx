@@ -24,7 +24,6 @@ import {
   TrendingDown,
   ShieldAlert,
   Building2,
-  MessageSquare,
   ArrowUpRight,
   Landmark,
   Target,
@@ -34,7 +33,6 @@ import {
   IndianRupee,
   Shield,
   Brain,
-  Send,
 } from "lucide-react";
 import type {
   PredictiveForecastingData,
@@ -46,22 +44,16 @@ import type {
   SROIntegrityIndexData,
   SROIntegrityRecord,
   IntegrityComponent,
-  PromptEngineData,
-  PromptTemplate,
-  PromptCategory,
-  InlineChartData,
-  PromptResponseData,
 } from "@/lib/data/types/igrs";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-type TabKey = "forecasting" | "risk-scoring" | "integrity-index" | "prompt-engine";
+type TabKey = "forecasting" | "risk-scoring" | "integrity-index";
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: "forecasting", label: "Predictive Forecasting", icon: <TrendingUp className="w-3.5 h-3.5" /> },
   { key: "risk-scoring", label: "Risk Scoring", icon: <ShieldAlert className="w-3.5 h-3.5" /> },
   { key: "integrity-index", label: "SRO Integrity", icon: <Building2 className="w-3.5 h-3.5" /> },
-  { key: "prompt-engine", label: "Prompt Engine", icon: <MessageSquare className="w-3.5 h-3.5" /> },
 ];
 
 // ── Format Helper ────────────────────────────────────────────────────────────
@@ -1441,476 +1433,22 @@ function IntegrityIndexTab({ data }: { data: SROIntegrityIndexData }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// Sub-Tab 4: Natural Language Prompt Engine
-// ═══════════════════════════════════════════════════════════════════════════════
-
-interface ConversationMessage {
-  role: "user" | "ai";
-  content: string;
-  data?: PromptResponseData;
-}
-
-function PromptEngineTab({ data }: { data: PromptEngineData }) {
-  const [selectedCategory, setSelectedCategory] = useState<PromptCategory | "all">("all");
-  const [conversation, setConversation] = useState<ConversationMessage[]>([]);
-  const [inputText, setInputText] = useState("");
-
-  const { categories, prompts } = data;
-
-  // Filter prompts by category
-  const filteredPrompts = useMemo(() => {
-    if (selectedCategory === "all") return prompts;
-    return prompts.filter((p) => p.category === selectedCategory);
-  }, [prompts, selectedCategory]);
-
-  // Fuzzy matching
-  function findBestMatch(input: string, allPrompts: PromptTemplate[]): PromptTemplate | null {
-    const normalized = input.toLowerCase().trim();
-    const exact = allPrompts.find((p) => p.promptText.toLowerCase() === normalized);
-    if (exact) return exact;
-    const words = normalized.split(/\s+/).filter((w) => w.length > 2);
-    let best: PromptTemplate | null = null;
-    let bestScore = 0;
-    for (const p of allPrompts) {
-      const pw = p.promptText.toLowerCase().split(/\s+/);
-      const score = words.filter((w) => pw.some((x) => x.includes(w))).length / words.length;
-      if (score > bestScore && score >= 0.4) {
-        bestScore = score;
-        best = p;
-      }
-    }
-    return best;
-  }
-
-  function handleSend(text?: string) {
-    const msg = text || inputText.trim();
-    if (!msg) return;
-
-    // Add user message
-    const userMsg: ConversationMessage = { role: "user", content: msg };
-
-    // Find matching prompt
-    const match = findBestMatch(msg, prompts);
-
-    let aiMsg: ConversationMessage;
-    if (match) {
-      aiMsg = {
-        role: "ai",
-        content: match.response.narrative,
-        data: match.response,
-      };
-    } else {
-      aiMsg = {
-        role: "ai",
-        content: "I don't have a pre-computed answer for that specific question yet. Try one of the suggested prompts above, or the system administrator can add new prompt templates.",
-      };
-    }
-
-    setConversation((prev) => [...prev, userMsg, aiMsg]);
-    setInputText("");
-  }
-
-  function handlePromptClick(prompt: PromptTemplate) {
-    const userMsg: ConversationMessage = { role: "user", content: prompt.promptText };
-    const aiMsg: ConversationMessage = {
-      role: "ai",
-      content: prompt.response.narrative,
-      data: prompt.response,
-    };
-    setConversation((prev) => [...prev, userMsg, aiMsg]);
-  }
-
-  function handleFollowUp(text: string) {
-    handleSend(text);
-  }
-
-  // Inline chart renderer
-  function renderInlineChart(chart: InlineChartData) {
-    if (chart.type === "bar") {
-      const maxVal = Math.max(...chart.datasets.flatMap((d) => d.data), 1);
-      const barGroupW = 400 / Math.max(chart.labels.length, 1);
-      const barW = barGroupW * 0.6 / Math.max(chart.datasets.length, 1);
-      return (
-        <svg viewBox="0 0 420 160" className="w-full max-w-md mt-2">
-          {chart.labels.map((label, li) => (
-            <g key={label}>
-              {chart.datasets.map((ds, di) => {
-                const h = (ds.data[li] / maxVal) * 110;
-                const x = 30 + li * barGroupW + di * barW;
-                return (
-                  <rect
-                    key={di}
-                    x={x}
-                    y={130 - h}
-                    width={barW - 2}
-                    height={h}
-                    fill={ds.color}
-                    rx={2}
-                  />
-                );
-              })}
-              <text x={30 + li * barGroupW + barGroupW * 0.3 / 2} y={148} textAnchor="middle" className="text-[8px] fill-slate-500">
-                {label}
-              </text>
-            </g>
-          ))}
-          {/* Legend */}
-          {chart.datasets.map((ds, di) => (
-            <g key={di}>
-              <rect x={30 + di * 80} y={2} width={8} height={8} rx={1} fill={ds.color} />
-              <text x={42 + di * 80} y={10} className="text-[8px] fill-slate-500">{ds.label}</text>
-            </g>
-          ))}
-        </svg>
-      );
-    }
-
-    if (chart.type === "line") {
-      const maxVal = Math.max(...chart.datasets.flatMap((d) => d.data), 1);
-      const minVal = Math.min(...chart.datasets.flatMap((d) => d.data), 0);
-      const rng = maxVal - minVal || 1;
-      return (
-        <svg viewBox="0 0 420 160" className="w-full max-w-md mt-2">
-          {chart.datasets.map((ds, di) => {
-            const path = ds.data
-              .map((v, i) => {
-                const x = 30 + (i / Math.max(ds.data.length - 1, 1)) * 360;
-                const y = 130 - ((v - minVal) / rng) * 110;
-                return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
-              })
-              .join(" ");
-            return (
-              <g key={di}>
-                <path d={path} fill="none" stroke={ds.color} strokeWidth={2} />
-                {ds.data.map((v, i) => {
-                  const x = 30 + (i / Math.max(ds.data.length - 1, 1)) * 360;
-                  const y = 130 - ((v - minVal) / rng) * 110;
-                  return <circle key={i} cx={x} cy={y} r={2.5} fill={ds.color} />;
-                })}
-              </g>
-            );
-          })}
-          {chart.labels.map((label, i) => (
-            <text key={i} x={30 + (i / Math.max(chart.labels.length - 1, 1)) * 360} y={148} textAnchor="middle" className="text-[8px] fill-slate-500">
-              {label}
-            </text>
-          ))}
-          {chart.datasets.map((ds, di) => (
-            <g key={di}>
-              <rect x={30 + di * 80} y={2} width={8} height={8} rx={1} fill={ds.color} />
-              <text x={42 + di * 80} y={10} className="text-[8px] fill-slate-500">{ds.label}</text>
-            </g>
-          ))}
-        </svg>
-      );
-    }
-
-    if (chart.type === "donut") {
-      const total = chart.datasets[0]?.data.reduce((s, v) => s + v, 0) || 1;
-      let angle = -90;
-      const cx = 80;
-      const cy = 80;
-      const r = 60;
-      const innerR = 35;
-
-      return (
-        <svg viewBox="0 0 250 170" className="w-full max-w-xs mt-2">
-          {chart.datasets[0]?.data.map((val, i) => {
-            const sliceAngle = (val / total) * 360;
-            const startAngle = angle;
-            const endAngle = angle + sliceAngle;
-            angle = endAngle;
-
-            const startRad = (startAngle * Math.PI) / 180;
-            const endRad = (endAngle * Math.PI) / 180;
-            const largeArc = sliceAngle > 180 ? 1 : 0;
-
-            const x1 = cx + r * Math.cos(startRad);
-            const y1 = cy + r * Math.sin(startRad);
-            const x2 = cx + r * Math.cos(endRad);
-            const y2 = cy + r * Math.sin(endRad);
-            const ix1 = cx + innerR * Math.cos(startRad);
-            const iy1 = cy + innerR * Math.sin(startRad);
-            const ix2 = cx + innerR * Math.cos(endRad);
-            const iy2 = cy + innerR * Math.sin(endRad);
-
-            const d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${innerR} ${innerR} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
-
-            const color = chart.labels.length > i ? (chart.datasets[0] as { color: string }).color : "#94a3b8";
-            const colors = ["#7c3aed", "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#ec4899"];
-
-            return (
-              <path key={i} d={d} fill={colors[i % colors.length]} />
-            );
-          })}
-          {/* Labels */}
-          {chart.labels.map((label, i) => (
-            <g key={i}>
-              <rect x={170} y={20 + i * 18} width={8} height={8} rx={1} fill={["#7c3aed", "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#ec4899"][i % 6]} />
-              <text x={182} y={28 + i * 18} className="text-[8px] fill-slate-600">{label}</text>
-            </g>
-          ))}
-        </svg>
-      );
-    }
-
-    return null;
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* Empty State or Conversation */}
-      {conversation.length === 0 ? (
-        <div className="space-y-6">
-          {/* Empty state hero */}
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4">
-              <Brain className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="text-xl font-semibold text-slate-800">AI Prompt Engine</h2>
-            <p className="text-sm text-slate-500 mt-2 max-w-md">
-              Ask questions about revenue, performance, risk analysis, and more. Select a category or type a question to get AI-powered insights with data visualizations.
-            </p>
-          </div>
-
-          {/* Category Chips */}
-          <div className="flex flex-wrap gap-2 justify-center">
-            <button
-              onClick={() => setSelectedCategory("all")}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                selectedCategory === "all"
-                  ? "bg-violet-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              All
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                  selectedCategory === cat.id
-                    ? "text-white"
-                    : "text-slate-600 hover:bg-slate-200"
-                }`}
-                style={{
-                  backgroundColor: selectedCategory === cat.id ? cat.color : undefined,
-                }}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Suggested Prompts Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {filteredPrompts.map((prompt) => {
-              const cat = categories.find((c) => c.id === prompt.category);
-              return (
-                <button
-                  key={prompt.id}
-                  onClick={() => handlePromptClick(prompt)}
-                  className="text-left p-4 rounded-lg border border-slate-200 hover:border-violet-300 hover:bg-violet-50/30 transition-colors"
-                >
-                  <div className="flex items-start gap-2">
-                    {cat && (
-                      <span
-                        className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium text-white flex-shrink-0"
-                        style={{ backgroundColor: cat.color }}
-                      >
-                        {cat.label}
-                      </span>
-                    )}
-                    <p className="text-sm text-slate-700">{prompt.promptText}</p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {/* Category Chips - compact when conversation active */}
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setSelectedCategory("all")}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                selectedCategory === "all"
-                  ? "bg-violet-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              All
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                  selectedCategory === cat.id
-                    ? "text-white"
-                    : "text-slate-600 hover:bg-slate-200"
-                }`}
-                style={{
-                  backgroundColor: selectedCategory === cat.id ? cat.color : undefined,
-                }}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Suggested Prompts (collapsed to horizontal scroll) */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {filteredPrompts.slice(0, 6).map((prompt) => (
-              <button
-                key={prompt.id}
-                onClick={() => handlePromptClick(prompt)}
-                className="flex-shrink-0 text-left px-3 py-2 rounded-lg border border-slate-200 hover:border-violet-300 hover:bg-violet-50/30 transition-colors max-w-[280px]"
-              >
-                <p className="text-xs text-slate-600 truncate">{prompt.promptText}</p>
-              </button>
-            ))}
-          </div>
-
-          {/* Conversation Area */}
-          <div className="space-y-4 min-h-[300px] max-h-[600px] overflow-y-auto px-2">
-            {conversation.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                {msg.role === "ai" && (
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0 mr-2 mt-1">
-                    <Brain className="w-4 h-4 text-white" />
-                  </div>
-                )}
-                <div
-                  className={`rounded-2xl px-4 py-3 max-w-[80%] ${
-                    msg.role === "user"
-                      ? "bg-gray-100 text-slate-800"
-                      : "bg-white border border-slate-200"
-                  }`}
-                >
-                  <p className="text-sm text-slate-700 leading-relaxed">{msg.content}</p>
-
-                  {/* Inline Table */}
-                  {msg.data?.inlineTable && (
-                    <div className="mt-3 overflow-x-auto">
-                      <table className="w-full text-xs border-collapse">
-                        <thead>
-                          <tr>
-                            {msg.data.inlineTable.headers.map((h, hi) => (
-                              <th
-                                key={hi}
-                                className={`text-left px-2 py-1 border-b border-slate-200 font-semibold ${
-                                  msg.data?.inlineTable?.highlightColumn === hi ? "bg-violet-50 text-violet-700" : "text-slate-600"
-                                }`}
-                              >
-                                {h}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {msg.data.inlineTable.rows.map((row, ri) => (
-                            <tr key={ri}>
-                              {row.map((cell, ci) => (
-                                <td
-                                  key={ci}
-                                  className={`px-2 py-1 border-b border-slate-100 ${
-                                    msg.data?.inlineTable?.highlightColumn === ci ? "bg-violet-50/50 font-medium" : ""
-                                  }`}
-                                >
-                                  {typeof cell === "number" ? cell.toLocaleString("en-IN") : cell}
-                                </td>
-                              ))}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-
-                  {/* Inline Chart */}
-                  {msg.data?.inlineChart && renderInlineChart(msg.data.inlineChart)}
-
-                  {/* Key Insight */}
-                  {msg.data?.keyInsight && (
-                    <div className="mt-3 rounded-lg bg-violet-50 border-l-4 border-l-violet-400 p-3">
-                      <div className="flex items-start gap-2">
-                        <Sparkles className="w-3.5 h-3.5 text-violet-600 flex-shrink-0 mt-0.5" />
-                        <p className="text-xs text-violet-800 font-medium">{msg.data.keyInsight}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Follow-up prompts */}
-                  {msg.data?.followUpPrompts && msg.data.followUpPrompts.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {msg.data.followUpPrompts.map((fp, fi) => (
-                        <button
-                          key={fi}
-                          onClick={() => handleFollowUp(fp)}
-                          className="px-3 py-1 rounded-full bg-violet-50 text-violet-700 text-xs font-medium hover:bg-violet-100 transition-colors"
-                        >
-                          {fp}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Input Box */}
-      <div className="sticky bottom-0 bg-white border-t border-slate-200 pt-3 pb-1">
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            placeholder="Ask a question about IGRS data..."
-            className="flex-1 px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-          />
-          <button
-            onClick={() => handleSend()}
-            disabled={!inputText.trim()}
-            className="px-4 py-2.5 rounded-lg bg-violet-600 text-white text-sm font-medium hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
-          >
-            <Send className="w-4 h-4" />
-            Send
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
 // Main Page Component
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export default function AIIntelligencePage() {
   const [activeTab, setActiveTab] = useState<TabKey>("forecasting");
-  const { forecasting, riskScoring, integrityIndex, promptEngine, isLoading, error } = useAIIntelligence(activeTab);
+  const { forecasting, riskScoring, integrityIndex, isLoading, error } = useAIIntelligence(activeTab);
 
   // Loading state
-  if (isLoading && !forecasting && !riskScoring && !integrityIndex && !promptEngine) {
+  if (isLoading && !forecasting && !riskScoring && !integrityIndex) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 rounded w-1/3" />
           <div className="h-4 bg-gray-200 rounded w-1/2" />
           <div className="flex gap-2">
-            {Array.from({ length: 4 }).map((_, i) => (
+            {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="h-9 bg-gray-200 rounded w-36" />
             ))}
           </div>
@@ -1946,8 +1484,6 @@ export default function AIIntelligencePage() {
         return riskScoring ? <RiskScoringTab data={riskScoring} /> : <LoadingSkeleton />;
       case "integrity-index":
         return integrityIndex ? <IntegrityIndexTab data={integrityIndex} /> : <LoadingSkeleton />;
-      case "prompt-engine":
-        return promptEngine ? <PromptEngineTab data={promptEngine} /> : <LoadingSkeleton />;
       default:
         return null;
     }
@@ -1959,7 +1495,7 @@ export default function AIIntelligencePage() {
       <div>
         <h1 className="text-2xl font-semibold">AI Intelligence</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          AI-powered predictive analytics, risk scoring, integrity monitoring, and natural language querying
+          AI-powered predictive analytics, risk scoring, and integrity monitoring
         </p>
       </div>
 

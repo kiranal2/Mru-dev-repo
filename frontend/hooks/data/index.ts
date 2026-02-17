@@ -20,6 +20,7 @@ export { useIGRSMVRevisionComparison } from "./use-igrs-mv-revision-comparison";
 export { useIGRSMVAnomalies } from "./use-igrs-mv-anomalies";
 export { useIGRSGovernance } from "./use-igrs-governance";
 export { useAIIntelligence } from "./use-igrs-ai-intelligence";
+export { useAIChat } from "./use-igrs-ai-chat";
 
 // Enterprise Revenue Assurance
 export { useRevenueCases, useRevenueCase, useRevenueCaseMutation } from "./use-revenue-cases";
