@@ -7,6 +7,7 @@
 import type {
   IGRSCase, IGRSRule, SROOffice, IGRSDashboardKPIs, IGRSTrend,
   IGRSPattern, MVHotspot, IGRSSettings, IGRSExport, IGRSSignal,
+  CashReconciliationRecord, StampInventoryRecord,
   RevenueCase, RevenueRule, Customer, Contract, RevenueDashboardKPIs,
   RevenueTrend, RevenuePattern, RevenueExport, RevenueSettings, RevenueSignal,
   CashPayment, CashRemittance, CashInvoice, CashMatchResult, CashException,
@@ -212,6 +213,18 @@ export const igrsRevenue = {
 
   async getSettings(): Promise<IGRSSettings> {
     return loadJson<IGRSSettings>('/data/igrs/settings.json');
+  },
+
+  async getCashReconciliation(srCode?: string): Promise<CashReconciliationRecord[]> {
+    const records = await loadJson<CashReconciliationRecord[]>('/data/igrs/cash-reconciliation.json');
+    if (srCode) return records.filter(r => r.srCode === srCode);
+    return records;
+  },
+
+  async getStampInventory(srCode?: string): Promise<StampInventoryRecord[]> {
+    const records = await loadJson<StampInventoryRecord[]>('/data/igrs/stamp-inventory.json');
+    if (srCode) return records.filter(r => r.srCode === srCode);
+    return records;
   },
 };
 

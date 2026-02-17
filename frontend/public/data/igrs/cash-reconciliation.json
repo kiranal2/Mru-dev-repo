@@ -1,0 +1,57 @@
+[
+  {
+    "id": "CR-001",
+    "srCode": "SR01",
+    "collectionDate": "2025-01-02",
+    "collectedAmountInr": 452000,
+    "depositedAmountInr": 410000,
+    "discrepancyInr": 42000,
+    "transactionCount": 28,
+    "status": "Discrepant",
+    "notes": "₹42K gap — treasury deposit delayed 3 days; under investigation"
+  },
+  {
+    "id": "CR-002",
+    "srCode": "SR02",
+    "collectionDate": "2025-01-03",
+    "collectedAmountInr": 387000,
+    "depositedAmountInr": 320000,
+    "discrepancyInr": 67000,
+    "transactionCount": 35,
+    "status": "Escalated",
+    "notes": "₹67K unreconciled; collection volume 180% above baseline — possible structuring"
+  },
+  {
+    "id": "CR-003",
+    "srCode": "SR03",
+    "collectionDate": "2025-01-04",
+    "collectedAmountInr": 215000,
+    "depositedAmountInr": 215000,
+    "discrepancyInr": 0,
+    "transactionCount": 14,
+    "status": "Matched",
+    "notes": null
+  },
+  {
+    "id": "CR-004",
+    "srCode": "SR05",
+    "collectionDate": "2025-01-04",
+    "collectedAmountInr": 325000,
+    "depositedAmountInr": 318000,
+    "discrepancyInr": 7000,
+    "transactionCount": 22,
+    "status": "Pending",
+    "notes": "Minor ₹7K variance — likely rounding; awaiting confirmation"
+  },
+  {
+    "id": "CR-005",
+    "srCode": "SR06",
+    "collectionDate": "2025-01-05",
+    "collectedAmountInr": 410000,
+    "depositedAmountInr": 395000,
+    "discrepancyInr": 15000,
+    "transactionCount": 26,
+    "status": "Discrepant",
+    "notes": "₹15K shortfall in deposit — partial deposit on same day, remainder pending"
+  }
+]

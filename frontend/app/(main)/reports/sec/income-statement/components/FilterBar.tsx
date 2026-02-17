@@ -83,11 +83,11 @@ export function FilterBar({
   handleApplyFilters,
 }: FilterBarProps) {
   return (
-    <div className="bg-slate-100 border-b px-6 py-3">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-slate-700 whitespace-nowrap">View:</label>
+    <div className="bg-slate-100 border-b px-4 py-2">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-slate-700 whitespace-nowrap">View:</label>
             <Select
               value={pendingView}
               onValueChange={(value: string) =>
@@ -105,8 +105,8 @@ export function FilterBar({
             </Select>
           </div>
 
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-slate-700 whitespace-nowrap">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-slate-700 whitespace-nowrap">
               Period:
             </label>
             <Popover open={periodPopoverOpen} onOpenChange={setPeriodPopoverOpen}>
@@ -175,8 +175,8 @@ export function FilterBar({
             </Popover>
           </div>
 
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-gray-700 whitespace-nowrap">
               Subsidiary:
             </label>
             <Popover open={subsidiaryPopoverOpen} onOpenChange={setSubsidiaryPopoverOpen}>
@@ -248,7 +248,7 @@ export function FilterBar({
             Go
           </Button>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <ToggleGroup
             type="single"
             value={displayMode}

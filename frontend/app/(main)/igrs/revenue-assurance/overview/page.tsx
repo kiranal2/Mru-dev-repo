@@ -54,7 +54,8 @@ const SIGNAL_LABELS: Record<IGRSLeakageSignal, string> = {
   MarketValueRisk: "Market",
   ProhibitedLand: "Prohibited",
   DataIntegrity: "Data",
-  HolidayFee: "Holiday",
+  CashReconciliation: "Cash Recon",
+  StampInventory: "Stamp Inv",
 };
 
 const SIGNAL_COLORS: Record<IGRSLeakageSignal, string> = {
@@ -64,7 +65,8 @@ const SIGNAL_COLORS: Record<IGRSLeakageSignal, string> = {
   MarketValueRisk: "#3b82f6",
   ProhibitedLand: "#ec4899",
   DataIntegrity: "#64748b",
-  HolidayFee: "#f97316",
+  CashReconciliation: "#10b981",
+  StampInventory: "#3b82f6",
 };
 
 const STATUS_COLORS: Record<string, string> = {

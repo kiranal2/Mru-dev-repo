@@ -25,13 +25,14 @@ export type IGRSCaseStatus =
 /**
  * Discrete signal categories that indicate potential revenue leakage.
  *
- * - `RevenueGap`      -- Mismatch between payable and paid amounts.
- * - `ChallanDelay`    -- Abnormal delay between receipt and challan dates.
- * - `ExemptionRisk`   -- Suspicious or ineligible exemption claims.
- * - `MarketValueRisk` -- Declared value deviates from market rate card.
- * - `ProhibitedLand`  -- Property falls in a prohibited-transaction zone.
- * - `DataIntegrity`   -- Missing or inconsistent data fields.
- * - `HolidayFee`      -- Registration executed on a holiday / non-working day.
+ * - `RevenueGap`          -- Mismatch between payable and paid amounts.
+ * - `ChallanDelay`        -- Abnormal delay between receipt and challan dates.
+ * - `ExemptionRisk`       -- Suspicious or ineligible exemption claims.
+ * - `MarketValueRisk`     -- Declared value deviates from market rate card.
+ * - `ProhibitedLand`      -- Property falls in a prohibited-transaction zone.
+ * - `DataIntegrity`       -- Missing or inconsistent data fields.
+ * - `CashReconciliation`  -- Cash collection vs treasury reconciliation mismatch.
+ * - `StampInventory`      -- Physical stamp paper inventory discrepancy.
  */
 export type IGRSLeakageSignal =
   | "RevenueGap"
@@ -40,7 +41,8 @@ export type IGRSLeakageSignal =
   | "MarketValueRisk"
   | "ProhibitedLand"
   | "DataIntegrity"
-  | "HolidayFee";
+  | "CashReconciliation"
+  | "StampInventory";
 
 /** Rule categories that group detection logic into functional domains. */
 export type IGRSRuleCategory =
@@ -49,7 +51,8 @@ export type IGRSRuleCategory =
   | "Exemption"
   | "Compliance"
   | "Operational"
-  | "Systemic";
+  | "Systemic"
+  | "StampIntelligence";
 
 /** Market-value hotspot severity classification. */
 export type MVSeverity = "Critical" | "High" | "Medium" | "Watch" | "Normal";
@@ -387,6 +390,12 @@ export interface SROOffice {
   highRiskCases: number;
   /** Total revenue gap in INR across all cases. */
   totalGapInr: number;
+  /** Cash collection risk score (0-100) for this office. */
+  cashRiskScore?: number;
+  /** Gap between physical stamp inventory and sold amount in INR. */
+  stampInventoryGap?: number;
+  /** Officer accountability composite score (0-100). */
+  officerAccountabilityScore?: number;
   /** Breakdown of the composite risk score by component. */
   componentScores: {
     /** Revenue-gap component score. */
@@ -492,6 +501,16 @@ export interface IGRSDashboardKPIs {
     /** Plain-text highlight sentence. */
     text: string;
   }>;
+
+  // --- New KPIs (Phase 1) ---
+  /** Estimated revenue leakage from market-value deviations in INR. */
+  estimatedMVLeakage?: number;
+  /** Composite daily cash risk score across all offices (0-100). */
+  dailyCashRiskScore?: number;
+  /** Count of exemption abuse flags currently active. */
+  exemptionAbuseFlags?: number;
+  /** Count of cash reconciliation alerts pending resolution. */
+  cashReconAlerts?: number;
 
   // --- Meta ---
   /** ISO-8601 timestamp of the last data refresh. */
@@ -669,3 +688,143 @@ export interface IGRSSignal {
   /** Triage status of the signal. */
   status: IGRSSignalStatus;
 }
+
+// ---------------------------------------------------------------------------
+// Cash Reconciliation
+// ---------------------------------------------------------------------------
+
+/**
+ * A cash reconciliation record comparing SRO daily collections against
+ * treasury deposit records.
+ */
+export interface CashReconciliationRecord {
+  /** Unique record identifier. */
+  id: string;
+  /** Sub-Registrar office code. */
+  srCode: string;
+  /** Date of collection (ISO-8601). */
+  collectionDate: string;
+  /** Total amount collected at the SRO counter in INR. */
+  collectedAmountInr: number;
+  /** Amount deposited to treasury in INR. */
+  depositedAmountInr: number;
+  /** Difference between collected and deposited in INR. */
+  discrepancyInr: number;
+  /** Number of individual transactions in the collection batch. */
+  transactionCount: number;
+  /** Reconciliation status. */
+  status: "Matched" | "Discrepant" | "Pending" | "Escalated";
+  /** Plain-language explanation of the discrepancy, if any. */
+  notes?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Stamp Inventory
+// ---------------------------------------------------------------------------
+
+/**
+ * A stamp paper inventory record tracking physical stock versus
+ * sold/issued stamps at an SRO.
+ */
+export interface StampInventoryRecord {
+  /** Unique record identifier. */
+  id: string;
+  /** Sub-Registrar office code. */
+  srCode: string;
+  /** Stamp denomination in INR. */
+  denomination: number;
+  /** Date of inventory snapshot (ISO-8601). */
+  snapshotDate: string;
+  /** Opening stock count. */
+  openingStock: number;
+  /** Stamps received from treasury during the period. */
+  received: number;
+  /** Stamps sold/issued during the period. */
+  sold: number;
+  /** Physical closing stock count. */
+  closingStock: number;
+  /** Expected closing stock (opening + received - sold). */
+  expectedClosingStock: number;
+  /** Variance between expected and actual closing stock. */
+  variance: number;
+  /** Inventory status. */
+  status: "Balanced" | "Shortage" | "Surplus" | "Under Investigation";
+}
+
+// ---------------------------------------------------------------------------
+// Signal Display Configuration
+// ---------------------------------------------------------------------------
+
+/** Display configuration for a signal type — used for consistent colours & labels. */
+export interface SignalDisplayConfig {
+  /** The signal type this config applies to. */
+  signal: IGRSLeakageSignal;
+  /** Human-readable label. */
+  label: string;
+  /** Tailwind text colour class (e.g. "text-red-600"). */
+  color: string;
+  /** Tailwind background colour class (e.g. "bg-red-50"). */
+  bgColor: string;
+  /** Short description for tooltips. */
+  description: string;
+}
+
+/** Signal type → display config lookup. */
+export const IGRS_SIGNAL_CONFIG: Record<IGRSLeakageSignal, SignalDisplayConfig> = {
+  RevenueGap: {
+    signal: "RevenueGap",
+    label: "Revenue Gap",
+    color: "text-red-700",
+    bgColor: "bg-red-50",
+    description: "Mismatch between payable and paid amounts",
+  },
+  ChallanDelay: {
+    signal: "ChallanDelay",
+    label: "Challan Delay",
+    color: "text-amber-700",
+    bgColor: "bg-amber-50",
+    description: "Abnormal delay between receipt and challan dates",
+  },
+  ExemptionRisk: {
+    signal: "ExemptionRisk",
+    label: "Exemption Risk",
+    color: "text-purple-700",
+    bgColor: "bg-purple-50",
+    description: "Suspicious or ineligible exemption claims",
+  },
+  MarketValueRisk: {
+    signal: "MarketValueRisk",
+    label: "Market Value Risk",
+    color: "text-orange-700",
+    bgColor: "bg-orange-50",
+    description: "Declared value deviates from market rate card",
+  },
+  ProhibitedLand: {
+    signal: "ProhibitedLand",
+    label: "Prohibited Land",
+    color: "text-rose-700",
+    bgColor: "bg-rose-50",
+    description: "Property in a prohibited-transaction zone",
+  },
+  DataIntegrity: {
+    signal: "DataIntegrity",
+    label: "Data Integrity",
+    color: "text-slate-700",
+    bgColor: "bg-slate-50",
+    description: "Missing or inconsistent data fields",
+  },
+  CashReconciliation: {
+    signal: "CashReconciliation",
+    label: "Cash Reconciliation",
+    color: "text-emerald-700",
+    bgColor: "bg-emerald-50",
+    description: "Cash collection vs treasury deposit mismatch",
+  },
+  StampInventory: {
+    signal: "StampInventory",
+    label: "Stamp Inventory",
+    color: "text-blue-700",
+    bgColor: "bg-blue-50",
+    description: "Physical stamp paper inventory discrepancy",
+  },
+};

@@ -25,6 +25,8 @@ export const igrsRevenue = {
   getMvHotspots: notConfigured,
   getExports: notConfigured,
   getSettings: notConfigured,
+  getCashReconciliation: notConfigured,
+  getStampInventory: notConfigured,
 };
 
 export const revenueAssurance = {

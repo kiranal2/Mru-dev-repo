@@ -77,7 +77,8 @@ const SIGNAL_OPTIONS: Array<{ label: string; value: IGRSLeakageSignal }> = [
   { label: "Market Value", value: "MarketValueRisk" },
   { label: "Prohibited Land", value: "ProhibitedLand" },
   { label: "Data Integrity", value: "DataIntegrity" },
-  { label: "Holiday Fee", value: "HolidayFee" },
+  { label: "Cash Recon", value: "CashReconciliation" },
+  { label: "Stamp Inventory", value: "StampInventory" },
 ];
 
 const SIGNAL_BADGES: Record<IGRSLeakageSignal, string> = {
@@ -87,7 +88,8 @@ const SIGNAL_BADGES: Record<IGRSLeakageSignal, string> = {
   MarketValueRisk: "bg-blue-50 text-blue-700 border-blue-200",
   ProhibitedLand: "bg-pink-50 text-pink-700 border-pink-200",
   DataIntegrity: "bg-slate-100 text-slate-700 border-slate-200",
-  HolidayFee: "bg-orange-50 text-orange-700 border-orange-200",
+  CashReconciliation: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  StampInventory: "bg-blue-50 text-blue-700 border-blue-200",
 };
 
 const SIGNAL_CHIP_STYLES: Record<
@@ -118,9 +120,13 @@ const SIGNAL_CHIP_STYLES: Record<
     active: "bg-slate-200 text-slate-700 border-slate-300",
     inactive: "bg-slate-100 text-slate-700 border-slate-200",
   },
-  HolidayFee: {
-    active: "bg-orange-100 text-orange-700 border-orange-300",
-    inactive: "bg-orange-50 text-orange-700 border-orange-200",
+  CashReconciliation: {
+    active: "bg-emerald-100 text-emerald-700 border-emerald-300",
+    inactive: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  },
+  StampInventory: {
+    active: "bg-blue-100 text-blue-700 border-blue-300",
+    inactive: "bg-blue-50 text-blue-700 border-blue-200",
   },
 };
 
@@ -131,7 +137,8 @@ const SIGNAL_LABELS: Record<IGRSLeakageSignal, string> = {
   MarketValueRisk: "Market Value",
   ProhibitedLand: "Prohibited Land",
   DataIntegrity: "Data Integrity",
-  HolidayFee: "Holiday Fee",
+  CashReconciliation: "Cash Recon",
+  StampInventory: "Stamp Inventory",
 };
 
 const RISK_BADGES: Record<string, string> = {

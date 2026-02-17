@@ -251,12 +251,12 @@ export default function FilterBar(props: FilterBarProps) {
   } = props;
 
   return (
-    <div className="bg-slate-100 border-b px-6 py-3">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-4 flex-wrap">
+    <div className="bg-slate-100 border-b px-4 py-2">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
           {/* Start Period */}
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-slate-700 whitespace-nowrap">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-slate-700 whitespace-nowrap">
               Start Period:
             </label>
             <Popover open={periodPopoverOpen} onOpenChange={setPeriodPopoverOpen}>
@@ -309,8 +309,8 @@ export default function FilterBar(props: FilterBarProps) {
           </div>
 
           {/* End Period */}
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-gray-700 whitespace-nowrap">
               End Period:
             </label>
             <Popover>
@@ -362,8 +362,8 @@ export default function FilterBar(props: FilterBarProps) {
           </div>
 
           {/* GL Account */}
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-gray-700 whitespace-nowrap">
               GL Account:
             </label>
             <Popover open={glAccountPopoverOpen} onOpenChange={setGlAccountPopoverOpen}>
@@ -419,8 +419,8 @@ export default function FilterBar(props: FilterBarProps) {
           </div>
 
           {/* Subsidiary */}
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-gray-700 whitespace-nowrap">
               Subsidiary:
             </label>
             <Popover open={subsidiaryPopoverOpen} onOpenChange={setSubsidiaryPopoverOpen}>
@@ -487,7 +487,7 @@ export default function FilterBar(props: FilterBarProps) {
             Go
           </Button>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <ToggleGroup
             type="single"
             value={currency}

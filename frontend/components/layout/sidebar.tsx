@@ -50,14 +50,14 @@ export default function Sidebar({
 
   return (
     <aside className={cn(
-        "flex flex-col pt-4 relative border-r border-[#0A3B77]/5",
+        "flex flex-col pt-4 relative border-r border-[#0A3B77]/10",
         isCollapsed ? "w-[72px]" : "w-[72px]",
         loadingState === 'loading'
           ? "transition-all duration-300 ease-out opacity-0 -translate-x-4"
           : "transition-none opacity-100 translate-x-0"
       )}
       style={{
-        background: 'linear-gradient(180deg, #F2FDFF 0%, #E8F4FF 40%, #DCEEFF 100%)',
+        background: 'linear-gradient(180deg, #EDF5FF 0%, #E0EDFC 40%, #D4E5F8 100%)',
       }}
     >
         <nav className="flex flex-col gap-1" role="navigation" aria-label="Main navigation">
@@ -181,7 +181,7 @@ export default function Sidebar({
           <Tooltip delayDuration={150}>
             <TooltipTrigger asChild>
               <button
-                className="text-[#0A3B77]/70 hover:text-[#0A3B77] hover:bg-white/40 transition-all duration-200 p-2 rounded-lg relative group"
+                className="text-[#0A3B77]/80 hover:text-[#0A3B77] hover:bg-white/50 transition-all duration-200 p-2 rounded-lg relative group"
                 style={{ outline: 'none', border: 'none' }}
                 aria-label="User profile"
                 onClick={(e) => {
@@ -260,8 +260,8 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
         "flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg relative group",
         "transition-all duration-200 ease-out",
         isSelected
-          ? "text-[#0A3B77] bg-white/70 shadow-elevation-1"
-          : "text-[#0A3B77]/70 hover:text-[#0A3B77] hover:bg-white/40"
+          ? "text-[#0A3B77] bg-white/80 shadow-elevation-1"
+          : "text-[#0A3B77]/80 hover:text-[#0A3B77] hover:bg-white/50"
       )}
       style={{ outline: 'none', border: 'none' }}
       aria-label={label}
@@ -273,7 +273,7 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
           "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full transition-all duration-300",
           isSelected
             ? "h-[60%] opacity-100"
-            : "h-0 opacity-0 group-hover:h-[40%] group-hover:opacity-50"
+            : "h-0 opacity-0 group-hover:h-[40%] group-hover:opacity-60"
         )}
         style={{ background: 'var(--gradient-primary)' }}
       />
@@ -285,8 +285,8 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
       </span>
       {!isCollapsed && (
         <span className={cn(
-          "text-[10px] font-medium transition-opacity duration-200",
-          isSelected ? "opacity-100" : "opacity-70 group-hover:opacity-100"
+          "text-[11px] font-medium transition-opacity duration-200",
+          isSelected ? "opacity-100" : "opacity-80 group-hover:opacity-100"
         )}>
           {label}
         </span>

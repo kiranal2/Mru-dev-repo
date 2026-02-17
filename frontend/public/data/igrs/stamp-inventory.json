@@ -1,0 +1,67 @@
+[
+  {
+    "id": "SI-001",
+    "srCode": "SR06",
+    "denomination": 10000,
+    "snapshotDate": "2025-01-05",
+    "openingStock": 500,
+    "received": 0,
+    "sold": 50,
+    "closingStock": 438,
+    "expectedClosingStock": 450,
+    "variance": -12,
+    "status": "Shortage"
+  },
+  {
+    "id": "SI-002",
+    "srCode": "SR09",
+    "denomination": 5000,
+    "snapshotDate": "2025-01-06",
+    "openingStock": 300,
+    "received": 50,
+    "sold": 135,
+    "closingStock": 230,
+    "expectedClosingStock": 215,
+    "variance": 15,
+    "status": "Surplus"
+  },
+  {
+    "id": "SI-003",
+    "srCode": "SR10",
+    "denomination": 10000,
+    "snapshotDate": "2025-01-06",
+    "openingStock": 400,
+    "received": 100,
+    "sold": 75,
+    "closingStock": 400,
+    "expectedClosingStock": 425,
+    "variance": -25,
+    "status": "Under Investigation"
+  },
+  {
+    "id": "SI-004",
+    "srCode": "SR01",
+    "denomination": 5000,
+    "snapshotDate": "2025-01-05",
+    "openingStock": 250,
+    "received": 100,
+    "sold": 88,
+    "closingStock": 262,
+    "expectedClosingStock": 262,
+    "variance": 0,
+    "status": "Balanced"
+  },
+  {
+    "id": "SI-005",
+    "srCode": "SR02",
+    "denomination": 10000,
+    "snapshotDate": "2025-01-05",
+    "openingStock": 350,
+    "received": 50,
+    "sold": 62,
+    "closingStock": 336,
+    "expectedClosingStock": 338,
+    "variance": -2,
+    "status": "Balanced"
+  }
+]

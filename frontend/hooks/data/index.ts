@@ -12,6 +12,8 @@ export { useIGRSPatterns } from "./use-igrs-patterns";
 export { useIGRSMVHotspots } from "./use-igrs-mv-hotspots";
 export { useIGRSExports } from "./use-igrs-exports";
 export { useIGRSSettings } from "./use-igrs-settings";
+export { useIGRSCashReconciliation } from "./use-igrs-cash-reconciliation";
+export { useIGRSStampInventory } from "./use-igrs-stamp-inventory";
 
 // Enterprise Revenue Assurance
 export { useRevenueCases, useRevenueCase, useRevenueCaseMutation } from "./use-revenue-cases";

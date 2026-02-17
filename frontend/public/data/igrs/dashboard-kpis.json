@@ -11,7 +11,8 @@
     { "signal": "ChallanDelay", "high": 2, "medium": 4, "low": 2 },
     { "signal": "ExemptionRisk", "high": 2, "medium": 2, "low": 1 },
     { "signal": "DataIntegrity", "high": 1, "medium": 3, "low": 2 },
-    { "signal": "HolidayFee", "high": 1, "medium": 2, "low": 2 },
+    { "signal": "CashReconciliation", "high": 2, "medium": 2, "low": 0 },
+    { "signal": "StampInventory", "high": 2, "medium": 1, "low": 1 },
     { "signal": "ProhibitedLand", "high": 1, "medium": 1, "low": 0 }
   ],
   "topOfficesByGap": [
@@ -41,8 +42,8 @@
     "repeatOffenders": 1
   },
   "rulesHealth": {
-    "enabled": 20,
-    "lastRun": "2025-01-04T22:00:00Z",
+    "enabled": 36,
+    "lastRun": "2025-01-06T22:00:00Z",
     "failures": 0
   },
   "monthlyTrends": [
@@ -63,6 +64,10 @@
     { "icon": "info", "text": "All 20 detection rules active with 0 failures in the last run — engine healthy." },
     { "icon": "trending-up", "text": "High-risk case count rising: +43% from Q3 to Q4 2024, correlating with increased sale deed volumes." }
   ],
-  "lastRefresh": "2025-01-05T00:00:00Z",
+  "estimatedMVLeakage": 2350000,
+  "dailyCashRiskScore": 68,
+  "exemptionAbuseFlags": 3,
+  "cashReconAlerts": 5,
+  "lastRefresh": "2025-01-07T00:00:00Z",
   "syncStatus": "Healthy"
 }

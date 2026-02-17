@@ -187,7 +187,7 @@
     "confidence": 74,
     "status": "New",
     "assignedTo": "SR",
-    "leakageSignals": ["HolidayFee", "ChallanDelay"],
+    "leakageSignals": ["RevenueGap", "ChallanDelay"],
     "impactAmountInr": 45000,
     "payableTotalInr": 310000,
     "paidTotalInr": 265000,
@@ -364,7 +364,7 @@
     "confidence": 76,
     "status": "In Review",
     "assignedTo": "SR",
-    "leakageSignals": ["ChallanDelay", "HolidayFee"],
+    "leakageSignals": ["ChallanDelay", "RevenueGap"],
     "impactAmountInr": 55000,
     "payableTotalInr": 280000,
     "paidTotalInr": 225000,
@@ -643,7 +643,7 @@
     "confidence": 68,
     "status": "In Review",
     "assignedTo": "SR",
-    "leakageSignals": ["HolidayFee", "RevenueGap"],
+    "leakageSignals": ["RevenueGap", "RevenueGap"],
     "impactAmountInr": 42000,
     "payableTotalInr": 260000,
     "paidTotalInr": 218000,
@@ -823,7 +823,7 @@
     "confidence": 66,
     "status": "New",
     "assignedTo": "SR",
-    "leakageSignals": ["HolidayFee"],
+    "leakageSignals": ["RevenueGap"],
     "impactAmountInr": 18000,
     "payableTotalInr": 175000,
     "paidTotalInr": 157000,
@@ -879,6 +879,318 @@
     "activityLog": [
       { "id": "log-25a", "ts": "2024-12-25T08:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-EXM-002" },
       { "id": "log-25b", "ts": "2024-12-30T09:00:00Z", "actor": "SR", "action": "Status changed to In Review", "detail": "Verifying purchaser identity documents" }
+    ]
+  },
+  {
+    "id": "26",
+    "caseId": "IGRS-2024-0026",
+    "documentKey": { "srCode": "SR01", "bookNo": "1", "doctNo": "5026", "regYear": "2025" },
+    "createdAt": "2025-01-03T08:00:00Z",
+    "updatedAt": "2025-01-05T10:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 78,
+    "confidence": 82,
+    "status": "New",
+    "assignedTo": null,
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 42000,
+    "payableTotalInr": 452000,
+    "paidTotalInr": 410000,
+    "gapInr": 42000,
+    "office": { "srCode": "SR01", "srName": "Vijayawada Central", "district": "Krishna", "zone": "South" },
+    "docType": { "tranMajCode": "99", "tranMinCode": "01", "tranDesc": "Cash Reconciliation", "abDesc": "CashRecon" },
+    "dates": { "pDate": "2025-01-02", "eDate": "2025-01-02", "rDate": "2025-01-02" },
+    "propertySummary": { "isUrban": true, "extent": "N/A", "unit": "N/A" },
+    "partiesSummary": [],
+    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "evidence": {
+      "triggeredRules": [
+        { "ruleId": "R-CR-001", "ruleName": "Daily Cash Collection Mismatch", "category": "StampIntelligence", "severity": "High", "impactInr": 42000, "explanation": "₹4.52L collected but ₹4.10L deposited — ₹42K gap", "confidence": 82 },
+        { "ruleId": "R-CR-002", "ruleName": "Delayed Treasury Deposit", "category": "StampIntelligence", "severity": "Medium", "impactInr": 0, "explanation": "3-day deposit delay exceeds 2-day mandate", "confidence": 90 }
+      ],
+      "receiptCount": 28,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": { "ageingDays": 3, "ageingBucket": "0-7d", "slaBreached": false },
+    "notes": [],
+    "activityLog": [
+      { "id": "log-26a", "ts": "2025-01-03T08:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-CR-001: daily cash mismatch at SR01" }
+    ]
+  },
+  {
+    "id": "27",
+    "caseId": "IGRS-2024-0027",
+    "documentKey": { "srCode": "SR02", "bookNo": "1", "doctNo": "5027", "regYear": "2025" },
+    "createdAt": "2025-01-04T09:00:00Z",
+    "updatedAt": "2025-01-06T11:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 82,
+    "confidence": 85,
+    "status": "In Review",
+    "assignedTo": "AK",
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 67000,
+    "payableTotalInr": 387000,
+    "paidTotalInr": 320000,
+    "gapInr": 67000,
+    "office": { "srCode": "SR02", "srName": "Guntur Main", "district": "Guntur", "zone": "South" },
+    "docType": { "tranMajCode": "99", "tranMinCode": "01", "tranDesc": "Cash Reconciliation", "abDesc": "CashRecon" },
+    "dates": { "pDate": "2025-01-03", "eDate": "2025-01-03", "rDate": "2025-01-03" },
+    "propertySummary": { "isUrban": true, "extent": "N/A", "unit": "N/A" },
+    "partiesSummary": [],
+    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "evidence": {
+      "triggeredRules": [
+        { "ruleId": "R-CR-001", "ruleName": "Daily Cash Collection Mismatch", "category": "StampIntelligence", "severity": "High", "impactInr": 67000, "explanation": "₹3.87L collected but ₹3.20L deposited — ₹67K unreconciled", "confidence": 85 },
+        { "ruleId": "R-CR-003", "ruleName": "Unusual Cash Pattern", "category": "StampIntelligence", "severity": "Medium", "impactInr": 0, "explanation": "Collection volume 180% above baseline", "confidence": 70 }
+      ],
+      "receiptCount": 35,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": { "ageingDays": 2, "ageingBucket": "0-7d", "slaBreached": false },
+    "notes": [],
+    "activityLog": [
+      { "id": "log-27a", "ts": "2025-01-04T09:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-CR-001: cash mismatch at SR02" },
+      { "id": "log-27b", "ts": "2025-01-05T10:00:00Z", "actor": "AK", "action": "Status changed to In Review", "detail": "Investigating collection records" }
+    ]
+  },
+  {
+    "id": "28",
+    "caseId": "IGRS-2024-0028",
+    "documentKey": { "srCode": "SR03", "bookNo": "1", "doctNo": "5028", "regYear": "2025" },
+    "createdAt": "2025-01-05T10:00:00Z",
+    "updatedAt": "2025-01-06T09:00:00Z",
+    "riskLevel": "Medium",
+    "riskScore": 55,
+    "confidence": 72,
+    "status": "New",
+    "assignedTo": null,
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 18000,
+    "payableTotalInr": 95000,
+    "paidTotalInr": 77000,
+    "gapInr": 18000,
+    "office": { "srCode": "SR03", "srName": "Tirupati Urban", "district": "Chittoor", "zone": "South" },
+    "docType": { "tranMajCode": "99", "tranMinCode": "02", "tranDesc": "Receipt-Challan Recon", "abDesc": "RcptRecon" },
+    "dates": { "pDate": "2025-01-04", "eDate": "2025-01-04", "rDate": "2025-01-04" },
+    "propertySummary": { "isUrban": true, "extent": "N/A", "unit": "N/A" },
+    "partiesSummary": [],
+    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "evidence": {
+      "triggeredRules": [
+        { "ruleId": "R-CR-004", "ruleName": "Receipt-Challan Cross-Reference Failure", "category": "StampIntelligence", "severity": "Medium", "impactInr": 18000, "explanation": "Receipt R-45678 for ₹95K but challan C-12340 shows ₹77K", "confidence": 72 }
+      ],
+      "receiptCount": 1,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": { "ageingDays": 1, "ageingBucket": "0-7d", "slaBreached": false },
+    "notes": [],
+    "activityLog": [
+      { "id": "log-28a", "ts": "2025-01-05T10:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-CR-004: receipt-challan mismatch at SR03" }
+    ]
+  },
+  {
+    "id": "29",
+    "caseId": "IGRS-2024-0029",
+    "documentKey": { "srCode": "SR06", "bookNo": "1", "doctNo": "5029", "regYear": "2025" },
+    "createdAt": "2025-01-05T11:00:00Z",
+    "updatedAt": "2025-01-07T08:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 80,
+    "confidence": 88,
+    "status": "In Review",
+    "assignedTo": "PK",
+    "leakageSignals": ["StampInventory"],
+    "impactAmountInr": 120000,
+    "payableTotalInr": 0,
+    "paidTotalInr": 0,
+    "gapInr": 120000,
+    "office": { "srCode": "SR06", "srName": "Rajahmundry Central", "district": "East Godavari", "zone": "North" },
+    "docType": { "tranMajCode": "98", "tranMinCode": "01", "tranDesc": "Stamp Inventory Audit", "abDesc": "StampAudit" },
+    "dates": { "pDate": "2025-01-05", "eDate": "2025-01-05", "rDate": "2025-01-05" },
+    "propertySummary": { "isUrban": true, "extent": "N/A", "unit": "N/A" },
+    "partiesSummary": [],
+    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "evidence": {
+      "triggeredRules": [
+        { "ruleId": "R-SI-001", "ruleName": "Stamp Paper Inventory Shortage", "category": "StampIntelligence", "severity": "High", "impactInr": 120000, "explanation": "Expected 450 stamps, physical count 438 — 12 stamps missing", "confidence": 88 },
+        { "ruleId": "R-SI-003", "ruleName": "High-Denomination Stamp Velocity", "category": "StampIntelligence", "severity": "Medium", "impactInr": 0, "explanation": "₹10K stamp usage 280% above daily average", "confidence": 75 }
+      ],
+      "receiptCount": 0,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": { "ageingDays": 2, "ageingBucket": "0-7d", "slaBreached": false },
+    "notes": [],
+    "activityLog": [
+      { "id": "log-29a", "ts": "2025-01-05T11:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SI-001: stamp shortage at SR06" },
+      { "id": "log-29b", "ts": "2025-01-06T09:00:00Z", "actor": "PK", "action": "Status changed to In Review", "detail": "Physical inventory recount ordered" }
+    ]
+  },
+  {
+    "id": "30",
+    "caseId": "IGRS-2024-0030",
+    "documentKey": { "srCode": "SR09", "bookNo": "1", "doctNo": "5030", "regYear": "2025" },
+    "createdAt": "2025-01-06T08:30:00Z",
+    "updatedAt": "2025-01-07T10:00:00Z",
+    "riskLevel": "Medium",
+    "riskScore": 52,
+    "confidence": 68,
+    "status": "New",
+    "assignedTo": null,
+    "leakageSignals": ["StampInventory"],
+    "impactAmountInr": 8000,
+    "payableTotalInr": 0,
+    "paidTotalInr": 0,
+    "gapInr": 8000,
+    "office": { "srCode": "SR09", "srName": "Nellore City", "district": "Nellore", "zone": "South" },
+    "docType": { "tranMajCode": "98", "tranMinCode": "01", "tranDesc": "Stamp Inventory Audit", "abDesc": "StampAudit" },
+    "dates": { "pDate": "2025-01-06", "eDate": "2025-01-06", "rDate": "2025-01-06" },
+    "propertySummary": { "isUrban": true, "extent": "N/A", "unit": "N/A" },
+    "partiesSummary": [],
+    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "evidence": {
+      "triggeredRules": [
+        { "ruleId": "R-SI-002", "ruleName": "Stamp Paper Surplus Anomaly", "category": "StampIntelligence", "severity": "Medium", "impactInr": 0, "explanation": "15 surplus stamps of ₹5K denomination unexplained", "confidence": 68 },
+        { "ruleId": "R-SI-004", "ruleName": "Stamp Denomination Mismatch", "category": "StampIntelligence", "severity": "Low", "impactInr": 8000, "explanation": "₹5K stamp used where ₹8K duty required on lease deed", "confidence": 65 }
+      ],
+      "receiptCount": 0,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": { "ageingDays": 1, "ageingBucket": "0-7d", "slaBreached": false },
+    "notes": [],
+    "activityLog": [
+      { "id": "log-30a", "ts": "2025-01-06T08:30:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SI-002: stamp surplus at SR09" }
+    ]
+  },
+  {
+    "id": "31",
+    "caseId": "IGRS-2024-0031",
+    "documentKey": { "srCode": "SR10", "bookNo": "1", "doctNo": "5031", "regYear": "2025" },
+    "createdAt": "2025-01-06T14:00:00Z",
+    "updatedAt": "2025-01-07T15:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 85,
+    "confidence": 90,
+    "status": "New",
+    "assignedTo": null,
+    "leakageSignals": ["StampInventory"],
+    "impactAmountInr": 250000,
+    "payableTotalInr": 0,
+    "paidTotalInr": 0,
+    "gapInr": 250000,
+    "office": { "srCode": "SR10", "srName": "Anantapur Main", "district": "Anantapur", "zone": "Central" },
+    "docType": { "tranMajCode": "98", "tranMinCode": "01", "tranDesc": "Stamp Inventory Audit", "abDesc": "StampAudit" },
+    "dates": { "pDate": "2025-01-06", "eDate": "2025-01-06", "rDate": "2025-01-06" },
+    "propertySummary": { "isUrban": false, "extent": "N/A", "unit": "N/A" },
+    "partiesSummary": [],
+    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "evidence": {
+      "triggeredRules": [
+        { "ruleId": "R-SI-001", "ruleName": "Stamp Paper Inventory Shortage", "category": "StampIntelligence", "severity": "High", "impactInr": 250000, "explanation": "25 stamps of ₹10K unaccounted — ₹2.5L inventory gap", "confidence": 90 }
+      ],
+      "receiptCount": 0,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": { "ageingDays": 1, "ageingBucket": "0-7d", "slaBreached": false },
+    "notes": [],
+    "activityLog": [
+      { "id": "log-31a", "ts": "2025-01-06T14:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SI-001: major stamp shortage at SR10" }
+    ]
+  },
+  {
+    "id": "32",
+    "caseId": "IGRS-2024-0032",
+    "documentKey": { "srCode": "SR05", "bookNo": "1", "doctNo": "4892", "regYear": "2024" },
+    "createdAt": "2024-12-10T09:45:00Z",
+    "updatedAt": "2024-12-15T11:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 84,
+    "confidence": 92,
+    "status": "In Review",
+    "assignedTo": "PK",
+    "leakageSignals": ["MarketValueRisk", "RevenueGap"],
+    "impactAmountInr": 145000,
+    "payableTotalInr": 480000,
+    "paidTotalInr": 335000,
+    "gapInr": 145000,
+    "office": { "srCode": "SR05", "srName": "Visakhapatnam Port", "district": "Visakhapatnam", "zone": "North" },
+    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
+    "dates": { "pDate": "2024-12-08", "eDate": "2024-12-09", "rDate": "2024-12-10" },
+    "propertySummary": { "isUrban": false, "landNature": "Commercial (misclassified as Agricultural)", "extent": "2.5 acres", "unit": "acres" },
+    "partiesSummary": [
+      { "code": "P032A", "name": "Srinivasa Developers Pvt Ltd", "panNo": "AABCS1234D" },
+      { "code": "P032B", "name": "Ramesh Babu", "panNo": "BKRPB5678E" }
+    ],
+    "payableBreakdown": { "sdPayable": 288000, "tdPayable": 96000, "rfPayable": 48000, "dsdPayable": 28800, "otherFee": 19200, "finalTaxableValue": 4800000 },
+    "evidence": {
+      "triggeredRules": [
+        { "ruleId": "R-VAL-007", "ruleName": "Webland Classification Cross-Verify", "category": "Valuation", "severity": "High", "impactInr": 145000, "explanation": "Survey 245/A in Kondapur mandal declared as 'Agricultural' in Form 1 but Webland/MeeBhoomi records show 'Commercial' — stamp duty differential of ₹1.45L", "confidence": 92 },
+        { "ruleId": "R-VAL-001", "ruleName": "Market Value Deviation", "category": "Valuation", "severity": "Medium", "impactInr": 0, "explanation": "Declared value aligned with agricultural rate card, but commercial rate card applies per Webland classification", "confidence": 85 }
+      ],
+      "receiptCount": 3,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 38.2,
+      "exemptionCount": 0
+    },
+    "sla": { "ageingDays": 5, "ageingBucket": "0-7d", "slaBreached": false },
+    "notes": [{ "id": "note-32a", "author": "PK", "createdAt": "2024-12-12T10:00:00Z", "note": "Webland API confirmed commercial classification. Requesting Form 1 amendment from SRO." }],
+    "activityLog": [
+      { "id": "log-32a", "ts": "2024-12-10T09:45:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-VAL-007: Webland classification mismatch at SR05" },
+      { "id": "log-32b", "ts": "2024-12-11T10:00:00Z", "actor": "PK", "action": "Status changed to In Review", "detail": "Cross-referencing MeeBhoomi records for survey 245/A" }
+    ]
+  },
+  {
+    "id": "33",
+    "caseId": "IGRS-2024-0033",
+    "documentKey": { "srCode": "SR02", "bookNo": "1", "doctNo": "4910", "regYear": "2024" },
+    "createdAt": "2024-12-06T15:20:00Z",
+    "updatedAt": "2024-12-12T09:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 88,
+    "confidence": 94,
+    "status": "Confirmed",
+    "assignedTo": "SR",
+    "leakageSignals": ["ExemptionRisk", "RevenueGap"],
+    "impactAmountInr": 185000,
+    "payableTotalInr": 185000,
+    "paidTotalInr": 0,
+    "gapInr": 185000,
+    "office": { "srCode": "SR02", "srName": "Guntur Main", "district": "Guntur", "zone": "South" },
+    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
+    "dates": { "pDate": "2024-12-04", "eDate": "2024-12-05", "rDate": "2024-12-06" },
+    "propertySummary": { "isUrban": true, "extent": "1200 sq.ft", "unit": "sq.ft" },
+    "partiesSummary": [
+      { "code": "P033A", "name": "AP State Housing Corporation (claimed)", "panNo": "BXYPK4567F" },
+      { "code": "P033B", "name": "Lakshmi Devi", "panNo": "CNLPD8901G" }
+    ],
+    "payableBreakdown": { "sdPayable": 111000, "tdPayable": 37000, "rfPayable": 18500, "dsdPayable": 11100, "otherFee": 7400, "finalTaxableValue": 1850000 },
+    "evidence": {
+      "triggeredRules": [
+        { "ruleId": "R-EXM-006", "ruleName": "Government Party Impersonation via PAN/Aadhaar", "category": "Exemption", "severity": "High", "impactInr": 185000, "explanation": "Party listed as 'AP State Housing Corporation' (Government) but PAN prefix 'B' indicates private individual — ₹1.85L stamp duty exemption potentially fraudulent", "confidence": 94 }
+      ],
+      "receiptCount": 2,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 5.2,
+      "exemptionCount": 1
+    },
+    "sla": { "ageingDays": 6, "ageingBucket": "0-7d", "slaBreached": false },
+    "notes": [{ "id": "note-33a", "author": "SR", "createdAt": "2024-12-08T14:00:00Z", "note": "PAN verification confirmed: BXYPK4567F belongs to private individual Bhaskara Rao, not a government entity. Exemption claim is fraudulent." }],
+    "activityLog": [
+      { "id": "log-33a", "ts": "2024-12-06T15:20:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-EXM-006: Government party impersonation at SR02" },
+      { "id": "log-33b", "ts": "2024-12-07T09:00:00Z", "actor": "SR", "action": "Status changed to In Review", "detail": "Verifying PAN/Aadhaar against government entity database" },
+      { "id": "log-33c", "ts": "2024-12-10T11:00:00Z", "actor": "SR", "action": "Status changed to Confirmed", "detail": "Fraud confirmed — recovery notice issued to SRO Guntur" }
     ]
   }
 ]
