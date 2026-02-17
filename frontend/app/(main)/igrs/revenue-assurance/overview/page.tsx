@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   useIGRSCases,
   useIGRSDashboard,
@@ -66,7 +67,7 @@ const SIGNAL_COLORS: Record<IGRSLeakageSignal, string> = {
   ProhibitedLand: "#ec4899",
   DataIntegrity: "#64748b",
   CashReconciliation: "#10b981",
-  StampInventory: "#3b82f6",
+  StampInventory: "#14b8a6",
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -122,6 +123,7 @@ function sparklinePoints(values: number[], width = 70, height = 22): string {
 }
 
 export default function IGRSOverviewPage() {
+  const router = useRouter();
   const [currencyMode, setCurrencyMode] = useState<CurrencyMode>("auto");
 
   const { data: dashboard, loading: dashLoading, error: dashError, refetch: refetchDashboard } =
@@ -177,9 +179,11 @@ export default function IGRSOverviewPage() {
     const delayOverThreshold = cases.filter((c: IGRSCase) => daysBetween(c.dates.pDate, c.dates.rDate) > delayThreshold)
       .length;
     const dataIntegrityFlags = cases.filter((c: IGRSCase) => c.leakageSignals.includes("DataIntegrity")).length;
+    const exemptionAbuseFlags = dashboard?.exemptionAbuseFlags ?? 0;
+    const cashReconAlerts = dashboard?.cashReconAlerts ?? 0;
 
-    return { prohibitedHits, gapOverThreshold, delayOverThreshold, dataIntegrityFlags };
-  }, [cases]);
+    return { prohibitedHits, gapOverThreshold, delayOverThreshold, dataIntegrityFlags, exemptionAbuseFlags, cashReconAlerts };
+  }, [cases, dashboard]);
 
   const leakageBarData = useMemo(() => {
     return (dashboard?.leakageBySignal ?? []).map((s) => ({
@@ -425,6 +429,20 @@ export default function IGRSOverviewPage() {
       border: "border-violet-200",
       spark: kpiSparklines.awaiting,
     },
+    {
+      title: "Est. MV Leakage",
+      value: formatByMode(dashboard.estimatedMVLeakage ?? 0, currencyMode),
+      delta: null,
+      border: "border-blue-200",
+      spark: [2, 3, 4, 3, 5, 6],
+    },
+    {
+      title: "Cash Risk Score",
+      value: String(dashboard.dailyCashRiskScore ?? 0),
+      delta: null,
+      border: (dashboard.dailyCashRiskScore ?? 0) >= 70 ? "border-red-200" : (dashboard.dailyCashRiskScore ?? 0) >= 40 ? "border-amber-200" : "border-emerald-200",
+      spark: [3, 4, 5, 6, 5, 7],
+    },
   ];
 
   const sumSignals = leakageBarData.reduce((s, row) => s + row.total, 0);
@@ -473,7 +491,7 @@ export default function IGRSOverviewPage() {
         </Select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
         {cards.map((card) => (
           <Card key={card.title} className={`shadow-none ${card.border}`}>
             <CardContent className="pt-4 pb-3">
@@ -497,7 +515,7 @@ export default function IGRSOverviewPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-3">
         <Card className="xl:col-span-1">
           <CardContent className="py-3 flex items-center justify-between">
             <p className="text-xs text-slate-500">Prohibited Land Hits</p>
@@ -520,6 +538,24 @@ export default function IGRSOverviewPage() {
           <CardContent className="py-3 flex items-center justify-between">
             <p className="text-xs text-slate-500">Data Integrity Flags</p>
             <p className="text-xl font-semibold">{thresholdStats.dataIntegrityFlags}</p>
+          </CardContent>
+        </Card>
+        <Card
+          className="xl:col-span-1 cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => router.push("/igrs/revenue-assurance/cases?signal=ExemptionRisk")}
+        >
+          <CardContent className="py-3 flex items-center justify-between">
+            <p className="text-xs text-purple-600">Exemption Abuse</p>
+            <p className="text-xl font-semibold text-purple-700">{thresholdStats.exemptionAbuseFlags}</p>
+          </CardContent>
+        </Card>
+        <Card
+          className="xl:col-span-1 cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => router.push("/igrs/revenue-assurance/cases?signal=CashReconciliation")}
+        >
+          <CardContent className="py-3 flex items-center justify-between">
+            <p className="text-xs text-emerald-600">Cash Recon Alerts</p>
+            <p className="text-xl font-semibold text-emerald-700">{thresholdStats.cashReconAlerts}</p>
           </CardContent>
         </Card>
       </div>

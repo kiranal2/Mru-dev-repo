@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "lastUpdated": "2024-12-13T14:30:00Z",
+    "period": "2024-01 to 2024-12",
+    "totalDistricts": 13,
+    "totalSROs": 26
+  },
+  "gender": {
+    "distribution": [
+      { "gender": "Male", "count": 18500, "percent": 55.6, "revenue": 9800000000 },
+      { "gender": "Female", "count": 8200, "percent": 24.6, "revenue": 4100000000 },
+      { "gender": "Joint", "count": 5800, "percent": 17.4, "revenue": 3500000000 },
+      { "gender": "Other", "count": 800, "percent": 2.4, "revenue": 350000000 }
+    ],
+    "femaleBuyerPercent": 24.6,
+    "jointRegistrationPercent": 17.4,
+    "avgMVFemale": 2450000,
+    "avgMVMale": 2850000,
+    "monthlyTrend": [
+      { "month": "2024-01", "femalePercent": 22.8, "malePercent": 57.4, "jointPercent": 16.2 },
+      { "month": "2024-02", "femalePercent": 23.1, "malePercent": 57.1, "jointPercent": 16.4 },
+      { "month": "2024-03", "femalePercent": 23.5, "malePercent": 56.8, "jointPercent": 16.6 },
+      { "month": "2024-04", "femalePercent": 23.8, "malePercent": 56.5, "jointPercent": 16.8 },
+      { "month": "2024-05", "femalePercent": 24.0, "malePercent": 56.2, "jointPercent": 17.0 },
+      { "month": "2024-06", "femalePercent": 24.1, "malePercent": 56.0, "jointPercent": 17.1 },
+      { "month": "2024-07", "femalePercent": 24.2, "malePercent": 55.9, "jointPercent": 17.2 },
+      { "month": "2024-08", "femalePercent": 24.3, "malePercent": 55.8, "jointPercent": 17.2 },
+      { "month": "2024-09", "femalePercent": 24.4, "malePercent": 55.7, "jointPercent": 17.3 },
+      { "month": "2024-10", "femalePercent": 24.5, "malePercent": 55.6, "jointPercent": 17.3 },
+      { "month": "2024-11", "femalePercent": 24.5, "malePercent": 55.6, "jointPercent": 17.4 },
+      { "month": "2024-12", "femalePercent": 24.6, "malePercent": 55.6, "jointPercent": 17.4 }
+    ]
+  },
+  "topParties": [
+    {
+      "partyName": "Venkata Ramana Reddy Koppula",
+      "pan": "ABCPK1234R",
+      "role": "Buyer",
+      "registrations": 47,
+      "totalValue": 285000000,
+      "districts": ["Krishna", "Guntur"],
+      "flagged": true
+    },
+    {
+      "partyName": "Srinivasa Rao Mandava",
+      "pan": "BDFPM5678S",
+      "role": "Both",
+      "registrations": 42,
+      "totalValue": 248000000,
+      "districts": ["Visakhapatnam", "East Godavari", "Srikakulam"],
+      "flagged": true
+    },
+    {
+      "partyName": "Lakshmi Narayana Chitturi",
+      "pan": "CGHPC9012N",
+      "role": "Seller",
+      "registrations": 38,
+      "totalValue": 220000000,
+      "districts": ["Krishna", "West Godavari"],
+      "flagged": false
+    },
+    {
+      "partyName": "Padmavathi Devi Gundlapalli",
+      "pan": "DJKPG3456L",
+      "role": "Buyer",
+      "registrations": 35,
+      "totalValue": 198000000,
+      "districts": ["Chittoor", "Nellore"],
+      "flagged": false
+    },
+    {
+      "partyName": "Ravi Kumar Boyapati",
+      "pan": "EFMPB7890T",
+      "role": "Both",
+      "registrations": 33,
+      "totalValue": 186000000,
+      "districts": ["Guntur", "Prakasam"],
+      "flagged": true
+    },
+    {
+      "partyName": "Suresh Babu Kalidindi",
+      "pan": "FHNPK2345M",
+      "role": "Buyer",
+      "registrations": 30,
+      "totalValue": 172000000,
+      "districts": ["Visakhapatnam"],
+      "flagged": false
+    },
+    {
+      "partyName": "Annapurna Devi Mallela",
+      "pan": "GJKPM6789A",
+      "role": "Seller",
+      "registrations": 28,
+      "totalValue": 158000000,
+      "districts": ["East Godavari", "West Godavari"],
+      "flagged": false
+    },
+    {
+      "partyName": "Bhaskar Rao Nadella",
+      "pan": "HKLPN1234D",
+      "role": "Buyer",
+      "registrations": 26,
+      "totalValue": 145000000,
+      "districts": ["Kurnool", "Anantapur"],
+      "flagged": false
+    },
+    {
+      "partyName": "Satyanarayana Murthy Pothula",
+      "pan": "JMNPP5678G",
+      "role": "Both",
+      "registrations": 24,
+      "totalValue": 132000000,
+      "districts": ["Nellore", "Prakasam", "Kadapa"],
+      "flagged": false
+    },
+    {
+      "partyName": "Durga Prasad Vemula",
+      "pan": "KNQPV9012K",
+      "role": "Seller",
+      "registrations": 22,
+      "totalValue": 118000000,
+      "districts": ["Krishna", "Guntur"],
+      "flagged": false
+    }
+  ],
+  "departments": [
+    {
+      "department": "CRDA",
+      "docCount": 1240,
+      "revenue": 620000000,
+      "exemptionsClaimed": 186,
+      "exemptAmount": 45000000,
+      "netRevenue": 575000000
+    },
+    {
+      "department": "TIDCO",
+      "docCount": 980,
+      "revenue": 485000000,
+      "exemptionsClaimed": 294,
+      "exemptAmount": 68000000,
+      "netRevenue": 417000000
+    },
+    {
+      "department": "APIIC",
+      "docCount": 720,
+      "revenue": 410000000,
+      "exemptionsClaimed": 108,
+      "exemptAmount": 32000000,
+      "netRevenue": 378000000
+    },
+    {
+      "department": "HMDA",
+      "docCount": 540,
+      "revenue": 295000000,
+      "exemptionsClaimed": 81,
+      "exemptAmount": 24000000,
+      "netRevenue": 271000000
+    },
+    {
+      "department": "AP Housing Board",
+      "docCount": 460,
+      "revenue": 230000000,
+      "exemptionsClaimed": 345,
+      "exemptAmount": 86000000,
+      "netRevenue": 144000000
+    },
+    {
+      "department": "Endowments",
+      "docCount": 180,
+      "revenue": 72000000,
+      "exemptionsClaimed": 126,
+      "exemptAmount": 38000000,
+      "netRevenue": 34000000
+    }
+  ]
+}

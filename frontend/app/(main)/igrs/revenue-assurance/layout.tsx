@@ -11,7 +11,11 @@ const IGRS_TABS = [
   { label: "Rules", path: "/igrs/revenue-assurance/rules" },
   { label: "Insights", path: "/igrs/revenue-assurance/insights" },
   { label: "Patterns", path: "/igrs/revenue-assurance/patterns" },
+  { label: "MV Trends", path: "/igrs/revenue-assurance/mv-trends" },
   { label: "Exports", path: "/igrs/revenue-assurance/exports" },
+  { label: "Governance", path: "/igrs/revenue-assurance/governance" },
+  { label: "AI Intelligence", path: "/igrs/revenue-assurance/ai-intelligence" },
+  { label: "Settings", path: "/igrs/revenue-assurance/settings" },
   { label: "Admin", path: "/igrs/revenue-assurance/admin" },
 ];
 

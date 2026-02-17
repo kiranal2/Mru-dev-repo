@@ -1,0 +1,647 @@
+{
+  "metadata": {
+    "lastUpdated": "2024-12-13T14:30:00+05:30",
+    "totalPrompts": 24,
+    "version": "v1.0"
+  },
+  "categories": [
+    { "id": "revenue", "label": "Revenue", "icon": "IndianRupee", "color": "#DC2626" },
+    { "id": "performance", "label": "Performance", "icon": "BarChart3", "color": "#3B82F6" },
+    { "id": "risk", "label": "Risk", "icon": "AlertTriangle", "color": "#F97316" },
+    { "id": "forecasting", "label": "Forecasting", "icon": "TrendingUp", "color": "#7C3AED" },
+    { "id": "compliance", "label": "Compliance", "icon": "ShieldCheck", "color": "#22C55E" },
+    { "id": "sla", "label": "SLA", "icon": "Clock", "color": "#0891B2" }
+  ],
+  "prompts": [
+    {
+      "id": "rev-001",
+      "promptText": "Show monthly revenue growth for last quarter",
+      "category": "revenue",
+      "response": {
+        "narrative": "Here's the monthly revenue performance for Q3 FY 2024-25 (Oct-Dec 2024). Total quarterly revenue reached ₹34.2Cr, up 16.3% compared to Q3 FY 2023-24.",
+        "inlineTable": {
+          "headers": ["Month", "Revenue", "MoM Growth", "YoY Growth", "vs Target"],
+          "rows": [
+            ["Oct 2024", "₹10.8Cr", "+5.2%", "+14.1%", "+₹0.4Cr"],
+            ["Nov 2024", "₹11.6Cr", "+7.4%", "+17.8%", "+₹0.8Cr"],
+            ["Dec 2024", "₹11.8Cr", "+1.7%", "+17.2%", "+₹0.6Cr"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Oct", "Nov", "Dec"],
+          "datasets": [{ "label": "Revenue (₹Cr)", "data": [10.8, 11.6, 11.8], "color": "#7C3AED" }]
+        },
+        "keyInsight": "November showed the strongest MoM growth at 7.4%, driven by high document volume in Krishna and East Godavari districts. All 3 months exceeded revenue targets.",
+        "followUpPrompts": ["Show district breakdown for Q3", "Compare Q3 with Q2 performance", "Which SROs contributed most to growth?"]
+      }
+    },
+    {
+      "id": "rev-002",
+      "promptText": "Total revenue by district",
+      "category": "revenue",
+      "response": {
+        "narrative": "District-wise revenue distribution for the current fiscal year (Apr-Dec 2024). Krishna leads with ₹18.4Cr (15.2%), followed by Guntur at ₹15.2Cr (12.6%).",
+        "inlineTable": {
+          "headers": ["District", "Revenue", "Share %", "YoY Growth", "Documents"],
+          "rows": [
+            ["Krishna", "₹18.4Cr", "15.2%", "+17.5%", "4,820"],
+            ["Guntur", "₹15.2Cr", "12.6%", "+17.2%", "3,940"],
+            ["East Godavari", "₹14.9Cr", "12.3%", "+16.0%", "3,680"],
+            ["Visakhapatnam", "₹13.8Cr", "11.4%", "+17.8%", "3,520"],
+            ["Chittoor", "₹9.8Cr", "8.1%", "+16.1%", "2,640"]
+          ],
+          "highlightColumn": 3
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Krishna", "Guntur", "E.Godavari", "Vizag", "Chittoor"],
+          "datasets": [{ "label": "Revenue (₹Cr)", "data": [18.4, 15.2, 14.9, 13.8, 9.8], "color": "#7C3AED" }]
+        },
+        "keyInsight": "Top 5 districts account for 59.6% of total revenue. Krishna maintains its lead with the highest document count and YoY growth.",
+        "followUpPrompts": ["Show bottom 5 districts", "Revenue per document by district", "District trend over last 6 months"]
+      }
+    },
+    {
+      "id": "rev-003",
+      "promptText": "Revenue vs target comparison",
+      "category": "revenue",
+      "response": {
+        "narrative": "Revenue achievement against annual targets as of December 2024. State-level achievement stands at 78.4% of the annual target with 3 months remaining.",
+        "inlineTable": {
+          "headers": ["Metric", "Target", "Actual", "Achievement", "Gap"],
+          "rows": [
+            ["Annual Target", "₹154.0Cr", "₹120.8Cr", "78.4%", "₹33.2Cr"],
+            ["Q3 Target", "₹32.0Cr", "₹34.2Cr", "106.9%", "+₹2.2Cr"],
+            ["Dec Target", "₹10.5Cr", "₹11.8Cr", "112.4%", "+₹1.3Cr"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Q1", "Q2", "Q3", "Q4 (Proj)"],
+          "datasets": [
+            { "label": "Target", "data": [36.0, 38.0, 32.0, 48.0], "color": "#94A3B8" },
+            { "label": "Actual", "data": [34.8, 37.6, 34.2, 0], "color": "#7C3AED" }
+          ]
+        },
+        "keyInsight": "Q3 performance exceeded target by 6.9%. At current trajectory, the annual target of ₹154Cr is achievable with Q4 needing ₹33.2Cr (projected ₹38.4Cr based on trend).",
+        "followUpPrompts": ["Which districts are below target?", "Monthly target achievement trend", "Project Q4 revenue"]
+      }
+    },
+    {
+      "id": "rev-004",
+      "promptText": "Top 5 revenue-generating SROs",
+      "category": "revenue",
+      "response": {
+        "narrative": "Top 5 Sub-Registrar Offices by revenue generation for Dec 2024. SR05 (Salem Main) leads with ₹2.1Cr, contributing 17.8% of total monthly revenue.",
+        "inlineTable": {
+          "headers": ["Rank", "SRO", "District", "Revenue", "Documents", "Avg MV"],
+          "rows": [
+            ["1", "SR05 Salem Main", "Krishna", "₹2.1Cr", "412", "₹28.4L"],
+            ["2", "SR01 Chennai Central", "Guntur", "₹1.9Cr", "386", "₹32.1L"],
+            ["3", "SR03 Vijayawada", "Krishna", "₹1.7Cr", "348", "₹26.8L"],
+            ["4", "SR04 Vizag North", "Visakhapatnam", "₹1.5Cr", "322", "₹24.2L"],
+            ["5", "SR07 Tirupati", "Chittoor", "₹1.3Cr", "296", "₹22.6L"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["SR05", "SR01", "SR03", "SR04", "SR07"],
+          "datasets": [{ "label": "Revenue (₹Cr)", "data": [2.1, 1.9, 1.7, 1.5, 1.3], "color": "#7C3AED" }]
+        },
+        "keyInsight": "Top 5 SROs contribute 72.0% of total revenue. SR05 has the highest document volume while SR01 has the highest average market value per document at ₹32.1L.",
+        "followUpPrompts": ["Compare with previous month", "SRO revenue trend for top 5", "Bottom 5 SROs by revenue"]
+      }
+    },
+    {
+      "id": "perf-001",
+      "promptText": "Which districts are performing best?",
+      "category": "performance",
+      "response": {
+        "narrative": "District performance ranking based on a composite score of revenue achievement, growth rate, compliance, and SLA adherence for Q3 FY 2024-25.",
+        "inlineTable": {
+          "headers": ["Rank", "District", "Score", "Revenue Achievement", "Growth", "Compliance"],
+          "rows": [
+            ["1", "Krishna", "92/100", "108.2%", "+17.5%", "94%"],
+            ["2", "Visakhapatnam", "89/100", "106.8%", "+17.8%", "91%"],
+            ["3", "East Godavari", "87/100", "104.6%", "+16.0%", "90%"],
+            ["4", "Guntur", "85/100", "103.8%", "+17.2%", "88%"],
+            ["5", "Chittoor", "82/100", "102.4%", "+16.1%", "86%"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Krishna", "Vizag", "E.Godavari", "Guntur", "Chittoor"],
+          "datasets": [{ "label": "Performance Score", "data": [92, 89, 87, 85, 82], "color": "#3B82F6" }]
+        },
+        "keyInsight": "Krishna leads with the highest composite score driven by strong revenue achievement and compliance. Visakhapatnam has the highest growth rate but slightly lower compliance.",
+        "followUpPrompts": ["Show bottom performing districts", "Performance trend over quarters", "What drives Krishna's performance?"]
+      }
+    },
+    {
+      "id": "perf-002",
+      "promptText": "Bottom performing districts with reasons",
+      "category": "performance",
+      "response": {
+        "narrative": "Bottom 5 districts by performance score for Q3 FY 2024-25. Vizianagaram ranks lowest with persistent structural challenges.",
+        "inlineTable": {
+          "headers": ["Rank", "District", "Score", "Key Issues", "Revenue Gap"],
+          "rows": [
+            ["13", "Vizianagaram", "42/100", "Low volume, staff vacancy", "-₹1.2Cr"],
+            ["12", "Srikakulam", "48/100", "Poor SLA, data quality", "-₹0.8Cr"],
+            ["11", "Kurnool", "52/100", "Volume decline, PP zones", "-₹1.4Cr"],
+            ["10", "Kadapa", "55/100", "SLA breaches, cash issues", "-₹0.6Cr"],
+            ["9", "Anantapur", "58/100", "Low compliance, revenue gap", "-₹0.4Cr"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Vizianagaram", "Srikakulam", "Kurnool", "Kadapa", "Anantapur"],
+          "datasets": [{ "label": "Performance Score", "data": [42, 48, 52, 55, 58], "color": "#F97316" }]
+        },
+        "keyInsight": "Kurnool has the largest revenue gap at ₹1.4Cr despite not being the lowest performer, due to prohibited property zone reclassification reducing volume by 8.2%.",
+        "followUpPrompts": ["Detailed breakdown for Kurnool", "Suggested actions for bottom districts", "Compare bottom districts YoY"]
+      }
+    },
+    {
+      "id": "perf-003",
+      "promptText": "District-wise ranking this quarter",
+      "category": "performance",
+      "response": {
+        "narrative": "Complete district ranking for Q3 FY 2024-25 based on composite performance index combining revenue, growth, compliance, and operational efficiency.",
+        "inlineTable": {
+          "headers": ["Rank", "District", "Revenue", "Growth", "Target %", "Score"],
+          "rows": [
+            ["1", "Krishna", "₹10.2Cr", "+17.5%", "108%", "92"],
+            ["2", "Visakhapatnam", "₹8.4Cr", "+17.8%", "107%", "89"],
+            ["3", "East Godavari", "₹8.1Cr", "+16.0%", "105%", "87"],
+            ["4", "Guntur", "₹7.8Cr", "+17.2%", "104%", "85"],
+            ["5", "Chittoor", "₹5.6Cr", "+16.1%", "102%", "82"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Krishna", "Vizag", "E.God", "Guntur", "Chittoor"],
+          "datasets": [
+            { "label": "Revenue (₹Cr)", "data": [10.2, 8.4, 8.1, 7.8, 5.6], "color": "#3B82F6" },
+            { "label": "Growth %", "data": [17.5, 17.8, 16.0, 17.2, 16.1], "color": "#22C55E" }
+          ]
+        },
+        "keyInsight": "Top 5 districts exceed their quarterly targets. Krishna maintains its dominance with the highest absolute revenue though Visakhapatnam leads in growth rate.",
+        "followUpPrompts": ["Full 13-district ranking", "Compare Q3 with Q2 ranking", "Which districts improved most?"]
+      }
+    },
+    {
+      "id": "perf-004",
+      "promptText": "Compare Q2 vs Q1 performance",
+      "category": "performance",
+      "response": {
+        "narrative": "Quarter-over-quarter performance comparison. Q2 (Jul-Sep 2024) showed mixed results vs Q1 (Apr-Jun 2024) with overall revenue declining 2.1% due to seasonal patterns.",
+        "inlineTable": {
+          "headers": ["Metric", "Q1", "Q2", "Change", "Status"],
+          "rows": [
+            ["Revenue", "₹34.8Cr", "₹34.1Cr", "-2.1%", "Seasonal dip"],
+            ["Documents", "8,420", "8,180", "-2.8%", "Normal"],
+            ["Avg Risk Score", "40.2", "39.2", "-2.5%", "Improving"],
+            ["SLA Compliance", "84.2%", "86.1%", "+1.9%", "Improving"],
+            ["High Risk Cases", "148", "132", "-10.8%", "Improving"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Revenue", "Documents", "Compliance", "Risk Cases"],
+          "datasets": [
+            { "label": "Q1", "data": [34.8, 8.42, 84.2, 148], "color": "#94A3B8" },
+            { "label": "Q2", "data": [34.1, 8.18, 86.1, 132], "color": "#3B82F6" }
+          ]
+        },
+        "keyInsight": "While revenue dipped slightly (seasonal pattern consistent with prior years), risk metrics improved significantly. High risk cases dropped 10.8% and SLA compliance increased.",
+        "followUpPrompts": ["Show Q3 comparison", "Which districts drove the Q2 dip?", "Seasonal pattern analysis"]
+      }
+    },
+    {
+      "id": "risk-001",
+      "promptText": "Show highest risk SROs this month",
+      "category": "risk",
+      "response": {
+        "narrative": "Top 5 highest-risk Sub-Registrar Offices for December 2024 based on the SRO Integrity Index. These offices require immediate attention.",
+        "inlineTable": {
+          "headers": ["Rank", "SRO", "Risk Score", "Key Risk", "Cases", "Gap Amount"],
+          "rows": [
+            ["16", "SR18 Cuddalore", "38/100", "Revenue + Cash", "12", "₹14.1L"],
+            ["15", "SR17 Srikakulam", "48/100", "SLA + Revenue", "8", "₹8.4L"],
+            ["14", "SR09 Kurnool", "50/100", "Volume decline", "9", "₹11.2L"],
+            ["13", "SR14 Anantapur", "52/100", "Revenue + Data", "7", "₹6.8L"],
+            ["12", "SR08 Kadapa", "55/100", "SLA breaches", "6", "₹6.4L"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["SR18", "SR17", "SR09", "SR14", "SR08"],
+          "datasets": [{ "label": "Integrity Score", "data": [38, 48, 50, 52, 55], "color": "#EF4444" }]
+        },
+        "keyInsight": "SR18 (Cuddalore) is the most concerning with a 5-point drop this month. Revenue compliance at 35% and 3 CFMS sync failures require immediate audit intervention.",
+        "followUpPrompts": ["Detailed report for SR18", "Corrective actions for at-risk SROs", "Compare with last month"]
+      }
+    },
+    {
+      "id": "risk-002",
+      "promptText": "What are the top revenue leakage types?",
+      "category": "risk",
+      "response": {
+        "narrative": "Revenue leakage breakdown by signal type for the current period. RevenueGap continues to be the dominant leakage category at 38.2% of total.",
+        "inlineTable": {
+          "headers": ["Signal Type", "Cases", "Amount", "Share", "Trend"],
+          "rows": [
+            ["Revenue Gap", "142", "₹16.2Cr", "38.2%", "Declining \u2193"],
+            ["Market Value Risk", "98", "₹10.4Cr", "24.5%", "Stable \u2192"],
+            ["Exemption Risk", "64", "₹6.8Cr", "16.0%", "Rising \u2191"],
+            ["Challan Delay", "48", "₹4.2Cr", "9.9%", "Declining \u2193"],
+            ["Cash Reconciliation", "32", "₹2.8Cr", "6.6%", "Rising \u2191"],
+            ["Others", "28", "₹2.0Cr", "4.8%", "Stable \u2192"]
+          ]
+        },
+        "inlineChart": {
+          "type": "donut",
+          "labels": ["Revenue Gap", "MV Risk", "Exemption", "Challan", "Cash Recon", "Others"],
+          "datasets": [{ "label": "Share %", "data": [38.2, 24.5, 16.0, 9.9, 6.6, 4.8], "color": "#F97316" }]
+        },
+        "keyInsight": "Exemption Risk and Cash Reconciliation are rising trends that need attention. Revenue Gap is declining due to improved detection rules deployed in Q2.",
+        "followUpPrompts": ["Deep dive into Exemption Risk", "Cash reconciliation details by SRO", "Leakage trend over 12 months"]
+      }
+    },
+    {
+      "id": "risk-003",
+      "promptText": "Which offices have exemption abuse alerts?",
+      "category": "risk",
+      "response": {
+        "narrative": "Offices flagged for exemption abuse patterns in the current month. 6 SROs show abnormal exemption usage above the 15% threshold.",
+        "inlineTable": {
+          "headers": ["SRO", "Exemptions", "Rate", "Failed Checks", "Impact"],
+          "rows": [
+            ["SR18 Cuddalore", "28", "22.4%", "8", "₹1.4Cr"],
+            ["SR09 Kurnool", "19", "18.6%", "5", "₹0.9Cr"],
+            ["SR14 Anantapur", "16", "17.8%", "4", "₹0.7Cr"],
+            ["SR17 Srikakulam", "14", "16.2%", "3", "₹0.5Cr"],
+            ["SR08 Kadapa", "12", "15.8%", "3", "₹0.4Cr"],
+            ["SR13 Ongole", "11", "15.4%", "2", "₹0.3Cr"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["SR18", "SR09", "SR14", "SR17", "SR08", "SR13"],
+          "datasets": [
+            { "label": "Exemption Rate %", "data": [22.4, 18.6, 17.8, 16.2, 15.8, 15.4], "color": "#F97316" }
+          ]
+        },
+        "keyInsight": "SR18 has the highest exemption rate at 22.4% with 8 failed eligibility checks. State average is 8.2%. These 6 offices account for 68% of all failed exemption checks.",
+        "followUpPrompts": ["Exemption types being abused", "Historical trend for SR18", "State-wide exemption compliance"]
+      }
+    },
+    {
+      "id": "risk-004",
+      "promptText": "Cash reconciliation status across offices",
+      "category": "risk",
+      "response": {
+        "narrative": "Daily cash reconciliation status across all 16 SROs for December 2024. 3 offices show persistent discrepancies requiring investigation.",
+        "inlineTable": {
+          "headers": ["SRO", "Days Matched", "Days Discrepant", "Avg Variance", "Status"],
+          "rows": [
+            ["SR18 Cuddalore", "8", "5", "₹82,400", "Alert"],
+            ["SR09 Kurnool", "10", "3", "₹45,200", "Warning"],
+            ["SR14 Anantapur", "11", "2", "₹28,600", "Warning"],
+            ["SR05 Salem Main", "13", "0", "₹0", "Clear"],
+            ["SR01 Chennai Central", "13", "0", "₹0", "Clear"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["SR18", "SR09", "SR14", "SR05", "SR01"],
+          "datasets": [
+            { "label": "Matched Days", "data": [8, 10, 11, 13, 13], "color": "#22C55E" },
+            { "label": "Discrepant Days", "data": [5, 3, 2, 0, 0], "color": "#EF4444" }
+          ]
+        },
+        "keyInsight": "SR18 has the highest discrepancy rate at 38.5% of working days, with average daily variance of ₹82,400. 11 of 16 SROs maintain 100% reconciliation accuracy.",
+        "followUpPrompts": ["Detail SR18 discrepancies", "Cash reconciliation trend", "Compare with previous month"]
+      }
+    },
+    {
+      "id": "fc-001",
+      "promptText": "Revenue forecast for next quarter",
+      "category": "forecasting",
+      "response": {
+        "narrative": "Revenue forecast for Q4 FY 2024-25 (Jan-Mar 2025) under three scenarios. Baseline projects ₹35.0Cr, driven by steady volume growth and compliance improvements.",
+        "inlineTable": {
+          "headers": ["Month", "Conservative", "Baseline", "Optimistic"],
+          "rows": [
+            ["Jan 2025", "₹10.3Cr", "₹11.2Cr", "₹12.2Cr"],
+            ["Feb 2025", "₹10.7Cr", "₹11.7Cr", "₹12.6Cr"],
+            ["Mar 2025", "₹11.1Cr", "₹12.1Cr", "₹13.2Cr"],
+            ["Q4 Total", "₹32.1Cr", "₹35.0Cr", "₹38.0Cr"]
+          ],
+          "highlightColumn": 2
+        },
+        "inlineChart": {
+          "type": "line",
+          "labels": ["Jan", "Feb", "Mar"],
+          "datasets": [
+            { "label": "Conservative", "data": [10.3, 10.7, 11.1], "color": "#94A3B8" },
+            { "label": "Baseline", "data": [11.2, 11.7, 12.1], "color": "#7C3AED" },
+            { "label": "Optimistic", "data": [12.2, 12.6, 13.2], "color": "#22C55E" }
+          ]
+        },
+        "keyInsight": "Baseline Q4 forecast of ₹35.0Cr would bring FY total to ₹155.8Cr, exceeding the annual target by 1.2%. Model confidence (MAPE: 5.8%) supports this projection.",
+        "followUpPrompts": ["Impact of MV revision on Q1 FY26", "Which districts drive Q4 growth?", "Scenario comparison details"]
+      }
+    },
+    {
+      "id": "fc-002",
+      "promptText": "Impact of upcoming MV revision",
+      "category": "forecasting",
+      "response": {
+        "narrative": "Analysis of the scheduled April 2025 Market Value revision impact. Expected to affect 8 districts with an estimated ₹12.4Cr revenue uplift in the first 6 months.",
+        "inlineTable": {
+          "headers": ["District", "Current Avg MV", "Expected New MV", "Revenue Impact", "Volume Impact"],
+          "rows": [
+            ["Krishna", "₹28.4L", "₹33.6L", "+₹2.1Cr", "-2.8%"],
+            ["Guntur", "₹24.2L", "₹28.4L", "+₹1.8Cr", "-3.1%"],
+            ["East Godavari", "₹22.8L", "₹26.8L", "+₹1.6Cr", "-2.4%"],
+            ["Visakhapatnam", "₹26.4L", "₹31.2L", "+₹1.6Cr", "-3.4%"],
+            ["Chittoor", "₹20.6L", "₹24.2L", "+₹1.0Cr", "-2.0%"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Krishna", "Guntur", "E.God", "Vizag", "Chittoor"],
+          "datasets": [
+            { "label": "Revenue Impact (₹Cr)", "data": [2.1, 1.8, 1.6, 1.6, 1.0], "color": "#7C3AED" },
+            { "label": "Volume Impact %", "data": [-2.8, -3.1, -2.4, -3.4, -2.0], "color": "#F97316" }
+          ]
+        },
+        "keyInsight": "Net impact is strongly positive: ₹12.4Cr revenue gain vs ~₹1.8Cr volume-driven loss. Historical pattern shows volume recovers within 3-4 months post-revision.",
+        "followUpPrompts": ["Historical MV revision impacts", "Volume recovery timeline", "District-level preparation status"]
+      }
+    },
+    {
+      "id": "fc-003",
+      "promptText": "Which districts will grow most?",
+      "category": "forecasting",
+      "response": {
+        "narrative": "Projected district growth rates for the next 12 months (NTM). Visakhapatnam leads with 17.8% projected growth driven by strong commercial activity.",
+        "inlineTable": {
+          "headers": ["Rank", "District", "Current (LTM)", "Forecast (NTM)", "Growth %", "Risk"],
+          "rows": [
+            ["1", "Visakhapatnam", "₹13.8Cr", "₹16.3Cr", "+17.8%", "Low"],
+            ["2", "Krishna", "₹18.4Cr", "₹21.6Cr", "+17.5%", "Low"],
+            ["3", "Guntur", "₹15.2Cr", "₹17.9Cr", "+17.2%", "Low"],
+            ["4", "Chittoor", "₹9.8Cr", "₹11.4Cr", "+16.1%", "Low"],
+            ["5", "East Godavari", "₹14.9Cr", "₹17.2Cr", "+16.0%", "Low"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Vizag", "Krishna", "Guntur", "Chittoor", "E.God"],
+          "datasets": [{ "label": "YoY Growth %", "data": [17.8, 17.5, 17.2, 16.1, 16.0], "color": "#7C3AED" }]
+        },
+        "keyInsight": "Top 5 growth districts are all in the 'low risk' category with high model confidence. Kurnool (-3.6%) is the only district projected to decline due to prohibited property zones.",
+        "followUpPrompts": ["Districts projected to decline", "Growth drivers for Visakhapatnam", "Confidence intervals by district"]
+      }
+    },
+    {
+      "id": "fc-004",
+      "promptText": "Projected vs actual comparison",
+      "category": "forecasting",
+      "response": {
+        "narrative": "Comparison of previously forecasted values vs actual revenue for Q3 2024. The model showed strong accuracy with MAPE of 5.8%.",
+        "inlineTable": {
+          "headers": ["Month", "Forecast", "Actual", "Variance", "Accuracy"],
+          "rows": [
+            ["Oct 2024", "₹10.4Cr", "₹10.8Cr", "+₹0.4Cr", "96.3%"],
+            ["Nov 2024", "₹11.2Cr", "₹11.6Cr", "+₹0.4Cr", "96.6%"],
+            ["Dec 2024", "₹11.4Cr", "₹11.8Cr", "+₹0.4Cr", "96.6%"]
+          ]
+        },
+        "inlineChart": {
+          "type": "line",
+          "labels": ["Oct", "Nov", "Dec"],
+          "datasets": [
+            { "label": "Forecast", "data": [10.4, 11.2, 11.4], "color": "#94A3B8" },
+            { "label": "Actual", "data": [10.8, 11.6, 11.8], "color": "#7C3AED" }
+          ]
+        },
+        "keyInsight": "The model slightly under-predicted all three months by ~₹0.4Cr, suggesting the compliance improvement factor could be increased. Overall accuracy exceeds 96%.",
+        "followUpPrompts": ["Adjust model parameters", "Historical accuracy trend", "Forecast confidence analysis"]
+      }
+    },
+    {
+      "id": "comp-001",
+      "promptText": "Exemption compliance summary",
+      "category": "compliance",
+      "response": {
+        "narrative": "Exemption compliance dashboard for December 2024. Overall compliance rate is 91.8% with 64 exemptions failing eligibility checks out of 782 total claims.",
+        "inlineTable": {
+          "headers": ["Metric", "Value", "vs Target", "Trend"],
+          "rows": [
+            ["Total Exemptions", "782", "-", "\u2191 4.2%"],
+            ["Compliance Rate", "91.8%", "Target: 95%", "\u2191 1.2%"],
+            ["Failed Checks", "64", "vs 72 last month", "\u2193 11.1%"],
+            ["Repeat Offenders", "12", "vs 14 last month", "\u2193 14.3%"],
+            ["Total Exempt Amount", "₹18.4Cr", "-", "\u2191 6.8%"]
+          ]
+        },
+        "inlineChart": {
+          "type": "line",
+          "labels": ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          "datasets": [
+            { "label": "Compliance %", "data": [88.2, 89.1, 89.8, 90.4, 90.8, 91.8], "color": "#22C55E" },
+            { "label": "Target", "data": [95, 95, 95, 95, 95, 95], "color": "#94A3B8" }
+          ]
+        },
+        "keyInsight": "Compliance is steadily improving (+3.6% over 6 months) but still 3.2% below the 95% target. SR18 and SR09 account for 38% of all failed checks.",
+        "followUpPrompts": ["Exemption types breakdown", "SRO-level compliance", "Repeat offender details"]
+      }
+    },
+    {
+      "id": "comp-002",
+      "promptText": "SRO integrity scores this month",
+      "category": "compliance",
+      "response": {
+        "narrative": "SRO Integrity Index for December 2024. State average is 72.4/100, up 1.2 points from November. 4 SROs in excellent band, 6 in good, 5 needs improvement, 1 at risk.",
+        "inlineTable": {
+          "headers": ["Band", "SROs", "Avg Score", "Best", "Worst"],
+          "rows": [
+            ["Excellent (80-100)", "4", "86.3", "SR05 (91)", "SR03 (82)"],
+            ["Good (60-79)", "6", "71.3", "SR07 (78)", "SR02 (65)"],
+            ["Needs Improvement (40-59)", "5", "52.6", "SR13 (58)", "SR17 (48)"],
+            ["At Risk (20-39)", "1", "38.0", "SR18 (38)", "SR18 (38)"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Excellent", "Good", "Needs Imp.", "At Risk"],
+          "datasets": [{ "label": "SRO Count", "data": [4, 6, 5, 1], "color": "#22C55E" }]
+        },
+        "keyInsight": "SR05 jumped from rank 3 to rank 1 this month (+3 points). SR18 dropped to 'at risk' band with a 5-point decline, requiring immediate intervention.",
+        "followUpPrompts": ["Detailed SR18 report", "Month-over-month changes", "Component score breakdown"]
+      }
+    },
+    {
+      "id": "comp-003",
+      "promptText": "Which offices need corrective action?",
+      "category": "compliance",
+      "response": {
+        "narrative": "6 SROs require corrective action based on integrity scores below 60 or declining trends. Recommended interventions prioritized by urgency.",
+        "inlineTable": {
+          "headers": ["SRO", "Score", "Trend", "Priority", "Key Action"],
+          "rows": [
+            ["SR18 Cuddalore", "38", "\u2193\u2193\u2193", "Critical", "Immediate audit + daily oversight"],
+            ["SR17 Srikakulam", "48", "\u2192", "High", "Revenue training + SLA monitoring"],
+            ["SR09 Kurnool", "50", "\u2193", "High", "SLA recovery + PP zone review"],
+            ["SR14 Anantapur", "52", "\u2191", "Medium", "Continue improvement program"],
+            ["SR08 Kadapa", "55", "\u2193", "Medium", "SLA focus + cash procedures"],
+            ["SR13 Ongole", "58", "\u2191", "Low", "Data quality improvement"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["SR18", "SR17", "SR09", "SR14", "SR08", "SR13"],
+          "datasets": [{ "label": "Integrity Score", "data": [38, 48, 50, 52, 55, 58], "color": "#F97316" }]
+        },
+        "keyInsight": "SR18 is the only office in 'at risk' band and needs immediate intervention. SR14 and SR13 are improving and may exit corrective action in 2-3 months.",
+        "followUpPrompts": ["Corrective action plan for SR18", "Budget for improvement programs", "Timeline for expected improvements"]
+      }
+    },
+    {
+      "id": "comp-004",
+      "promptText": "Stamp inventory anomalies",
+      "category": "compliance",
+      "response": {
+        "narrative": "Stamp inventory anomaly summary for December 2024. 4 vendors flagged for usage deviation above 20% threshold. Total estimated leakage from stamp irregularities: ₹1.8Cr.",
+        "inlineTable": {
+          "headers": ["Vendor", "Jurisdiction", "Usage", "Expected", "Deviation", "Risk"],
+          "rows": [
+            ["V-008 Ganesh Stamps", "SR18", "342", "180", "+90%", "High"],
+            ["V-012 AP Stamps", "SR09", "285", "200", "+42.5%", "High"],
+            ["V-015 Sri Stamps", "SR14", "198", "150", "+32%", "Medium"],
+            ["V-003 Lakshmi Papers", "SR17", "168", "130", "+29.2%", "Medium"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["V-008", "V-012", "V-015", "V-003"],
+          "datasets": [
+            { "label": "Actual Usage", "data": [342, 285, 198, 168], "color": "#EF4444" },
+            { "label": "Expected", "data": [180, 200, 150, 130], "color": "#94A3B8" }
+          ]
+        },
+        "keyInsight": "V-008 (Ganesh Stamps) at SR18 shows 90% deviation, the highest this quarter. This vendor's jurisdiction (SR18) is already flagged as at-risk in the integrity index.",
+        "followUpPrompts": ["Vendor risk profile for V-008", "NJ stamp anomaly details", "Franking alert summary"]
+      }
+    },
+    {
+      "id": "sla-001",
+      "promptText": "Pending documents beyond SLA",
+      "category": "sla",
+      "response": {
+        "narrative": "48 documents currently pending beyond the 14-day SLA target across all SROs. SR18 accounts for the highest share at 12 documents.",
+        "inlineTable": {
+          "headers": ["SRO", "Pending > SLA", "Oldest (Days)", "Avg Delay", "Est. Revenue Held"],
+          "rows": [
+            ["SR18 Cuddalore", "12", "32", "22.4", "₹8.4L"],
+            ["SR09 Kurnool", "8", "28", "19.6", "₹6.2L"],
+            ["SR08 Kadapa", "7", "24", "18.2", "₹4.8L"],
+            ["SR17 Srikakulam", "6", "21", "16.8", "₹3.6L"],
+            ["SR14 Anantapur", "5", "18", "15.4", "₹2.8L"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["SR18", "SR09", "SR08", "SR17", "SR14"],
+          "datasets": [{ "label": "Pending > SLA", "data": [12, 8, 7, 6, 5], "color": "#0891B2" }]
+        },
+        "keyInsight": "SR18 has 12 documents pending with the oldest at 32 days (2.3x SLA). Total revenue held up across all SROs is ₹32.4L. 72% of breaches are in bottom 5 SROs.",
+        "followUpPrompts": ["SLA breach by document type", "Historical SLA trend", "Escalation actions for SR18"]
+      }
+    },
+    {
+      "id": "sla-002",
+      "promptText": "Average processing time by office",
+      "category": "sla",
+      "response": {
+        "narrative": "Average document processing time across all 16 SROs for December 2024. State average is 8.4 days against a 14-day SLA target.",
+        "inlineTable": {
+          "headers": ["SRO", "Avg Days", "Within SLA %", "P90 Days", "Rank"],
+          "rows": [
+            ["SR05 Salem Main", "4.2", "98.6%", "8.4", "1"],
+            ["SR01 Chennai Central", "5.1", "97.2%", "9.8", "2"],
+            ["SR04 Vizag North", "5.8", "96.4%", "10.2", "3"],
+            ["SR18 Cuddalore", "14.8", "62.4%", "28.6", "16"],
+            ["SR09 Kurnool", "12.4", "71.2%", "24.2", "15"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["SR05", "SR01", "SR04", "SR18", "SR09"],
+          "datasets": [{ "label": "Avg Processing Days", "data": [4.2, 5.1, 5.8, 14.8, 12.4], "color": "#0891B2" }]
+        },
+        "keyInsight": "Top 3 SROs process documents in under 6 days on average. SR18 exceeds the SLA target at 14.8 days average with P90 at 28.6 days, indicating systematic processing delays.",
+        "followUpPrompts": ["Full 16-SRO ranking", "Processing time trend", "Staffing vs volume correlation"]
+      }
+    },
+    {
+      "id": "sla-003",
+      "promptText": "SLA breach trend this quarter",
+      "category": "sla",
+      "response": {
+        "narrative": "SLA breach trend for Q3 FY 2024-25. Monthly breach rate decreased from 9.2% in October to 7.8% in December, showing improvement.",
+        "inlineTable": {
+          "headers": ["Month", "Total Docs", "Within SLA", "Breached", "Breach Rate"],
+          "rows": [
+            ["Oct 2024", "2,840", "2,579", "261", "9.2%"],
+            ["Nov 2024", "2,920", "2,674", "246", "8.4%"],
+            ["Dec 2024", "2,680", "2,471", "209", "7.8%"]
+          ]
+        },
+        "inlineChart": {
+          "type": "line",
+          "labels": ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          "datasets": [
+            { "label": "Breach Rate %", "data": [11.4, 10.8, 10.2, 9.2, 8.4, 7.8], "color": "#0891B2" },
+            { "label": "Target (5%)", "data": [5, 5, 5, 5, 5, 5], "color": "#94A3B8" }
+          ]
+        },
+        "keyInsight": "Breach rate has improved 31.6% over 6 months (11.4% \u2192 7.8%) but remains above the 5% target. Improvement is primarily from top-performing SROs; bottom 5 SROs still average 18.4%.",
+        "followUpPrompts": ["Breach rate by SRO", "What drove the improvement?", "Path to 5% target"]
+      }
+    },
+    {
+      "id": "sla-004",
+      "promptText": "Offices with longest delays",
+      "category": "sla",
+      "response": {
+        "narrative": "SROs with the longest average processing delays in December 2024. 5 offices exceed the state average of 8.4 days.",
+        "inlineTable": {
+          "headers": ["SRO", "Avg Days", "Max Days", "Pending", "Root Cause"],
+          "rows": [
+            ["SR18 Cuddalore", "14.8", "32", "12", "Staff shortage + system issues"],
+            ["SR09 Kurnool", "12.4", "28", "8", "Volume spike + PP reviews"],
+            ["SR08 Kadapa", "11.6", "24", "7", "Manual processing delays"],
+            ["SR17 Srikakulam", "10.8", "21", "6", "Data quality rework"],
+            ["SR14 Anantapur", "10.2", "18", "5", "Verification backlogs"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["SR18", "SR09", "SR08", "SR17", "SR14"],
+          "datasets": [
+            { "label": "Avg Days", "data": [14.8, 12.4, 11.6, 10.8, 10.2], "color": "#0891B2" },
+            { "label": "Max Days", "data": [32, 28, 24, 21, 18], "color": "#EF4444" }
+          ]
+        },
+        "keyInsight": "SR18's maximum delay of 32 days is 2.3x the SLA target. The primary bottleneck is staff shortage \u2014 operating at 60% capacity. Adding 2 temporary staff could reduce avg processing to under 10 days.",
+        "followUpPrompts": ["Staff utilization by SRO", "Cost of temporary staffing", "Impact of automation on delays"]
+      }
+    }
+  ]
+}

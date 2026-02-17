@@ -168,6 +168,8 @@ export const Menu: MenuItem[] = [
       { path: "igrs/revenue-assurance/exports", permission: "igrs_exports" },
       { path: "igrs/revenue-assurance/admin", permission: "igrs_admin" },
       { path: "igrs/revenue-assurance/settings", permission: "igrs_settings" },
+      { path: "igrs/revenue-assurance/governance", permission: "igrs_governance" },
+      { path: "igrs/revenue-assurance/ai-intelligence", permission: "igrs_ai_intelligence" },
     ],
   },
   {

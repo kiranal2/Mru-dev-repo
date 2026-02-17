@@ -8,6 +8,8 @@ import type {
   IGRSCase, IGRSRule, SROOffice, IGRSDashboardKPIs, IGRSTrend,
   IGRSPattern, MVHotspot, IGRSSettings, IGRSExport, IGRSSignal,
   CashReconciliationRecord, StampInventoryRecord,
+  StampVendorAnalysis, MVGrowthAttribution, MVRevisionComparison, MVAnomaliesData,
+  PredictiveForecastingData, DocumentRiskScoringData, SROIntegrityIndexData, PromptEngineData,
   RevenueCase, RevenueRule, Customer, Contract, RevenueDashboardKPIs,
   RevenueTrend, RevenuePattern, RevenueExport, RevenueSettings, RevenueSignal,
   CashPayment, CashRemittance, CashInvoice, CashMatchResult, CashException,
@@ -225,6 +227,54 @@ export const igrsRevenue = {
     const records = await loadJson<StampInventoryRecord[]>('/data/igrs/stamp-inventory.json');
     if (srCode) return records.filter(r => r.srCode === srCode);
     return records;
+  },
+
+  async getStampVendorAnalysis(): Promise<StampVendorAnalysis> {
+    return loadJson<StampVendorAnalysis>('/data/igrs/stamp-vendor-analysis.json');
+  },
+
+  async getMVGrowthAttribution(): Promise<MVGrowthAttribution> {
+    return loadJson<MVGrowthAttribution>('/data/igrs/mv-growth-attribution.json');
+  },
+
+  async getMVRevisionComparison(): Promise<MVRevisionComparison> {
+    return loadJson<MVRevisionComparison>('/data/igrs/mv-revision-comparison.json');
+  },
+
+  async getMVAnomalies(): Promise<MVAnomaliesData> {
+    return loadJson<MVAnomaliesData>('/data/igrs/mv-anomalies.json');
+  },
+
+  async getAIPredictiveForecasting(): Promise<PredictiveForecastingData> {
+    return loadJson<PredictiveForecastingData>('/data/igrs/ai-predictive-forecasting.json');
+  },
+
+  async getAIRiskScoring(): Promise<DocumentRiskScoringData> {
+    return loadJson<DocumentRiskScoringData>('/data/igrs/ai-risk-scoring.json');
+  },
+
+  async getAISROIntegrity(): Promise<SROIntegrityIndexData> {
+    return loadJson<SROIntegrityIndexData>('/data/igrs/ai-sro-integrity.json');
+  },
+
+  async getAIPromptEngine(): Promise<PromptEngineData> {
+    return loadJson<PromptEngineData>('/data/igrs/ai-prompt-engine.json');
+  },
+
+  async getGovernanceData(tab: string): Promise<unknown> {
+    const fileMap: Record<string, string> = {
+      'revenue-growth': 'governance-revenue-growth.json',
+      'district-ranking': 'governance-district-ranking.json',
+      'low-performing': 'governance-low-performers.json',
+      'classification': 'governance-classification.json',
+      'prohibited-property': 'governance-prohibited-property.json',
+      'anywhere-registration': 'governance-anywhere-registration.json',
+      'sla-monitoring': 'governance-sla-monitoring.json',
+      'demographics': 'governance-demographics.json',
+    };
+    const file = fileMap[tab];
+    if (!file) throw new Error(`Unknown governance tab: ${tab}`);
+    return loadJson<unknown>(`/data/igrs/${file}`);
   },
 };
 

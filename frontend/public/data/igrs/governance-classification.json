@@ -1,0 +1,183 @@
+{
+  "metadata": {
+    "lastUpdated": "2024-12-13T14:30:00Z",
+    "period": "2024-01 to 2024-12",
+    "totalDistricts": 13,
+    "totalSROs": 26
+  },
+  "classifications": [
+    {
+      "type": "Residential",
+      "docCount": 14200,
+      "revenue": 7400000000,
+      "sharePercent": 40.0,
+      "avgMV": 2850000,
+      "growthPercent": 11.2,
+      "topDistrict": "Krishna"
+    },
+    {
+      "type": "Commercial",
+      "docCount": 5800,
+      "revenue": 4440000000,
+      "sharePercent": 24.0,
+      "avgMV": 5420000,
+      "growthPercent": 8.7,
+      "topDistrict": "Visakhapatnam"
+    },
+    {
+      "type": "Agricultural",
+      "docCount": 8600,
+      "revenue": 3330000000,
+      "sharePercent": 18.0,
+      "avgMV": 1480000,
+      "growthPercent": 3.4,
+      "topDistrict": "East Godavari"
+    },
+    {
+      "type": "Industrial",
+      "docCount": 2100,
+      "revenue": 1850000000,
+      "sharePercent": 10.0,
+      "avgMV": 6250000,
+      "growthPercent": 6.5,
+      "topDistrict": "Chittoor"
+    },
+    {
+      "type": "Mixed Use",
+      "docCount": 1800,
+      "revenue": 1110000000,
+      "sharePercent": 6.0,
+      "avgMV": 3950000,
+      "growthPercent": 5.1,
+      "topDistrict": "Guntur"
+    },
+    {
+      "type": "Government",
+      "docCount": 800,
+      "revenue": 370000000,
+      "sharePercent": 2.0,
+      "avgMV": 1250000,
+      "growthPercent": 1.8,
+      "topDistrict": "Kurnool"
+    }
+  ],
+  "districtClassificationMatrix": [
+    {
+      "district": "Krishna",
+      "residential": 1140000000,
+      "commercial": 684000000,
+      "agricultural": 513000000,
+      "industrial": 285000000,
+      "mixed": 171000000,
+      "govt": 57000000
+    },
+    {
+      "district": "Visakhapatnam",
+      "residential": 943200000,
+      "commercial": 707400000,
+      "agricultural": 366800000,
+      "industrial": 340600000,
+      "mixed": 183400000,
+      "govt": 78600000
+    },
+    {
+      "district": "Guntur",
+      "residential": 872000000,
+      "commercial": 523200000,
+      "agricultural": 392400000,
+      "industrial": 218000000,
+      "mixed": 130800000,
+      "govt": 43600000
+    },
+    {
+      "district": "Chittoor",
+      "residential": 626400000,
+      "commercial": 382800000,
+      "agricultural": 278400000,
+      "industrial": 296800000,
+      "mixed": 104400000,
+      "govt": 51200000
+    },
+    {
+      "district": "Nellore",
+      "residential": 568800000,
+      "commercial": 347600000,
+      "agricultural": 284400000,
+      "industrial": 221200000,
+      "mixed": 110600000,
+      "govt": 47400000
+    },
+    {
+      "district": "East Godavari",
+      "residential": 483800000,
+      "commercial": 298200000,
+      "agricultural": 369200000,
+      "industrial": 142000000,
+      "mixed": 85200000,
+      "govt": 41600000
+    },
+    {
+      "district": "West Godavari",
+      "residential": 401200000,
+      "commercial": 247800000,
+      "agricultural": 318600000,
+      "industrial": 106200000,
+      "mixed": 70800000,
+      "govt": 35400000
+    },
+    {
+      "district": "Kurnool",
+      "residential": 352800000,
+      "commercial": 205800000,
+      "agricultural": 225400000,
+      "industrial": 98000000,
+      "mixed": 49000000,
+      "govt": 49000000
+    },
+    {
+      "district": "Prakasam",
+      "residential": 309600000,
+      "commercial": 180600000,
+      "agricultural": 215000000,
+      "industrial": 86000000,
+      "mixed": 43000000,
+      "govt": 25800000
+    },
+    {
+      "district": "Anantapur",
+      "residential": 259200000,
+      "commercial": 151200000,
+      "agricultural": 187200000,
+      "industrial": 72000000,
+      "mixed": 36000000,
+      "govt": 14400000
+    },
+    {
+      "district": "Kadapa",
+      "residential": 230400000,
+      "commercial": 134400000,
+      "agricultural": 160000000,
+      "industrial": 64000000,
+      "mixed": 32000000,
+      "govt": 19200000
+    },
+    {
+      "district": "Vizianagaram",
+      "residential": 163200000,
+      "commercial": 86400000,
+      "agricultural": 134400000,
+      "industrial": 48000000,
+      "mixed": 28800000,
+      "govt": 19200000
+    },
+    {
+      "district": "Srikakulam",
+      "residential": 142800000,
+      "commercial": 71400000,
+      "agricultural": 121800000,
+      "industrial": 42000000,
+      "mixed": 25200000,
+      "govt": 16800000
+    }
+  ]
+}

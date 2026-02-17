@@ -914,6 +914,29 @@
       "exemptionCount": 0
     },
     "sla": { "ageingDays": 3, "ageingBucket": "0-7d", "slaBreached": false },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 78,
+      "challanId": "CH-SR01-20250102-001",
+      "challanStatus": "Deposited — Partial Mismatch",
+      "originalDocumentId": "SR01/1/5026/2025",
+      "challanTimeline": [
+        { "date": "2025-01-02T09:00:00Z", "event": "Collection recorded", "documentId": null, "amount": 452000, "status": "normal", "detail": "28 receipts collected at counter" },
+        { "date": "2025-01-02T17:30:00Z", "event": "Day-end reconciliation", "documentId": null, "amount": 452000, "status": "normal", "detail": "Cash counted and sealed" },
+        { "date": "2025-01-03T10:15:00Z", "event": "Challan prepared", "documentId": "CH-SR01-20250102-001", "amount": 410000, "status": "warning", "detail": "Challan amount ₹4.10L vs collection ₹4.52L — variance ₹42K" },
+        { "date": "2025-01-04T14:00:00Z", "event": "Treasury deposit", "documentId": "TD-KR-20250104-008", "amount": 410000, "status": "critical", "detail": "Deposit confirms ₹42K shortfall; 2-day delay from collection" }
+      ],
+      "cfmsComparison": [
+        { "field": "Challan Amount", "challanValue": "₹4,10,000", "cfmsValue": "₹4,10,000", "mismatch": false },
+        { "field": "Collection Date", "challanValue": "02-Jan-2025", "cfmsValue": "02-Jan-2025", "mismatch": false },
+        { "field": "Deposit Date", "challanValue": "04-Jan-2025", "cfmsValue": "04-Jan-2025", "mismatch": false },
+        { "field": "Receipt Count", "challanValue": "28", "cfmsValue": "28", "mismatch": false },
+        { "field": "Total Collected", "challanValue": "₹4,10,000", "cfmsValue": "₹4,52,000", "mismatch": true },
+        { "field": "Officer Code", "challanValue": "SR01-OFC-04", "cfmsValue": "SR01-OFC-04", "mismatch": false }
+      ],
+      "dailyCashSummary": { "officeDate": "2025-01-02", "cashCollected": 452000, "misRemittance": 410000, "variance": 42000 },
+      "officerName": "R. Venkatesh",
+      "officerId": "SR01-OFC-04"
+    },
     "notes": [],
     "activityLog": [
       { "id": "log-26a", "ts": "2025-01-03T08:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-CR-001: daily cash mismatch at SR01" }
@@ -952,6 +975,29 @@
       "exemptionCount": 0
     },
     "sla": { "ageingDays": 2, "ageingBucket": "0-7d", "slaBreached": false },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 82,
+      "challanId": "CH-SR02-20250103-002",
+      "challanStatus": "Pending Investigation",
+      "originalDocumentId": "SR02/1/5027/2025",
+      "challanTimeline": [
+        { "date": "2025-01-03T08:30:00Z", "event": "Collection recorded", "documentId": null, "amount": 387000, "status": "normal", "detail": "35 receipts collected; unusually high volume" },
+        { "date": "2025-01-03T18:00:00Z", "event": "Day-end reconciliation", "documentId": null, "amount": 387000, "status": "warning", "detail": "Volume 180% above baseline flagged" },
+        { "date": "2025-01-04T11:00:00Z", "event": "Challan prepared", "documentId": "CH-SR02-20250103-002", "amount": 320000, "status": "critical", "detail": "Challan amount ₹3.20L — ₹67K less than collection" },
+        { "date": "2025-01-05T09:30:00Z", "event": "Assigned for review", "documentId": null, "amount": 0, "status": "warning", "detail": "AK assigned to investigate discrepancy" }
+      ],
+      "cfmsComparison": [
+        { "field": "Challan Amount", "challanValue": "₹3,20,000", "cfmsValue": "₹3,20,000", "mismatch": false },
+        { "field": "Collection Date", "challanValue": "03-Jan-2025", "cfmsValue": "03-Jan-2025", "mismatch": false },
+        { "field": "Receipt Count", "challanValue": "35", "cfmsValue": "35", "mismatch": false },
+        { "field": "Total Collected", "challanValue": "₹3,20,000", "cfmsValue": "₹3,87,000", "mismatch": true },
+        { "field": "Deposit Status", "challanValue": "Deposited", "cfmsValue": "Under Review", "mismatch": true },
+        { "field": "Officer Code", "challanValue": "SR02-OFC-02", "cfmsValue": "SR02-OFC-02", "mismatch": false }
+      ],
+      "dailyCashSummary": { "officeDate": "2025-01-03", "cashCollected": 387000, "misRemittance": 320000, "variance": 67000 },
+      "officerName": "S. Lakshmi Prasad",
+      "officerId": "SR02-OFC-02"
+    },
     "notes": [],
     "activityLog": [
       { "id": "log-27a", "ts": "2025-01-04T09:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-CR-001: cash mismatch at SR02" },
@@ -990,6 +1036,27 @@
       "exemptionCount": 0
     },
     "sla": { "ageingDays": 1, "ageingBucket": "0-7d", "slaBreached": false },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 55,
+      "challanId": "CH-SR03-20250104-001",
+      "challanStatus": "Mismatch Confirmed",
+      "originalDocumentId": "SR03/1/5028/2025",
+      "challanTimeline": [
+        { "date": "2025-01-04T10:00:00Z", "event": "Receipt issued", "documentId": "R-45678", "amount": 95000, "status": "normal", "detail": "Single receipt for lease registration" },
+        { "date": "2025-01-04T17:00:00Z", "event": "Challan prepared", "documentId": "CH-SR03-20250104-001", "amount": 77000, "status": "critical", "detail": "Challan shows ₹77K — ₹18K less than receipt" },
+        { "date": "2025-01-05T10:00:00Z", "event": "CFMS cross-check", "documentId": null, "amount": 77000, "status": "warning", "detail": "CFMS confirms ₹77K deposited; receipt-challan gap flagged" }
+      ],
+      "cfmsComparison": [
+        { "field": "Receipt Amount", "challanValue": "₹95,000", "cfmsValue": "N/A", "mismatch": false },
+        { "field": "Challan Amount", "challanValue": "₹77,000", "cfmsValue": "₹77,000", "mismatch": false },
+        { "field": "Receipt-Challan Variance", "challanValue": "₹18,000", "cfmsValue": "₹18,000", "mismatch": true },
+        { "field": "Transaction Date", "challanValue": "04-Jan-2025", "cfmsValue": "04-Jan-2025", "mismatch": false },
+        { "field": "Officer Code", "challanValue": "SR03-OFC-01", "cfmsValue": "SR03-OFC-01", "mismatch": false }
+      ],
+      "dailyCashSummary": { "officeDate": "2025-01-04", "cashCollected": 95000, "misRemittance": 77000, "variance": 18000 },
+      "officerName": "K. Nagaraju",
+      "officerId": "SR03-OFC-01"
+    },
     "notes": [],
     "activityLog": [
       { "id": "log-28a", "ts": "2025-01-05T10:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-CR-004: receipt-challan mismatch at SR03" }
@@ -1028,6 +1095,53 @@
       "exemptionCount": 0
     },
     "sla": { "ageingDays": 2, "ageingBucket": "0-7d", "slaBreached": false },
+    "stampInventoryEvidence": {
+      "vendorRiskScore": 88,
+      "vendorId": "SV-EG-002",
+      "vendorName": "Rajahmundry Stamps & Papers",
+      "jurisdiction": "East Godavari",
+      "stampType": "Non-Judicial",
+      "usageCount": 438,
+      "expectedUsage": 450,
+      "deviationPercent": -2.7,
+      "monthlyUsage": [
+        { "month": "2024-08", "count": 82, "expected": 75 },
+        { "month": "2024-09", "count": 78, "expected": 75 },
+        { "month": "2024-10", "count": 70, "expected": 75 },
+        { "month": "2024-11", "count": 68, "expected": 75 },
+        { "month": "2024-12", "count": 72, "expected": 75 },
+        { "month": "2025-01", "count": 68, "expected": 75 }
+      ],
+      "revenuePerStamp": [
+        { "month": "2024-08", "avgRevenue": 8200 },
+        { "month": "2024-09", "avgRevenue": 8500 },
+        { "month": "2024-10", "avgRevenue": 9100 },
+        { "month": "2024-11", "avgRevenue": 9800 },
+        { "month": "2024-12", "avgRevenue": 10200 },
+        { "month": "2025-01", "avgRevenue": 10500 }
+      ],
+      "peerVendors": [
+        { "vendorId": "SV-EG-001", "vendorName": "Sri Sai Stamps", "usage": 480, "expected": 470, "deviation": 2.1, "riskScore": 22 },
+        { "vendorId": "SV-EG-003", "vendorName": "Godavari Paper House", "usage": 410, "expected": 420, "deviation": -2.4, "riskScore": 35 },
+        { "vendorId": "SV-EG-004", "vendorName": "Eastern Stamps Co.", "usage": 395, "expected": 400, "deviation": -1.3, "riskScore": 18 }
+      ],
+      "stampTypeDistribution": {
+        "vendor": [
+          { "type": "₹100", "percent": 35 },
+          { "type": "₹500", "percent": 25 },
+          { "type": "₹1000", "percent": 20 },
+          { "type": "₹5000", "percent": 12 },
+          { "type": "₹10000", "percent": 8 }
+        ],
+        "jurisdictionAvg": [
+          { "type": "₹100", "percent": 30 },
+          { "type": "₹500", "percent": 28 },
+          { "type": "₹1000", "percent": 22 },
+          { "type": "₹5000", "percent": 13 },
+          { "type": "₹10000", "percent": 7 }
+        ]
+      }
+    },
     "notes": [],
     "activityLog": [
       { "id": "log-29a", "ts": "2025-01-05T11:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SI-001: stamp shortage at SR06" },
@@ -1067,6 +1181,50 @@
       "exemptionCount": 0
     },
     "sla": { "ageingDays": 1, "ageingBucket": "0-7d", "slaBreached": false },
+    "stampInventoryEvidence": {
+      "vendorRiskScore": 42,
+      "vendorId": "SV-NL-001",
+      "vendorName": "Nellore Stamp Centre",
+      "jurisdiction": "Nellore",
+      "stampType": "Non-Judicial",
+      "usageCount": 340,
+      "expectedUsage": 325,
+      "deviationPercent": 4.6,
+      "monthlyUsage": [
+        { "month": "2024-08", "count": 52, "expected": 54 },
+        { "month": "2024-09", "count": 55, "expected": 54 },
+        { "month": "2024-10", "count": 58, "expected": 54 },
+        { "month": "2024-11", "count": 56, "expected": 54 },
+        { "month": "2024-12", "count": 59, "expected": 54 },
+        { "month": "2025-01", "count": 60, "expected": 55 }
+      ],
+      "revenuePerStamp": [
+        { "month": "2024-08", "avgRevenue": 4800 },
+        { "month": "2024-09", "avgRevenue": 4900 },
+        { "month": "2024-10", "avgRevenue": 5000 },
+        { "month": "2024-11", "avgRevenue": 5100 },
+        { "month": "2024-12", "avgRevenue": 4600 },
+        { "month": "2025-01", "avgRevenue": 4200 }
+      ],
+      "peerVendors": [
+        { "vendorId": "SV-NL-002", "vendorName": "Sri Rama Stamps", "usage": 310, "expected": 320, "deviation": -3.1, "riskScore": 30 },
+        { "vendorId": "SV-NL-003", "vendorName": "Kavali Papers", "usage": 280, "expected": 285, "deviation": -1.8, "riskScore": 15 }
+      ],
+      "stampTypeDistribution": {
+        "vendor": [
+          { "type": "₹100", "percent": 40 },
+          { "type": "₹500", "percent": 30 },
+          { "type": "₹1000", "percent": 15 },
+          { "type": "₹5000", "percent": 15 }
+        ],
+        "jurisdictionAvg": [
+          { "type": "₹100", "percent": 32 },
+          { "type": "₹500", "percent": 28 },
+          { "type": "₹1000", "percent": 22 },
+          { "type": "₹5000", "percent": 18 }
+        ]
+      }
+    },
     "notes": [],
     "activityLog": [
       { "id": "log-30a", "ts": "2025-01-06T08:30:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SI-002: stamp surplus at SR09" }
@@ -1104,6 +1262,53 @@
       "exemptionCount": 0
     },
     "sla": { "ageingDays": 1, "ageingBucket": "0-7d", "slaBreached": false },
+    "stampInventoryEvidence": {
+      "vendorRiskScore": 92,
+      "vendorId": "SV-AN-001",
+      "vendorName": "Anantapur Central Stamps",
+      "jurisdiction": "Anantapur",
+      "stampType": "Non-Judicial",
+      "usageCount": 375,
+      "expectedUsage": 400,
+      "deviationPercent": -6.3,
+      "monthlyUsage": [
+        { "month": "2024-08", "count": 72, "expected": 67 },
+        { "month": "2024-09", "count": 68, "expected": 67 },
+        { "month": "2024-10", "count": 65, "expected": 67 },
+        { "month": "2024-11", "count": 60, "expected": 67 },
+        { "month": "2024-12", "count": 58, "expected": 67 },
+        { "month": "2025-01", "count": 52, "expected": 65 }
+      ],
+      "revenuePerStamp": [
+        { "month": "2024-08", "avgRevenue": 9200 },
+        { "month": "2024-09", "avgRevenue": 9500 },
+        { "month": "2024-10", "avgRevenue": 10200 },
+        { "month": "2024-11", "avgRevenue": 10800 },
+        { "month": "2024-12", "avgRevenue": 11500 },
+        { "month": "2025-01", "avgRevenue": 12000 }
+      ],
+      "peerVendors": [
+        { "vendorId": "SV-AN-002", "vendorName": "Rayalaseema Papers", "usage": 420, "expected": 410, "deviation": 2.4, "riskScore": 20 },
+        { "vendorId": "SV-AN-003", "vendorName": "Kurnool Stamp House", "usage": 380, "expected": 390, "deviation": -2.6, "riskScore": 28 },
+        { "vendorId": "SV-AN-004", "vendorName": "Penukonda Stamps", "usage": 290, "expected": 300, "deviation": -3.3, "riskScore": 32 }
+      ],
+      "stampTypeDistribution": {
+        "vendor": [
+          { "type": "₹100", "percent": 20 },
+          { "type": "₹500", "percent": 18 },
+          { "type": "₹1000", "percent": 15 },
+          { "type": "₹5000", "percent": 22 },
+          { "type": "₹10000", "percent": 25 }
+        ],
+        "jurisdictionAvg": [
+          { "type": "₹100", "percent": 30 },
+          { "type": "₹500", "percent": 25 },
+          { "type": "₹1000", "percent": 20 },
+          { "type": "₹5000", "percent": 15 },
+          { "type": "₹10000", "percent": 10 }
+        ]
+      }
+    },
     "notes": [],
     "activityLog": [
       { "id": "log-31a", "ts": "2025-01-06T14:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SI-001: major stamp shortage at SR10" }

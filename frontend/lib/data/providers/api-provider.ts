@@ -27,6 +27,15 @@ export const igrsRevenue = {
   getSettings: notConfigured,
   getCashReconciliation: notConfigured,
   getStampInventory: notConfigured,
+  getStampVendorAnalysis: notConfigured,
+  getMVGrowthAttribution: notConfigured,
+  getMVRevisionComparison: notConfigured,
+  getMVAnomalies: notConfigured,
+  getGovernanceData: notConfigured,
+  getAIPredictiveForecasting: notConfigured,
+  getAIRiskScoring: notConfigured,
+  getAISROIntegrity: notConfigured,
+  getAIPromptEngine: notConfigured,
 };
 
 export const revenueAssurance = {

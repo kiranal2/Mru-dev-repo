@@ -308,6 +308,10 @@ export interface IGRSCase {
   // --- Evidence ---
   /** Aggregated evidence supporting the risk assessment. */
   evidence: IGRSCaseEvidence;
+  /** Extended Cash Reconciliation evidence (present only for CashReconciliation signal cases). */
+  cashReconciliationEvidence?: CashReconciliationEvidenceExtended;
+  /** Extended Stamp Inventory evidence (present only for StampInventory signal cases). */
+  stampInventoryEvidence?: StampInventoryEvidenceExtended;
 
   // --- SLA & Workflow Metadata ---
   /** SLA tracking (optional -- may be absent for newly ingested cases). */
@@ -823,8 +827,762 @@ export const IGRS_SIGNAL_CONFIG: Record<IGRSLeakageSignal, SignalDisplayConfig> 
   StampInventory: {
     signal: "StampInventory",
     label: "Stamp Inventory",
-    color: "text-blue-700",
-    bgColor: "bg-blue-50",
+    color: "text-teal-700",
+    bgColor: "bg-teal-50",
     description: "Physical stamp paper inventory discrepancy",
   },
 };
+
+// ---------------------------------------------------------------------------
+// Phase 3: Stamp Intelligence Types
+// ---------------------------------------------------------------------------
+
+/** A stamp vendor with risk scoring and usage data. */
+export interface StampVendor {
+  vendorId: string;
+  vendorName: string;
+  jurisdiction: string;
+  sroCode: string;
+  stampType: "Non-Judicial" | "Judicial" | "Franking" | "e-Stamp";
+  usageCurrent: number;
+  usageExpected: number;
+  deviationPercent: number;
+  vendorRiskScore: number;
+  riskLevel: IGRSRiskLevel;
+  flaggedDate: string;
+  monthlyUsage: { month: string; count: number }[];
+}
+
+/** NJ stamp denomination anomaly detection record. */
+export interface NJStampAnomaly {
+  vendorId: string;
+  vendorName: string;
+  jurisdiction: string;
+  njStampCount: number;
+  njStampDenominations: number[];
+  estimatedImpact: number;
+  detectedDate: string;
+}
+
+/** Franking transaction above threshold. */
+export interface FrankingAlert {
+  documentId: string;
+  frankingDate: string;
+  frankingAmount: number;
+  sroCode: string;
+  officeName: string;
+  vendorName: string;
+  expectedAmount: number;
+  variance: number;
+  reviewStatus: "Pending" | "Reviewed" | "Cleared" | "Escalated";
+}
+
+/** Monthly stamp usage trend entry per jurisdiction. */
+export interface StampUsageTrend {
+  month: string;
+  jurisdiction: string;
+  stampCount: number;
+  expectedCount: number;
+  anomaly: boolean;
+}
+
+/** Summary KPIs for the Stamp Intelligence tab. */
+export interface StampIntelligenceSummary {
+  totalVendors: number;
+  atRiskVendors: number;
+  atRiskVendorPercent: number;
+  njStampAnomalies: number;
+  njStampImpact: number;
+  frankingAlerts: number;
+  stampLeakageIndex: number;
+  totalStampLeakage: number;
+}
+
+/** Top-level stamp vendor analysis payload. */
+export interface StampVendorAnalysis {
+  summary: StampIntelligenceSummary;
+  vendorRiskRanking: StampVendor[];
+  stampLeakageByType: { type: string; percent: number; amount: number; color: string }[];
+  njStampAnomalies: NJStampAnomaly[];
+  frankingAlerts: FrankingAlert[];
+  usageTrends: StampUsageTrend[];
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3: MV Growth Attribution Types
+// ---------------------------------------------------------------------------
+
+/** Monthly revenue attribution split between MV-driven and volume-driven. */
+export interface MVMonthlyAttribution {
+  month: string;
+  totalRevenue: number;
+  mvDrivenRevenue: number;
+  volumeDrivenRevenue: number;
+  documentCount: number;
+  avgMVPerDocument: number;
+}
+
+/** District-level revenue growth attribution. */
+export interface MVDistrictAttribution {
+  districtCode: string;
+  districtName: string;
+  totalGrowth: number;
+  mvContribution: number;
+  mvContributionPercent: number;
+  volumeContribution: number;
+  volumeContributionPercent: number;
+  lastMVRevisionDate: string;
+  docCountChange: number;
+  revenuePerDoc: number;
+}
+
+/** Hierarchical node for district → SRO → mandal → village drill-down. */
+export interface MVHierarchyNode {
+  code: string;
+  name: string;
+  revenue: number;
+  mvDriven: number;
+  volumeDriven: number;
+  docCount: number;
+  children?: MVHierarchyNode[];
+}
+
+/** MV growth attribution payload. */
+export interface MVGrowthAttribution {
+  summary: {
+    totalRevenueGrowth: number;
+    mvDrivenGrowth: number;
+    mvDrivenPercent: number;
+    volumeDrivenGrowth: number;
+    volumeDrivenPercent: number;
+    netMVRevisionImpact: number;
+  };
+  monthlyAttribution: MVMonthlyAttribution[];
+  districtAttribution: MVDistrictAttribution[];
+  hierarchyData: { districts: MVHierarchyNode[] };
+  mvRevisionTimeline: {
+    date: string;
+    district: string;
+    avgMVIncrease: number;
+    revenueImpact: number;
+    documentImpact: number;
+  }[];
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3: MV Anomalies Types
+// ---------------------------------------------------------------------------
+
+/** MV anomaly type classification. */
+export type MVAnomalyType =
+  | "ExecutionRegistrationGap"
+  | "AbnormalUDS"
+  | "CompositeRateMisuse"
+  | "ClassificationDowngrade";
+
+/** A single MV manipulation anomaly case. */
+export interface MVAnomaly {
+  caseId: string;
+  anomalyType: MVAnomalyType;
+  documentKey: string;
+  mvDeclared: number;
+  mvExpected: number;
+  deviationPercent: number;
+  estimatedLeakage: number;
+  sroCode: string;
+  officeName: string;
+  riskScore: number;
+  status: IGRSCaseStatus;
+}
+
+/** MV anomalies data payload. */
+export interface MVAnomaliesData {
+  summary: {
+    totalAnomalies: number;
+    executionGapCases: number;
+    udsAnomalies: number;
+    compositeRateCases: number;
+    classificationCases: number;
+    totalEstimatedLeakage: number;
+  };
+  anomalies: MVAnomaly[];
+  anomalyDistribution: { type: MVAnomalyType; count: number; amount: number }[];
+  sroRiskHeatmap: { sroCode: string; officeName: string; score: number; anomalyCount: number }[];
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3: MV Revision Comparison Types
+// ---------------------------------------------------------------------------
+
+/** Pre/Post MV revision comparison data. */
+export interface MVRevisionComparison {
+  revisions: {
+    district: string;
+    sroCode: string;
+    revisionDate: string;
+    preRevision: {
+      avgDocsPerMonth: number;
+      avgMV: number;
+      totalRevenue: number;
+      avgGap: number;
+      highRiskRate: number;
+      exemptionClaims: number;
+    };
+    postRevision: {
+      avgDocsPerMonth: number;
+      avgMV: number;
+      totalRevenue: number;
+      avgGap: number;
+      highRiskRate: number;
+      exemptionClaims: number;
+    };
+    documentVolumeTimeline: { month: string; count: number; phase: "pre" | "post" }[];
+  }[];
+  sroPeerComparison: {
+    sroCode: string;
+    officeName: string;
+    district: string;
+    revenue: number;
+    revenueGrowth: number;
+    mvCompliance: number;
+    avgGap: number;
+    highRiskPercent: number;
+    rank: number;
+  }[];
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3: Governance Dashboard Types
+// ---------------------------------------------------------------------------
+
+/** Common metadata for governance data files. */
+export interface GovernanceMetadata {
+  lastUpdated: string;
+  period: string;
+  totalDistricts: number;
+  totalSROs: number;
+}
+
+/** Governance Tab 1: Revenue Growth. */
+export interface GovernanceRevenueGrowth {
+  metadata: GovernanceMetadata;
+  summary: {
+    currentMonthRevenue: number;
+    previousMonthRevenue: number;
+    momGrowth: number;
+    ytdRevenue: number;
+  };
+  monthlyRevenue: {
+    month: string;
+    stampDuty: number;
+    transferDuty: number;
+    registrationFee: number;
+    dsd: number;
+    other: number;
+    total: number;
+    growthPercent: number;
+    docCount: number;
+  }[];
+}
+
+/** Governance Tab 2: District Ranking. */
+export interface GovernanceDistrictRanking {
+  metadata: GovernanceMetadata;
+  rankings: {
+    rank: number;
+    districtCode: string;
+    districtName: string;
+    revenue: number;
+    target: number;
+    achievementPercent: number;
+    growthPercent: number;
+    docCount: number;
+    avgMV: number;
+    sroCount: number;
+    zone: string;
+  }[];
+}
+
+/** Governance Tab 3: Low Performer analysis. */
+export interface GovernanceLowPerformer {
+  districtCode: string;
+  districtName: string;
+  rank: number;
+  revenue: number;
+  target: number;
+  achievement: number;
+  growth: number;
+  reasons: string[];
+  suggestedActions: string[];
+  keyMetrics: {
+    docCountVsPrev: number;
+    avgMVVsState: number;
+    exemptionRate: number;
+    vacantSROCount: number;
+  };
+}
+
+/** Governance Tab 4: Classification-wise revenue. */
+export interface GovernanceClassification {
+  metadata: GovernanceMetadata;
+  classifications: {
+    type: string;
+    docCount: number;
+    revenue: number;
+    sharePercent: number;
+    avgMV: number;
+    growthPercent: number;
+    topDistrict: string;
+  }[];
+  districtClassificationMatrix: {
+    district: string;
+    residential: number;
+    commercial: number;
+    agricultural: number;
+    industrial: number;
+    mixed: number;
+    govt: number;
+  }[];
+}
+
+/** Governance Tab 5: Prohibited Property trends. */
+export interface GovernanceProhibitedProperty {
+  metadata: GovernanceMetadata;
+  summary: {
+    totalNotifications: number;
+    totalDenotifications: number;
+    activePPCount: number;
+    registrationBlocks: number;
+  };
+  trends: { month: string; notifications: number; denotifications: number }[];
+  registry: {
+    notificationNo: string;
+    date: string;
+    category: string;
+    district: string;
+    location: string;
+    status: "Active" | "Denotified";
+    documentsBlocked: number;
+  }[];
+  categoryDistribution: { category: string; count: number; percent: number }[];
+}
+
+/** Governance Tab 6: Anywhere Registration trends. */
+export interface GovernanceAnywhereRegistration {
+  metadata: GovernanceMetadata;
+  summary: {
+    totalAnywhereRegs: number;
+    percentOfTotal: number;
+    topDestinationSRO: string;
+    topSourceDistrict: string;
+  };
+  flows: {
+    propertyLocation: string;
+    registeredAt: string;
+    docCount: number;
+    revenue: number;
+    avgMV: number;
+  }[];
+  monthlyTrend: { month: string; count: number; percent: number }[];
+}
+
+/** Governance Tab 7: SLA Monitoring. */
+export interface GovernanceSLAMonitoring {
+  metadata: GovernanceMetadata;
+  summary: {
+    totalPending: number;
+    withinSLA: number;
+    slaBreached: number;
+    avgProcessingDays: number;
+    oldestPendingDays: number;
+    compliancePercent: number;
+  };
+  ageingBuckets: { bucket: string; count: number; color: string }[];
+  officeSLA: {
+    officeCode: string;
+    officeName: string;
+    total: number;
+    withinSLA: number;
+    breached: number;
+    avgDays: number;
+    oldestDays: number;
+    compliancePercent: number;
+  }[];
+  pendingByDocType: { docType: string; count: number; percent: number }[];
+  monthlyCompliance: { month: string; compliancePercent: number }[];
+}
+
+/** Governance Tab 8: Demographics. */
+export interface GovernanceDemographics {
+  metadata: GovernanceMetadata;
+  gender: {
+    distribution: { gender: string; count: number; percent: number; revenue: number }[];
+    femaleBuyerPercent: number;
+    jointRegistrationPercent: number;
+    avgMVFemale: number;
+    avgMVMale: number;
+    monthlyTrend: { month: string; femalePercent: number; malePercent: number; jointPercent: number }[];
+  };
+  topParties: {
+    partyName: string;
+    pan: string;
+    role: "Buyer" | "Seller" | "Both";
+    registrations: number;
+    totalValue: number;
+    districts: string[];
+    flagged: boolean;
+  }[];
+  departments: {
+    department: string;
+    docCount: number;
+    revenue: number;
+    exemptionsClaimed: number;
+    exemptAmount: number;
+    netRevenue: number;
+  }[];
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3: Case Drawer Evidence Enrichment Types
+// ---------------------------------------------------------------------------
+
+/** A single event in a challan reuse timeline. */
+export interface ChallanTimelineEvent {
+  date: string;
+  event: string;
+  documentId: string | null;
+  amount: number;
+  status: "normal" | "warning" | "critical";
+  detail: string;
+}
+
+/** A row in the CFMS comparison table. */
+export interface CFMSComparisonRow {
+  field: string;
+  challanValue: string;
+  cfmsValue: string;
+  mismatch: boolean;
+}
+
+/** Extended Cash Reconciliation evidence for enriched case drawer. */
+export interface CashReconciliationEvidenceExtended {
+  cashRiskScore: number;
+  challanId: string;
+  challanStatus: string;
+  originalDocumentId?: string;
+  challanTimeline: ChallanTimelineEvent[];
+  cfmsComparison: CFMSComparisonRow[];
+  dailyCashSummary: {
+    officeDate: string;
+    cashCollected: number;
+    misRemittance: number;
+    variance: number;
+  };
+  officerName: string;
+  officerId: string;
+}
+
+/** Extended Stamp Inventory evidence for enriched case drawer. */
+export interface StampInventoryEvidenceExtended {
+  vendorRiskScore: number;
+  vendorId: string;
+  vendorName: string;
+  jurisdiction: string;
+  stampType: string;
+  usageCount: number;
+  expectedUsage: number;
+  deviationPercent: number;
+  monthlyUsage: { month: string; count: number; expected: number }[];
+  revenuePerStamp: { month: string; avgRevenue: number }[];
+  peerVendors: {
+    vendorId: string;
+    vendorName: string;
+    usage: number;
+    expected: number;
+    deviation: number;
+    riskScore: number;
+  }[];
+  stampTypeDistribution: {
+    vendor: { type: string; percent: number }[];
+    jurisdictionAvg: { type: string; percent: number }[];
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Phase 4: AI Intelligence Types
+// ---------------------------------------------------------------------------
+
+// --- Predictive Forecasting ---
+
+export type ForecastScenario = "baseline" | "optimistic" | "conservative";
+
+export interface ForecastScenarioValues {
+  forecast: number;
+  upper95: number;
+  lower95: number;
+  upper80: number;
+  lower80: number;
+}
+
+export interface ForecastHistoricalMonth {
+  month: string;
+  actual: number;
+  isMVRevision: boolean;
+  mvRevisionLabel?: string;
+}
+
+export interface ForecastFutureMonth {
+  month: string;
+  scenarios: Record<ForecastScenario, ForecastScenarioValues>;
+  isMVRevision: boolean;
+  mvRevisionLabel?: string;
+}
+
+export interface ForecastGrowthAttribution {
+  month: string;
+  mvRevision: number;
+  volumeGrowth: number;
+  newAreas: number;
+  complianceImprovement: number;
+}
+
+export interface DistrictForecast {
+  district: string;
+  actualLTM: number;
+  forecastNTM: number;
+  yoyGrowth: number;
+  mvRevisionImpact: number;
+  volumeGrowth: number;
+  confidenceRange: number;
+  riskFlag: "low" | "medium" | "high";
+  monthlyTrend: number[];
+}
+
+export interface ForecastModelPerformance {
+  mape: number;
+  r2: number;
+  mae: number;
+  rmse: number;
+  lastValidation: string;
+}
+
+export interface PredictiveForecastingData {
+  metadata: {
+    lastComputedAt: string;
+    modelVersion: string;
+    trainingPeriod: string;
+    trainingMonths: number;
+    modelType: string;
+  };
+  modelPerformance: ForecastModelPerformance;
+  stateLevel: {
+    forecastNarrative: string;
+    historicalMonths: ForecastHistoricalMonth[];
+    forecastMonths: ForecastFutureMonth[];
+    growthAttribution: ForecastGrowthAttribution[];
+  };
+  districtForecasts: DistrictForecast[];
+  scenarioAssumptions: Record<ForecastScenario, string>;
+}
+
+// --- Document Risk Scoring ---
+
+export type RiskBand = "low" | "moderate" | "elevated" | "high" | "critical";
+
+export type RiskDimension = "revenue" | "exemption" | "classification" | "cash";
+
+export interface RiskDistributionBucket {
+  band: string;
+  label: string;
+  count: number;
+  pct: number;
+  color: string;
+}
+
+export interface RiskDimensionAvg {
+  avg: number;
+  max: number;
+  pct: number;
+  prevAvg: number;
+}
+
+export interface RiskMonthlyTrend {
+  month: string;
+  avgScore: number;
+  highRiskCount: number;
+  annotation?: string;
+}
+
+export interface RiskDimensionWeight {
+  dimension: string;
+  weight: number;
+  maxScore: number;
+  avgContribution: number;
+  rules: string[];
+  color: string;
+}
+
+export interface RiskScoredDocument {
+  rank: number;
+  documentId: string;
+  sro: string;
+  sroName: string;
+  compositeScore: number;
+  revenueScore: number;
+  exemptionScore: number;
+  classificationScore: number;
+  cashScore: number;
+  gapAmount: number;
+  signals: string[];
+  caseId?: string;
+}
+
+export interface DocumentRiskScoringData {
+  metadata: {
+    lastComputedAt: string;
+    modelVersion: string;
+    scoringDate: string;
+    totalDocumentsScored: number;
+    period: string;
+  };
+  summary: {
+    avgCompositeScore: number;
+    avgCompositeScoreChange: number;
+    highRiskCount: number;
+    highRiskPct: number;
+    criticalCount: number;
+    criticalPct: number;
+    estimatedRevenueAtRisk: number;
+    estimatedRevenueAtRiskChange: number;
+  };
+  distribution: RiskDistributionBucket[];
+  dimensionAvg: Record<RiskDimension, RiskDimensionAvg>;
+  monthlyTrend: RiskMonthlyTrend[];
+  dimensionWeights: RiskDimensionWeight[];
+  topDocuments: RiskScoredDocument[];
+  aiExplanation: string;
+}
+
+// --- SRO Integrity Index ---
+
+export type IntegrityBand = "excellent" | "good" | "needsImprovement" | "atRisk" | "critical";
+
+export type IntegrityComponent = "revenueCompliance" | "cashHandling" | "exemptionAdherence" | "slaCompliance" | "dataQuality";
+
+export interface IntegrityComponentDefinition {
+  id: IntegrityComponent;
+  label: string;
+  maxScore: number;
+  color: string;
+  description: string;
+}
+
+export interface SROMonthlyIntegrity {
+  month: string;
+  score: number;
+  rc: number;
+  ch: number;
+  ea: number;
+  sc: number;
+  dq: number;
+}
+
+export interface SROIntegrityRecord {
+  code: string;
+  name: string;
+  district: string;
+  currentScore: number;
+  previousScore: number;
+  momChange: number;
+  rank: number;
+  previousRank: number;
+  band: IntegrityBand;
+  components: Record<IntegrityComponent, number>;
+  monthlyHistory: SROMonthlyIntegrity[];
+  aiAssessment: string;
+  improvementActions: string[];
+}
+
+export interface SROIntegrityIndexData {
+  metadata: {
+    lastComputedAt: string;
+    currentMonth: string;
+    totalSROs: number;
+    scoringModel: string;
+  };
+  summary: {
+    stateAvgScore: number;
+    stateAvgChange: number;
+    topSRO: { code: string; name: string; score: number };
+    bottomSRO: { code: string; name: string; score: number };
+    improvingSROCount: number;
+    decliningSROCount: number;
+    stableSROCount: number;
+  };
+  componentDefinitions: IntegrityComponentDefinition[];
+  sros: SROIntegrityRecord[];
+}
+
+// --- Natural Language Prompt Engine ---
+
+export type PromptCategory = "revenue" | "performance" | "risk" | "forecasting" | "compliance" | "sla";
+
+export interface PromptCategoryDefinition {
+  id: PromptCategory;
+  label: string;
+  icon: string;
+  color: string;
+}
+
+export interface InlineTableData {
+  headers: string[];
+  rows: (string | number)[][];
+  highlightColumn?: number;
+}
+
+export interface InlineChartData {
+  type: "bar" | "line" | "donut";
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    color: string;
+  }[];
+}
+
+export interface PromptResponseData {
+  narrative: string;
+  inlineTable?: InlineTableData;
+  inlineChart?: InlineChartData;
+  keyInsight: string;
+  followUpPrompts: string[];
+}
+
+export interface PromptTemplate {
+  id: string;
+  promptText: string;
+  category: PromptCategory;
+  response: PromptResponseData;
+}
+
+export interface PromptEngineData {
+  metadata: {
+    lastUpdated: string;
+    totalPrompts: number;
+    version: string;
+  };
+  categories: PromptCategoryDefinition[];
+  prompts: PromptTemplate[];
+}
+
+// --- Combined AI Intelligence Metadata ---
+
+export interface AIIntelligenceMetadata {
+  lastComputedAt: string;
+  modelStatuses: {
+    forecasting: "active" | "training" | "error";
+    riskScoring: "active" | "training" | "error";
+    integrityIndex: "active" | "training" | "error";
+    promptEngine: "active" | "maintenance" | "error";
+  };
+}

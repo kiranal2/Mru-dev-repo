@@ -1,0 +1,127 @@
+{
+  "metadata": {
+    "lastUpdated": "2024-12-13T14:30:00Z",
+    "period": "2024-01 to 2024-12",
+    "totalDistricts": 13,
+    "totalSROs": 26
+  },
+  "summary": {
+    "totalNotifications": 156,
+    "totalDenotifications": 23,
+    "activePPCount": 133,
+    "registrationBlocks": 42
+  },
+  "trends": [
+    { "month": "2024-01", "notifications": 10, "denotifications": 1 },
+    { "month": "2024-02", "notifications": 12, "denotifications": 2 },
+    { "month": "2024-03", "notifications": 15, "denotifications": 3 },
+    { "month": "2024-04", "notifications": 14, "denotifications": 2 },
+    { "month": "2024-05", "notifications": 11, "denotifications": 1 },
+    { "month": "2024-06", "notifications": 13, "denotifications": 2 },
+    { "month": "2024-07", "notifications": 16, "denotifications": 3 },
+    { "month": "2024-08", "notifications": 14, "denotifications": 2 },
+    { "month": "2024-09", "notifications": 12, "denotifications": 1 },
+    { "month": "2024-10", "notifications": 15, "denotifications": 3 },
+    { "month": "2024-11", "notifications": 11, "denotifications": 1 },
+    { "month": "2024-12", "notifications": 13, "denotifications": 2 }
+  ],
+  "registry": [
+    {
+      "notificationNo": "PP-2024-001",
+      "date": "2024-01-15T00:00:00Z",
+      "category": "Government Land",
+      "district": "Krishna",
+      "location": "Survey No. 245, Gannavaram Mandal, Near Vijayawada Airport Expansion Zone",
+      "status": "Active",
+      "documentsBlocked": 8
+    },
+    {
+      "notificationNo": "PP-2024-018",
+      "date": "2024-02-22T00:00:00Z",
+      "category": "Forest Preserve",
+      "district": "Visakhapatnam",
+      "location": "Survey No. 112/3, Ananthagiri Hills Reserve Forest, Araku Valley Mandal",
+      "status": "Active",
+      "documentsBlocked": 3
+    },
+    {
+      "notificationNo": "PP-2024-034",
+      "date": "2024-03-10T00:00:00Z",
+      "category": "Litigation",
+      "district": "Guntur",
+      "location": "Plot No. 78-82, Amaravati Capital Region, Thullur Mandal",
+      "status": "Active",
+      "documentsBlocked": 12
+    },
+    {
+      "notificationNo": "PP-2024-052",
+      "date": "2024-04-05T00:00:00Z",
+      "category": "Religious Endowment",
+      "district": "East Godavari",
+      "location": "Devasthanam Lands, Survey No. 56, Draksharamam Temple Complex, Ramachandrapuram",
+      "status": "Active",
+      "documentsBlocked": 2
+    },
+    {
+      "notificationNo": "PP-2024-067",
+      "date": "2024-05-18T00:00:00Z",
+      "category": "Water Body",
+      "district": "Nellore",
+      "location": "Survey No. 320, Pulicat Lake Catchment Area, Tada Mandal",
+      "status": "Active",
+      "documentsBlocked": 5
+    },
+    {
+      "notificationNo": "PP-2024-078",
+      "date": "2024-06-02T00:00:00Z",
+      "category": "Government Land",
+      "district": "Chittoor",
+      "location": "Survey No. 189, Tirupati Industrial Corridor, Renigunta Mandal",
+      "status": "Denotified",
+      "documentsBlocked": 0
+    },
+    {
+      "notificationNo": "PP-2024-091",
+      "date": "2024-07-14T00:00:00Z",
+      "category": "Forest Preserve",
+      "district": "West Godavari",
+      "location": "Survey No. 445, Papikondalu Forest Area, Polavaram Mandal",
+      "status": "Active",
+      "documentsBlocked": 4
+    },
+    {
+      "notificationNo": "PP-2024-105",
+      "date": "2024-08-20T00:00:00Z",
+      "category": "Litigation",
+      "district": "Kurnool",
+      "location": "Survey No. 67/A, Orvakal Granite Quarry Zone, Orvakal Mandal",
+      "status": "Active",
+      "documentsBlocked": 6
+    },
+    {
+      "notificationNo": "PP-2024-123",
+      "date": "2024-10-01T00:00:00Z",
+      "category": "Religious Endowment",
+      "district": "Kadapa",
+      "location": "Ameen Peer Dargah Wakf Land, Survey No. 23, Kadapa Urban Mandal",
+      "status": "Active",
+      "documentsBlocked": 1
+    },
+    {
+      "notificationNo": "PP-2024-142",
+      "date": "2024-11-12T00:00:00Z",
+      "category": "Water Body",
+      "district": "Anantapur",
+      "location": "Survey No. 198, Handri-Neeva Canal Buffer Zone, Dharmavaram Mandal",
+      "status": "Active",
+      "documentsBlocked": 1
+    }
+  ],
+  "categoryDistribution": [
+    { "category": "Government Land", "count": 48, "percent": 30.8 },
+    { "category": "Litigation", "count": 38, "percent": 24.4 },
+    { "category": "Forest Preserve", "count": 32, "percent": 20.5 },
+    { "category": "Religious Endowment", "count": 22, "percent": 14.1 },
+    { "category": "Water Body", "count": 16, "percent": 10.2 }
+  ]
+}

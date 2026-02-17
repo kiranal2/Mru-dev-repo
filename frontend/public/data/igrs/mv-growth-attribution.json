@@ -1,0 +1,457 @@
+{
+  "summary": {
+    "totalRevenueGrowth": 1250000000,
+    "mvDrivenGrowth": 750000000,
+    "mvDrivenPercent": 60,
+    "volumeDrivenGrowth": 500000000,
+    "volumeDrivenPercent": 40,
+    "netMVRevisionImpact": 680000000
+  },
+  "monthlyAttribution": [
+    { "month": "2024-01", "totalRevenue": 285000000, "mvDrivenRevenue": 168000000, "volumeDrivenRevenue": 117000000, "documentCount": 42500, "avgMVPerDocument": 6706 },
+    { "month": "2024-02", "totalRevenue": 272000000, "mvDrivenRevenue": 160000000, "volumeDrivenRevenue": 112000000, "documentCount": 40200, "avgMVPerDocument": 6766 },
+    { "month": "2024-03", "totalRevenue": 310000000, "mvDrivenRevenue": 186000000, "volumeDrivenRevenue": 124000000, "documentCount": 45800, "avgMVPerDocument": 6769 },
+    { "month": "2024-04", "totalRevenue": 325000000, "mvDrivenRevenue": 198000000, "volumeDrivenRevenue": 127000000, "documentCount": 47200, "avgMVPerDocument": 6886 },
+    { "month": "2024-05", "totalRevenue": 298000000, "mvDrivenRevenue": 179000000, "volumeDrivenRevenue": 119000000, "documentCount": 43500, "avgMVPerDocument": 6851 },
+    { "month": "2024-06", "totalRevenue": 305000000, "mvDrivenRevenue": 184000000, "volumeDrivenRevenue": 121000000, "documentCount": 44100, "avgMVPerDocument": 6916 },
+    { "month": "2024-07", "totalRevenue": 340000000, "mvDrivenRevenue": 210000000, "volumeDrivenRevenue": 130000000, "documentCount": 48500, "avgMVPerDocument": 7010 },
+    { "month": "2024-08", "totalRevenue": 355000000, "mvDrivenRevenue": 220000000, "volumeDrivenRevenue": 135000000, "documentCount": 49800, "avgMVPerDocument": 7129 },
+    { "month": "2024-09", "totalRevenue": 368000000, "mvDrivenRevenue": 228000000, "volumeDrivenRevenue": 140000000, "documentCount": 51200, "avgMVPerDocument": 7188 },
+    { "month": "2024-10", "totalRevenue": 382000000, "mvDrivenRevenue": 238000000, "volumeDrivenRevenue": 144000000, "documentCount": 52500, "avgMVPerDocument": 7276 },
+    { "month": "2024-11", "totalRevenue": 395000000, "mvDrivenRevenue": 248000000, "volumeDrivenRevenue": 147000000, "documentCount": 53800, "avgMVPerDocument": 7342 },
+    { "month": "2024-12", "totalRevenue": 415000000, "mvDrivenRevenue": 262000000, "volumeDrivenRevenue": 153000000, "documentCount": 55200, "avgMVPerDocument": 7518 }
+  ],
+  "districtAttribution": [
+    {
+      "districtCode": "KR",
+      "districtName": "Krishna",
+      "totalGrowth": 185000000,
+      "mvContribution": 118000000,
+      "mvContributionPercent": 63.8,
+      "volumeContribution": 67000000,
+      "volumeContributionPercent": 36.2,
+      "lastMVRevisionDate": "2024-07-01",
+      "docCountChange": 14.2,
+      "revenuePerDoc": 7850
+    },
+    {
+      "districtCode": "GN",
+      "districtName": "Guntur",
+      "totalGrowth": 152000000,
+      "mvContribution": 94000000,
+      "mvContributionPercent": 61.8,
+      "volumeContribution": 58000000,
+      "volumeContributionPercent": 38.2,
+      "lastMVRevisionDate": "2024-07-01",
+      "docCountChange": 12.5,
+      "revenuePerDoc": 7200
+    },
+    {
+      "districtCode": "EG",
+      "districtName": "East Godavari",
+      "totalGrowth": 128000000,
+      "mvContribution": 82000000,
+      "mvContributionPercent": 64.1,
+      "volumeContribution": 46000000,
+      "volumeContributionPercent": 35.9,
+      "lastMVRevisionDate": "2024-04-15",
+      "docCountChange": 10.8,
+      "revenuePerDoc": 6950
+    },
+    {
+      "districtCode": "WG",
+      "districtName": "West Godavari",
+      "totalGrowth": 88000000,
+      "mvContribution": 53000000,
+      "mvContributionPercent": 60.2,
+      "volumeContribution": 35000000,
+      "volumeContributionPercent": 39.8,
+      "lastMVRevisionDate": "2024-04-15",
+      "docCountChange": 9.5,
+      "revenuePerDoc": 6400
+    },
+    {
+      "districtCode": "VS",
+      "districtName": "Visakhapatnam",
+      "totalGrowth": 165000000,
+      "mvContribution": 105000000,
+      "mvContributionPercent": 63.6,
+      "volumeContribution": 60000000,
+      "volumeContributionPercent": 36.4,
+      "lastMVRevisionDate": "2024-07-01",
+      "docCountChange": 15.1,
+      "revenuePerDoc": 8100
+    },
+    {
+      "districtCode": "PR",
+      "districtName": "Prakasam",
+      "totalGrowth": 62000000,
+      "mvContribution": 36000000,
+      "mvContributionPercent": 58.1,
+      "volumeContribution": 26000000,
+      "volumeContributionPercent": 41.9,
+      "lastMVRevisionDate": "2024-04-15",
+      "docCountChange": 7.8,
+      "revenuePerDoc": 5800
+    },
+    {
+      "districtCode": "NL",
+      "districtName": "Nellore",
+      "totalGrowth": 78000000,
+      "mvContribution": 48000000,
+      "mvContributionPercent": 61.5,
+      "volumeContribution": 30000000,
+      "volumeContributionPercent": 38.5,
+      "lastMVRevisionDate": "2024-07-01",
+      "docCountChange": 11.2,
+      "revenuePerDoc": 6700
+    },
+    {
+      "districtCode": "KN",
+      "districtName": "Kurnool",
+      "totalGrowth": 72000000,
+      "mvContribution": 42000000,
+      "mvContributionPercent": 58.3,
+      "volumeContribution": 30000000,
+      "volumeContributionPercent": 41.7,
+      "lastMVRevisionDate": "2024-04-15",
+      "docCountChange": 8.4,
+      "revenuePerDoc": 5950
+    },
+    {
+      "districtCode": "AN",
+      "districtName": "Anantapur",
+      "totalGrowth": 65000000,
+      "mvContribution": 38000000,
+      "mvContributionPercent": 58.5,
+      "volumeContribution": 27000000,
+      "volumeContributionPercent": 41.5,
+      "lastMVRevisionDate": "2024-04-15",
+      "docCountChange": 7.2,
+      "revenuePerDoc": 5600
+    },
+    {
+      "districtCode": "CT",
+      "districtName": "Chittoor",
+      "totalGrowth": 95000000,
+      "mvContribution": 58000000,
+      "mvContributionPercent": 61.1,
+      "volumeContribution": 37000000,
+      "volumeContributionPercent": 38.9,
+      "lastMVRevisionDate": "2024-07-01",
+      "docCountChange": 12.8,
+      "revenuePerDoc": 7100
+    },
+    {
+      "districtCode": "KD",
+      "districtName": "Kadapa",
+      "totalGrowth": 55000000,
+      "mvContribution": 32000000,
+      "mvContributionPercent": 58.2,
+      "volumeContribution": 23000000,
+      "volumeContributionPercent": 41.8,
+      "lastMVRevisionDate": "2024-04-15",
+      "docCountChange": 6.9,
+      "revenuePerDoc": 5500
+    },
+    {
+      "districtCode": "SK",
+      "districtName": "Srikakulam",
+      "totalGrowth": 48000000,
+      "mvContribution": 28000000,
+      "mvContributionPercent": 58.3,
+      "volumeContribution": 20000000,
+      "volumeContributionPercent": 41.7,
+      "lastMVRevisionDate": "2024-04-15",
+      "docCountChange": 6.1,
+      "revenuePerDoc": 5200
+    },
+    {
+      "districtCode": "VZ",
+      "districtName": "Vizianagaram",
+      "totalGrowth": 57000000,
+      "mvContribution": 34000000,
+      "mvContributionPercent": 59.6,
+      "volumeContribution": 23000000,
+      "volumeContributionPercent": 40.4,
+      "lastMVRevisionDate": "2024-04-15",
+      "docCountChange": 7.5,
+      "revenuePerDoc": 5350
+    }
+  ],
+  "hierarchyData": {
+    "districts": [
+      {
+        "code": "KR",
+        "name": "Krishna",
+        "revenue": 185000000,
+        "mvDriven": 118000000,
+        "volumeDriven": 67000000,
+        "docCount": 23567,
+        "children": [
+          {
+            "code": "SR01",
+            "name": "SRO Vijayawada-I",
+            "revenue": 102000000,
+            "mvDriven": 65000000,
+            "volumeDriven": 37000000,
+            "docCount": 12980,
+            "children": [
+              {
+                "code": "M-KR-01",
+                "name": "Vijayawada Urban",
+                "revenue": 58000000,
+                "mvDriven": 37500000,
+                "volumeDriven": 20500000,
+                "docCount": 7400,
+                "children": [
+                  { "code": "V-KR-01-01", "name": "Patamata", "revenue": 32000000, "mvDriven": 20800000, "volumeDriven": 11200000, "docCount": 4100 },
+                  { "code": "V-KR-01-02", "name": "Benz Circle Area", "revenue": 26000000, "mvDriven": 16700000, "volumeDriven": 9300000, "docCount": 3300 }
+                ]
+              },
+              {
+                "code": "M-KR-02",
+                "name": "Vijayawada Rural",
+                "revenue": 44000000,
+                "mvDriven": 27500000,
+                "volumeDriven": 16500000,
+                "docCount": 5580,
+                "children": [
+                  { "code": "V-KR-02-01", "name": "Gannavaram", "revenue": 24000000, "mvDriven": 15200000, "volumeDriven": 8800000, "docCount": 3050 },
+                  { "code": "V-KR-02-02", "name": "Ibrahimpatnam", "revenue": 20000000, "mvDriven": 12300000, "volumeDriven": 7700000, "docCount": 2530 }
+                ]
+              }
+            ]
+          },
+          {
+            "code": "SR02",
+            "name": "SRO Vijayawada-II",
+            "revenue": 83000000,
+            "mvDriven": 53000000,
+            "volumeDriven": 30000000,
+            "docCount": 10587,
+            "children": [
+              {
+                "code": "M-KR-03",
+                "name": "Machilipatnam",
+                "revenue": 46000000,
+                "mvDriven": 29500000,
+                "volumeDriven": 16500000,
+                "docCount": 5850,
+                "children": [
+                  { "code": "V-KR-03-01", "name": "Machilipatnam Town", "revenue": 28000000, "mvDriven": 18000000, "volumeDriven": 10000000, "docCount": 3560 },
+                  { "code": "V-KR-03-02", "name": "Pedana", "revenue": 18000000, "mvDriven": 11500000, "volumeDriven": 6500000, "docCount": 2290 }
+                ]
+              },
+              {
+                "code": "M-KR-04",
+                "name": "Nuzvid",
+                "revenue": 37000000,
+                "mvDriven": 23500000,
+                "volumeDriven": 13500000,
+                "docCount": 4737,
+                "children": [
+                  { "code": "V-KR-04-01", "name": "Nuzvid Town", "revenue": 21000000, "mvDriven": 13400000, "volumeDriven": 7600000, "docCount": 2680 },
+                  { "code": "V-KR-04-02", "name": "Tiruvuru", "revenue": 16000000, "mvDriven": 10100000, "volumeDriven": 5900000, "docCount": 2057 }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "code": "GN",
+        "name": "Guntur",
+        "revenue": 152000000,
+        "mvDriven": 94000000,
+        "volumeDriven": 58000000,
+        "docCount": 21112,
+        "children": [
+          {
+            "code": "SR05",
+            "name": "SRO Guntur-I",
+            "revenue": 86000000,
+            "mvDriven": 54000000,
+            "volumeDriven": 32000000,
+            "docCount": 11945,
+            "children": [
+              {
+                "code": "M-GN-01",
+                "name": "Guntur Urban",
+                "revenue": 50000000,
+                "mvDriven": 32000000,
+                "volumeDriven": 18000000,
+                "docCount": 6950,
+                "children": [
+                  { "code": "V-GN-01-01", "name": "Brodipet", "revenue": 28000000, "mvDriven": 18000000, "volumeDriven": 10000000, "docCount": 3900 },
+                  { "code": "V-GN-01-02", "name": "Lakshmipuram", "revenue": 22000000, "mvDriven": 14000000, "volumeDriven": 8000000, "docCount": 3050 }
+                ]
+              },
+              {
+                "code": "M-GN-02",
+                "name": "Mangalagiri",
+                "revenue": 36000000,
+                "mvDriven": 22000000,
+                "volumeDriven": 14000000,
+                "docCount": 4995,
+                "children": [
+                  { "code": "V-GN-02-01", "name": "Mangalagiri Town", "revenue": 21000000, "mvDriven": 13000000, "volumeDriven": 8000000, "docCount": 2920 },
+                  { "code": "V-GN-02-02", "name": "Tadepalli", "revenue": 15000000, "mvDriven": 9000000, "volumeDriven": 6000000, "docCount": 2075 }
+                ]
+              }
+            ]
+          },
+          {
+            "code": "SR06",
+            "name": "SRO Tenali",
+            "revenue": 66000000,
+            "mvDriven": 40000000,
+            "volumeDriven": 26000000,
+            "docCount": 9167,
+            "children": [
+              {
+                "code": "M-GN-03",
+                "name": "Tenali",
+                "revenue": 38000000,
+                "mvDriven": 23000000,
+                "volumeDriven": 15000000,
+                "docCount": 5280,
+                "children": [
+                  { "code": "V-GN-03-01", "name": "Tenali Town", "revenue": 22000000, "mvDriven": 13500000, "volumeDriven": 8500000, "docCount": 3060 },
+                  { "code": "V-GN-03-02", "name": "Duggirala", "revenue": 16000000, "mvDriven": 9500000, "volumeDriven": 6500000, "docCount": 2220 }
+                ]
+              },
+              {
+                "code": "M-GN-04",
+                "name": "Narasaraopet",
+                "revenue": 28000000,
+                "mvDriven": 17000000,
+                "volumeDriven": 11000000,
+                "docCount": 3887,
+                "children": [
+                  { "code": "V-GN-04-01", "name": "Narasaraopet Town", "revenue": 16500000, "mvDriven": 10000000, "volumeDriven": 6500000, "docCount": 2290 },
+                  { "code": "V-GN-04-02", "name": "Chilakaluripet", "revenue": 11500000, "mvDriven": 7000000, "volumeDriven": 4500000, "docCount": 1597 }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "code": "VS",
+        "name": "Visakhapatnam",
+        "revenue": 165000000,
+        "mvDriven": 105000000,
+        "volumeDriven": 60000000,
+        "docCount": 20370,
+        "children": [
+          {
+            "code": "SR12",
+            "name": "SRO Visakhapatnam-I",
+            "revenue": 95000000,
+            "mvDriven": 62000000,
+            "volumeDriven": 33000000,
+            "docCount": 11730,
+            "children": [
+              {
+                "code": "M-VS-01",
+                "name": "Visakhapatnam Urban",
+                "revenue": 56000000,
+                "mvDriven": 37000000,
+                "volumeDriven": 19000000,
+                "docCount": 6910,
+                "children": [
+                  { "code": "V-VS-01-01", "name": "Madhurawada", "revenue": 32000000, "mvDriven": 21200000, "volumeDriven": 10800000, "docCount": 3950 },
+                  { "code": "V-VS-01-02", "name": "Gajuwaka", "revenue": 24000000, "mvDriven": 15800000, "volumeDriven": 8200000, "docCount": 2960 }
+                ]
+              },
+              {
+                "code": "M-VS-02",
+                "name": "Pendurthi",
+                "revenue": 39000000,
+                "mvDriven": 25000000,
+                "volumeDriven": 14000000,
+                "docCount": 4820,
+                "children": [
+                  { "code": "V-VS-02-01", "name": "Pendurthi Town", "revenue": 22000000, "mvDriven": 14200000, "volumeDriven": 7800000, "docCount": 2720 },
+                  { "code": "V-VS-02-02", "name": "Anandapuram", "revenue": 17000000, "mvDriven": 10800000, "volumeDriven": 6200000, "docCount": 2100 }
+                ]
+              }
+            ]
+          },
+          {
+            "code": "SR13",
+            "name": "SRO Visakhapatnam-II",
+            "revenue": 70000000,
+            "mvDriven": 43000000,
+            "volumeDriven": 27000000,
+            "docCount": 8640,
+            "children": [
+              {
+                "code": "M-VS-03",
+                "name": "Anakapalli",
+                "revenue": 40000000,
+                "mvDriven": 25000000,
+                "volumeDriven": 15000000,
+                "docCount": 4940,
+                "children": [
+                  { "code": "V-VS-03-01", "name": "Anakapalli Town", "revenue": 24000000, "mvDriven": 15200000, "volumeDriven": 8800000, "docCount": 2960 },
+                  { "code": "V-VS-03-02", "name": "Chodavaram", "revenue": 16000000, "mvDriven": 9800000, "volumeDriven": 6200000, "docCount": 1980 }
+                ]
+              },
+              {
+                "code": "M-VS-04",
+                "name": "Narsipatnam",
+                "revenue": 30000000,
+                "mvDriven": 18000000,
+                "volumeDriven": 12000000,
+                "docCount": 3700,
+                "children": [
+                  { "code": "V-VS-04-01", "name": "Narsipatnam Town", "revenue": 18000000, "mvDriven": 11000000, "volumeDriven": 7000000, "docCount": 2220 },
+                  { "code": "V-VS-04-02", "name": "Yelamanchili", "revenue": 12000000, "mvDriven": 7000000, "volumeDriven": 5000000, "docCount": 1480 }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "mvRevisionTimeline": [
+    {
+      "date": "2024-04-15",
+      "district": "East Godavari",
+      "avgMVIncrease": 18.5,
+      "revenueImpact": 128000000,
+      "documentImpact": -4.2
+    },
+    {
+      "date": "2024-04-15",
+      "district": "Kurnool",
+      "avgMVIncrease": 15.2,
+      "revenueImpact": 72000000,
+      "documentImpact": -3.8
+    },
+    {
+      "date": "2024-07-01",
+      "district": "Krishna",
+      "avgMVIncrease": 22.4,
+      "revenueImpact": 185000000,
+      "documentImpact": -5.6
+    },
+    {
+      "date": "2024-07-01",
+      "district": "Visakhapatnam",
+      "avgMVIncrease": 20.8,
+      "revenueImpact": 165000000,
+      "documentImpact": -4.9
+    },
+    {
+      "date": "2024-10-01",
+      "district": "Chittoor",
+      "avgMVIncrease": 16.3,
+      "revenueImpact": 95000000,
+      "documentImpact": -3.5
+    }
+  ]
+}

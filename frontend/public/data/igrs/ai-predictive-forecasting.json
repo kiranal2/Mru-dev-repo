@@ -1,0 +1,118 @@
+{
+  "metadata": {
+    "lastComputedAt": "2024-12-13T14:30:00+05:30",
+    "modelVersion": "v2.1",
+    "trainingPeriod": "2022-01 to 2024-12",
+    "trainingMonths": 36,
+    "modelType": "Ensemble (ARIMA + XGBoost + Prophet)"
+  },
+  "modelPerformance": {
+    "mape": 5.8,
+    "r2": 0.942,
+    "mae": 83200000,
+    "rmse": 105600000,
+    "lastValidation": "2024-11-30"
+  },
+  "stateLevel": {
+    "forecastNarrative": "State-wide revenue is projected to reach ₹142.3Cr over the next 12 months, representing 18.2% YoY growth. The primary driver is the scheduled April 2025 MV revision affecting 8 districts, contributing an estimated ₹12.4Cr uplift. Krishna and Guntur districts show the strongest growth trajectory at 22% and 19% respectively. Risk factors include potential volume decline in Kurnool district (-3.2%) due to prohibited land reclassification. Model confidence is high (MAPE: 5.8%) based on 36 months of training data.",
+    "historicalMonths": [
+      { "month": "2024-01", "actual": 89200000, "isMVRevision": false },
+      { "month": "2024-02", "actual": 92500000, "isMVRevision": false },
+      { "month": "2024-03", "actual": 95800000, "isMVRevision": false },
+      { "month": "2024-04", "actual": 108400000, "isMVRevision": true, "mvRevisionLabel": "Apr 2024 Revision" },
+      { "month": "2024-05", "actual": 104200000, "isMVRevision": false },
+      { "month": "2024-06", "actual": 112600000, "isMVRevision": false },
+      { "month": "2024-07", "actual": 107800000, "isMVRevision": false },
+      { "month": "2024-08", "actual": 109400000, "isMVRevision": false },
+      { "month": "2024-09", "actual": 101200000, "isMVRevision": false },
+      { "month": "2024-10", "actual": 108300000, "isMVRevision": false },
+      { "month": "2024-11", "actual": 115800000, "isMVRevision": false },
+      { "month": "2024-12", "actual": 118400000, "isMVRevision": false }
+    ],
+    "forecastMonths": [
+      {
+        "month": "2025-01",
+        "scenarios": {
+          "baseline": { "forecast": 112400000, "upper95": 128800000, "lower95": 96000000, "upper80": 122600000, "lower80": 102200000 },
+          "optimistic": { "forecast": 121600000, "upper95": 139200000, "lower95": 104000000, "upper80": 132400000, "lower80": 110800000 },
+          "conservative": { "forecast": 103200000, "upper95": 118400000, "lower95": 88000000, "upper80": 112800000, "lower80": 93600000 }
+        },
+        "isMVRevision": false
+      },
+      {
+        "month": "2025-02",
+        "scenarios": {
+          "baseline": { "forecast": 116800000, "upper95": 134400000, "lower95": 99200000, "upper80": 127600000, "lower80": 106000000 },
+          "optimistic": { "forecast": 126400000, "upper95": 145600000, "lower95": 107200000, "upper80": 138000000, "lower80": 114800000 },
+          "conservative": { "forecast": 107200000, "upper95": 123200000, "lower95": 91200000, "upper80": 117200000, "lower80": 97200000 }
+        },
+        "isMVRevision": false
+      },
+      {
+        "month": "2025-03",
+        "scenarios": {
+          "baseline": { "forecast": 121200000, "upper95": 140000000, "lower95": 102400000, "upper80": 132600000, "lower80": 109800000 },
+          "optimistic": { "forecast": 131600000, "upper95": 152000000, "lower95": 111200000, "upper80": 143800000, "lower80": 119400000 },
+          "conservative": { "forecast": 111200000, "upper95": 128400000, "lower95": 94000000, "upper80": 121800000, "lower80": 100600000 }
+        },
+        "isMVRevision": false
+      },
+      {
+        "month": "2025-04",
+        "scenarios": {
+          "baseline": { "forecast": 138600000, "upper95": 160400000, "lower95": 116800000, "upper80": 151500000, "lower80": 125700000 },
+          "optimistic": { "forecast": 152400000, "upper95": 176000000, "lower95": 128800000, "upper80": 166200000, "lower80": 138600000 },
+          "conservative": { "forecast": 118400000, "upper95": 136800000, "lower95": 100000000, "upper80": 129600000, "lower80": 107200000 }
+        },
+        "isMVRevision": true,
+        "mvRevisionLabel": "Apr 2025 Revision (Scheduled)"
+      },
+      {
+        "month": "2025-05",
+        "scenarios": {
+          "baseline": { "forecast": 134200000, "upper95": 156000000, "lower95": 112400000, "upper80": 147100000, "lower80": 121300000 },
+          "optimistic": { "forecast": 148000000, "upper95": 172000000, "lower95": 124000000, "upper80": 162000000, "lower80": 134000000 },
+          "conservative": { "forecast": 114800000, "upper95": 133600000, "lower95": 96000000, "upper80": 126200000, "lower80": 103400000 }
+        },
+        "isMVRevision": false
+      },
+      {
+        "month": "2025-06",
+        "scenarios": {
+          "baseline": { "forecast": 136800000, "upper95": 159600000, "lower95": 114000000, "upper80": 150200000, "lower80": 123400000 },
+          "optimistic": { "forecast": 150800000, "upper95": 176000000, "lower95": 125600000, "upper80": 165400000, "lower80": 136200000 },
+          "conservative": { "forecast": 117200000, "upper95": 136800000, "lower95": 97600000, "upper80": 129000000, "lower80": 105400000 }
+        },
+        "isMVRevision": false
+      }
+    ],
+    "growthAttribution": [
+      { "month": "2025-01", "mvRevision": 0, "volumeGrowth": 8200000, "newAreas": 2100000, "complianceImprovement": 3700000 },
+      { "month": "2025-02", "mvRevision": 0, "volumeGrowth": 8800000, "newAreas": 2400000, "complianceImprovement": 4200000 },
+      { "month": "2025-03", "mvRevision": 0, "volumeGrowth": 9200000, "newAreas": 2600000, "complianceImprovement": 4600000 },
+      { "month": "2025-04", "mvRevision": 18400000, "volumeGrowth": 5200000, "newAreas": 1800000, "complianceImprovement": 4800000 },
+      { "month": "2025-05", "mvRevision": 14600000, "volumeGrowth": 5800000, "newAreas": 2000000, "complianceImprovement": 4200000 },
+      { "month": "2025-06", "mvRevision": 12400000, "volumeGrowth": 6400000, "newAreas": 2200000, "complianceImprovement": 4600000 }
+    ]
+  },
+  "districtForecasts": [
+    { "district": "Krishna", "actualLTM": 184200000, "forecastNTM": 216400000, "yoyGrowth": 17.5, "mvRevisionImpact": 21000000, "volumeGrowth": 8.2, "confidenceRange": 12400000, "riskFlag": "low", "monthlyTrend": [14.2, 14.8, 15.1, 16.8, 15.9, 16.4] },
+    { "district": "Guntur", "actualLTM": 152400000, "forecastNTM": 178600000, "yoyGrowth": 17.2, "mvRevisionImpact": 18200000, "volumeGrowth": 7.8, "confidenceRange": 9800000, "riskFlag": "low", "monthlyTrend": [12.1, 12.4, 12.8, 14.2, 13.6, 14.1] },
+    { "district": "East Godavari", "actualLTM": 148600000, "forecastNTM": 172400000, "yoyGrowth": 16.0, "mvRevisionImpact": 15800000, "volumeGrowth": 6.4, "confidenceRange": 10200000, "riskFlag": "low", "monthlyTrend": [11.8, 12.2, 12.5, 13.8, 13.2, 13.6] },
+    { "district": "West Godavari", "actualLTM": 112400000, "forecastNTM": 128600000, "yoyGrowth": 14.4, "mvRevisionImpact": 11200000, "volumeGrowth": 5.6, "confidenceRange": 8400000, "riskFlag": "low", "monthlyTrend": [8.8, 9.1, 9.4, 10.6, 10.2, 10.4] },
+    { "district": "Visakhapatnam", "actualLTM": 138200000, "forecastNTM": 162800000, "yoyGrowth": 17.8, "mvRevisionImpact": 16400000, "volumeGrowth": 8.6, "confidenceRange": 11200000, "riskFlag": "low", "monthlyTrend": [10.8, 11.2, 11.6, 13.2, 12.4, 12.8] },
+    { "district": "Prakasam", "actualLTM": 68400000, "forecastNTM": 76200000, "yoyGrowth": 11.4, "mvRevisionImpact": 6200000, "volumeGrowth": 4.2, "confidenceRange": 5600000, "riskFlag": "medium", "monthlyTrend": [5.4, 5.6, 5.7, 6.2, 6.0, 6.1] },
+    { "district": "Nellore", "actualLTM": 82600000, "forecastNTM": 94800000, "yoyGrowth": 14.8, "mvRevisionImpact": 8400000, "volumeGrowth": 5.8, "confidenceRange": 6800000, "riskFlag": "low", "monthlyTrend": [6.6, 6.8, 7.0, 7.8, 7.4, 7.6] },
+    { "district": "Kurnool", "actualLTM": 72400000, "forecastNTM": 69800000, "yoyGrowth": -3.6, "mvRevisionImpact": 5800000, "volumeGrowth": -8.2, "confidenceRange": 8200000, "riskFlag": "high", "monthlyTrend": [6.4, 6.2, 5.8, 5.6, 5.4, 5.2] },
+    { "district": "Anantapur", "actualLTM": 64200000, "forecastNTM": 72400000, "yoyGrowth": 12.8, "mvRevisionImpact": 5400000, "volumeGrowth": 5.2, "confidenceRange": 5800000, "riskFlag": "medium", "monthlyTrend": [5.0, 5.2, 5.4, 5.8, 5.6, 5.7] },
+    { "district": "Chittoor", "actualLTM": 98400000, "forecastNTM": 114200000, "yoyGrowth": 16.1, "mvRevisionImpact": 9800000, "volumeGrowth": 6.8, "confidenceRange": 7400000, "riskFlag": "low", "monthlyTrend": [7.8, 8.0, 8.2, 9.4, 8.8, 9.2] },
+    { "district": "Kadapa", "actualLTM": 58600000, "forecastNTM": 64800000, "yoyGrowth": 10.6, "mvRevisionImpact": 4800000, "volumeGrowth": 4.0, "confidenceRange": 5200000, "riskFlag": "medium", "monthlyTrend": [4.6, 4.8, 4.9, 5.4, 5.2, 5.3] },
+    { "district": "Srikakulam", "actualLTM": 42800000, "forecastNTM": 46200000, "yoyGrowth": 7.9, "mvRevisionImpact": 3200000, "volumeGrowth": 2.8, "confidenceRange": 4600000, "riskFlag": "medium", "monthlyTrend": [3.4, 3.5, 3.6, 3.8, 3.7, 3.7] },
+    { "district": "Vizianagaram", "actualLTM": 38400000, "forecastNTM": 40600000, "yoyGrowth": 5.7, "mvRevisionImpact": 2800000, "volumeGrowth": 1.4, "confidenceRange": 4200000, "riskFlag": "high", "monthlyTrend": [3.2, 3.1, 3.2, 3.4, 3.3, 3.2] }
+  ],
+  "scenarioAssumptions": {
+    "baseline": "Scheduled MV revision in Apr 2025, +2% volume trend, current compliance trajectory",
+    "optimistic": "MV revision + 3 new SROs operational by Jun 2025 + 95% compliance rate achieved",
+    "conservative": "No MV revision applied, -5% volume decline in 3 districts, current leakage rate persists"
+  }
+}

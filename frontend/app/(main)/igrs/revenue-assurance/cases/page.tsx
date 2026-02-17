@@ -9,6 +9,8 @@ import type {
   IGRSCaseFilters,
   IGRSCaseNote,
   IGRSLeakageSignal,
+  CashReconciliationEvidenceExtended,
+  StampInventoryEvidenceExtended,
 } from "@/lib/data/types";
 import { formatINR } from "@/lib/data/utils/format-currency";
 import { Button } from "@/components/ui/button";
@@ -89,7 +91,7 @@ const SIGNAL_BADGES: Record<IGRSLeakageSignal, string> = {
   ProhibitedLand: "bg-pink-50 text-pink-700 border-pink-200",
   DataIntegrity: "bg-slate-100 text-slate-700 border-slate-200",
   CashReconciliation: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  StampInventory: "bg-blue-50 text-blue-700 border-blue-200",
+  StampInventory: "bg-teal-50 text-teal-700 border-teal-200",
 };
 
 const SIGNAL_CHIP_STYLES: Record<
@@ -125,8 +127,8 @@ const SIGNAL_CHIP_STYLES: Record<
     inactive: "bg-emerald-50 text-emerald-700 border-emerald-200",
   },
   StampInventory: {
-    active: "bg-blue-100 text-blue-700 border-blue-300",
-    inactive: "bg-blue-50 text-blue-700 border-blue-200",
+    active: "bg-teal-100 text-teal-700 border-teal-300",
+    inactive: "bg-teal-50 text-teal-700 border-teal-200",
   },
 };
 
@@ -373,6 +375,12 @@ function CaseDrawer({
                   <TabsTrigger value="parties" className="text-xs">Parties</TabsTrigger>
                   <TabsTrigger value="explain" className="text-xs">Explain</TabsTrigger>
                   <TabsTrigger value="activity" className="text-xs">Activity</TabsTrigger>
+                  {caseItem.leakageSignals.includes("CashReconciliation") && (
+                    <TabsTrigger value="cash-recon" className="text-xs">Cash Recon</TabsTrigger>
+                  )}
+                  {caseItem.leakageSignals.includes("StampInventory") && (
+                    <TabsTrigger value="stamp-intel" className="text-xs">Stamp Intel</TabsTrigger>
+                  )}
                 </TabsList>
               </div>
 
@@ -547,6 +555,270 @@ function CaseDrawer({
                   </div>
                 </Card>
               </TabsContent>
+
+              {caseItem.leakageSignals.includes("CashReconciliation") && (
+                <TabsContent value="cash-recon" className="px-6 py-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold">Cash Reconciliation Evidence</h4>
+                    <Badge variant="destructive" className="text-xs">
+                      {caseItem.evidence.triggeredRules.filter(r => r.ruleId.startsWith("R-CR")).length} rule{caseItem.evidence.triggeredRules.filter(r => r.ruleId.startsWith("R-CR")).length !== 1 ? "s" : ""} triggered
+                    </Badge>
+                  </div>
+
+                  {/* Collection vs Deposit */}
+                  <Card className="p-4">
+                    <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Collection vs Deposit</h5>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-blue-50 rounded p-3">
+                        <p className="text-xs text-blue-600">Collected</p>
+                        <p className="text-xl font-bold text-blue-800">{formatINR(caseItem.cashReconciliationEvidence?.dailyCashSummary.cashCollected ?? caseItem.payableTotalInr)}</p>
+                      </div>
+                      <div className="bg-emerald-50 rounded p-3">
+                        <p className="text-xs text-emerald-600">Deposited</p>
+                        <p className="text-xl font-bold text-emerald-800">{formatINR(caseItem.cashReconciliationEvidence?.dailyCashSummary.misRemittance ?? caseItem.paidTotalInr)}</p>
+                      </div>
+                      <div className="bg-red-50 rounded p-3">
+                        <p className="text-xs text-red-600">Variance</p>
+                        <p className="text-xl font-bold text-red-700">{formatINR(caseItem.cashReconciliationEvidence?.dailyCashSummary.variance ?? caseItem.gapInr)}</p>
+                      </div>
+                    </div>
+                  </Card>
+
+                  {/* Challan Timeline */}
+                  {caseItem.cashReconciliationEvidence?.challanTimeline && (
+                    <Card className="p-4">
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Challan Timeline</h5>
+                      <div className="space-y-0">
+                        {caseItem.cashReconciliationEvidence.challanTimeline.map((evt, i) => (
+                          <div key={i} className="flex items-start gap-3 relative">
+                            <div className="flex flex-col items-center">
+                              <div className={`w-3 h-3 rounded-full border-2 ${evt.status === "critical" ? "bg-red-500 border-red-600" : evt.status === "warning" ? "bg-amber-400 border-amber-500" : "bg-emerald-400 border-emerald-500"}`} />
+                              {i < caseItem.cashReconciliationEvidence!.challanTimeline.length - 1 && (
+                                <div className="w-0.5 h-10 bg-slate-200" />
+                              )}
+                            </div>
+                            <div className="pb-4 flex-1">
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-semibold">{evt.event}</p>
+                                {evt.amount > 0 && <span className="text-xs font-medium text-slate-600">{formatINR(evt.amount)}</span>}
+                              </div>
+                              <p className="text-xs text-slate-600 mt-0.5">{evt.detail}</p>
+                              <p className="text-[10px] text-slate-400 mt-0.5">{new Date(evt.date).toLocaleString()}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* CFMS Comparison */}
+                  {caseItem.cashReconciliationEvidence?.cfmsComparison && (
+                    <Card className="p-4">
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">CFMS Cross-Reference</h5>
+                      <div className="space-y-1">
+                        {caseItem.cashReconciliationEvidence.cfmsComparison.map((row, i) => (
+                          <div key={i} className={`flex items-center gap-2 px-3 py-2 rounded text-sm ${row.mismatch ? "bg-red-50 border border-red-200" : "bg-slate-50"}`}>
+                            <span className="w-40 text-slate-500 text-xs">{row.field}</span>
+                            <span className="flex-1 font-mono text-xs">{row.challanValue}</span>
+                            <span className="text-[10px] text-slate-400">vs</span>
+                            <span className={`flex-1 font-mono text-xs ${row.mismatch ? "text-red-700 font-bold" : ""}`}>{row.cfmsValue}</span>
+                            {row.mismatch && <span className="text-red-500 text-[10px] font-bold">MISMATCH</span>}
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Daily Cash Summary */}
+                  {caseItem.cashReconciliationEvidence && (
+                    <Card className="p-4 bg-slate-50">
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Officer & Office Details</h5>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div><span className="text-slate-500">Officer:</span> <span className="font-medium">{caseItem.cashReconciliationEvidence.officerName}</span></div>
+                        <div><span className="text-slate-500">Officer ID:</span> <span className="font-medium font-mono text-xs">{caseItem.cashReconciliationEvidence.officerId}</span></div>
+                        <div><span className="text-slate-500">Challan:</span> <span className="font-medium font-mono text-xs">{caseItem.cashReconciliationEvidence.challanId}</span></div>
+                        <div><span className="text-slate-500">Status:</span> <span className="font-medium">{caseItem.cashReconciliationEvidence.challanStatus}</span></div>
+                        <div><span className="text-slate-500">Office:</span> <span className="font-medium">{caseItem.office.srName}</span></div>
+                        <div><span className="text-slate-500">District:</span> <span className="font-medium">{caseItem.office.district}</span></div>
+                        <div><span className="text-slate-500">Cash Risk Score:</span> <span className="font-bold">{caseItem.cashReconciliationEvidence.cashRiskScore}/100</span></div>
+                        <div><span className="text-slate-500">Office Date:</span> <span className="font-medium">{caseItem.cashReconciliationEvidence.dailyCashSummary.officeDate}</span></div>
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Triggered Rules */}
+                  <Card className="p-4">
+                    <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Triggered Rules</h5>
+                    <div className="space-y-2">
+                      {caseItem.evidence.triggeredRules.filter(r => r.ruleId.startsWith("R-CR")).map(r => (
+                        <div key={r.ruleId} className="border-l-2 border-emerald-300 pl-3 py-1">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold">{r.ruleName}</p>
+                            <Badge variant={r.severity === "High" ? "destructive" : "secondary"} className="text-[10px]">{r.severity}</Badge>
+                          </div>
+                          <p className="text-sm text-slate-600 mt-0.5">{r.explanation}</p>
+                          {r.impactInr > 0 && <p className="text-xs text-red-600 mt-0.5">Impact: {formatINR(r.impactInr)}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </TabsContent>
+              )}
+
+              {caseItem.leakageSignals.includes("StampInventory") && (
+                <TabsContent value="stamp-intel" className="px-6 py-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold">Stamp Inventory Evidence</h4>
+                    <Badge variant="destructive" className="text-xs">
+                      {caseItem.evidence.triggeredRules.filter(r => r.ruleId.startsWith("R-SI")).length} rule{caseItem.evidence.triggeredRules.filter(r => r.ruleId.startsWith("R-SI")).length !== 1 ? "s" : ""} triggered
+                    </Badge>
+                  </div>
+
+                  {/* Inventory KPIs */}
+                  <Card className="p-4">
+                    <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Inventory Variance</h5>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-blue-50 rounded p-3">
+                        <p className="text-xs text-blue-600">Impact Amount</p>
+                        <p className="text-xl font-bold text-blue-800">{formatINR(caseItem.impactAmountInr)}</p>
+                      </div>
+                      <div className="bg-red-50 rounded p-3">
+                        <p className="text-xs text-red-600">Inventory Gap</p>
+                        <p className="text-xl font-bold text-red-700">{formatINR(caseItem.gapInr)}</p>
+                      </div>
+                      {caseItem.stampInventoryEvidence && (
+                        <div className="bg-amber-50 rounded p-3">
+                          <p className="text-xs text-amber-600">Vendor Risk Score</p>
+                          <p className="text-xl font-bold text-amber-800">{caseItem.stampInventoryEvidence.vendorRiskScore}/100</p>
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+
+                  {/* Vendor Details */}
+                  {caseItem.stampInventoryEvidence && (
+                    <Card className="p-4">
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Vendor Profile</h5>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div><span className="text-slate-500">Vendor:</span> <span className="font-medium">{caseItem.stampInventoryEvidence.vendorName}</span></div>
+                        <div><span className="text-slate-500">Vendor ID:</span> <span className="font-medium font-mono text-xs">{caseItem.stampInventoryEvidence.vendorId}</span></div>
+                        <div><span className="text-slate-500">Jurisdiction:</span> <span className="font-medium">{caseItem.stampInventoryEvidence.jurisdiction}</span></div>
+                        <div><span className="text-slate-500">Stamp Type:</span> <span className="font-medium">{caseItem.stampInventoryEvidence.stampType}</span></div>
+                        <div><span className="text-slate-500">Usage:</span> <span className="font-medium">{caseItem.stampInventoryEvidence.usageCount} / {caseItem.stampInventoryEvidence.expectedUsage} expected</span></div>
+                        <div><span className="text-slate-500">Deviation:</span> <span className={`font-bold ${caseItem.stampInventoryEvidence.deviationPercent < 0 ? "text-red-600" : "text-emerald-600"}`}>{caseItem.stampInventoryEvidence.deviationPercent > 0 ? "+" : ""}{caseItem.stampInventoryEvidence.deviationPercent}%</span></div>
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Usage Trend Sparkline */}
+                  {caseItem.stampInventoryEvidence?.monthlyUsage && (
+                    <Card className="p-4">
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Monthly Usage Trend</h5>
+                      <div className="overflow-x-auto">
+                        <svg viewBox="0 0 400 100" className="w-full h-[100px]">
+                          {caseItem.stampInventoryEvidence.monthlyUsage.map((pt, i, arr) => {
+                            const maxVal = Math.max(...arr.map((p) => Math.max(p.count, p.expected)));
+                            const x = 30 + (i * ((340) / (arr.length - 1)));
+                            const yActual = 85 - ((pt.count / maxVal) * 70);
+                            const yExpected = 85 - ((pt.expected / maxVal) * 70);
+                            return (
+                              <g key={pt.month}>
+                                {i > 0 && (
+                                  <>
+                                    <line x1={30 + ((i - 1) * (340 / (arr.length - 1)))} y1={85 - ((arr[i - 1].count / maxVal) * 70)} x2={x} y2={yActual} stroke="#3b82f6" strokeWidth={2} />
+                                    <line x1={30 + ((i - 1) * (340 / (arr.length - 1)))} y1={85 - ((arr[i - 1].expected / maxVal) * 70)} x2={x} y2={yExpected} stroke="#94a3b8" strokeWidth={1} strokeDasharray="4 2" />
+                                  </>
+                                )}
+                                <circle cx={x} cy={yActual} r={3} fill="#3b82f6" />
+                                <circle cx={x} cy={yExpected} r={2} fill="#94a3b8" />
+                                <text x={x} y={97} textAnchor="middle" className="text-[8px] fill-slate-400">{pt.month.slice(5)}</text>
+                              </g>
+                            );
+                          })}
+                        </svg>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1"><span className="w-3 h-1 rounded bg-blue-500" /> Actual</span>
+                        <span className="flex items-center gap-1"><span className="w-6 h-0 border-t border-dashed border-slate-400" /> Expected</span>
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Peer Comparison */}
+                  {caseItem.stampInventoryEvidence?.peerVendors && caseItem.stampInventoryEvidence.peerVendors.length > 0 && (
+                    <Card className="p-4">
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Peer Vendor Comparison</h5>
+                      <div className="space-y-2">
+                        <div className={`flex items-center gap-2 px-3 py-2 rounded text-sm bg-amber-50 border border-amber-200`}>
+                          <span className="w-40 font-medium text-amber-800">{caseItem.stampInventoryEvidence.vendorName}</span>
+                          <span className="flex-1 text-xs">Usage: {caseItem.stampInventoryEvidence.usageCount}</span>
+                          <span className="text-xs font-bold text-red-600">{caseItem.stampInventoryEvidence.deviationPercent > 0 ? "+" : ""}{caseItem.stampInventoryEvidence.deviationPercent}%</span>
+                          <span className="text-xs font-bold">Risk: {caseItem.stampInventoryEvidence.vendorRiskScore}</span>
+                        </div>
+                        {caseItem.stampInventoryEvidence.peerVendors.map((peer) => (
+                          <div key={peer.vendorId} className="flex items-center gap-2 px-3 py-2 rounded text-sm bg-slate-50">
+                            <span className="w-40 font-medium">{peer.vendorName}</span>
+                            <span className="flex-1 text-xs">Usage: {peer.usage}</span>
+                            <span className={`text-xs font-medium ${peer.deviation < 0 ? "text-red-600" : "text-emerald-600"}`}>{peer.deviation > 0 ? "+" : ""}{peer.deviation}%</span>
+                            <span className="text-xs">Risk: {peer.riskScore}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Stamp Type Distribution */}
+                  {caseItem.stampInventoryEvidence?.stampTypeDistribution && (
+                    <Card className="p-4">
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Stamp Type Distribution</h5>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs font-semibold text-slate-600 mb-2">This Vendor</p>
+                          {caseItem.stampInventoryEvidence.stampTypeDistribution.vendor.map((d) => (
+                            <div key={d.type} className="flex items-center gap-2 mb-1">
+                              <span className="w-12 text-xs text-slate-500">{d.type}</span>
+                              <div className="flex-1 h-3 bg-slate-100 rounded overflow-hidden">
+                                <div className="h-full bg-blue-400" style={{ width: `${d.percent}%` }} />
+                              </div>
+                              <span className="text-xs w-8 text-right">{d.percent}%</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-slate-600 mb-2">Jurisdiction Average</p>
+                          {caseItem.stampInventoryEvidence.stampTypeDistribution.jurisdictionAvg.map((d) => (
+                            <div key={d.type} className="flex items-center gap-2 mb-1">
+                              <span className="w-12 text-xs text-slate-500">{d.type}</span>
+                              <div className="flex-1 h-3 bg-slate-100 rounded overflow-hidden">
+                                <div className="h-full bg-slate-400" style={{ width: `${d.percent}%` }} />
+                              </div>
+                              <span className="text-xs w-8 text-right">{d.percent}%</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Triggered Rules */}
+                  <Card className="p-4">
+                    <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Triggered Rules</h5>
+                    <div className="space-y-2">
+                      {caseItem.evidence.triggeredRules.filter(r => r.ruleId.startsWith("R-SI")).map(r => (
+                        <div key={r.ruleId} className="border-l-2 border-teal-300 pl-3 py-1">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold">{r.ruleName}</p>
+                            <Badge variant={r.severity === "High" ? "destructive" : "secondary"} className="text-[10px]">{r.severity}</Badge>
+                          </div>
+                          <p className="text-sm text-slate-600 mt-0.5">{r.explanation}</p>
+                          {r.impactInr > 0 && <p className="text-xs text-red-600 mt-0.5">Impact: {formatINR(r.impactInr)}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </TabsContent>
+              )}
+
             </Tabs>
           </div>
         </SheetContent>

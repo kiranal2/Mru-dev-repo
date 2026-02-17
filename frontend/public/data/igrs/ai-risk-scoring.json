@@ -1,0 +1,75 @@
+{
+  "metadata": {
+    "lastComputedAt": "2024-12-13T14:30:00+05:30",
+    "modelVersion": "v1.3",
+    "scoringDate": "2024-12-13",
+    "totalDocumentsScored": 556,
+    "period": "2024-11-14 to 2024-12-13"
+  },
+  "summary": {
+    "avgCompositeScore": 38.4,
+    "avgCompositeScoreChange": -2.1,
+    "highRiskCount": 47,
+    "highRiskPct": 8.45,
+    "criticalCount": 8,
+    "criticalPct": 1.44,
+    "estimatedRevenueAtRisk": 42400000,
+    "estimatedRevenueAtRiskChange": 12.3
+  },
+  "distribution": [
+    { "band": "0-20", "label": "Low", "count": 312, "pct": 56.1, "color": "#22C55E" },
+    { "band": "21-40", "label": "Moderate", "count": 148, "pct": 26.6, "color": "#84CC16" },
+    { "band": "41-60", "label": "Elevated", "count": 49, "pct": 8.8, "color": "#F59E0B" },
+    { "band": "61-80", "label": "High", "count": 39, "pct": 7.0, "color": "#F97316" },
+    { "band": "81-100", "label": "Critical", "count": 8, "pct": 1.4, "color": "#EF4444" }
+  ],
+  "dimensionAvg": {
+    "revenue": { "avg": 22.1, "max": 40, "pct": 55.3, "prevAvg": 23.8 },
+    "exemption": { "avg": 6.3, "max": 25, "pct": 25.2, "prevAvg": 5.9 },
+    "classification": { "avg": 5.8, "max": 20, "pct": 29.0, "prevAvg": 6.2 },
+    "cash": { "avg": 4.2, "max": 15, "pct": 28.0, "prevAvg": 4.5 }
+  },
+  "monthlyTrend": [
+    { "month": "2024-01", "avgScore": 42.1, "highRiskCount": 52 },
+    { "month": "2024-02", "avgScore": 41.4, "highRiskCount": 49 },
+    { "month": "2024-03", "avgScore": 40.8, "highRiskCount": 48 },
+    { "month": "2024-04", "avgScore": 39.6, "highRiskCount": 46 },
+    { "month": "2024-05", "avgScore": 40.2, "highRiskCount": 50 },
+    { "month": "2024-06", "avgScore": 39.8, "highRiskCount": 48 },
+    { "month": "2024-07", "avgScore": 41.2, "highRiskCount": 51, "annotation": "Rule R-PAY-03 deployed" },
+    { "month": "2024-08", "avgScore": 39.4, "highRiskCount": 45 },
+    { "month": "2024-09", "avgScore": 38.8, "highRiskCount": 44 },
+    { "month": "2024-10", "avgScore": 39.2, "highRiskCount": 46 },
+    { "month": "2024-11", "avgScore": 38.6, "highRiskCount": 43 },
+    { "month": "2024-12", "avgScore": 38.4, "highRiskCount": 47 }
+  ],
+  "dimensionWeights": [
+    { "dimension": "Revenue", "weight": 0.40, "maxScore": 40, "avgContribution": 22.1, "rules": ["R-PAY-01", "R-PAY-02", "R-PAY-03", "R-PAY-04"], "color": "#DC2626" },
+    { "dimension": "Exemption", "weight": 0.25, "maxScore": 25, "avgContribution": 6.3, "rules": ["R-EXM-01", "R-EXM-02", "R-EXM-03", "R-EXM-04"], "color": "#7C3AED" },
+    { "dimension": "Classification", "weight": 0.20, "maxScore": 20, "avgContribution": 5.8, "rules": ["R-CLS-01", "R-CLS-02", "R-DATA-01", "R-DATA-02"], "color": "#2563EB" },
+    { "dimension": "Cash", "weight": 0.15, "maxScore": 15, "avgContribution": 4.2, "rules": ["R-CHLN-01", "R-CHLN-02", "R-CSH-01"], "color": "#4F46E5" }
+  ],
+  "topDocuments": [
+    { "rank": 1, "documentId": "SR15/1/9011/2024", "sro": "SR15", "sroName": "Chengalpattu", "compositeScore": 96, "revenueScore": 38, "exemptionScore": 24, "classificationScore": 19, "cashScore": 15, "gapAmount": 1100000, "signals": ["ProhibitedLand", "RevenueGap"], "caseId": "RL-2024-0015" },
+    { "rank": 2, "documentId": "SR18/1/1122/2024", "sro": "SR18", "sroName": "Cuddalore", "compositeScore": 91, "revenueScore": 36, "exemptionScore": 22, "classificationScore": 18, "cashScore": 15, "gapAmount": 1410000, "signals": ["RevenueGap", "ChallanDelay"], "caseId": "RL-2024-0018" },
+    { "rank": 3, "documentId": "SR12/1/8831/2024", "sro": "SR12", "sroName": "Krishnagiri", "compositeScore": 86, "revenueScore": 34, "exemptionScore": 22, "classificationScore": 18, "cashScore": 12, "gapAmount": 2480000, "signals": ["RevenueGap", "DataIntegrity"], "caseId": "RL-2024-0012" },
+    { "rank": 4, "documentId": "SR03/1/7245/2024", "sro": "SR03", "sroName": "Vijayawada", "compositeScore": 84, "revenueScore": 36, "exemptionScore": 18, "classificationScore": 16, "cashScore": 14, "gapAmount": 1850000, "signals": ["RevenueGap", "ExemptionRisk"] },
+    { "rank": 5, "documentId": "SR07/1/4421/2024", "sro": "SR07", "sroName": "Tirupati", "compositeScore": 82, "revenueScore": 34, "exemptionScore": 20, "classificationScore": 14, "cashScore": 14, "gapAmount": 920000, "signals": ["MarketValueRisk", "RevenueGap"] },
+    { "rank": 6, "documentId": "SR11/1/3318/2024", "sro": "SR11", "sroName": "Kakinada", "compositeScore": 80, "revenueScore": 32, "exemptionScore": 18, "classificationScore": 16, "cashScore": 14, "gapAmount": 1240000, "signals": ["RevenueGap", "CashReconciliation"] },
+    { "rank": 7, "documentId": "SR16/1/5567/2024", "sro": "SR16", "sroName": "Nellore Central", "compositeScore": 78, "revenueScore": 30, "exemptionScore": 20, "classificationScore": 16, "cashScore": 12, "gapAmount": 780000, "signals": ["ExemptionRisk", "DataIntegrity"] },
+    { "rank": 8, "documentId": "SR02/1/9934/2024", "sro": "SR02", "sroName": "Guntur Main", "compositeScore": 76, "revenueScore": 28, "exemptionScore": 22, "classificationScore": 14, "cashScore": 12, "gapAmount": 1560000, "signals": ["ExemptionRisk", "RevenueGap"] },
+    { "rank": 9, "documentId": "SR14/1/2287/2024", "sro": "SR14", "sroName": "Anantapur", "compositeScore": 74, "revenueScore": 30, "exemptionScore": 16, "classificationScore": 14, "cashScore": 14, "gapAmount": 680000, "signals": ["MarketValueRisk", "ChallanDelay"] },
+    { "rank": 10, "documentId": "SR09/1/6612/2024", "sro": "SR09", "sroName": "Kurnool", "compositeScore": 73, "revenueScore": 28, "exemptionScore": 18, "classificationScore": 15, "cashScore": 12, "gapAmount": 1120000, "signals": ["RevenueGap", "StampInventory"] },
+    { "rank": 11, "documentId": "SR06/1/3389/2024", "sro": "SR06", "sroName": "Rajahmundry", "compositeScore": 72, "revenueScore": 26, "exemptionScore": 20, "classificationScore": 14, "cashScore": 12, "gapAmount": 890000, "signals": ["ExemptionRisk", "DataIntegrity"] },
+    { "rank": 12, "documentId": "SR10/1/8845/2024", "sro": "SR10", "sroName": "Eluru", "compositeScore": 70, "revenueScore": 28, "exemptionScore": 16, "classificationScore": 14, "cashScore": 12, "gapAmount": 720000, "signals": ["RevenueGap", "MarketValueRisk"] },
+    { "rank": 13, "documentId": "SR08/1/4456/2024", "sro": "SR08", "sroName": "Kadapa", "compositeScore": 68, "revenueScore": 26, "exemptionScore": 16, "classificationScore": 14, "cashScore": 12, "gapAmount": 640000, "signals": ["ChallanDelay", "RevenueGap"] },
+    { "rank": 14, "documentId": "SR04/1/7723/2024", "sro": "SR04", "sroName": "Vizag North", "compositeScore": 67, "revenueScore": 24, "exemptionScore": 18, "classificationScore": 13, "cashScore": 12, "gapAmount": 580000, "signals": ["ExemptionRisk"] },
+    { "rank": 15, "documentId": "SR13/1/5512/2024", "sro": "SR13", "sroName": "Ongole", "compositeScore": 65, "revenueScore": 26, "exemptionScore": 14, "classificationScore": 13, "cashScore": 12, "gapAmount": 520000, "signals": ["RevenueGap", "ProhibitedLand"] },
+    { "rank": 16, "documentId": "SR17/1/2234/2024", "sro": "SR17", "sroName": "Srikakulam", "compositeScore": 64, "revenueScore": 24, "exemptionScore": 16, "classificationScore": 12, "cashScore": 12, "gapAmount": 480000, "signals": ["MarketValueRisk"] },
+    { "rank": 17, "documentId": "SR15/1/6678/2024", "sro": "SR15", "sroName": "Chengalpattu", "compositeScore": 63, "revenueScore": 22, "exemptionScore": 18, "classificationScore": 12, "cashScore": 11, "gapAmount": 460000, "signals": ["ExemptionRisk", "DataIntegrity"] },
+    { "rank": 18, "documentId": "SR01/1/3345/2024", "sro": "SR01", "sroName": "Chennai Central", "compositeScore": 62, "revenueScore": 24, "exemptionScore": 14, "classificationScore": 12, "cashScore": 12, "gapAmount": 380000, "signals": ["CashReconciliation"] },
+    { "rank": 19, "documentId": "SR05/1/8892/2024", "sro": "SR05", "sroName": "Salem Main", "compositeScore": 61, "revenueScore": 22, "exemptionScore": 16, "classificationScore": 12, "cashScore": 11, "gapAmount": 340000, "signals": ["RevenueGap"] },
+    { "rank": 20, "documentId": "SR12/1/1167/2024", "sro": "SR12", "sroName": "Krishnagiri", "compositeScore": 61, "revenueScore": 22, "exemptionScore": 14, "classificationScore": 14, "cashScore": 11, "gapAmount": 320000, "signals": ["DataIntegrity", "StampInventory"] }
+  ],
+  "aiExplanation": "Risk scores are computed using a weighted multi-dimensional model. Each registered document is evaluated against 15 active detection rules across 4 dimensions. Revenue carries the highest weight (40%) as it directly measures duty collection accuracy. Exemption (25%) captures the second-largest leakage vector through invalid claims. Classification (20%) detects duty reduction through misclassification. Cash handling (15%) identifies post-collection integrity issues. Scores are updated daily as new detection runs complete."
+}

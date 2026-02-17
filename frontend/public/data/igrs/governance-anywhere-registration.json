@@ -1,0 +1,135 @@
+{
+  "metadata": {
+    "lastUpdated": "2024-12-13T14:30:00Z",
+    "period": "2024-01 to 2024-12",
+    "totalDistricts": 13,
+    "totalSROs": 26
+  },
+  "summary": {
+    "totalAnywhereRegs": 4250,
+    "percentOfTotal": 12.8,
+    "topDestinationSRO": "Vijayawada Main",
+    "topSourceDistrict": "Krishna"
+  },
+  "flows": [
+    {
+      "propertyLocation": "Krishna",
+      "registeredAt": "Vijayawada Main SRO",
+      "docCount": 620,
+      "revenue": 385000000,
+      "avgMV": 3480000
+    },
+    {
+      "propertyLocation": "Guntur",
+      "registeredAt": "Vijayawada Main SRO",
+      "docCount": 480,
+      "revenue": 298000000,
+      "avgMV": 3120000
+    },
+    {
+      "propertyLocation": "East Godavari",
+      "registeredAt": "Rajahmundry SRO",
+      "docCount": 410,
+      "revenue": 245000000,
+      "avgMV": 2680000
+    },
+    {
+      "propertyLocation": "Visakhapatnam",
+      "registeredAt": "Visakhapatnam Main SRO",
+      "docCount": 390,
+      "revenue": 268000000,
+      "avgMV": 3540000
+    },
+    {
+      "propertyLocation": "Chittoor",
+      "registeredAt": "Tirupati SRO",
+      "docCount": 350,
+      "revenue": 218000000,
+      "avgMV": 2950000
+    },
+    {
+      "propertyLocation": "Nellore",
+      "registeredAt": "Nellore Main SRO",
+      "docCount": 310,
+      "revenue": 186000000,
+      "avgMV": 2620000
+    },
+    {
+      "propertyLocation": "West Godavari",
+      "registeredAt": "Eluru SRO",
+      "docCount": 280,
+      "revenue": 162000000,
+      "avgMV": 2380000
+    },
+    {
+      "propertyLocation": "Kurnool",
+      "registeredAt": "Kurnool Main SRO",
+      "docCount": 240,
+      "revenue": 132000000,
+      "avgMV": 2150000
+    },
+    {
+      "propertyLocation": "Prakasam",
+      "registeredAt": "Ongole SRO",
+      "docCount": 210,
+      "revenue": 118000000,
+      "avgMV": 2040000
+    },
+    {
+      "propertyLocation": "Anantapur",
+      "registeredAt": "Anantapur Main SRO",
+      "docCount": 190,
+      "revenue": 98000000,
+      "avgMV": 1890000
+    },
+    {
+      "propertyLocation": "Krishna",
+      "registeredAt": "Guntur SRO",
+      "docCount": 180,
+      "revenue": 112000000,
+      "avgMV": 3260000
+    },
+    {
+      "propertyLocation": "Kadapa",
+      "registeredAt": "Kadapa Main SRO",
+      "docCount": 170,
+      "revenue": 86000000,
+      "avgMV": 1760000
+    },
+    {
+      "propertyLocation": "Visakhapatnam",
+      "registeredAt": "Gajuwaka SRO",
+      "docCount": 160,
+      "revenue": 105000000,
+      "avgMV": 3420000
+    },
+    {
+      "propertyLocation": "Vizianagaram",
+      "registeredAt": "Visakhapatnam Main SRO",
+      "docCount": 140,
+      "revenue": 68000000,
+      "avgMV": 1520000
+    },
+    {
+      "propertyLocation": "Srikakulam",
+      "registeredAt": "Visakhapatnam Main SRO",
+      "docCount": 120,
+      "revenue": 54000000,
+      "avgMV": 1360000
+    }
+  ],
+  "monthlyTrend": [
+    { "month": "2024-01", "count": 280, "percent": 10.6 },
+    { "month": "2024-02", "count": 295, "percent": 10.8 },
+    { "month": "2024-03", "count": 340, "percent": 11.3 },
+    { "month": "2024-04", "count": 320, "percent": 11.3 },
+    { "month": "2024-05", "count": 310, "percent": 11.6 },
+    { "month": "2024-06", "count": 335, "percent": 12.0 },
+    { "month": "2024-07", "count": 360, "percent": 12.3 },
+    { "month": "2024-08", "count": 375, "percent": 12.3 },
+    { "month": "2024-09", "count": 385, "percent": 12.1 },
+    { "month": "2024-10", "count": 400, "percent": 12.0 },
+    { "month": "2024-11", "count": 410, "percent": 12.1 },
+    { "month": "2024-12", "count": 440, "percent": 12.3 }
+  ]
+}

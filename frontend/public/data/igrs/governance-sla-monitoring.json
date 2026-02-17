@@ -1,0 +1,145 @@
+{
+  "metadata": {
+    "lastUpdated": "2024-12-13T14:30:00Z",
+    "period": "2024-01 to 2024-12",
+    "totalDistricts": 13,
+    "totalSROs": 26
+  },
+  "summary": {
+    "totalPending": 842,
+    "withinSLA": 654,
+    "slaBreached": 188,
+    "avgProcessingDays": 8.4,
+    "oldestPendingDays": 67,
+    "compliancePercent": 77.7
+  },
+  "ageingBuckets": [
+    { "bucket": "0-7d", "count": 420, "color": "#22c55e" },
+    { "bucket": "8-14d", "count": 234, "color": "#f59e0b" },
+    { "bucket": "15-30d", "count": 128, "color": "#f97316" },
+    { "bucket": "30d+", "count": 60, "color": "#ef4444" }
+  ],
+  "officeSLA": [
+    {
+      "officeCode": "VJA-01",
+      "officeName": "Vijayawada Main SRO",
+      "total": 142,
+      "withinSLA": 118,
+      "breached": 24,
+      "avgDays": 6.8,
+      "oldestDays": 38,
+      "compliancePercent": 83.1
+    },
+    {
+      "officeCode": "VSK-01",
+      "officeName": "Visakhapatnam Main SRO",
+      "total": 128,
+      "withinSLA": 104,
+      "breached": 24,
+      "avgDays": 7.2,
+      "oldestDays": 42,
+      "compliancePercent": 81.3
+    },
+    {
+      "officeCode": "GNT-01",
+      "officeName": "Guntur SRO",
+      "total": 105,
+      "withinSLA": 84,
+      "breached": 21,
+      "avgDays": 7.9,
+      "oldestDays": 45,
+      "compliancePercent": 80.0
+    },
+    {
+      "officeCode": "TPT-01",
+      "officeName": "Tirupati SRO",
+      "total": 96,
+      "withinSLA": 76,
+      "breached": 20,
+      "avgDays": 8.1,
+      "oldestDays": 48,
+      "compliancePercent": 79.2
+    },
+    {
+      "officeCode": "NLR-01",
+      "officeName": "Nellore Main SRO",
+      "total": 84,
+      "withinSLA": 65,
+      "breached": 19,
+      "avgDays": 8.6,
+      "oldestDays": 52,
+      "compliancePercent": 77.4
+    },
+    {
+      "officeCode": "RJM-01",
+      "officeName": "Rajahmundry SRO",
+      "total": 72,
+      "withinSLA": 54,
+      "breached": 18,
+      "avgDays": 9.1,
+      "oldestDays": 55,
+      "compliancePercent": 75.0
+    },
+    {
+      "officeCode": "ONG-01",
+      "officeName": "Ongole SRO",
+      "total": 62,
+      "withinSLA": 45,
+      "breached": 17,
+      "avgDays": 9.8,
+      "oldestDays": 58,
+      "compliancePercent": 72.6
+    },
+    {
+      "officeCode": "KRN-01",
+      "officeName": "Kurnool Main SRO",
+      "total": 56,
+      "withinSLA": 40,
+      "breached": 16,
+      "avgDays": 10.2,
+      "oldestDays": 61,
+      "compliancePercent": 71.4
+    },
+    {
+      "officeCode": "ELR-01",
+      "officeName": "Eluru SRO",
+      "total": 52,
+      "withinSLA": 38,
+      "breached": 14,
+      "avgDays": 9.4,
+      "oldestDays": 56,
+      "compliancePercent": 73.1
+    },
+    {
+      "officeCode": "SKL-01",
+      "officeName": "Srikakulam SRO",
+      "total": 45,
+      "withinSLA": 30,
+      "breached": 15,
+      "avgDays": 11.5,
+      "oldestDays": 67,
+      "compliancePercent": 66.7
+    }
+  ],
+  "pendingByDocType": [
+    { "docType": "Sale Deed", "count": 462, "percent": 54.9 },
+    { "docType": "Gift Deed", "count": 118, "percent": 14.0 },
+    { "docType": "Mortgage", "count": 142, "percent": 16.9 },
+    { "docType": "Lease", "count": 76, "percent": 9.0 },
+    { "docType": "Other", "count": 44, "percent": 5.2 }
+  ],
+  "monthlyCompliance": [
+    { "month": "2024-01", "compliancePercent": 72.3 },
+    { "month": "2024-02", "compliancePercent": 73.1 },
+    { "month": "2024-03", "compliancePercent": 74.5 },
+    { "month": "2024-04", "compliancePercent": 73.8 },
+    { "month": "2024-05", "compliancePercent": 74.2 },
+    { "month": "2024-06", "compliancePercent": 75.0 },
+    { "month": "2024-07", "compliancePercent": 75.6 },
+    { "month": "2024-08", "compliancePercent": 76.1 },
+    { "month": "2024-09", "compliancePercent": 76.8 },
+    { "month": "2024-10", "compliancePercent": 77.2 },
+    { "month": "2024-11", "compliancePercent": 77.4 },
+    { "month": "2024-12", "compliancePercent": 77.7 }
+  ]
+}

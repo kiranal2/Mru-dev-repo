@@ -1,0 +1,287 @@
+{
+  "metadata": {
+    "lastComputedAt": "2024-12-13T14:30:00+05:30",
+    "currentMonth": "2024-12",
+    "totalSROs": 16,
+    "scoringModel": "Weighted Component Index v1.2"
+  },
+  "summary": {
+    "stateAvgScore": 72.4,
+    "stateAvgChange": 1.2,
+    "topSRO": { "code": "SR05", "name": "Salem Main", "score": 91 },
+    "bottomSRO": { "code": "SR18", "name": "Cuddalore", "score": 48 },
+    "improvingSROCount": 8,
+    "decliningSROCount": 5,
+    "stableSROCount": 3
+  },
+  "componentDefinitions": [
+    { "id": "revenueCompliance", "label": "Revenue Compliance", "maxScore": 20, "color": "#DC2626", "description": "% of documents with zero revenue gap" },
+    { "id": "cashHandling", "label": "Cash Handling", "maxScore": 20, "color": "#4F46E5", "description": "Challan integrity + daily reconciliation accuracy" },
+    { "id": "exemptionAdherence", "label": "Exemption Adherence", "maxScore": 20, "color": "#7C3AED", "description": "% of exemptions that pass validation" },
+    { "id": "slaCompliance", "label": "SLA Compliance", "maxScore": 20, "color": "#0891B2", "description": "% of documents processed within SLA" },
+    { "id": "dataQuality", "label": "Data Quality", "maxScore": 20, "color": "#64748B", "description": "Completeness of mandatory fields and schedules" }
+  ],
+  "sros": [
+    {
+      "code": "SR05", "name": "Salem Main", "district": "Krishna",
+      "currentScore": 91, "previousScore": 88, "momChange": 3,
+      "rank": 1, "previousRank": 3, "band": "excellent",
+      "components": { "revenueCompliance": 19, "cashHandling": 18, "exemptionAdherence": 19, "slaCompliance": 17, "dataQuality": 18 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 82, "rc": 17, "ch": 16, "ea": 17, "sc": 16, "dq": 16 },
+        { "month": "2024-08", "score": 84, "rc": 17, "ch": 17, "ea": 17, "sc": 16, "dq": 17 },
+        { "month": "2024-09", "score": 85, "rc": 18, "ch": 17, "ea": 17, "sc": 16, "dq": 17 },
+        { "month": "2024-10", "score": 86, "rc": 18, "ch": 17, "ea": 18, "sc": 16, "dq": 17 },
+        { "month": "2024-11", "score": 88, "rc": 18, "ch": 18, "ea": 18, "sc": 17, "dq": 17 },
+        { "month": "2024-12", "score": 91, "rc": 19, "ch": 18, "ea": 19, "sc": 17, "dq": 18 }
+      ],
+      "aiAssessment": "SR05 maintains excellent performance across all dimensions with consistent month-over-month improvement. Revenue compliance hit 95% this month, the highest in the state. Slight SLA dip due to 2 documents pending beyond 14 days during the Diwali period.",
+      "improvementActions": []
+    },
+    {
+      "code": "SR01", "name": "Chennai Central", "district": "Guntur",
+      "currentScore": 88, "previousScore": 88, "momChange": 0,
+      "rank": 2, "previousRank": 2, "band": "excellent",
+      "components": { "revenueCompliance": 18, "cashHandling": 17, "exemptionAdherence": 18, "slaCompliance": 18, "dataQuality": 17 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 85, "rc": 17, "ch": 17, "ea": 17, "sc": 17, "dq": 17 },
+        { "month": "2024-08", "score": 86, "rc": 17, "ch": 17, "ea": 18, "sc": 17, "dq": 17 },
+        { "month": "2024-09", "score": 87, "rc": 18, "ch": 17, "ea": 18, "sc": 17, "dq": 17 },
+        { "month": "2024-10", "score": 87, "rc": 18, "ch": 17, "ea": 18, "sc": 17, "dq": 17 },
+        { "month": "2024-11", "score": 88, "rc": 18, "ch": 17, "ea": 18, "sc": 18, "dq": 17 },
+        { "month": "2024-12", "score": 88, "rc": 18, "ch": 17, "ea": 18, "sc": 18, "dq": 17 }
+      ],
+      "aiAssessment": "SR01 delivers consistently strong performance with minimal variance. All component scores are in the 85-90% range. Stable trajectory suggests well-established operational processes.",
+      "improvementActions": []
+    },
+    {
+      "code": "SR04", "name": "Vizag North", "district": "Visakhapatnam",
+      "currentScore": 84, "previousScore": 81, "momChange": 3,
+      "rank": 3, "previousRank": 5, "band": "excellent",
+      "components": { "revenueCompliance": 17, "cashHandling": 17, "exemptionAdherence": 17, "slaCompliance": 16, "dataQuality": 17 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 76, "rc": 15, "ch": 15, "ea": 16, "sc": 15, "dq": 15 },
+        { "month": "2024-08", "score": 78, "rc": 16, "ch": 15, "ea": 16, "sc": 15, "dq": 16 },
+        { "month": "2024-09", "score": 79, "rc": 16, "ch": 16, "ea": 16, "sc": 15, "dq": 16 },
+        { "month": "2024-10", "score": 80, "rc": 16, "ch": 16, "ea": 17, "sc": 15, "dq": 16 },
+        { "month": "2024-11", "score": 81, "rc": 17, "ch": 16, "ea": 17, "sc": 15, "dq": 16 },
+        { "month": "2024-12", "score": 84, "rc": 17, "ch": 17, "ea": 17, "sc": 16, "dq": 17 }
+      ],
+      "aiAssessment": "SR04 has shown strong upward trajectory, crossing into excellent band this month. Revenue compliance and cash handling both improved. SLA compliance is the lowest component but trending up.",
+      "improvementActions": []
+    },
+    {
+      "code": "SR03", "name": "Vijayawada", "district": "Krishna",
+      "currentScore": 82, "previousScore": 83, "momChange": -1,
+      "rank": 4, "previousRank": 4, "band": "excellent",
+      "components": { "revenueCompliance": 17, "cashHandling": 16, "exemptionAdherence": 17, "slaCompliance": 16, "dataQuality": 16 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 80, "rc": 16, "ch": 16, "ea": 16, "sc": 16, "dq": 16 },
+        { "month": "2024-08", "score": 81, "rc": 16, "ch": 16, "ea": 17, "sc": 16, "dq": 16 },
+        { "month": "2024-09", "score": 82, "rc": 17, "ch": 16, "ea": 17, "sc": 16, "dq": 16 },
+        { "month": "2024-10", "score": 83, "rc": 17, "ch": 16, "ea": 17, "sc": 17, "dq": 16 },
+        { "month": "2024-11", "score": 83, "rc": 17, "ch": 16, "ea": 17, "sc": 17, "dq": 16 },
+        { "month": "2024-12", "score": 82, "rc": 17, "ch": 16, "ea": 17, "sc": 16, "dq": 16 }
+      ],
+      "aiAssessment": "SR03 maintains excellent integrity with a minor -1 dip this month due to SLA compliance regression. Two documents exceeded 14-day processing. Overall strong performer.",
+      "improvementActions": []
+    },
+    {
+      "code": "SR07", "name": "Tirupati", "district": "Chittoor",
+      "currentScore": 78, "previousScore": 76, "momChange": 2,
+      "rank": 5, "previousRank": 6, "band": "good",
+      "components": { "revenueCompliance": 16, "cashHandling": 15, "exemptionAdherence": 16, "slaCompliance": 16, "dataQuality": 15 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 72, "rc": 14, "ch": 14, "ea": 15, "sc": 15, "dq": 14 },
+        { "month": "2024-08", "score": 73, "rc": 15, "ch": 14, "ea": 15, "sc": 15, "dq": 14 },
+        { "month": "2024-09", "score": 74, "rc": 15, "ch": 14, "ea": 15, "sc": 15, "dq": 15 },
+        { "month": "2024-10", "score": 75, "rc": 15, "ch": 15, "ea": 16, "sc": 15, "dq": 14 },
+        { "month": "2024-11", "score": 76, "rc": 16, "ch": 15, "ea": 16, "sc": 15, "dq": 14 },
+        { "month": "2024-12", "score": 78, "rc": 16, "ch": 15, "ea": 16, "sc": 16, "dq": 15 }
+      ],
+      "aiAssessment": "SR07 shows consistent improvement trajectory. Revenue compliance reached 80% this month. Cash handling and data quality are areas for focus to cross into excellent band.",
+      "improvementActions": ["Implement daily cash register reconciliation checklist", "Complete pending data quality fields for 12 documents"]
+    },
+    {
+      "code": "SR06", "name": "Rajahmundry", "district": "East Godavari",
+      "currentScore": 75, "previousScore": 74, "momChange": 1,
+      "rank": 6, "previousRank": 7, "band": "good",
+      "components": { "revenueCompliance": 15, "cashHandling": 15, "exemptionAdherence": 16, "slaCompliance": 14, "dataQuality": 15 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 70, "rc": 14, "ch": 14, "ea": 15, "sc": 13, "dq": 14 },
+        { "month": "2024-08", "score": 71, "rc": 14, "ch": 14, "ea": 15, "sc": 14, "dq": 14 },
+        { "month": "2024-09", "score": 72, "rc": 14, "ch": 15, "ea": 15, "sc": 14, "dq": 14 },
+        { "month": "2024-10", "score": 73, "rc": 15, "ch": 15, "ea": 15, "sc": 14, "dq": 14 },
+        { "month": "2024-11", "score": 74, "rc": 15, "ch": 15, "ea": 16, "sc": 14, "dq": 14 },
+        { "month": "2024-12", "score": 75, "rc": 15, "ch": 15, "ea": 16, "sc": 14, "dq": 15 }
+      ],
+      "aiAssessment": "SR06 shows steady improvement. SLA compliance at 70% is the weakest component and should be prioritized. Exemption adherence is the strongest at 80%.",
+      "improvementActions": ["Review pending documents older than 10 days", "Assign dedicated SLA monitor for high-volume days"]
+    },
+    {
+      "code": "SR11", "name": "Kakinada", "district": "East Godavari",
+      "currentScore": 72, "previousScore": 72, "momChange": 0,
+      "rank": 7, "previousRank": 8, "band": "good",
+      "components": { "revenueCompliance": 15, "cashHandling": 14, "exemptionAdherence": 15, "slaCompliance": 14, "dataQuality": 14 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 70, "rc": 14, "ch": 14, "ea": 14, "sc": 14, "dq": 14 },
+        { "month": "2024-08", "score": 71, "rc": 14, "ch": 14, "ea": 15, "sc": 14, "dq": 14 },
+        { "month": "2024-09", "score": 71, "rc": 15, "ch": 14, "ea": 15, "sc": 14, "dq": 13 },
+        { "month": "2024-10", "score": 72, "rc": 15, "ch": 14, "ea": 15, "sc": 14, "dq": 14 },
+        { "month": "2024-11", "score": 72, "rc": 15, "ch": 14, "ea": 15, "sc": 14, "dq": 14 },
+        { "month": "2024-12", "score": 72, "rc": 15, "ch": 14, "ea": 15, "sc": 14, "dq": 14 }
+      ],
+      "aiAssessment": "SR11 has plateaued at 72 for 3 consecutive months. Cash handling and data quality are dragging down the overall score. Needs targeted intervention to break the plateau.",
+      "improvementActions": ["Implement automated CFMS reconciliation checks", "Data quality audit for all November-December registrations"]
+    },
+    {
+      "code": "SR10", "name": "Eluru", "district": "West Godavari",
+      "currentScore": 70, "previousScore": 71, "momChange": -1,
+      "rank": 8, "previousRank": 9, "band": "good",
+      "components": { "revenueCompliance": 14, "cashHandling": 14, "exemptionAdherence": 14, "slaCompliance": 14, "dataQuality": 14 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 68, "rc": 14, "ch": 13, "ea": 14, "sc": 13, "dq": 14 },
+        { "month": "2024-08", "score": 69, "rc": 14, "ch": 14, "ea": 14, "sc": 13, "dq": 14 },
+        { "month": "2024-09", "score": 70, "rc": 14, "ch": 14, "ea": 14, "sc": 14, "dq": 14 },
+        { "month": "2024-10", "score": 71, "rc": 14, "ch": 14, "ea": 14, "sc": 15, "dq": 14 },
+        { "month": "2024-11", "score": 71, "rc": 14, "ch": 14, "ea": 14, "sc": 15, "dq": 14 },
+        { "month": "2024-12", "score": 70, "rc": 14, "ch": 14, "ea": 14, "sc": 14, "dq": 14 }
+      ],
+      "aiAssessment": "SR10 is a balanced performer with all components around 70%. The slight dip this month is due to SLA compliance regression. Even performance across dimensions.",
+      "improvementActions": ["Prioritize revenue gap cases for immediate review", "Cross-train staff for peak-period coverage"]
+    },
+    {
+      "code": "SR16", "name": "Nellore Central", "district": "Nellore",
+      "currentScore": 68, "previousScore": 65, "momChange": 3,
+      "rank": 9, "previousRank": 11, "band": "good",
+      "components": { "revenueCompliance": 14, "cashHandling": 13, "exemptionAdherence": 14, "slaCompliance": 14, "dataQuality": 13 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 60, "rc": 12, "ch": 12, "ea": 12, "sc": 12, "dq": 12 },
+        { "month": "2024-08", "score": 62, "rc": 12, "ch": 12, "ea": 13, "sc": 12, "dq": 13 },
+        { "month": "2024-09", "score": 63, "rc": 13, "ch": 12, "ea": 13, "sc": 12, "dq": 13 },
+        { "month": "2024-10", "score": 64, "rc": 13, "ch": 13, "ea": 13, "sc": 12, "dq": 13 },
+        { "month": "2024-11", "score": 65, "rc": 13, "ch": 13, "ea": 13, "sc": 13, "dq": 13 },
+        { "month": "2024-12", "score": 68, "rc": 14, "ch": 13, "ea": 14, "sc": 14, "dq": 13 }
+      ],
+      "aiAssessment": "SR16 is showing strong recovery with +8 points over 6 months. Revenue compliance and SLA both improved significantly. Cash handling remains the weakest area.",
+      "improvementActions": ["Continue daily reconciliation protocol", "Focus on cash handling procedures"]
+    },
+    {
+      "code": "SR02", "name": "Guntur Main", "district": "Guntur",
+      "currentScore": 65, "previousScore": 67, "momChange": -2,
+      "rank": 10, "previousRank": 10, "band": "good",
+      "components": { "revenueCompliance": 13, "cashHandling": 13, "exemptionAdherence": 14, "slaCompliance": 12, "dataQuality": 13 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 66, "rc": 13, "ch": 14, "ea": 13, "sc": 13, "dq": 13 },
+        { "month": "2024-08", "score": 66, "rc": 13, "ch": 13, "ea": 14, "sc": 13, "dq": 13 },
+        { "month": "2024-09", "score": 67, "rc": 13, "ch": 13, "ea": 14, "sc": 14, "dq": 13 },
+        { "month": "2024-10", "score": 68, "rc": 14, "ch": 13, "ea": 14, "sc": 14, "dq": 13 },
+        { "month": "2024-11", "score": 67, "rc": 13, "ch": 13, "ea": 14, "sc": 14, "dq": 13 },
+        { "month": "2024-12", "score": 65, "rc": 13, "ch": 13, "ea": 14, "sc": 12, "dq": 13 }
+      ],
+      "aiAssessment": "SR02 has declined 3 points over 2 months. SLA compliance dropped from 70% to 60%, likely due to staff shortage. Revenue compliance also dipped. Warrants attention before dropping below good band.",
+      "improvementActions": ["Address SLA backlog - 8 documents pending beyond 14 days", "Review revenue gap cases from last 2 weeks"]
+    },
+    {
+      "code": "SR13", "name": "Ongole", "district": "Prakasam",
+      "currentScore": 58, "previousScore": 56, "momChange": 2,
+      "rank": 11, "previousRank": 12, "band": "needsImprovement",
+      "components": { "revenueCompliance": 12, "cashHandling": 11, "exemptionAdherence": 12, "slaCompliance": 12, "dataQuality": 11 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 52, "rc": 10, "ch": 10, "ea": 11, "sc": 11, "dq": 10 },
+        { "month": "2024-08", "score": 53, "rc": 10, "ch": 10, "ea": 11, "sc": 11, "dq": 11 },
+        { "month": "2024-09", "score": 54, "rc": 11, "ch": 10, "ea": 11, "sc": 11, "dq": 11 },
+        { "month": "2024-10", "score": 55, "rc": 11, "ch": 11, "ea": 11, "sc": 11, "dq": 11 },
+        { "month": "2024-11", "score": 56, "rc": 11, "ch": 11, "ea": 12, "sc": 11, "dq": 11 },
+        { "month": "2024-12", "score": 58, "rc": 12, "ch": 11, "ea": 12, "sc": 12, "dq": 11 }
+      ],
+      "aiAssessment": "SR13 is slowly improving but remains in the needs-improvement band. Cash handling and data quality are the weakest areas. Revenue compliance improving steadily.",
+      "improvementActions": ["Implement CFMS daily sync verification", "Complete data quality backfill for 45 pending documents", "Weekly review with district supervisor"]
+    },
+    {
+      "code": "SR08", "name": "Kadapa", "district": "Kadapa",
+      "currentScore": 55, "previousScore": 57, "momChange": -2,
+      "rank": 12, "previousRank": 11, "band": "needsImprovement",
+      "components": { "revenueCompliance": 11, "cashHandling": 11, "exemptionAdherence": 12, "slaCompliance": 10, "dataQuality": 11 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 58, "rc": 12, "ch": 12, "ea": 12, "sc": 11, "dq": 11 },
+        { "month": "2024-08", "score": 57, "rc": 12, "ch": 11, "ea": 12, "sc": 11, "dq": 11 },
+        { "month": "2024-09", "score": 57, "rc": 11, "ch": 11, "ea": 12, "sc": 12, "dq": 11 },
+        { "month": "2024-10", "score": 56, "rc": 11, "ch": 11, "ea": 12, "sc": 11, "dq": 11 },
+        { "month": "2024-11", "score": 57, "rc": 12, "ch": 11, "ea": 12, "sc": 11, "dq": 11 },
+        { "month": "2024-12", "score": 55, "rc": 11, "ch": 11, "ea": 12, "sc": 10, "dq": 11 }
+      ],
+      "aiAssessment": "SR08 is declining, down from 58 to 55 over 6 months. SLA compliance is the primary concern at 50%. Revenue compliance also weakening. Needs corrective action plan.",
+      "improvementActions": ["Mandatory daily pending queue review", "Revenue gap audit for all documents above ₹5L", "SLA escalation protocol for documents older than 7 days"]
+    },
+    {
+      "code": "SR14", "name": "Anantapur", "district": "Anantapur",
+      "currentScore": 52, "previousScore": 50, "momChange": 2,
+      "rank": 13, "previousRank": 13, "band": "needsImprovement",
+      "components": { "revenueCompliance": 10, "cashHandling": 10, "exemptionAdherence": 12, "slaCompliance": 10, "dataQuality": 10 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 46, "rc": 9, "ch": 9, "ea": 10, "sc": 9, "dq": 9 },
+        { "month": "2024-08", "score": 47, "rc": 9, "ch": 9, "ea": 11, "sc": 9, "dq": 9 },
+        { "month": "2024-09", "score": 48, "rc": 10, "ch": 9, "ea": 11, "sc": 9, "dq": 9 },
+        { "month": "2024-10", "score": 49, "rc": 10, "ch": 10, "ea": 11, "sc": 9, "dq": 9 },
+        { "month": "2024-11", "score": 50, "rc": 10, "ch": 10, "ea": 11, "sc": 10, "dq": 9 },
+        { "month": "2024-12", "score": 52, "rc": 10, "ch": 10, "ea": 12, "sc": 10, "dq": 10 }
+      ],
+      "aiAssessment": "SR14 shows gradual improvement from 46 to 52 over 6 months. Exemption adherence is the strongest component. Revenue compliance and SLA need focused effort.",
+      "improvementActions": ["Revenue compliance training for registration officers", "Daily cash reconciliation with supervisor sign-off", "Data quality improvement drive targeting 90% completeness"]
+    },
+    {
+      "code": "SR09", "name": "Kurnool", "district": "Kurnool",
+      "currentScore": 50, "previousScore": 52, "momChange": -2,
+      "rank": 14, "previousRank": 13, "band": "needsImprovement",
+      "components": { "revenueCompliance": 10, "cashHandling": 10, "exemptionAdherence": 11, "slaCompliance": 9, "dataQuality": 10 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 54, "rc": 11, "ch": 11, "ea": 11, "sc": 11, "dq": 10 },
+        { "month": "2024-08", "score": 53, "rc": 11, "ch": 10, "ea": 11, "sc": 11, "dq": 10 },
+        { "month": "2024-09", "score": 53, "rc": 11, "ch": 10, "ea": 11, "sc": 11, "dq": 10 },
+        { "month": "2024-10", "score": 52, "rc": 10, "ch": 10, "ea": 11, "sc": 11, "dq": 10 },
+        { "month": "2024-11", "score": 52, "rc": 10, "ch": 10, "ea": 11, "sc": 11, "dq": 10 },
+        { "month": "2024-12", "score": 50, "rc": 10, "ch": 10, "ea": 11, "sc": 9, "dq": 10 }
+      ],
+      "aiAssessment": "SR09 has been declining steadily from 54 to 50. SLA compliance dropped 2 points this month. Prohibited land reclassification in the district may be contributing to volume and compliance challenges.",
+      "improvementActions": ["Urgent SLA recovery plan for 15 pending documents", "Revenue gap training for new staff members", "Weekly integrity review with district collector"]
+    },
+    {
+      "code": "SR17", "name": "Srikakulam", "district": "Srikakulam",
+      "currentScore": 48, "previousScore": 48, "momChange": 0,
+      "rank": 15, "previousRank": 15, "band": "needsImprovement",
+      "components": { "revenueCompliance": 9, "cashHandling": 10, "exemptionAdherence": 11, "slaCompliance": 9, "dataQuality": 9 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 50, "rc": 10, "ch": 10, "ea": 11, "sc": 10, "dq": 9 },
+        { "month": "2024-08", "score": 49, "rc": 10, "ch": 10, "ea": 11, "sc": 9, "dq": 9 },
+        { "month": "2024-09", "score": 49, "rc": 10, "ch": 10, "ea": 11, "sc": 9, "dq": 9 },
+        { "month": "2024-10", "score": 48, "rc": 9, "ch": 10, "ea": 11, "sc": 9, "dq": 9 },
+        { "month": "2024-11", "score": 48, "rc": 9, "ch": 10, "ea": 11, "sc": 9, "dq": 9 },
+        { "month": "2024-12", "score": 48, "rc": 9, "ch": 10, "ea": 11, "sc": 9, "dq": 9 }
+      ],
+      "aiAssessment": "SR17 has stagnated at 48-50 for 6 months. Revenue compliance and SLA are consistently weak. Exemption adherence is relatively strong. Needs structured improvement program.",
+      "improvementActions": ["Fortnightly review with IG office", "Revenue training workshops", "SLA monitoring dashboard implementation"]
+    },
+    {
+      "code": "SR18", "name": "Cuddalore", "district": "Prakasam",
+      "currentScore": 38, "previousScore": 43, "momChange": -5,
+      "rank": 16, "previousRank": 16, "band": "atRisk",
+      "components": { "revenueCompliance": 7, "cashHandling": 8, "exemptionAdherence": 9, "slaCompliance": 7, "dataQuality": 7 },
+      "monthlyHistory": [
+        { "month": "2024-07", "score": 48, "rc": 10, "ch": 10, "ea": 10, "sc": 9, "dq": 9 },
+        { "month": "2024-08", "score": 46, "rc": 9, "ch": 10, "ea": 10, "sc": 9, "dq": 8 },
+        { "month": "2024-09", "score": 45, "rc": 9, "ch": 9, "ea": 10, "sc": 9, "dq": 8 },
+        { "month": "2024-10", "score": 44, "rc": 8, "ch": 9, "ea": 10, "sc": 9, "dq": 8 },
+        { "month": "2024-11", "score": 43, "rc": 8, "ch": 9, "ea": 9, "sc": 9, "dq": 8 },
+        { "month": "2024-12", "score": 38, "rc": 7, "ch": 8, "ea": 9, "sc": 7, "dq": 7 }
+      ],
+      "aiAssessment": "SR18 shows a persistent downward trend over 6 months, dropping from 48 to 38. Revenue compliance is the weakest dimension at 7/20 (35%), indicating systemic issues with duty collection. Cash handling dropped 2 points this month due to 3 CFMS sync failures. Immediate audit intervention recommended.",
+      "improvementActions": [
+        "Mandatory daily CFMS reconciliation reporting with supervisor sign-off",
+        "Revenue gap review for all documents above ₹10,000 before registration approval",
+        "SLA monitoring escalation: auto-alert after 7 days pending",
+        "Monthly audit by district collector office"
+      ]
+    }
+  ]
+}

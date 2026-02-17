@@ -1,0 +1,135 @@
+{
+  "metadata": {
+    "lastUpdated": "2024-12-13T14:30:00Z",
+    "period": "2024-01 to 2024-12",
+    "totalDistricts": 13,
+    "totalSROs": 26
+  },
+  "districts": [
+    {
+      "districtCode": "SKL",
+      "districtName": "Srikakulam",
+      "rank": 13,
+      "revenue": 420000000,
+      "target": 650000000,
+      "achievement": 64.6,
+      "growth": -5.6,
+      "reasons": [
+        "Significant outmigration to Visakhapatnam reducing local buyer pool",
+        "Cyclone Michaung aftermath depressed real estate activity in coastal mandals",
+        "Low industrial investment leading to stagnant land demand",
+        "Multiple litigated properties blocking registrations in Palasa and Tekkali zones"
+      ],
+      "suggestedActions": [
+        "Conduct special registration drives in Narasannapeta and Amadalavalasa mandals",
+        "Fast-track denotification of cyclone-affected properties with updated survey records",
+        "Coordinate with District Collector to resolve pending Section 22A disputes"
+      ],
+      "keyMetrics": {
+        "docCountVsPrev": -8.2,
+        "avgMVVsState": -42.5,
+        "exemptionRate": 18.4,
+        "vacantSROCount": 2
+      }
+    },
+    {
+      "districtCode": "VZN",
+      "districtName": "Vizianagaram",
+      "rank": 12,
+      "revenue": 480000000,
+      "target": 700000000,
+      "achievement": 68.6,
+      "growth": -4.2,
+      "reasons": [
+        "Limited urban growth outside Vizianagaram town resulting in low market values",
+        "High proportion of agricultural land transactions with lower stamp duty",
+        "Pending RERA registrations causing delays in apartment deed registrations",
+        "Shortage of document writers leading to registration backlogs"
+      ],
+      "suggestedActions": [
+        "Deploy mobile SRO units for remote mandals like Salur and Parvathipuram",
+        "Increase market value benchmarks in Vizianagaram urban area to reflect current prices"
+      ],
+      "keyMetrics": {
+        "docCountVsPrev": -6.1,
+        "avgMVVsState": -35.8,
+        "exemptionRate": 15.7,
+        "vacantSROCount": 1
+      }
+    },
+    {
+      "districtCode": "KDP",
+      "districtName": "Kadapa",
+      "rank": 11,
+      "revenue": 640000000,
+      "target": 850000000,
+      "achievement": 75.3,
+      "growth": -2.8,
+      "reasons": [
+        "Mining belt litigation in Pulivendula and Rajampet mandals blocking transactions",
+        "Delayed TIDCO housing allotments reducing new registration volume",
+        "Market value revision pending since 2022 causing undervaluation of urban plots"
+      ],
+      "suggestedActions": [
+        "Expedite market value revision for Kadapa urban and Proddatur mandals",
+        "Resolve mining belt property disputes through special Lok Adalat sessions",
+        "Appoint additional Sub-Registrar for Proddatur to reduce document processing backlog"
+      ],
+      "keyMetrics": {
+        "docCountVsPrev": -3.9,
+        "avgMVVsState": -25.8,
+        "exemptionRate": 12.3,
+        "vacantSROCount": 1
+      }
+    },
+    {
+      "districtCode": "ATP",
+      "districtName": "Anantapur",
+      "rank": 10,
+      "revenue": 720000000,
+      "target": 900000000,
+      "achievement": 80.0,
+      "growth": -1.4,
+      "reasons": [
+        "Drought conditions in Penukonda and Dharmavaram mandals depressing agricultural land values",
+        "Kia Motors corridor land acquisition disputes pending in revenue courts",
+        "Low awareness of online slot booking system in rural mandals leading to walk-in congestion"
+      ],
+      "suggestedActions": [
+        "Conduct awareness campaigns for Mee-Seva integrated registration services in rural areas",
+        "Prioritize resolution of land acquisition compensation disputes near Kia Motors corridor",
+        "Increase SRO staffing in Hindupur to handle growing industrial corridor registrations"
+      ],
+      "keyMetrics": {
+        "docCountVsPrev": -2.1,
+        "avgMVVsState": -20.0,
+        "exemptionRate": 10.8,
+        "vacantSROCount": 1
+      }
+    },
+    {
+      "districtCode": "PKS",
+      "districtName": "Prakasam",
+      "rank": 9,
+      "revenue": 860000000,
+      "target": 1000000000,
+      "achievement": 86.0,
+      "growth": 2.1,
+      "reasons": [
+        "Coastal Regulation Zone restrictions limiting development near Vodarevu and Chirala coast",
+        "Pending fishermen colony regularization affecting 340+ properties in Ongole mandal",
+        "Slow uptake of digital registration services in interior mandals like Markapur and Giddalur"
+      ],
+      "suggestedActions": [
+        "Coordinate with CRZ authority for expedited NOCs for eligible coastal properties",
+        "Establish satellite registration counter in Chirala to serve textile corridor transactions"
+      ],
+      "keyMetrics": {
+        "docCountVsPrev": 1.4,
+        "avgMVVsState": -14.6,
+        "exemptionRate": 9.2,
+        "vacantSROCount": 0
+      }
+    }
+  ]
+}

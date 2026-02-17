@@ -40,6 +40,7 @@ import {
   Workflow,
   RefreshCw,
   Landmark,
+  Building2,
 } from "lucide-react";
 
 type RailItem = "home" | "automation" | "reports" | "workbench" | "igrs" | "admin";
@@ -374,6 +375,18 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       label: "Exports",
       icon: React.createElement(Download, { size: 18 }),
       route: "/igrs/revenue-assurance/exports",
+    },
+    {
+      id: "igrs-governance",
+      label: "Governance",
+      icon: React.createElement(Building2, { size: 18 }),
+      route: "/igrs/revenue-assurance/governance",
+    },
+    {
+      id: "igrs-ai-intelligence",
+      label: "AI Intelligence",
+      icon: React.createElement(Brain, { size: 18 }),
+      route: "/igrs/revenue-assurance/ai-intelligence",
     },
     {
       id: "igrs-ai-chat",

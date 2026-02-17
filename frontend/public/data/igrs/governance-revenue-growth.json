@@ -1,0 +1,148 @@
+{
+  "metadata": {
+    "lastUpdated": "2024-12-13T14:30:00Z",
+    "period": "2024-01 to 2024-12",
+    "totalDistricts": 13,
+    "totalSROs": 26
+  },
+  "summary": {
+    "currentMonthRevenue": 1850000000,
+    "previousMonthRevenue": 1720000000,
+    "momGrowth": 7.6,
+    "ytdRevenue": 18500000000
+  },
+  "monthlyRevenue": [
+    {
+      "month": "2024-01",
+      "stampDuty": 680000000,
+      "transferDuty": 340000000,
+      "registrationFee": 170000000,
+      "dsd": 85000000,
+      "other": 25000000,
+      "total": 1300000000,
+      "growthPercent": 0.0,
+      "docCount": 26500
+    },
+    {
+      "month": "2024-02",
+      "stampDuty": 710000000,
+      "transferDuty": 355000000,
+      "registrationFee": 178000000,
+      "dsd": 89000000,
+      "other": 28000000,
+      "total": 1360000000,
+      "growthPercent": 4.6,
+      "docCount": 27200
+    },
+    {
+      "month": "2024-03",
+      "stampDuty": 780000000,
+      "transferDuty": 390000000,
+      "registrationFee": 195000000,
+      "dsd": 98000000,
+      "other": 37000000,
+      "total": 1500000000,
+      "growthPercent": 10.3,
+      "docCount": 30100
+    },
+    {
+      "month": "2024-04",
+      "stampDuty": 740000000,
+      "transferDuty": 370000000,
+      "registrationFee": 185000000,
+      "dsd": 93000000,
+      "other": 32000000,
+      "total": 1420000000,
+      "growthPercent": -5.3,
+      "docCount": 28400
+    },
+    {
+      "month": "2024-05",
+      "stampDuty": 690000000,
+      "transferDuty": 345000000,
+      "registrationFee": 173000000,
+      "dsd": 86000000,
+      "other": 26000000,
+      "total": 1320000000,
+      "growthPercent": -7.0,
+      "docCount": 26800
+    },
+    {
+      "month": "2024-06",
+      "stampDuty": 725000000,
+      "transferDuty": 363000000,
+      "registrationFee": 181000000,
+      "dsd": 91000000,
+      "other": 30000000,
+      "total": 1390000000,
+      "growthPercent": 5.3,
+      "docCount": 27900
+    },
+    {
+      "month": "2024-07",
+      "stampDuty": 760000000,
+      "transferDuty": 380000000,
+      "registrationFee": 190000000,
+      "dsd": 95000000,
+      "other": 35000000,
+      "total": 1460000000,
+      "growthPercent": 5.0,
+      "docCount": 29300
+    },
+    {
+      "month": "2024-08",
+      "stampDuty": 795000000,
+      "transferDuty": 398000000,
+      "registrationFee": 199000000,
+      "dsd": 99000000,
+      "other": 39000000,
+      "total": 1530000000,
+      "growthPercent": 4.8,
+      "docCount": 30500
+    },
+    {
+      "month": "2024-09",
+      "stampDuty": 830000000,
+      "transferDuty": 415000000,
+      "registrationFee": 208000000,
+      "dsd": 104000000,
+      "other": 43000000,
+      "total": 1600000000,
+      "growthPercent": 4.6,
+      "docCount": 31800
+    },
+    {
+      "month": "2024-10",
+      "stampDuty": 870000000,
+      "transferDuty": 435000000,
+      "registrationFee": 218000000,
+      "dsd": 109000000,
+      "other": 48000000,
+      "total": 1680000000,
+      "growthPercent": 5.0,
+      "docCount": 33200
+    },
+    {
+      "month": "2024-11",
+      "stampDuty": 900000000,
+      "transferDuty": 450000000,
+      "registrationFee": 225000000,
+      "dsd": 112000000,
+      "other": 33000000,
+      "total": 1720000000,
+      "growthPercent": 2.4,
+      "docCount": 33800
+    },
+    {
+      "month": "2024-12",
+      "stampDuty": 960000000,
+      "transferDuty": 480000000,
+      "registrationFee": 240000000,
+      "dsd": 120000000,
+      "other": 50000000,
+      "total": 1850000000,
+      "growthPercent": 7.6,
+      "docCount": 35800
+    }
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "revisions": [
+    {
+      "district": "Krishna",
+      "sroCode": "SR01",
+      "revisionDate": "2024-07-01T00:00:00.000Z",
+      "preRevision": {
+        "avgDocsPerMonth": 2180,
+        "avgMV": 4850000,
+        "totalRevenue": 148500000,
+        "avgGap": 12.4,
+        "highRiskRate": 8.2,
+        "exemptionClaims": 245
+      },
+      "postRevision": {
+        "avgDocsPerMonth": 2050,
+        "avgMV": 5940000,
+        "totalRevenue": 185200000,
+        "avgGap": 9.8,
+        "highRiskRate": 6.5,
+        "exemptionClaims": 312
+      },
+      "documentVolumeTimeline": [
+        { "month": "2024-01", "count": 2150, "phase": "pre" },
+        { "month": "2024-02", "count": 2080, "phase": "pre" },
+        { "month": "2024-03", "count": 2220, "phase": "pre" },
+        { "month": "2024-04", "count": 2250, "phase": "pre" },
+        { "month": "2024-05", "count": 2190, "phase": "pre" },
+        { "month": "2024-06", "count": 2180, "phase": "pre" },
+        { "month": "2024-07", "count": 1850, "phase": "post" },
+        { "month": "2024-08", "count": 1920, "phase": "post" },
+        { "month": "2024-09", "count": 2010, "phase": "post" },
+        { "month": "2024-10", "count": 2080, "phase": "post" },
+        { "month": "2024-11", "count": 2120, "phase": "post" },
+        { "month": "2024-12", "count": 2150, "phase": "post" }
+      ]
+    },
+    {
+      "district": "East Godavari",
+      "sroCode": "SR09",
+      "revisionDate": "2024-04-15T00:00:00.000Z",
+      "preRevision": {
+        "avgDocsPerMonth": 1680,
+        "avgMV": 3950000,
+        "totalRevenue": 98200000,
+        "avgGap": 14.8,
+        "highRiskRate": 9.5,
+        "exemptionClaims": 198
+      },
+      "postRevision": {
+        "avgDocsPerMonth": 1540,
+        "avgMV": 4680000,
+        "totalRevenue": 128400000,
+        "avgGap": 11.2,
+        "highRiskRate": 7.8,
+        "exemptionClaims": 276
+      },
+      "documentVolumeTimeline": [
+        { "month": "2024-01", "count": 1720, "phase": "pre" },
+        { "month": "2024-02", "count": 1650, "phase": "pre" },
+        { "month": "2024-03", "count": 1740, "phase": "pre" },
+        { "month": "2024-04", "count": 1610, "phase": "pre" },
+        { "month": "2024-05", "count": 1420, "phase": "post" },
+        { "month": "2024-06", "count": 1480, "phase": "post" },
+        { "month": "2024-07", "count": 1510, "phase": "post" },
+        { "month": "2024-08", "count": 1530, "phase": "post" },
+        { "month": "2024-09", "count": 1560, "phase": "post" },
+        { "month": "2024-10", "count": 1580, "phase": "post" },
+        { "month": "2024-11", "count": 1600, "phase": "post" },
+        { "month": "2024-12", "count": 1620, "phase": "post" }
+      ]
+    },
+    {
+      "district": "Visakhapatnam",
+      "sroCode": "SR12",
+      "revisionDate": "2024-07-01T00:00:00.000Z",
+      "preRevision": {
+        "avgDocsPerMonth": 1950,
+        "avgMV": 5200000,
+        "totalRevenue": 135800000,
+        "avgGap": 11.6,
+        "highRiskRate": 7.4,
+        "exemptionClaims": 218
+      },
+      "postRevision": {
+        "avgDocsPerMonth": 1820,
+        "avgMV": 6280000,
+        "totalRevenue": 165500000,
+        "avgGap": 8.9,
+        "highRiskRate": 5.8,
+        "exemptionClaims": 289
+      },
+      "documentVolumeTimeline": [
+        { "month": "2024-01", "count": 1920, "phase": "pre" },
+        { "month": "2024-02", "count": 1880, "phase": "pre" },
+        { "month": "2024-03", "count": 1980, "phase": "pre" },
+        { "month": "2024-04", "count": 2010, "phase": "pre" },
+        { "month": "2024-05", "count": 1960, "phase": "pre" },
+        { "month": "2024-06", "count": 1940, "phase": "pre" },
+        { "month": "2024-07", "count": 1680, "phase": "post" },
+        { "month": "2024-08", "count": 1750, "phase": "post" },
+        { "month": "2024-09", "count": 1810, "phase": "post" },
+        { "month": "2024-10", "count": 1850, "phase": "post" },
+        { "month": "2024-11", "count": 1880, "phase": "post" },
+        { "month": "2024-12", "count": 1910, "phase": "post" }
+      ]
+    }
+  ],
+  "sroPeerComparison": [
+    {
+      "sroCode": "SR01",
+      "officeName": "SRO Vijayawada-I",
+      "district": "Krishna",
+      "revenue": 102000000,
+      "revenueGrowth": 24.8,
+      "mvCompliance": 94.2,
+      "avgGap": 9.8,
+      "highRiskPercent": 6.5,
+      "rank": 1
+    },
+    {
+      "sroCode": "SR12",
+      "officeName": "SRO Visakhapatnam-I",
+      "district": "Visakhapatnam",
+      "revenue": 95000000,
+      "revenueGrowth": 22.1,
+      "mvCompliance": 93.8,
+      "avgGap": 8.9,
+      "highRiskPercent": 5.8,
+      "rank": 2
+    },
+    {
+      "sroCode": "SR05",
+      "officeName": "SRO Guntur-I",
+      "district": "Guntur",
+      "revenue": 86000000,
+      "revenueGrowth": 19.5,
+      "mvCompliance": 92.5,
+      "avgGap": 10.2,
+      "highRiskPercent": 7.1,
+      "rank": 3
+    },
+    {
+      "sroCode": "SR02",
+      "officeName": "SRO Vijayawada-II",
+      "district": "Krishna",
+      "revenue": 83000000,
+      "revenueGrowth": 18.2,
+      "mvCompliance": 91.8,
+      "avgGap": 10.5,
+      "highRiskPercent": 7.4,
+      "rank": 4
+    },
+    {
+      "sroCode": "SR20",
+      "officeName": "SRO Tirupati",
+      "district": "Chittoor",
+      "revenue": 72000000,
+      "revenueGrowth": 17.6,
+      "mvCompliance": 91.2,
+      "avgGap": 11.0,
+      "highRiskPercent": 7.8,
+      "rank": 5
+    },
+    {
+      "sroCode": "SR13",
+      "officeName": "SRO Visakhapatnam-II",
+      "district": "Visakhapatnam",
+      "revenue": 70000000,
+      "revenueGrowth": 16.4,
+      "mvCompliance": 90.5,
+      "avgGap": 11.3,
+      "highRiskPercent": 8.2,
+      "rank": 6
+    },
+    {
+      "sroCode": "SR06",
+      "officeName": "SRO Tenali",
+      "district": "Guntur",
+      "revenue": 66000000,
+      "revenueGrowth": 15.8,
+      "mvCompliance": 89.8,
+      "avgGap": 11.8,
+      "highRiskPercent": 8.5,
+      "rank": 7
+    },
+    {
+      "sroCode": "SR09",
+      "officeName": "SRO Rajahmundry",
+      "district": "East Godavari",
+      "revenue": 62000000,
+      "revenueGrowth": 14.2,
+      "mvCompliance": 88.4,
+      "avgGap": 12.5,
+      "highRiskPercent": 9.1,
+      "rank": 8
+    },
+    {
+      "sroCode": "SR16",
+      "officeName": "SRO Nellore",
+      "district": "Nellore",
+      "revenue": 58000000,
+      "revenueGrowth": 13.5,
+      "mvCompliance": 87.6,
+      "avgGap": 13.2,
+      "highRiskPercent": 9.6,
+      "rank": 9
+    },
+    {
+      "sroCode": "SR11",
+      "officeName": "SRO Eluru",
+      "district": "West Godavari",
+      "revenue": 54000000,
+      "revenueGrowth": 12.8,
+      "mvCompliance": 86.9,
+      "avgGap": 13.8,
+      "highRiskPercent": 10.2,
+      "rank": 10
+    }
+  ]
+}

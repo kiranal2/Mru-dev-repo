@@ -6,6 +6,7 @@ import {
   useIGRSSignals,
   useIGRSOffices,
   useIGRSPatterns,
+  useIGRSStampIntelligence,
 } from "@/hooks/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +21,10 @@ import {
   FileWarning,
   Activity,
   RefreshCw,
+  Users as UsersIcon,
+  Stamp,
 } from "lucide-react";
+import type { StampVendorAnalysis } from "@/lib/data/types";
 
 // ─── Inline SVG chart components ─────────────────────────────────────────────
 
@@ -287,13 +291,14 @@ function highlightIcon(icon: string) {
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
 
-type TabKey = "overview" | "office-risk" | "patterns" | "exemptions";
+type TabKey = "overview" | "office-risk" | "patterns" | "exemptions" | "stamp-intelligence";
 
 export default function InsightsPage() {
   const dashboard = useIGRSDashboard();
   const signals = useIGRSSignals();
   const offices = useIGRSOffices();
   const patterns = useIGRSPatterns();
+  const stampIntel = useIGRSStampIntelligence();
 
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
 
@@ -357,6 +362,7 @@ export default function InsightsPage() {
     { key: "office-risk", label: "Office Risk" },
     { key: "patterns", label: "Patterns" },
     { key: "exemptions", label: "Exemptions" },
+    { key: "stamp-intelligence", label: "Stamp Intelligence" },
   ];
 
   return (
@@ -579,6 +585,8 @@ export default function InsightsPage() {
                       <th className="text-center py-2 px-2">Prohibited</th>
                       <th className="text-center py-2 px-2">MV Dev.</th>
                       <th className="text-center py-2 px-2">Exemption</th>
+                      <th className="text-center py-2 px-2">Cash Risk</th>
+                      <th className="text-center py-2 px-2">Stamp Gap</th>
                       <th className="text-right py-2 px-2">Gap</th>
                     </tr>
                   </thead>
@@ -607,6 +615,8 @@ export default function InsightsPage() {
                           <td className="py-2 px-2 text-center">{o.componentScores.prohibitedMatch}</td>
                           <td className="py-2 px-2 text-center">{o.componentScores.mvDeviation}</td>
                           <td className="py-2 px-2 text-center">{o.componentScores.exemptionAnomaly}</td>
+                          <td className="py-2 px-2 text-center">{o.cashRiskScore ?? "—"}</td>
+                          <td className="py-2 px-2 text-center">{o.stampInventoryGap ? formatInr(o.stampInventoryGap) : "—"}</td>
                           <td className="py-2 px-2 text-right font-medium">
                             {formatInr(o.totalGapInr)}
                           </td>
@@ -794,6 +804,279 @@ export default function InsightsPage() {
           </Card>
         </div>
       )}
+
+      {activeTab === "stamp-intelligence" && (
+        <StampIntelligenceTab data={stampIntel.data} loading={stampIntel.loading} />
+      )}
+    </div>
+  );
+}
+
+// ─── Stamp Intelligence Tab ──────────────────────────────────────────────────
+
+function StampIntelligenceTab({ data, loading }: { data: StampVendorAnalysis | null; loading: boolean }) {
+  if (loading || !data) {
+    return (
+      <div className="space-y-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-48 bg-gray-200 rounded animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  const s = data.summary;
+  const maxRisk = Math.max(...data.vendorRiskRanking.map((v) => v.vendorRiskScore), 1);
+  const maxNJ = Math.max(...data.njStampAnomalies.map((a) => a.njStampCount), 1);
+
+  // Usage trends: group by jurisdiction for multi-line chart
+  const jurisdictions = Array.from(new Set(data.usageTrends.map((t) => t.jurisdiction)));
+  const months = Array.from(new Set(data.usageTrends.map((t) => t.month))).sort();
+  const TREND_COLORS = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6"];
+
+  return (
+    <div className="space-y-4">
+      {/* KPI Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <KPICard icon={<UsersIcon className="w-4 h-4 text-blue-600" />} label="Total Vendors" value={String(s.totalVendors)} sub={`${s.atRiskVendors} at risk`} accent="blue" />
+        <KPICard icon={<AlertTriangle className="w-4 h-4 text-red-600" />} label="At-Risk Vendors" value={String(s.atRiskVendors)} sub={`${s.atRiskVendorPercent}% of total`} accent="red" />
+        <KPICard icon={<FileWarning className="w-4 h-4 text-amber-600" />} label="NJ Stamp Anomalies" value={String(s.njStampAnomalies)} sub={`${formatInr(s.njStampImpact)} est. impact`} accent="amber" />
+        <KPICard icon={<Stamp className="w-4 h-4 text-purple-600" />} label="Franking Alerts" value={String(s.frankingAlerts)} sub="Above ₹1,000 threshold" accent="purple" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Vendor Risk Ranking Table */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Vendor Risk Ranking</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b text-slate-500">
+                    <th className="text-left py-2 px-1">#</th>
+                    <th className="text-left py-2 px-1">Vendor</th>
+                    <th className="text-left py-2 px-1">Jurisdiction</th>
+                    <th className="text-left py-2 px-1">Type</th>
+                    <th className="text-right py-2 px-1">Usage</th>
+                    <th className="text-right py-2 px-1">Expected</th>
+                    <th className="text-right py-2 px-1">Dev %</th>
+                    <th className="text-right py-2 px-1">Risk</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.vendorRiskRanking.slice(0, 10).map((v, i) => (
+                    <tr key={v.vendorId} className="border-b hover:bg-slate-50">
+                      <td className="py-1.5 px-1 text-slate-400">{i + 1}</td>
+                      <td className="py-1.5 px-1 font-medium">{v.vendorName}</td>
+                      <td className="py-1.5 px-1 text-slate-500">{v.jurisdiction}</td>
+                      <td className="py-1.5 px-1">
+                        <Badge variant="outline" className="text-[10px]">{v.stampType}</Badge>
+                      </td>
+                      <td className="py-1.5 px-1 text-right">{v.usageCurrent}</td>
+                      <td className="py-1.5 px-1 text-right text-slate-500">{v.usageExpected}</td>
+                      <td className={`py-1.5 px-1 text-right font-medium ${v.deviationPercent > 50 ? "text-red-600" : v.deviationPercent > 25 ? "text-amber-600" : "text-slate-600"}`}>
+                        +{v.deviationPercent}%
+                      </td>
+                      <td className="py-1.5 px-1 text-right">
+                        <div className="inline-flex items-center gap-1">
+                          <span className="w-12 h-1.5 rounded bg-slate-100 overflow-hidden">
+                            <span className="block h-full rounded bg-red-500" style={{ width: `${(v.vendorRiskScore / maxRisk) * 100}%` }} />
+                          </span>
+                          <span className="text-[10px]">{v.vendorRiskScore}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Stamp Leakage Index Donut */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Stamp Leakage Index</CardTitle>
+            <p className="text-xs text-muted-foreground">Leakage distribution by stamp type</p>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-6">
+              <svg viewBox="0 0 120 120" className="w-40 h-40 flex-shrink-0">
+                {(() => {
+                  let offset = 0;
+                  return data.stampLeakageByType.map((item) => {
+                    const circumference = 2 * Math.PI * 45;
+                    const strokeDash = (item.percent / 100) * circumference;
+                    const el = (
+                      <circle
+                        key={item.type}
+                        cx="60" cy="60" r="45"
+                        fill="none"
+                        stroke={item.color}
+                        strokeWidth="14"
+                        strokeDasharray={`${strokeDash} ${circumference - strokeDash}`}
+                        strokeDashoffset={-offset}
+                        transform="rotate(-90 60 60)"
+                      />
+                    );
+                    offset += strokeDash;
+                    return el;
+                  });
+                })()}
+                <text x="60" y="56" textAnchor="middle" className="text-[10px] fill-slate-500">Total</text>
+                <text x="60" y="72" textAnchor="middle" className="text-sm font-bold fill-slate-800">{formatInr(s.totalStampLeakage)}</text>
+              </svg>
+              <div className="space-y-2 flex-1">
+                {data.stampLeakageByType.map((item) => (
+                  <div key={item.type} className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className="text-slate-600">{item.type}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">{item.percent}%</p>
+                      <p className="text-slate-500">{formatInr(item.amount)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* NJ Stamp Anomaly Chart */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">NJ Stamp Anomalies (&gt;₹100)</CardTitle>
+            <p className="text-xs text-muted-foreground">Vendors with NJ stamp denominations above threshold</p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {data.njStampAnomalies.map((a) => (
+                <div key={a.vendorId} className="flex items-center gap-2 text-xs">
+                  <span className="w-28 truncate text-right text-slate-600">{a.vendorName}</span>
+                  <div className="flex-1 h-5 bg-slate-100 rounded overflow-hidden">
+                    <div
+                      className="h-full bg-red-500 rounded transition-all"
+                      style={{ width: `${(a.njStampCount / maxNJ) * 100}%` }}
+                      title={`${a.njStampCount} NJ stamps`}
+                    />
+                  </div>
+                  <span className="w-8 text-right font-medium">{a.njStampCount}</span>
+                  <span className="w-16 text-right text-slate-500">{formatInr(a.estimatedImpact)}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Franking Monitoring Table */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Franking Monitoring</CardTitle>
+            <p className="text-xs text-muted-foreground">Franking transactions above ₹1,000 threshold</p>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b text-slate-500">
+                    <th className="text-left py-2 px-1">Document</th>
+                    <th className="text-right py-2 px-1">Amount</th>
+                    <th className="text-right py-2 px-1">Expected</th>
+                    <th className="text-right py-2 px-1">Variance</th>
+                    <th className="text-center py-2 px-1">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.frankingAlerts.map((f) => (
+                    <tr key={f.documentId} className="border-b hover:bg-slate-50">
+                      <td className="py-1.5 px-1 font-mono text-[10px]">{f.documentId}</td>
+                      <td className="py-1.5 px-1 text-right">{formatInr(f.frankingAmount)}</td>
+                      <td className="py-1.5 px-1 text-right text-slate-500">{formatInr(f.expectedAmount)}</td>
+                      <td className="py-1.5 px-1 text-right text-red-600 font-medium">{formatInr(f.variance)}</td>
+                      <td className="py-1.5 px-1 text-center">
+                        <Badge variant={f.reviewStatus === "Escalated" ? "destructive" : f.reviewStatus === "Pending" ? "secondary" : "outline"} className="text-[10px]">
+                          {f.reviewStatus}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Usage Trend Multi-line Chart */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Monthly Stamp Usage Trend</CardTitle>
+          <p className="text-xs text-muted-foreground">Top jurisdictions — last 12 months</p>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-3 mb-3 flex-wrap">
+            {jurisdictions.slice(0, 5).map((j, i) => (
+              <span key={j} className="flex items-center gap-1 text-[10px] text-slate-600">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: TREND_COLORS[i % TREND_COLORS.length] }} />
+                {j}
+              </span>
+            ))}
+          </div>
+          <svg viewBox="0 0 500 160" className="w-full" preserveAspectRatio="xMidYMid meet">
+            {(() => {
+              const allCounts = data.usageTrends.map((t) => t.stampCount);
+              const maxCount = Math.max(...allCounts, 1);
+              const pad = { top: 10, right: 10, bottom: 24, left: 10 };
+              const iw = 500 - pad.left - pad.right;
+              const ih = 160 - pad.top - pad.bottom;
+
+              return jurisdictions.slice(0, 5).map((jurisdiction, ji) => {
+                const jData = months.map((m) => data.usageTrends.find((t) => t.month === m && t.jurisdiction === jurisdiction));
+                const points = jData.map((d, i) => {
+                  const x = pad.left + (i / Math.max(months.length - 1, 1)) * iw;
+                  const y = pad.top + ih - ((d?.stampCount ?? 0) / maxCount) * ih;
+                  return `${x},${y}`;
+                });
+                const anomalyPoints = jData.map((d, i) => ({
+                  x: pad.left + (i / Math.max(months.length - 1, 1)) * iw,
+                  y: pad.top + ih - ((d?.stampCount ?? 0) / maxCount) * ih,
+                  anomaly: d?.anomaly ?? false,
+                }));
+                return (
+                  <g key={jurisdiction}>
+                    <polyline
+                      fill="none"
+                      stroke={TREND_COLORS[ji % TREND_COLORS.length]}
+                      strokeWidth="1.5"
+                      points={points.join(" ")}
+                    />
+                    {anomalyPoints.filter((p) => p.anomaly).map((p, i) => (
+                      <circle key={i} cx={p.x} cy={p.y} r="3" fill="#ef4444" />
+                    ))}
+                  </g>
+                );
+              });
+            })()}
+            {months.map((m, i) => (
+              <text
+                key={m}
+                x={10 + (i / Math.max(months.length - 1, 1)) * 480}
+                y={150}
+                textAnchor="middle"
+                className="text-[7px] fill-slate-400"
+              >
+                {m.slice(5)}
+              </text>
+            ))}
+          </svg>
+        </CardContent>
+      </Card>
     </div>
   );
 }
