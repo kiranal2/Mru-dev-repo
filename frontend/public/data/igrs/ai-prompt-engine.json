@@ -93,12 +93,12 @@
       "promptText": "Top 5 revenue-generating SROs",
       "category": "revenue",
       "response": {
-        "narrative": "Top 5 Sub-Registrar Offices by revenue generation for Dec 2024. SR05 (Salem Main) leads with ₹2.1Cr, contributing 17.8% of total monthly revenue.",
+        "narrative": "Top 5 Sub-Registrar Offices by revenue generation for Dec 2024. SR05 (Rajahmundry Main) leads with ₹2.1Cr, contributing 17.8% of total monthly revenue.",
         "inlineTable": {
           "headers": ["Rank", "SRO", "District", "Revenue", "Documents", "Avg MV"],
           "rows": [
-            ["1", "SR05 Salem Main", "Krishna", "₹2.1Cr", "412", "₹28.4L"],
-            ["2", "SR01 Chennai Central", "Guntur", "₹1.9Cr", "386", "₹32.1L"],
+            ["1", "SR05 Rajahmundry Main", "Krishna", "₹2.1Cr", "412", "₹28.4L"],
+            ["2", "SR01 Vijayawada Central", "Guntur", "₹1.9Cr", "386", "₹32.1L"],
             ["3", "SR03 Vijayawada", "Krishna", "₹1.7Cr", "348", "₹26.8L"],
             ["4", "SR04 Vizag North", "Visakhapatnam", "₹1.5Cr", "322", "₹24.2L"],
             ["5", "SR07 Tirupati", "Chittoor", "₹1.3Cr", "296", "₹22.6L"]
@@ -228,7 +228,7 @@
         "inlineTable": {
           "headers": ["Rank", "SRO", "Risk Score", "Key Risk", "Cases", "Gap Amount"],
           "rows": [
-            ["16", "SR18 Cuddalore", "38/100", "Revenue + Cash", "12", "₹14.1L"],
+            ["16", "SR18 Nellore", "38/100", "Revenue + Cash", "12", "₹14.1L"],
             ["15", "SR17 Srikakulam", "48/100", "SLA + Revenue", "8", "₹8.4L"],
             ["14", "SR09 Kurnool", "50/100", "Volume decline", "9", "₹11.2L"],
             ["13", "SR14 Anantapur", "52/100", "Revenue + Data", "7", "₹6.8L"],
@@ -240,7 +240,7 @@
           "labels": ["SR18", "SR17", "SR09", "SR14", "SR08"],
           "datasets": [{ "label": "Integrity Score", "data": [38, 48, 50, 52, 55], "color": "#EF4444" }]
         },
-        "keyInsight": "SR18 (Cuddalore) is the most concerning with a 5-point drop this month. Revenue compliance at 35% and 3 CFMS sync failures require immediate audit intervention.",
+        "keyInsight": "SR18 (Nellore) is the most concerning with a 5-point drop this month. Revenue compliance at 35% and 3 CFMS sync failures require immediate audit intervention.",
         "followUpPrompts": ["Detailed report for SR18", "Corrective actions for at-risk SROs", "Compare with last month"]
       }
     },
@@ -279,7 +279,7 @@
         "inlineTable": {
           "headers": ["SRO", "Exemptions", "Rate", "Failed Checks", "Impact"],
           "rows": [
-            ["SR18 Cuddalore", "28", "22.4%", "8", "₹1.4Cr"],
+            ["SR18 Nellore", "28", "22.4%", "8", "₹1.4Cr"],
             ["SR09 Kurnool", "19", "18.6%", "5", "₹0.9Cr"],
             ["SR14 Anantapur", "16", "17.8%", "4", "₹0.7Cr"],
             ["SR17 Srikakulam", "14", "16.2%", "3", "₹0.5Cr"],
@@ -307,11 +307,11 @@
         "inlineTable": {
           "headers": ["SRO", "Days Matched", "Days Discrepant", "Avg Variance", "Status"],
           "rows": [
-            ["SR18 Cuddalore", "8", "5", "₹82,400", "Alert"],
+            ["SR18 Nellore", "8", "5", "₹82,400", "Alert"],
             ["SR09 Kurnool", "10", "3", "₹45,200", "Warning"],
             ["SR14 Anantapur", "11", "2", "₹28,600", "Warning"],
-            ["SR05 Salem Main", "13", "0", "₹0", "Clear"],
-            ["SR01 Chennai Central", "13", "0", "₹0", "Clear"]
+            ["SR05 Rajahmundry Main", "13", "0", "₹0", "Clear"],
+            ["SR01 Vijayawada Central", "13", "0", "₹0", "Clear"]
           ]
         },
         "inlineChart": {
@@ -495,7 +495,7 @@
         "inlineTable": {
           "headers": ["SRO", "Score", "Trend", "Priority", "Key Action"],
           "rows": [
-            ["SR18 Cuddalore", "38", "\u2193\u2193\u2193", "Critical", "Immediate audit + daily oversight"],
+            ["SR18 Nellore", "38", "\u2193\u2193\u2193", "Critical", "Immediate audit + daily oversight"],
             ["SR17 Srikakulam", "48", "\u2192", "High", "Revenue training + SLA monitoring"],
             ["SR09 Kurnool", "50", "\u2193", "High", "SLA recovery + PP zone review"],
             ["SR14 Anantapur", "52", "\u2191", "Medium", "Continue improvement program"],
@@ -548,7 +548,7 @@
         "inlineTable": {
           "headers": ["SRO", "Pending > SLA", "Oldest (Days)", "Avg Delay", "Est. Revenue Held"],
           "rows": [
-            ["SR18 Cuddalore", "12", "32", "22.4", "₹8.4L"],
+            ["SR18 Nellore", "12", "32", "22.4", "₹8.4L"],
             ["SR09 Kurnool", "8", "28", "19.6", "₹6.2L"],
             ["SR08 Kadapa", "7", "24", "18.2", "₹4.8L"],
             ["SR17 Srikakulam", "6", "21", "16.8", "₹3.6L"],
@@ -573,10 +573,10 @@
         "inlineTable": {
           "headers": ["SRO", "Avg Days", "Within SLA %", "P90 Days", "Rank"],
           "rows": [
-            ["SR05 Salem Main", "4.2", "98.6%", "8.4", "1"],
-            ["SR01 Chennai Central", "5.1", "97.2%", "9.8", "2"],
+            ["SR05 Rajahmundry Main", "4.2", "98.6%", "8.4", "1"],
+            ["SR01 Vijayawada Central", "5.1", "97.2%", "9.8", "2"],
             ["SR04 Vizag North", "5.8", "96.4%", "10.2", "3"],
-            ["SR18 Cuddalore", "14.8", "62.4%", "28.6", "16"],
+            ["SR18 Nellore", "14.8", "62.4%", "28.6", "16"],
             ["SR09 Kurnool", "12.4", "71.2%", "24.2", "15"]
           ]
         },
@@ -624,7 +624,7 @@
         "inlineTable": {
           "headers": ["SRO", "Avg Days", "Max Days", "Pending", "Root Cause"],
           "rows": [
-            ["SR18 Cuddalore", "14.8", "32", "12", "Staff shortage + system issues"],
+            ["SR18 Nellore", "14.8", "32", "12", "Staff shortage + system issues"],
             ["SR09 Kurnool", "12.4", "28", "8", "Volume spike + PP reviews"],
             ["SR08 Kadapa", "11.6", "24", "7", "Manual processing delays"],
             ["SR17 Srikakulam", "10.8", "21", "6", "Data quality rework"],

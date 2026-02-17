@@ -62,9 +62,9 @@ type ViewMode = "table" | "compact";
 
 type EscalateTarget =
   | "District Registrar"
-  | "Zonal Inspector"
-  | "Joint IG"
-  | "Revenue Audit Cell";
+  | "Joint Inspector General"
+  | "Additional Inspector General"
+  | "IG of Registration & Stamps";
 
 const RISK_OPTIONS = ["High", "Medium", "Low"];
 const STATUS_OPTIONS = ["New", "In Review", "Resolved"] as const;
@@ -854,9 +854,9 @@ function CaseDrawer({
                 <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="District Registrar">District Registrar</SelectItem>
-                  <SelectItem value="Zonal Inspector">Zonal Inspector</SelectItem>
-                  <SelectItem value="Joint IG">Joint IG</SelectItem>
-                  <SelectItem value="Revenue Audit Cell">Revenue Audit Cell</SelectItem>
+                  <SelectItem value="Joint Inspector General">Joint Inspector General</SelectItem>
+                  <SelectItem value="Additional Inspector General">Additional Inspector General</SelectItem>
+                  <SelectItem value="IG of Registration & Stamps">IG of Registration & Stamps</SelectItem>
                 </SelectContent>
               </Select>
             </div>

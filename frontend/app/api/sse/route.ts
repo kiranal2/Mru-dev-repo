@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { COMMAND_ENTER_SSE_URL } from "@/conf/conf";
 import { parseBody } from "@/app/api/_lib/validation";
+import { createMockSSEStream } from "@/app/api/_lib/mock-sse";
 
 const sseBodySchema = z.object({
   query: z.string().min(1),
@@ -11,7 +12,24 @@ export async function POST(request: NextRequest) {
   const parsed = await parseBody(request, sseBodySchema);
   if ('error' in parsed) return parsed.error;
   const body = parsed.data;
-  const response = await fetch(`${process.env.API_BASE_URL}/api${COMMAND_ENTER_SSE_URL}`, {
+
+  const apiBaseUrl = process.env.API_BASE_URL;
+
+  // Demo mode: return mock streaming events when no backend is configured
+  if (!apiBaseUrl) {
+    console.log("[sse] No API_BASE_URL configured — using mock SSE stream");
+    const stream = createMockSSEStream(body.query);
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      },
+    });
+  }
+
+  const response = await fetch(`${apiBaseUrl}/api${COMMAND_ENTER_SSE_URL}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

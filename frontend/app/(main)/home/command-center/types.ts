@@ -17,6 +17,7 @@ export type Message = {
   recommendations?: string[];
   nextSteps?: string[];
   dataAnalysis?: string;
+  followUpPrompts?: string[];
   streamingEvents?: StreamingEvent[]; // Streaming events for this message
 };
 

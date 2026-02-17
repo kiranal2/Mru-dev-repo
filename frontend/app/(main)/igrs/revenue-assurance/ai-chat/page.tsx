@@ -16,20 +16,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import type {
   PromptTemplate,
   PromptCategory,
-  PromptResponseData,
   InlineChartData,
   PromptCategoryDefinition,
 } from "@/lib/data/types/igrs";
-
-// ── Types ────────────────────────────────────────────────────────────────────
-
-interface ConversationMessage {
-  id: string;
-  role: "user" | "ai";
-  content: string;
-  data?: PromptResponseData;
-  timestamp: string;
-}
+import { ResponseActionBar } from "./_components/response-action-bar";
+import type { ConversationMessage } from "./_components/response-action-bar";
 
 // ── Fuzzy Matching ───────────────────────────────────────────────────────────
 
@@ -206,6 +197,9 @@ function AIBubble({
         <Brain className="w-4 h-4 text-white" />
       </div>
       <div className="rounded-2xl px-4 py-3 max-w-[80%] bg-white border border-slate-200">
+        {/* Action toolbar */}
+        <ResponseActionBar msg={msg} />
+
         <p className="text-sm text-slate-700 leading-relaxed">{msg.content}</p>
 
         {/* Inline Table */}

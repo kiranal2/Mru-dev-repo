@@ -8,8 +8,8 @@
   "summary": {
     "stateAvgScore": 72.4,
     "stateAvgChange": 1.2,
-    "topSRO": { "code": "SR05", "name": "Salem Main", "score": 91 },
-    "bottomSRO": { "code": "SR18", "name": "Cuddalore", "score": 48 },
+    "topSRO": { "code": "SR05", "name": "Rajahmundry Main", "score": 91 },
+    "bottomSRO": { "code": "SR18", "name": "Nellore", "score": 48 },
     "improvingSROCount": 8,
     "decliningSROCount": 5,
     "stableSROCount": 3
@@ -23,7 +23,7 @@
   ],
   "sros": [
     {
-      "code": "SR05", "name": "Salem Main", "district": "Krishna",
+      "code": "SR05", "name": "Rajahmundry Main", "district": "Krishna",
       "currentScore": 91, "previousScore": 88, "momChange": 3,
       "rank": 1, "previousRank": 3, "band": "excellent",
       "components": { "revenueCompliance": 19, "cashHandling": 18, "exemptionAdherence": 19, "slaCompliance": 17, "dataQuality": 18 },
@@ -39,7 +39,7 @@
       "improvementActions": []
     },
     {
-      "code": "SR01", "name": "Chennai Central", "district": "Guntur",
+      "code": "SR01", "name": "Vijayawada Central", "district": "Guntur",
       "currentScore": 88, "previousScore": 88, "momChange": 0,
       "rank": 2, "previousRank": 2, "band": "excellent",
       "components": { "revenueCompliance": 18, "cashHandling": 17, "exemptionAdherence": 18, "slaCompliance": 18, "dataQuality": 17 },
@@ -263,7 +263,7 @@
       "improvementActions": ["Fortnightly review with IG office", "Revenue training workshops", "SLA monitoring dashboard implementation"]
     },
     {
-      "code": "SR18", "name": "Cuddalore", "district": "Prakasam",
+      "code": "SR18", "name": "Nellore", "district": "Prakasam",
       "currentScore": 38, "previousScore": 43, "momChange": -5,
       "rank": 16, "previousRank": 16, "band": "atRisk",
       "components": { "revenueCompliance": 7, "cashHandling": 8, "exemptionAdherence": 9, "slaCompliance": 7, "dataQuality": 7 },

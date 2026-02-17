@@ -1,0 +1,1273 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Comprehensive Longevity Strategies: A Scientific and Holistic Approach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest': '#2d5016',
+                        'earth': '#8b7355',
+                        'clay': '#c4a484',
+                        'sage': '#9caf88',
+                        'moss': '#7a8471'
+                    },
+                    fontFamily: {
+                        'serif': ['Playfair Display', 'serif'],
+                        'sans': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #2d5016 0%, #7a8471 50%, #9caf88 100%);
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .citation-link {
+            color: #2d5016;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .citation-link:hover {
+            color: #7a8471;
+        }
+        .toc-fixed {
+            position: fixed;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 280px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .main-content {
+            margin-left: 320px;
+            margin-right: 2rem;
+        }
+        .chart-container {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .insight-highlight {
+            background: linear-gradient(120deg, #f3f4f6 0%, #ffffff 100%);
+            border-left: 4px solid #2d5016;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        @media (max-width: 1280px) {
+            .toc-fixed {
+                position: relative;
+                left: auto;
+                top: auto;
+                transform: none;
+                width: 100%;
+                margin-bottom: 2rem;
+            }
+            .main-content {
+                margin-left: 2rem;
+            }
+        }
+    </style>
+  <base target="_blank">
+</head>
+
+  <body class="bg-gray-50 font-sans text-gray-800 leading-relaxed overflow-x-hidden">
+
+    <!-- Toggle Button for Mobile -->
+    <button id="toc-toggle" class="fixed top-4 left-4 z-50 bg-forest text-white p-2 rounded-lg shadow-lg xl:hidden">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Fixed Table of Contents -->
+    <nav id="toc-nav" class="toc-fixed hidden xl:block">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-serif font-semibold text-lg text-forest">Contents</h3>
+        <button id="toc-close" class="xl:hidden text-gray-500 hover:text-forest">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <ul class="space-y-2 text-sm">
+        <li>
+          <a href="#introduction" class="block py-1 px-2 rounded hover:bg-sage/20 transition-colors">Introduction</a>
+        </li>
+        <li>
+          <a href="#nutrition" class="block py-1 px-2 rounded hover:bg-sage/20 transition-colors">1. Optimal Nutrition</a>
+          <ul class="ml-4 mt-1 space-y-1 text-xs">
+            <li>
+              <a href="#mediterranean-dash" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">1.1 Diet Patterns</a>
+            </li>
+            <li>
+              <a href="#plant-forward" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">1.2 Plant-Forward Approaches</a>
+            </li>
+            <li>
+              <a href="#targeted-strategies" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">1.3 Targeted Strategies</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#physical-activity" class="block py-1 px-2 rounded hover:bg-sage/20 transition-colors">2. Physical Activity</a>
+          <ul class="ml-4 mt-1 space-y-1 text-xs">
+            <li>
+              <a href="#aerobic-exercise" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">2.1 Aerobic Exercise</a>
+            </li>
+            <li>
+              <a href="#resistance-training" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">2.2 Resistance Training</a>
+            </li>
+            <li>
+              <a href="#movement-ecology" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">2.3 Movement Ecology</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#sleep-optimization" class="block py-1 px-2 rounded hover:bg-sage/20 transition-colors">3. Sleep Optimization</a>
+          <ul class="ml-4 mt-1 space-y-1 text-xs">
+            <li>
+              <a href="#sleep-duration" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">3.1 Sleep Duration</a>
+            </li>
+            <li>
+              <a href="#circadian-rhythm" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">3.2 Circadian Rhythm</a>
+            </li>
+            <li>
+              <a href="#sleep-hygiene" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">3.3 Sleep Hygiene</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#cardiometabolic" class="block py-1 px-2 rounded hover:bg-sage/20 transition-colors">4. Cardiometabolic Risk</a>
+          <ul class="ml-4 mt-1 space-y-1 text-xs">
+            <li>
+              <a href="#aha-essential8" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">4.1 Life&#39;s Essential 8</a>
+            </li>
+            <li>
+              <a href="#metabolic-health" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">4.2 Metabolic Health</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#cognitive-vitality" class="block py-1 px-2 rounded hover:bg-sage/20 transition-colors">5. Cognitive Vitality</a>
+          <ul class="ml-4 mt-1 space-y-1 text-xs">
+            <li>
+              <a href="#cognitive-training" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">5.1 Cognitive Training</a>
+            </li>
+            <li>
+              <a href="#comprehensive-interventions" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">5.2 Comprehensive Interventions</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#stress-resilience" class="block py-1 px-2 rounded hover:bg-sage/20 transition-colors">6. Stress Resilience</a>
+          <ul class="ml-4 mt-1 space-y-1 text-xs">
+            <li>
+              <a href="#mind-body" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">6.1 Mind-Body Practices</a>
+            </li>
+            <li>
+              <a href="#psychological-factors" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">6.2 Psychological Factors</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#environmental-health" class="block py-1 px-2 rounded hover:bg-sage/20 transition-colors">7. Environmental Health</a>
+          <ul class="ml-4 mt-1 space-y-1 text-xs">
+            <li>
+              <a href="#toxin-minimization" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">7.1 Toxin Minimization</a>
+            </li>
+            <li>
+              <a href="#nature-exposure" class="block py-1 px-2 rounded hover:bg-sage/10 transition-colors">7.2 Nature Exposure</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#implementation" class="block py-1 px-2 rounded hover:bg-sage/20 transition-colors">8. Implementation</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section -->
+      <section class="hero-gradient text-white rounded-2xl p-4 sm:p-6 md:p-8 mb-8">
+        <div class="max-w-6xl mx-auto">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+            <div class="lg:col-span-2">
+              <h1 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:text-shadow italic leading-tight">
+                Comprehensive Strategies for Longevity
+              </h1>
+              <p class="text-base sm:text-lg lg:text-xl mb-6 sm:opacity-90 leading-relaxed">
+                Scientific and Holistic Approaches to Preventing Chronic Disease and Sustaining Youthfulness
+              </p>
+              <div class="flex flex-wrap gap-3 mb-6">
+                <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">Evidence-Based</span>
+                <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">Holistic Integration</span>
+                <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">Preventive Medicine</span>
+              </div>
+            </div>
+            <div class="lg:col-span-1">
+              <img src="https://kimi-web-img.moonshot.cn/img/www.longlonglife.org/d4a94b3c114ae0d41e2af0df88a3bae9ee3ea910.png" alt="Abstract representation of longevity and healthy aging" class="rounded-xl shadow-2xl w-full h-64 object-cover opacity-90" size="medium" aspect="wide" query="healthy aging abstract" referrerpolicy="no-referrer" data-modified="1" data-score="0.00"/>
+            </div>
+          </div>
+
+          <!-- Key Highlights Bento Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <i class="fas fa-heart text-2xl mb-2"></i>
+              <h3 class="font-semibold mb-2">Cardiovascular Health</h3>
+              <p class="text-sm opacity-80">30% reduction in events with Mediterranean diet</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <i class="fas fa-brain text-2xl mb-2"></i>
+              <h3 class="font-semibold mb-2">Cognitive Protection</h3>
+              <p class="text-sm opacity-80">35% lower Alzheimer&#39;s risk with MIND diet</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <i class="fas fa-dumbbell text-2xl mb-2"></i>
+              <h3 class="font-semibold mb-2">Physical Activity</h3>
+              <p class="text-sm opacity-80">90 min/week strength training = 3.9 years younger</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <i class="fas fa-moon text-2xl mb-2"></i>
+              <h3 class="font-semibold mb-2">Sleep Quality</h3>
+              <p class="text-sm opacity-80">Optimal sleep adds 4.7 years for men</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Introduction -->
+      <section id="introduction" class="max-w-6xl mx-auto mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h2 class="font-serif text-3xl font-bold text-forest mb-6">The Science of Extended Healthspan</h2>
+          <p class="text-lg mb-6 leading-relaxed">
+            Longevity science has evolved from anecdotal observations of exceptionally long-lived populations to rigorous evidence-based frameworks that integrate modern medicine with traditional wisdom. This comprehensive analysis synthesizes findings from large-scale epidemiological studies, randomized controlled trials, and natural experiments in &#34;Blue Zones&#34;—regions with exceptional concentrations of centenarians.
+          </p>
+
+          <div class="insight-highlight">
+            <p class="font-semibold text-forest mb-2">Key Insight</p>
+            <p>The convergence of modern nutritional epidemiology and traditional dietary patterns reveals that systematic exclusion of harmful foods may be as important as inclusion of beneficial ones. Ultra-processed foods, refined carbohydrates, and industrial seed oils accelerate cellular aging through inflammatory pathways.</p>
+          </div>
+
+          <p class="mb-6">
+            The evidence base encompasses over 1.3 million participants across prospective cohort studies, demonstrating consistent relationships between lifestyle factors and mortality outcomes. This analysis distills these findings into actionable strategies organized around five core pillars: optimal nutrition, strategic physical activity, sleep optimization, stress resilience, and environmental health.
+          </p>
+
+          <img src="https://kimi-web-img.moonshot.cn/img/st4.depositphotos.com/30aa1682ab32bc5714ee5aa5147045394f35a691.jpg" alt="Longevity research laboratory" class="w-full rounded-lg shadow-md my-8" size="large" aspect="wide" style="photo" query="longevity research laboratory" referrerpolicy="no-referrer" data-modified="1" data-score="0.00"/>
+        </div>
+      </section>
+
+      <!-- Section 1: Optimal Nutrition -->
+      <section id="nutrition" class="max-w-6xl mx-auto mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h2 class="font-serif text-3xl font-bold text-forest mb-8">1. Optimal Nutrition for Disease Prevention and Cellular Health</h2>
+
+          <div id="mediterranean-dash" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">1.1 Mediterranean, DASH, and MIND Diet Patterns</h3>
+
+            <p class="text-lg mb-6">
+              The convergence of modern nutritional epidemiology has established three dietary patterns as the most robustly validated approaches for longevity: the <strong>Mediterranean diet</strong>, the <strong>DASH diet</strong>, and the <strong>MIND diet</strong>. These patterns share foundational principles while offering distinct emphases that together address cardiovascular, metabolic, and cognitive health.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div class="bg-sage/10 rounded-lg p-6">
+                <h4 class="font-semibold text-forest mb-3">Mediterranean Diet</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• Olive oil as primary fat</li>
+                  <li>• Abundant vegetables &amp; fruits</li>
+                  <li>• Whole grains &amp; legumes</li>
+                  <li>• Nuts &amp; fatty fish</li>
+                  <li>• Limited red meat</li>
+                </ul>
+                <div class="mt-4 p-3 bg-white rounded">
+                  <p class="text-xs font-medium">PREDIMED Trial: <span class="text-forest">30% ↓ CVD events</span></p>
+                  <p class="text-xs font-medium">Meta-analyses: <span class="text-forest">2-3 years additional life expectancy</span></p>
+                </div>
+              </div>
+
+              <div class="bg-sage/10 rounded-lg p-6">
+                <h4 class="font-semibold text-forest mb-3">DASH Diet</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• 4-5 servings fruits/vegetables daily</li>
+                  <li>• 6-8 servings whole grains</li>
+                  <li>• 2-3 servings low-fat dairy</li>
+                  <li>• Limited sodium (≤2,300mg/day)</li>
+                  <li>• Minimal sweets &amp; red meat</li>
+                </ul>
+                <div class="mt-4 p-3 bg-white rounded">
+                  <p class="text-xs font-medium">Blood Pressure: <span class="text-forest">8-14 mmHg reduction</span></p>
+                  <p class="text-xs font-medium">Additional Benefits: <span class="text-forest">↓ LDL, improved insulin sensitivity</span></p>
+                </div>
+              </div>
+
+              <div class="bg-sage/10 rounded-lg p-6">
+                <h4 class="font-semibold text-forest mb-3">MIND Diet</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• Green leafy vegetables ≥6x/week</li>
+                  <li>• Berries ≥2x/week</li>
+                  <li>• Nuts ≥5x/week</li>
+                  <li>• Whole grains ≥3x/day</li>
+                  <li>• Olive oil as primary fat</li>
+                </ul>
+                <div class="mt-4 p-3 bg-white rounded">
+                  <p class="text-xs font-medium">Alzheimer&#39;s Risk: <span class="text-forest">35% reduction</span></p>
+                  <p class="text-xs font-medium">Cognitive Decline: <span class="text-forest">Slower progression</span></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">Clinical Evidence</p>
+              <p>The landmark PREDIMED trial demonstrated that high adherence to the Mediterranean diet reduced major cardiovascular events by approximately 30% compared to a low-fat control diet, while the Rush Memory and Aging Project found that high MIND diet adherence was associated with a 35% reduction in Alzheimer&#39;s disease risk.</p>
+            </div>
+          </div>
+
+          <div id="plant-forward" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">1.2 Plant-Forward Dietary Approaches from Blue Zones</h3>
+
+            <p class="text-lg mb-6">
+              The dietary patterns observed in <strong>Blue Zones</strong>—geographic regions with exceptional concentrations of centenarians—provide compelling natural experimental evidence for plant-forward eating as a longevity strategy. Five regions have been rigorously validated: <em>Sardinia (Italy), Okinawa (Japan), Ikaria (Greece), Nicoya (Costa Rica), and Loma Linda (California, USA)</em>.
+            </p>
+
+            <div class="bg-gray-50 rounded-lg p-6 mb-8">
+              <h4 class="font-semibold text-forest mb-4">Common Blue Zone Dietary Characteristics</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h5 class="font-medium mb-3 text-forest">Protein Sources</h5>
+                  <ul class="text-sm space-y-2">
+                    <li>• <strong>Legumes as cornerstone protein</strong> (daily to multiple times daily)</li>
+                    <li>• Black beans (Nicoya)</li>
+                    <li>• Soy products (Okinawa: tofu, miso, natto)</li>
+                    <li>• Lentils and fava beans (Ikaria, Sardinia)</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 class="font-medium mb-3 text-forest">Unique Practices</h5>
+                  <ul class="text-sm space-y-2">
+                    <li>• <strong>Fermented foods</strong> for gut microbiome diversity</li>
+                    <li>• <strong>Caloric moderation</strong> (Okinawan &#34;hara hachi bu&#34;)</li>
+                    <li>• <strong>Traditional food preparation</strong> methods</li>
+                    <li>• <strong>Social eating patterns</strong></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">Okinawan Practice: &#34;Hara Hachi Bu&#34;</p>
+              <p>This 2,500-year-old Confucian mantra, spoken before meals, reminds practitioners to stop eating at 80% fullness. This practice results in approximately 10-20% caloric reduction compared to ad libitum eating patterns, with associated benefits for metabolic health and inflammation markers.</p>
+            </div>
+          </div>
+
+          <div id="targeted-strategies" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">1.3 Targeted Nutritional Strategies</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Anti-Inflammatory Focus</h4>
+                <ul class="text-sm space-y-3">
+                  <li>• <strong>Omega-3 fatty acids</strong>: EPA/DHA from fatty fish, ALA from flax, chia, walnuts</li>
+                  <li>• <strong>Polyphenols</strong>: Flavonoids from berries, tea, cocoa; phenolic acids from coffee, whole grains</li>
+                  <li>• <strong>Antioxidants</strong>: Vitamins C and E, selenium, carotenoids</li>
+                  <li>• <strong>Curcumin</strong> (turmeric), <strong>resveratrol</strong> (grapes/berries), <strong>sulforaphane</strong> (cruciferous vegetables)</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Glycemic Control</h4>
+                <ul class="text-sm space-y-3">
+                  <li>• <strong>Limited added sugars</strong> and refined carbohydrates</li>
+                  <li>• <strong>Low-glycemic load foods</strong>: intact grains, legumes, fiber-rich fruits/vegetables</li>
+                  <li>• <strong>Time-restricted eating</strong> for metabolic flexibility</li>
+                  <li>• <strong>Post-meal physical activity</strong> for glucose disposal</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Physical Activity -->
+      <section id="physical-activity" class="max-w-6xl mx-auto mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h2 class="font-serif text-3xl font-bold text-forest mb-8">2. Physical Activity: Optimizing Movement for Longevity</h2>
+
+          <div id="aerobic-exercise" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">2.1 Aerobic Exercise Prescription</h3>
+
+            <p class="text-lg mb-6">
+              Physical activity represents one of the most powerful and extensively validated interventions for extending healthspan and lifespan. The 2018 Physical Activity Guidelines for Americans establish <strong>150–300 minutes weekly of moderate-intensity activity or 75–150 minutes of vigorous activity</strong> as the threshold for &#34;substantial health benefits.&#34;
+            </p>
+
+            <div class="bg-sage/10 rounded-lg p-6 mb-8">
+              <h4 class="font-semibold text-forest mb-4">Dose-Response Relationship</h4>
+              <p class="mb-4">
+                A 2022 analysis of over 190,000 UK Biobank participants found that individuals achieving <strong>300–450 minutes of moderate activity weekly</strong> demonstrated additional mortality reductions compared to those meeting minimum guidelines. For every unit increase in VO₂ max, approximately <strong>45 days of additional lifespan</strong> are predicted.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white rounded p-4">
+                  <h5 class="font-medium text-forest">Moderate Aerobic</h5>
+                  <p class="text-sm">150-300 min/week at 60-75% HRmax</p>
+                  <p class="text-xs text-gray-600">30-40% mortality reduction</p>
+                </div>
+                <div class="bg-white rounded p-4">
+                  <h5 class="font-medium text-forest">Vigorous Aerobic</h5>
+                  <p class="text-sm">75-150 min/week at 76-95% HRmax</p>
+                  <p class="text-xs text-gray-600">Enhanced fitness gains</p>
+                </div>
+                <div class="bg-white rounded p-4">
+                  <h5 class="font-medium text-forest">HIIT</h5>
+                  <p class="text-sm">2-3 sessions, 20-30 min total</p>
+                  <p class="text-xs text-gray-600">22% VO₂ max improvement</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">High-Intensity Interval Training (HIIT)</p>
+              <p>The Norwegian 4×4 protocol—four intervals of four minutes at 85–95% of maximum heart rate, with three-minute active recovery periods—produced 22% improvements in VO₂ max in individuals recovering from cardiovascular disease, compared to 17% improvements from conventional aerobic training.</p>
+            </div>
+          </div>
+
+          <div id="resistance-training" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">2.2 Resistance and Functional Training</h3>
+
+            <p class="text-lg mb-6">
+              Resistance training is equally critical for longevity, particularly in aging populations. The Physical Activity Guidelines recommend <strong>minimum two weekly sessions targeting all major muscle groups</strong>, with optimal benefits observed at 2–4 sessions of 30–60 minutes each.
+            </p>
+
+            <div class="bg-gray-50 rounded-lg p-6 mb-8">
+              <h4 class="font-semibold text-forest mb-4">Telomere Length and Biological Aging</h4>
+              <p class="mb-4">
+                In a nationally representative sample of 4,814 US adults, <strong>each 10 minutes of weekly resistance training predicted telomeres 6.7 base pairs longer</strong> on average. Extrapolating from the observed rate of age-related telomere shortening (15.47 base pairs per year):
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg p-4">
+                  <h5 class="font-medium text-forest mb-2">90 minutes weekly</h5>
+                  <p class="text-2xl font-bold text-forest">3.9 years</p>
+                  <p class="text-sm text-gray-600">less biological aging</p>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <h5 class="font-medium text-forest mb-2">180 minutes weekly</h5>
+                  <p class="text-2xl font-bold text-forest">7.8 years</p>
+                  <p class="text-sm text-gray-600">biological age reduction</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Training Parameters</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• <strong>Frequency:</strong> 2-4 sessions/week</li>
+                  <li>• <strong>Duration:</strong> 30-60 minutes/session</li>
+                  <li>• <strong>Intensity:</strong> 60-85% 1-RM; 8-12 reps</li>
+                  <li>• <strong>Exercise selection:</strong> Compound movements</li>
+                  <li>• <strong>Volume:</strong> 40-150 minutes/week total</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Functional Benefits</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• <strong>Fall prevention</strong> (Tai Chi: 45% reduction)</li>
+                  <li>• <strong>Metabolic health</strong> (glucose/lipid sink)</li>
+                  <li>• <strong>Independence maintenance</strong></li>
+                  <li>• <strong>Myokine secretion</strong> (systemic benefits)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div id="movement-ecology" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">2.3 Movement Ecology: Embedding Activity into Daily Life</h3>
+
+            <p class="text-lg mb-6">
+              Blue Zone populations demonstrate that structured &#34;exercise&#34; is not required for longevity; rather, <strong>natural movement embedded throughout daily life produces comparable or superior outcomes</strong>. Non-exercise activity thermogenesis (NEAT) can vary by <strong>2,000 calories daily</strong> between individuals with similar structured exercise habits.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 class="font-semibold text-forest mb-4">NEAT Enhancement Strategies</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• Walking for transportation</li>
+                  <li>• Standing and moving during work</li>
+                  <li>• Manual household tasks</li>
+                  <li>• Parking at distance from destinations</li>
+                  <li>• Taking stairs rather than elevators</li>
+                  <li>• Breaking prolonged sitting every 30 minutes</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Nature Exposure Benefits</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• <strong>≥120 minutes weekly</strong> in natural environments</li>
+                  <li>• <strong>Stress reduction</strong> (lower cortisol)</li>
+                  <li>• <strong>Attention restoration</strong></li>
+                  <li>• <strong>Immune modulation</strong> through microbiota exposure</li>
+                  <li>• <strong>Enhanced adherence</strong> to physical activity</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">Post-Meal Activity Benefits</p>
+              <p>Interrupting sedentary time with 2-3 minutes of light activity substantially improves postprandial glucose and insulin responses. Post-meal walking (10-15 minutes) can reduce postprandial glycemic excursions by 20-30% compared to sedentary behavior.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Sleep Optimization -->
+      <section id="sleep-optimization" class="max-w-6xl mx-auto mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h2 class="font-serif text-3xl font-bold text-forest mb-8">3. Sleep Optimization: Circadian Health and Restoration</h2>
+
+          <div id="sleep-duration" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">3.1 Sleep Duration and Architecture</h3>
+
+            <p class="text-lg mb-6">
+              Large-scale meta-analyses of prospective cohort studies, encompassing over <strong>1.3 million participants</strong>, have established that both short sleep (&lt;7 hours) and long sleep (&gt;9 hours) are associated with increased all-cause mortality, with the lowest risk observed at approximately <strong>7 hours nightly</strong>.
+            </p>
+
+            <div class="bg-sage/10 rounded-lg p-6 mb-8">
+              <h4 class="font-semibold text-forest mb-4">Sleep Duration and Mortality Risk</h4>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white rounded p-4 text-center">
+                  <h5 class="font-medium text-red-600 mb-2">&lt;7 hours</h5>
+                  <p class="text-2xl font-bold text-red-600">12%</p>
+                  <p class="text-sm text-gray-600">greater death risk</p>
+                </div>
+                <div class="bg-white rounded p-4 text-center">
+                  <h5 class="font-medium text-forest mb-2">7-8 hours</h5>
+                  <p class="text-2xl font-bold text-forest">Optimal</p>
+                  <p class="text-sm text-gray-600">lowest mortality risk</p>
+                </div>
+                <div class="bg-white rounded p-4 text-center">
+                  <h5 class="font-medium text-orange-600 mb-2">&gt;9 hours</h5>
+                  <p class="text-2xl font-bold text-orange-600">30%</p>
+                  <p class="text-sm text-gray-600">increased death risk</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">Optimal Sleep Behaviors Study</p>
+              <p>A landmark study analyzing data from over 172,000 participants demonstrated that individuals with optimal sleep behaviors experienced remarkable longevity benefits: men with all five favorable sleep factors lived 4.7 years longer, and women 2.4 years longer, with a 30% reduction in all-cause mortality.</p>
+            </div>
+
+            <div class="overflow-x-auto mb-8">
+              <table class="w-full text-sm border-collapse">
+                <thead>
+                  <tr class="bg-forest text-white">
+                    <th class="border border-gray-300 px-4 py-3 text-left">Sleep Parameter</th>
+                    <th class="border border-gray-300 px-4 py-3 text-left">Optimal Target</th>
+                    <th class="border border-gray-300 px-4 py-3 text-left">Consequences of Suboptimal Performance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="bg-white">
+                    <td class="border border-gray-300 px-4 py-3 font-medium">Duration</td>
+                    <td class="border border-gray-300 px-4 py-3">7–9 hours (adults); 7–8 hours (older adults)</td>
+                    <td class="border border-gray-300 px-4 py-3">&lt;7h: ↑ obesity, diabetes, hypertension, CVD, depression, cognitive decline, mortality; &gt;9h: ↑ mortality risk</td>
+                  </tr>
+                  <tr class="bg-gray-50">
+                    <td class="border border-gray-300 px-4 py-3 font-medium">Sleep efficiency</td>
+                    <td class="border border-gray-300 px-4 py-3">&gt;85% (time asleep/time in bed)</td>
+                    <td class="border border-gray-300 px-4 py-3">Reduced restorative sleep, daytime impairment, increased health risks</td>
+                  </tr>
+                  <tr class="bg-white">
+                    <td class="border border-gray-300 px-4 py-3 font-medium">Sleep onset latency</td>
+                    <td class="border border-gray-300 px-4 py-3">&lt;30 minutes</td>
+                    <td class="border border-gray-300 px-4 py-3">Insomnia, anxiety, circadian disruption</td>
+                  </tr>
+                  <tr class="bg-gray-50">
+                    <td class="border border-gray-300 px-4 py-3 font-medium">Wake after sleep onset</td>
+                    <td class="border border-gray-300 px-4 py-3">Minimal (&lt;10% of time in bed)</td>
+                    <td class="border border-gray-300 px-4 py-3">Sleep fragmentation, reduced deep and REM sleep, cardiovascular stress</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="circadian-rhythm" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">3.2 Circadian Rhythm Entrainment</h3>
+
+            <p class="text-lg mb-6">
+              The circadian system regulates sleep timing, hormonal secretion, metabolic function, and cellular repair processes. <strong>Morning sunlight exposure of 10–30 minutes</strong>, particularly within the first hour after waking, provides the strongest stimulus for circadian entrainment.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div class="bg-sage/10 rounded-lg p-6">
+                <h4 class="font-semibold text-forest mb-4">Morning Light Benefits</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• Suppresses residual melatonin</li>
+                  <li>• Advances circadian phase</li>
+                  <li>• Improves subsequent sleep onset</li>
+                  <li>• Enhances sleep quality</li>
+                  <li>• Outdoor intensity (1,000-10,000 lux) vs indoor (100-500 lux)</li>
+                </ul>
+              </div>
+              <div class="bg-orange-50 rounded-lg p-6">
+                <h4 class="font-semibold text-orange-700 mb-4">Evening Light Risks</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• Delays circadian phase</li>
+                  <li>• Impairs sleep initiation</li>
+                  <li>• 34% higher premature mortality risk (1:00-6:00 AM exposure)</li>
+                  <li>• Blue light from screens and LED lighting particularly disruptive</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div id="sleep-hygiene" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">3.3 Sleep Hygiene and Environment</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Optimal Sleep Environment</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• <strong>Cool temperatures</strong> (~65°F/18°C)</li>
+                  <li>• <strong>Complete darkness</strong> (or eye masks)</li>
+                  <li>• <strong>Minimal noise</strong> (or white noise masking)</li>
+                  <li>• Comfortable bedding</li>
+                  <li>• Appropriate humidity</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Behavioral Sleep Hygiene</h4>
+                <ul class="text-sm space-y-2">
+                  <li>• <strong>Caffeine limitation</strong> (5-7 hour half-life)</li>
+                  <li>• <strong>Alcohol avoidance</strong> 3-4 hours before bedtime</li>
+                  <li>• <strong>Light evening meals</strong></li>
+                  <li>• <strong>Stress reduction practices</strong></li>
+                  <li>• <strong>Consistent sleep schedule</strong></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">CBT-I for Persistent Insomnia</p>
+              <p>Cognitive behavioral therapy for insomnia (CBT-I) demonstrates superior long-term efficacy to pharmacological approaches, with sustained benefits after treatment discontinuation and no adverse effects. Components include stimulus control, sleep restriction, cognitive restructuring, and relaxation training.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Cardiometabolic Risk -->
+      <section id="cardiometabolic" class="max-w-6xl mx-auto mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h2 class="font-serif text-3xl font-bold text-forest mb-8">4. Cardiometabolic Risk Reduction: Targeting Heart Disease and Diabetes</h2>
+
+          <div id="aha-essential8" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">4.1 American Heart Association Life&#39;s Essential 8 Framework</h3>
+
+            <p class="text-lg mb-6">
+              The American Heart Association&#39;s Life&#39;s Essential 8 provides the most current and comprehensive evidence-based framework for cardiovascular health promotion, updated in 2022 to incorporate <strong>sleep as the eighth essential component</strong> alongside diet, physical activity, nicotine exposure, and four health factors.
+            </p>
+
+            <div class="bg-sage/10 rounded-lg p-6 mb-8">
+              <h4 class="font-semibold text-forest mb-4">Life&#39;s Essential 8 Components</h4>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="bg-forest text-white">
+                      <th class="px-4 py-3 text-left">Component</th>
+                      <th class="px-4 py-3 text-left">Optimal Target</th>
+                      <th class="px-4 py-3 text-left">Health Impact</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="bg-white">
+                      <td class="border border-gray-300 px-4 py-3 font-medium">Diet</td>
+                      <td class="border border-gray-300 px-4 py-3">Mediterranean/DASH alignment; high fruits/vegetables/whole grains; low sodium/added sugars</td>
+                      <td class="border border-gray-300 px-4 py-3">30% ↓ CVD events with high adherence</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                      <td class="border border-gray-300 px-4 py-3 font-medium">Physical activity</td>
+                      <td class="border border-gray-300 px-4 py-3">≥150 min moderate or ≥75 min vigorous weekly + 2 strength sessions</td>
+                      <td class="border border-gray-300 px-4 py-3">30–40% mortality reduction</td>
+                    </tr>
+                    <tr class="bg-white">
+                      <td class="border border-gray-300 px-4 py-3 font-medium">Nicotine exposure</td>
+                      <td class="border border-gray-300 px-4 py-3">Complete avoidance of all inhaled nicotine products</td>
+                      <td class="border border-gray-300 px-4 py-3">Greatest single modifiable risk factor</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                      <td class="border border-gray-300 px-4 py-3 font-medium">Sleep health</td>
+                      <td class="border border-gray-300 px-4 py-3">7–9 hours, regular timing, good quality, no impairment</td>
+                      <td class="border border-gray-300 px-4 py-3">4.7-year life extension (men)</td>
+                    </tr>
+                    <tr class="bg-white">
+                      <td class="border border-gray-300 px-4 py-3 font-medium">BMI</td>
+                      <td class="border border-gray-300 px-4 py-3">18.5–24.9 kg/m²</td>
+                      <td class="border border-gray-300 px-4 py-3">J-shaped relationship with mortality</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                      <td class="border border-gray-300 px-4 py-3 font-medium">Blood lipids</td>
+                      <td class="border border-gray-300 px-4 py-3">Non-HDL cholesterol &lt;130 mg/dL or LDL &lt;100 mg/dL</td>
+                      <td class="border border-gray-300 px-4 py-3">Direct atherogenic contribution</td>
+                    </tr>
+                    <tr class="bg-white">
+                      <td class="border border-gray-300 px-4 py-3 font-medium">Blood glucose</td>
+                      <td class="border border-gray-300 px-4 py-3">Fasting glucose &lt;100 mg/dL or HbA1c &lt;5.7%</td>
+                      <td class="border border-gray-300 px-4 py-3">Hyperglycemia accelerates vascular aging</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                      <td class="border border-gray-300 px-4 py-3 font-medium">Blood pressure</td>
+                      <td class="border border-gray-300 px-4 py-3">&lt;120/80 mmHg</td>
+                      <td class="border border-gray-300 px-4 py-3">Primary driver of stroke, heart failure</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">Cardiovascular-Brain Health Connection</p>
+              <p>The same vascular pathologies that produce myocardial infarction and stroke—atherosclerosis, endothelial dysfunction, hypertension—also impair cerebral perfusion and promote neurodegeneration. Midlife intervention provides maximal protection given the long preclinical phase of neurodegenerative processes.</p>
+            </div>
+          </div>
+
+          <div id="metabolic-health" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">4.2 Metabolic Health Strategies</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Glycemic Control Approaches</h4>
+                <div class="space-y-4">
+                  <div class="bg-sage/10 rounded p-4">
+                    <h5 class="font-medium text-forest">Low-glycemic load diet</h5>
+                    <p class="text-sm">Reduced postprandial glucose and insulin excursions</p>
+                  </div>
+                  <div class="bg-sage/10 rounded p-4">
+                    <h5 class="font-medium text-forest">Post-meal walking</h5>
+                    <p class="text-sm">10-15 minutes; muscle contraction-mediated GLUT4 translocation</p>
+                  </div>
+                  <div class="bg-sage/10 rounded p-4">
+                    <h5 class="font-medium text-forest">Time-restricted eating</h5>
+                    <p class="text-sm">8-10 hour eating window; circadian alignment</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Adiposity Management</h4>
+                <ul class="text-sm space-y-3">
+                  <li>• <strong>Sustainable weight loss of 5–10%</strong> produces clinically meaningful improvements</li>
+                  <li>• <strong>Preservation of lean mass</strong> during weight reduction</li>
+                  <li>• <strong>Adequate protein intake</strong> (1.2–1.6 g/kg during energy restriction)</li>
+                  <li>• <strong>Continued resistance training</strong></li>
+                  <li>• <strong>Waist circumference</strong> as more precise risk stratification</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">Diabetes Prevention Program</p>
+              <p>Evidence from the Diabetes Prevention Program demonstrated 58% reduction in diabetes incidence with intensive lifestyle modification (7% weight loss, 150 minutes weekly physical activity), establishing the primacy of lifestyle intervention over pharmacological approaches for diabetes prevention.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Cognitive Vitality -->
+      <section id="cognitive-vitality" class="max-w-6xl mx-auto mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h2 class="font-serif text-3xl font-bold text-forest mb-8">5. Cognitive Vitality: Preventing Decline and Building Brain Reserve</h2>
+
+          <div id="cognitive-training" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">5.1 Cognitive Training and Neuroplasticity</h3>
+
+            <p class="text-lg mb-6">
+              The concept of cognitive reserve—the brain&#39;s resilience to neuropathological damage—can be actively enhanced through targeted cognitive training. <strong>Speed-of-processing training</strong>, exemplified by the Useful Field of View (UFOV) paradigm, has demonstrated particular efficacy for dementia risk reduction.
+            </p>
+
+            <div class="bg-sage/10 rounded-lg p-6 mb-8">
+              <h4 class="font-semibold text-forest mb-4">ACTIVE Trial Results</h4>
+              <p class="mb-4">
+                The landmark ACTIVE (Advanced Cognitive Training for Independent and Vital Elderly) trial, a <strong>20-year NIH-funded randomized controlled study</strong>, demonstrated that <strong>speed-of-processing training reduced dementia incidence by 29% over 10 years</strong> compared to control conditions, with benefits persisting over two decades of follow-up.
+              </p>
+              <div class="bg-white rounded p-4">
+                <h5 class="font-medium text-forest mb-2">Key Features</h5>
+                <ul class="text-sm space-y-1">
+                  <li>• Adaptive, computerized difficulty adjustment</li>
+                  <li>• Less than 24 hours total training time</li>
+                  <li>• Spread over 3 years with booster sessions</li>
+                  <li>• Benefits generalize to everyday functional tasks</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Training Approaches</h4>
+                <div class="space-y-4">
+                  <div class="bg-white border border-gray-200 rounded p-4">
+                    <h5 class="font-medium text-forest">Speed-of-processing (UFOV)</h5>
+                    <p class="text-sm">29% dementia reduction over 10 years</p>
+                  </div>
+                  <div class="bg-white border border-gray-200 rounded p-4">
+                    <h5 class="font-medium text-forest">Multi-domain training</h5>
+                    <p class="text-sm">Memory, reasoning, processing speed</p>
+                  </div>
+                  <div class="bg-white border border-gray-200 rounded p-4">
+                    <h5 class="font-medium text-forest">Computerized brain training apps</h5>
+                    <p class="text-sm">Variable evidence for dementia prevention</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Lifestyle Integration</h4>
+                <ul class="text-sm space-y-3">
+                  <li>• <strong>Novelty:</strong> Engaging new neural circuits</li>
+                  <li>• <strong>Complexity:</strong> Challenging multiple cognitive processes</li>
+                  <li>• <strong>Meaningfulness:</strong> Personal relevance maintaining motivation</li>
+                  <li>• <strong>Social interaction:</strong> Conversation, collaborative problem-solving</li>
+                  <li>• <strong>Bilingualism:</strong> Delays dementia onset by 4-5 years</li>
+                  <li>• <strong>Musical training:</strong> Preserved cognitive function</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div id="comprehensive-interventions" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">5.2 Comprehensive Lifestyle Interventions for Cognitive Protection</h3>
+
+            <div class="bg-sage/10 rounded-lg p-6 mb-8">
+              <h4 class="font-semibold text-forest mb-4">FINGER Trial Model</h4>
+              <p class="mb-4">
+                The Finnish Geriatric Intervention Study to Prevent Cognitive Impairment and Disability (FINGER) represents the landmark demonstration that <strong>multidomain lifestyle intervention can prevent cognitive decline in at-risk older adults</strong>. This 2-year randomized controlled trial enrolled 1,260 individuals aged 60-77 with elevated cardiovascular risk factors.
+              </p>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded p-4">
+                  <h5 class="font-medium text-forest mb-2">Intervention Components</h5>
+                  <ul class="text-sm space-y-1">
+                    <li>• Nutritional counseling (Mediterranean diet)</li>
+                    <li>• Physical exercise (aerobic + resistance)</li>
+                    <li>• Cognitive training (computer-based)</li>
+                    <li>• Vascular risk monitoring</li>
+                  </ul>
+                </div>
+                <div class="bg-white rounded p-4">
+                  <h5 class="font-medium text-forest mb-2">Results</h5>
+                  <ul class="text-sm space-y-1">
+                    <li>• 25% greater cognitive improvement</li>
+                    <li>• Benefits for executive function</li>
+                    <li>• Processing speed enhancement</li>
+                    <li>• Effect exceeded pharmacological trials</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">Ornish Lifestyle Medicine for Early Alzheimer&#39;s</p>
+              <p>A 2024 randomized controlled trial found that comprehensive lifestyle intervention was associated with improved cognitive function and reduced progression over 20 weeks compared to usual care in individuals with mild cognitive impairment or early dementia due to Alzheimer&#39;s disease. The intervention included a very low-fat whole-food plant-based diet, moderate aerobic exercise, daily meditation, and weekly support groups.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6: Stress Resilience -->
+      <section id="stress-resilience" class="max-w-6xl mx-auto mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h2 class="font-serif text-3xl font-bold text-forest mb-8">6. Stress Resilience and Psychological Wellbeing: Holistic Dimensions</h2>
+
+          <div id="mind-body" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">6.1 Mind-Body Practices with Scientific Validation</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Yoga and Contemplative Movement</h4>
+                <p class="text-sm mb-4">
+                  A 2024 umbrella review identified <strong>yoga as one of the modalities associated with telomere preservation</strong>, with effect sizes suggesting meaningful biological age reduction. A 12-week yoga and meditation-based lifestyle intervention demonstrated significant improvements in biomarkers of cellular aging.
+                </p>
+
+                <div class="bg-sage/10 rounded p-4">
+                  <h5 class="font-medium text-forest mb-2">Mechanisms</h5>
+                  <ul class="text-xs space-y-1">
+                    <li>• Stress hormone regulation</li>
+                    <li>• Autonomic nervous system balance</li>
+                    <li>• Inflammatory modulation</li>
+                    <li>• Enhanced parasympathetic tone</li>
+                    <li>• Reduced sympathetic activation</li>
+                  </ul>
+                </div>
+              </div>
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Tai Chi Benefits</h4>
+                <p class="text-sm mb-4">
+                  Tai chi demonstrates comparable benefits with particular strength in balance and psychological wellbeing. Meta-analyses indicate tai chi is as effective as conventional exercise for many outcomes and superior for balance and psychological wellbeing.
+                </p>
+
+                <div class="bg-sage/10 rounded p-4">
+                  <h5 class="font-medium text-forest mb-2">Evidence Quality</h5>
+                  <ul class="text-xs space-y-1">
+                    <li>• <strong>Fall risk reduction:</strong> 45% in randomized trials</li>
+                    <li>• <strong>Balance improvement:</strong> Superior to conventional exercise</li>
+                    <li>• <strong>Psychological wellbeing:</strong> Enhanced outcomes</li>
+                    <li>• <strong>Low injury risk:</strong> Suitable for frail populations</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">Cellular Aging Biomarkers</p>
+              <p>A 12-week yoga and meditation-based lifestyle intervention demonstrated significant improvements in cellular aging biomarkers including reduced oxidative stress markers, enhanced antioxidant capacity, increased telomerase activity, and elevated sirtuin-1 and brain-derived neurotrophic factor.</p>
+            </div>
+          </div>
+
+          <div id="psychological-factors" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">6.2 Psychological Resilience Factors</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Purpose and Meaning in Life</h4>
+                <p class="text-sm mb-4">
+                  The Okinawan concept of <strong>&#34;ikigai&#34;</strong>—one&#39;s reason for being or sense of life purpose—has gained attention as a psychosocial factor with profound health implications. Epidemiological studies consistently demonstrate that strong life purpose is associated with reduced mortality risk.
+                </p>
+                <ul class="text-sm space-y-2">
+                  <li>• Enhanced health behavior adherence</li>
+                  <li>• Better stress coping mechanisms</li>
+                  <li>• Reduced inflammatory activity</li>
+                  <li>• Maintained social engagement</li>
+                  <li>• Structure and social connection in later life</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold text-forest mb-4">Optimism and Positive Affect</h4>
+                <p class="text-sm mb-4">
+                  Dispositional optimism—the generalized expectation of positive outcomes—consistently predicts better health and longevity in prospective studies, with associations persisting after adjustment for demographic factors, health behaviors, and baseline health status.
+                </p>
+                <ul class="text-sm space-y-2">
+                  <li>• Lower risks of cardiovascular disease</li>
+                  <li>• Slower progression of atherosclerosis</li>
+                  <li>• Better immune function</li>
+                  <li>• Longer survival in chronic disease</li>
+                  <li>• Subjective life expectancy motivates health behaviors</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">Blue Zones Observation</p>
+              <p>Centenarians maintain active roles in family and community life, often with clear responsibilities and recognized value. Cultural embedding of purpose may contribute to exceptional longevity through multiple pathways including stress reduction, social connection, and health behavior maintenance.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 7: Environmental Health -->
+      <section id="environmental-health" class="max-w-6xl mx-auto mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h2 class="font-serif text-3xl font-bold text-forest mb-8">7. Social Ecology and Environmental Health: Contextual Determinants</h2>
+
+          <div id="toxin-minimization" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">7.1 Environmental Toxin Minimization</h3>
+
+            <p class="text-lg mb-6">
+              Environmental exposures represent increasingly recognized determinants of health and longevity, with the exposome explaining approximately <strong>17% of variation in mortality risk</strong>, compared to less than 2% attributable to genetic predisposition alone.
+            </p>
+
+            <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+              <h4 class="font-semibold text-red-700 mb-4">Major Environmental Toxin Categories</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h5 class="font-medium text-forest mb-3">Air Pollutants</h5>
+                  <ul class="text-sm space-y-1">
+                    <li>• PM2.5 and particulate matter</li>
+                    <li>• Vehicle emissions</li>
+                    <li>• Industrial pollution</li>
+                    <li>• Wildfire smoke</li>
+                  </ul>
+                  <p class="text-xs text-gray-600 mt-2">Life expectancy reduction: ~1 year globally</p>
+                </div>
+                <div>
+                  <h5 class="font-medium text-forest mb-3">Heavy Metals</h5>
+                  <ul class="text-sm space-y-1">
+                    <li>• Lead, cadmium, mercury, arsenic</li>
+                    <li>• Cigarette smoke</li>
+                    <li>• Contaminated food/water</li>
+                    <li>• Industrial pollution</li>
+                  </ul>
+                  <p class="text-xs text-gray-600 mt-2">Cadmium: major driver of epigenetic age acceleration</p>
+                </div>
+                <div>
+                  <h5 class="font-medium text-forest mb-3">Endocrine Disruptors</h5>
+                  <ul class="text-sm space-y-1">
+                    <li>• BPA, phthalates</li>
+                    <li>• Plastics, cosmetics</li>
+                    <li>• Food packaging</li>
+                    <li>• Receipts</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 class="font-medium text-forest mb-3">Pesticides &amp; VOCs</h5>
+                  <ul class="text-sm space-y-1">
+                    <li>• Conventional agriculture</li>
+                    <li>• Residential use</li>
+                    <li>• Paints, cleaning products</li>
+                    <li>• Building materials</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="bg-sage/10 rounded-lg p-4">
+                <h4 class="font-semibold text-forest mb-3">Air Quality Strategies</h4>
+                <ul class="text-sm space-y-1">
+                  <li>• HEPA filtration in homes</li>
+                  <li>• Avoid high-traffic areas</li>
+                  <li>• Exhaust fan use during cooking</li>
+                  <li>• Eliminate synthetic air fresheners</li>
+                </ul>
+              </div>
+              <div class="bg-sage/10 rounded-lg p-4">
+                <h4 class="font-semibold text-forest mb-3">Dietary Toxin Reduction</h4>
+                <ul class="text-sm space-y-1">
+                  <li>• Organic &#34;Dirty Dozen&#34; priority</li>
+                  <li>• Thorough produce washing</li>
+                  <li>• Avoid microwaving in plastic</li>
+                  <li>• Smaller, shorter-lived fish</li>
+                </ul>
+              </div>
+              <div class="bg-sage/10 rounded-lg p-4">
+                <h4 class="font-semibold text-forest mb-3">Water Filtration</h4>
+                <ul class="text-sm space-y-1">
+                  <li>• Carbon block or reverse osmosis</li>
+                  <li>• Removes heavy metals</li>
+                  <li>• Eliminates disinfection byproducts</li>
+                  <li>• Filters pharmaceutical residues</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div id="nature-exposure" class="mb-10">
+            <h3 class="font-serif text-2xl font-semibold text-forest mb-6">7.2 Nature Exposure and Biophilic Design</h3>
+
+            <p class="text-lg mb-6">
+              Regular contact with natural environments—forests, parks, coastlines, mountains—provides benefits for stress reduction, immune function, cognitive restoration, and physical activity promotion. A landmark study of nearly <strong>20,000 English adults</strong> found that spending <strong>≥120 minutes weekly in natural environments</strong> was associated with significantly better health and wellbeing.
+            </p>
+
+            <div class="bg-sage/10 rounded-lg p-6 mb-8">
+              <h4 class="font-semibold text-forest mb-4">Mechanisms of Nature Benefits</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h5 class="font-medium text-forest mb-2">Phytoncide Exposure</h5>
+                  <p class="text-sm">Volatile organic compounds from trees with immunomodulatory effects</p>
+                </div>
+                <div>
+                  <h5 class="font-medium text-forest mb-2">Microbiome Diversification</h5>
+                  <p class="text-sm">Environmental contact supports gut microbial diversity</p>
+                </div>
+                <div>
+                  <h5 class="font-medium text-forest mb-2">Attention Restoration</h5>
+                  <p class="text-sm">Reduced mental fatigue and improved cognitive function</p>
+                </div>
+                <div>
+                  <h5 class="font-medium text-forest mb-2">Stress Reduction</h5>
+                  <p class="text-sm">Parasympathetic activation and lowered cortisol levels</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="insight-highlight">
+              <p class="font-semibold text-forest mb-2">Built Environment Design</p>
+              <p>Urban planning and home design that supports physical activity and social interaction—walkable neighborhoods, mixed-use development, accessible green spaces, community gathering places—creates environments where healthy behaviors are default rather than effortful. The Blue Zones phenomenon reflects community-level environmental and social characteristics that support healthy lifestyles across generations.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 8: Implementation -->
+      <section id="implementation" class="max-w-6xl mx-auto mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h2 class="font-serif text-3xl font-bold text-forest mb-8">8. Implementation and Monitoring: Sustaining Longevity Practices</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+            <div>
+              <h3 class="font-serif text-xl font-semibold text-forest mb-6">Behavioral Adherence Strategies</h3>
+              <div class="space-y-4">
+                <div class="bg-sage/10 rounded p-4">
+                  <h4 class="font-medium text-forest mb-2">Habit Formation</h4>
+                  <ul class="text-sm space-y-1">
+                    <li>• Implementation intentions</li>
+                    <li>• Habit stacking</li>
+                    <li>• Environmental restructuring</li>
+                    <li>• Social commitment</li>
+                  </ul>
+                </div>
+                <div class="bg-sage/10 rounded p-4">
+                  <h4 class="font-medium text-forest mb-2">Professional Support</h4>
+                  <ul class="text-sm space-y-1">
+                    <li>• Healthcare provider engagement</li>
+                    <li>• Wellness coaching</li>
+                    <li>• Group-based programs</li>
+                    <li>• Technology-enabled delivery</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-serif text-xl font-semibold text-forest mb-6">Assessment and Monitoring</h3>
+              <div class="space-y-4">
+                <div class="bg-sage/10 rounded p-4">
+                  <h4 class="font-medium text-forest mb-2">Cardiometabolic Monitoring</h4>
+                  <ul class="text-sm space-y-1">
+                    <li>• Life&#39;s Essential 8 metrics</li>
+                    <li>• Advanced lipid profiling</li>
+                    <li>• Inflammatory markers</li>
+                    <li>• Continuous glucose monitoring</li>
+                  </ul>
+                </div>
+                <div class="bg-sage/10 rounded p-4">
+                  <h4 class="font-medium text-forest mb-2">Biological Aging Indicators</h4>
+                  <ul class="text-sm space-y-1">
+                    <li>• Telomere length assessment</li>
+                    <li>• Functional capacity measures</li>
+                    <li>• Cognitive screening</li>
+                    <li>• Integrated assessment profiles</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-forest text-white rounded-lg p-8 mb-8">
+            <h3 class="font-serif text-2xl font-semibold mb-6">Five Core Pillars for Longevity</h3>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div class="text-center">
+                <i class="fas fa-seedling text-3xl mb-3"></i>
+                <h4 class="font-semibold mb-2">Eat Mostly Plants</h4>
+                <p class="text-sm">Mediterranean/MIND-style diets with legumes as protein staples</p>
+              </div>
+              <div class="text-center">
+                <i class="fas fa-running text-3xl mb-3"></i>
+                <h4 class="font-semibold mb-2">Move Constantly</h4>
+                <p class="text-sm">150–300 min/week moderate exercise plus strength training</p>
+              </div>
+              <div class="text-center">
+                <i class="fas fa-moon text-3xl mb-3"></i>
+                <h4 class="font-semibold mb-2">Sleep 7–9 Hours</h4>
+                <p class="text-sm">Consistent timing with morning sunlight exposure</p>
+              </div>
+              <div class="text-center">
+                <i class="fas fa-heart text-3xl mb-3"></i>
+                <h4 class="font-semibold mb-2">Build Stress Resilience</h4>
+                <p class="text-sm">Yoga, meditation, and strong social connections</p>
+              </div>
+              <div class="text-center">
+                <i class="fas fa-leaf text-3xl mb-3"></i>
+                <h4 class="font-semibold mb-2">Minimize Toxins</h4>
+                <p class="text-sm">Clean air/water, organic foods when possible</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="insight-highlight">
+            <p class="font-semibold text-forest mb-2">Key Implementation Principle</p>
+            <p>The most effective intervention is one that is actually implemented; the moderately effective intervention sustained over decades outperforms the optimal intervention abandoned after brief trial. Sustainable adherence depends on alignment with personal values, preferences, and life circumstances.</p>
+          </div>
+
+          <div class="mt-8 text-center">
+            <p class="text-lg italic text-gray-600">
+              &#34;The art of longevity practice lies in matching evidence-based principles to individual capacity and context, with iterative adjustment as circumstances evolve.&#34;
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="max-w-6xl mx-auto mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h3 class="font-serif text-xl font-semibold text-forest mb-4">References and Further Reading</h3>
+          <p class="text-sm text-gray-600 mb-4">
+            This analysis synthesizes evidence from peer-reviewed journals, large-scale epidemiological studies, and randomized controlled trials. Key sources include the PREDIMED trial, FINGER study, ACTIVE trial, and Blue Zones research.
+          </p>
+          <div class="text-xs text-gray-500">
+            <p>All health recommendations should be discussed with qualified healthcare providers. Individual responses to lifestyle interventions vary, and personalized approaches may be necessary for optimal outcomes.</p>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Close TOC on mobile after clicking a link
+                    if (window.innerWidth < 1280) {
+                        document.getElementById('toc-nav').classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        // Highlight active section in TOC
+        const sections = document.querySelectorAll('section[id]');
+        const tocLinks = document.querySelectorAll('.toc-fixed a[href^="#"]');
+
+        function updateActiveTocLink() {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                // const sectionHeight = section.clientHeight; // Not strictly needed for this logic
+                if (window.scrollY >= sectionTop - 100) { // Adjust offset as needed
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('bg-sage/30', 'font-semibold');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('bg-sage/30', 'font-semibold');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveTocLink);
+        updateActiveTocLink(); // Initial call to set active link on page load
+
+        // TOC toggle functionality
+        const tocToggle = document.getElementById('toc-toggle');
+        const tocNav = document.getElementById('toc-nav');
+        const tocClose = document.getElementById('toc-close');
+
+        tocToggle.addEventListener('click', () => {
+            tocNav.classList.toggle('hidden');
+        });
+
+        tocClose.addEventListener('click', () => {
+            tocNav.classList.add('hidden');
+        });
+    </script>
+  
+
+</body></html>

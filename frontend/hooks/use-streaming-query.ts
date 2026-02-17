@@ -312,7 +312,10 @@ export function useStreamingQuery(options: UseStreamingQueryOptions = {}): UseSt
       const hardcodedUserId = "user_12345";
 
       // Build request body based on session state
+      // "query" is required by the Next.js API route validation;
+      // "user_prompt" is consumed by the backend SSE endpoint.
       const requestBody: Record<string, any> = {
+        query: prompt,
         user_prompt: prompt,
         user_id: hardcodedUserId,
       };

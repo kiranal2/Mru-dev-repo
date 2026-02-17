@@ -93,9 +93,9 @@ export function EscalateDialog({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="District Registrar">District Registrar</SelectItem>
-                <SelectItem value="Zonal Inspector">Zonal Inspector</SelectItem>
-                <SelectItem value="Chief Commissioner">Chief Commissioner</SelectItem>
-                <SelectItem value="Revenue Audit Cell">Revenue Audit Cell</SelectItem>
+                <SelectItem value="Joint Inspector General">Joint Inspector General</SelectItem>
+                <SelectItem value="Additional Inspector General">Additional Inspector General</SelectItem>
+                <SelectItem value="IG of Registration & Stamps">IG of Registration & Stamps</SelectItem>
               </SelectContent>
             </Select>
           </div>

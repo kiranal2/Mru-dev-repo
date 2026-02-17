@@ -1,6 +1,6 @@
 import { LeakageCase } from "@/lib/revenue-leakage/types";
 
-export const owners = ["DIG", "DR", "Joint IG 1", "Joint IG 2", "Addl IG", "Audit DR"];
+export const owners = ["DR", "Joint IG 1", "Joint IG 2", "Addl IG", "IG", "Audit DR"];
 
 export const riskStyles: Record<LeakageCase["risk_level"], string> = {
   High: "bg-red-600 text-white border-red-700",

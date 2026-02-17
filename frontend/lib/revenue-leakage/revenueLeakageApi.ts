@@ -102,7 +102,7 @@ const exportTemplates: ExportTemplate[] = [
 let exportHistory: ExportRecord[] = [
   {
     export_id: "EXP-2024-010",
-    created_by: "DIG",
+    created_by: "IG",
     created_at: "2024-12-12T15:10:00Z",
     type: "Case Summary CSV",
     filters_used: "Risk=High",
@@ -906,7 +906,7 @@ export const revenueLeakageApi = {
       users: [
         {
           id: "U-001",
-          name: "DIG",
+          name: "IG",
           role: "Admin",
           email: "dig@igrs.gov.in",
           cases_assigned: 0,
@@ -971,7 +971,7 @@ export const revenueLeakageApi = {
         {
           id: "AL-002",
           timestamp: "2025-01-15T09:32:00Z",
-          actor: "DIG",
+          actor: "IG",
           action: "Rule Updated",
           detail: "Enabled rule R-MV-008 (Cross-Office DRR Divergence)",
           category: "rule",
@@ -979,7 +979,7 @@ export const revenueLeakageApi = {
         {
           id: "AL-003",
           timestamp: "2025-01-15T09:30:00Z",
-          actor: "DIG",
+          actor: "IG",
           action: "User Login",
           detail: "Admin login from 10.0.12.45",
           category: "user",
@@ -1035,7 +1035,7 @@ export const revenueLeakageApi = {
         {
           id: "AL-010",
           timestamp: "2025-01-14T10:15:00Z",
-          actor: "DIG",
+          actor: "IG",
           action: "Threshold Updated",
           detail: "Gap threshold changed from ₹8,000 to ₹10,000",
           category: "rule",
@@ -1067,7 +1067,7 @@ export const revenueLeakageApi = {
         {
           id: "AL-014",
           timestamp: "2025-01-13T10:00:00Z",
-          actor: "DIG",
+          actor: "IG",
           action: "Rule Disabled",
           detail: "Disabled rule R-EX-002 (Holiday Fee Check) for review",
           category: "rule",

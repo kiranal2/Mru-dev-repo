@@ -20,6 +20,12 @@ import {
   Square,
   WifiOff,
   RefreshCw,
+  TrendingUp,
+  DollarSign,
+  Users,
+  PieChart,
+  Receipt,
+  type LucideIcon,
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ChatSessionItem } from "@/lib/streaming-types";
@@ -33,6 +39,22 @@ type Chip = {
 
 const QUICK_CHIPS = ["Invoices", "Payments", "Credit Memos", "Customers", "AR Balance", "AR Aging"];
 
+type SuggestedPrompt = {
+  id: string;
+  icon: LucideIcon;
+  text: string;
+  category: string;
+};
+
+const SUGGESTED_PROMPTS: SuggestedPrompt[] = [
+  { id: "sp-1", icon: TrendingUp, text: "Show me AR aging summary for all customers", category: "AR Aging" },
+  { id: "sp-2", icon: Receipt, text: "List all open invoices over $100,000", category: "Invoices" },
+  { id: "sp-3", icon: DollarSign, text: "Give me payment history for the last 30 days", category: "Payments" },
+  { id: "sp-4", icon: Users, text: "Show top 10 customers by outstanding balance", category: "Customers" },
+  { id: "sp-5", icon: AlertCircle, text: "What invoices are overdue by more than 60 days?", category: "Collections" },
+  { id: "sp-6", icon: PieChart, text: "Break down AR balance by business unit", category: "Analysis" },
+];
+
 type Message = {
   id: string;
   message: string;
@@ -44,6 +66,7 @@ type Message = {
   recommendations?: string[];
   nextSteps?: string[];
   dataAnalysis?: string;
+  followUpPrompts?: string[];
 };
 
 // Streaming event type for display
@@ -72,6 +95,7 @@ interface CommandCenterProps {
   onSendClick: () => void;
   onChipClick: (chipText: string) => void;
   onRemoveChip: (chipId: string) => void;
+  onPromptSuggestionClick: (promptText: string) => void;
   onDropdownToggle: (chipId: string) => void;
   onTestUI: () => void;
   onOpenLivePinModal?: () => void;
@@ -89,6 +113,88 @@ interface CommandCenterProps {
   onRetrySessions?: () => void;
 }
 
+/** Detect the best label and value columns for a bar chart */
+function detectChartColumns(
+  columns: any[],
+  rows: any[][]
+): { labelIdx: number; valueIdx: number } | null {
+  if (!columns || columns.length < 2 || !rows || rows.length === 0) return null;
+
+  let labelIdx = 0; // default: first column
+  let valueIdx = -1;
+
+  // Find the first currency/number column
+  for (let i = 0; i < columns.length; i++) {
+    const col = columns[i];
+    const key = (col.key || col.title || "").toLowerCase();
+    const format = (col.format || col.type || "").toLowerCase();
+    if (
+      format === "currency" ||
+      format === "number" ||
+      key.includes("amount") ||
+      key.includes("balance") ||
+      key.includes("total") ||
+      key.includes("usd")
+    ) {
+      valueIdx = i;
+      break;
+    }
+  }
+
+  // Fallback: scan rows for numeric-looking data
+  if (valueIdx === -1) {
+    for (let i = 1; i < columns.length; i++) {
+      const sample = String(rows[0]?.[i] || "");
+      if (/^\$?[\d,]+(\.\d+)?%?$/.test(sample.trim())) {
+        valueIdx = i;
+        break;
+      }
+    }
+  }
+
+  if (valueIdx === -1) return null;
+  return { labelIdx, valueIdx };
+}
+
+/** Parse a currency/number string to a raw number */
+function parseNumericValue(val: string): number {
+  if (!val) return 0;
+  const cleaned = String(val).replace(/[$,%]/g, "").replace(/,/g, "");
+  const num = parseFloat(cleaned);
+  return isNaN(num) ? 0 : num;
+}
+
+/** Client-side fallback follow-up prompts when backend doesn't return any */
+function generateClientFollowUpPrompts(userMessage: string): string[] {
+  const lower = (userMessage || "").toLowerCase();
+  if (lower.includes("aging") || lower.includes("overdue")) {
+    return [
+      "Show collection history for critical accounts",
+      "What is the write-off risk?",
+      "Break down aging by business unit",
+    ];
+  }
+  if (lower.includes("invoice") || lower.includes("open")) {
+    return [
+      "Which invoices are past due?",
+      "Show payment terms breakdown",
+      "Average days-to-pay for these customers?",
+    ];
+  }
+  if (lower.includes("payment") || lower.includes("paid")) {
+    return [
+      "Compare payment trends month-over-month",
+      "Show pending payments",
+      "Payment method distribution this quarter",
+    ];
+  }
+  return [
+    "Show AR aging summary",
+    "List open invoices over $100K",
+    "Top customers by outstanding balance",
+  ];
+}
+
 // Memoize message item component to prevent re-renders
 const MessageItem = memo(
   ({
@@ -102,6 +208,8 @@ const MessageItem = memo(
     onOpenCreateWatchModal,
     onOpenCreateTemplateModal,
     onExpandTable,
+    onPromptSuggestionClick,
+    isLastAssistantMessage,
   }: {
     message: Message;
     index: number;
@@ -113,7 +221,14 @@ const MessageItem = memo(
     onOpenCreateWatchModal?: () => void;
     onOpenCreateTemplateModal?: () => void;
     onExpandTable: (tableId: string) => void;
+    onPromptSuggestionClick?: (text: string) => void;
+    isLastAssistantMessage: boolean;
   }) => {
+    const [chartVisibleForTable, setChartVisibleForTable] = useState<Record<string, boolean>>({});
+
+    const toggleChart = useCallback((tableId: string) => {
+      setChartVisibleForTable((prev) => ({ ...prev, [tableId]: !prev[tableId] }));
+    }, []);
     const includesAging = useMemo(
       () => message.message.toLowerCase().includes("aging"),
       [message.message]
@@ -331,6 +446,13 @@ const MessageItem = memo(
                           {!includesAging && (
                             <div className="flex items-center space-x-2">
                               <button
+                                onClick={() => toggleChart(tableId)}
+                                className="bg-white hover:bg-[#D1ECFF] text-[#000000] px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-[#D2D2D2]"
+                              >
+                                <BarChart3 size={18} className="text-[#0A3B77]" />
+                                <span>{chartVisibleForTable[tableId] ? "Hide Chart" : "Visualize"}</span>
+                              </button>
+                              <button
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
@@ -465,11 +587,131 @@ const MessageItem = memo(
                         subjectArea="financial"
                         className="border-0"
                       />
+
+                      {/* Inline Bar Chart */}
+                      {chartVisibleForTable[tableId] && (() => {
+                        const chartCols = detectChartColumns(table.columns, table.rows);
+                        if (!chartCols) return null;
+                        const { labelIdx, valueIdx } = chartCols;
+                        const chartData = table.rows.map((row: any) => ({
+                          label: String(row[labelIdx] || ""),
+                          value: parseNumericValue(String(row[valueIdx] || "0")),
+                          display: String(row[valueIdx] || ""),
+                        }));
+                        const maxValue = Math.max(...chartData.map((d: any) => d.value), 1);
+                        const barHeight = 32;
+                        const gap = 8;
+                        const svgHeight = chartData.length * (barHeight + gap);
+                        const labelWidth = 160;
+                        const valueWidth = 120;
+                        const barAreaWidth = 400;
+
+                        return (
+                          <div className="mt-4 p-4 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] animate-in slide-in-from-top-2 duration-300">
+                            <div className="flex items-center gap-2 mb-3">
+                              <BarChart3 size={16} className="text-[#6B7EF3]" />
+                              <span className="text-sm font-medium text-[#1E293B]">
+                                {table.columns[valueIdx]?.title || "Value"} by {table.columns[labelIdx]?.title || "Category"}
+                              </span>
+                            </div>
+                            <svg
+                              width="100%"
+                              height={svgHeight}
+                              viewBox={`0 0 ${labelWidth + barAreaWidth + valueWidth} ${svgHeight}`}
+                              className="overflow-visible"
+                            >
+                              {chartData.map((item: any, i: number) => {
+                                const y = i * (barHeight + gap);
+                                const barWidth = (item.value / maxValue) * barAreaWidth;
+                                const truncatedLabel =
+                                  item.label.length > 20 ? item.label.slice(0, 20) + "\u2026" : item.label;
+
+                                return (
+                                  <g key={i}>
+                                    {/* Label */}
+                                    <text
+                                      x={labelWidth - 8}
+                                      y={y + barHeight / 2}
+                                      textAnchor="end"
+                                      dominantBaseline="central"
+                                      className="text-xs fill-[#475569]"
+                                    >
+                                      {truncatedLabel}
+                                    </text>
+                                    {/* Bar background */}
+                                    <rect
+                                      x={labelWidth}
+                                      y={y + 2}
+                                      width={barAreaWidth}
+                                      height={barHeight - 4}
+                                      rx={4}
+                                      fill="#F1F5F9"
+                                    />
+                                    {/* Bar */}
+                                    <rect
+                                      x={labelWidth}
+                                      y={y + 2}
+                                      width={0}
+                                      height={barHeight - 4}
+                                      rx={4}
+                                      fill="#6B7EF3"
+                                    >
+                                      <animate
+                                        attributeName="width"
+                                        from="0"
+                                        to={barWidth}
+                                        dur="0.6s"
+                                        begin={`${i * 0.05}s`}
+                                        fill="freeze"
+                                        calcMode="spline"
+                                        keySplines="0.25 0.1 0.25 1"
+                                        keyTimes="0;1"
+                                      />
+                                    </rect>
+                                    {/* Value */}
+                                    <text
+                                      x={labelWidth + barAreaWidth + 8}
+                                      y={y + barHeight / 2}
+                                      textAnchor="start"
+                                      dominantBaseline="central"
+                                      className="text-xs fill-[#334155] font-medium"
+                                    >
+                                      {item.display}
+                                    </text>
+                                  </g>
+                                );
+                              })}
+                            </svg>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
               );
             })}
+
+            {/* Follow-up Prompt Suggestions — only on the last assistant message, when not loading */}
+            {isLastAssistantMessage && !isLoading && (() => {
+              const prompts = message.followUpPrompts && message.followUpPrompts.length > 0
+                ? message.followUpPrompts
+                : generateClientFollowUpPrompts(message.message || message.content);
+              return (
+                <div className="flex flex-wrap gap-2 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                  {prompts.map((text, i) => (
+                    <button
+                      key={i}
+                      onClick={() => onPromptSuggestionClick?.(text)}
+                      className="group inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#E2E8F0] bg-white text-sm text-[#334155] hover:border-[#6B7EF3] hover:bg-[#F5F8FF] hover:text-[#0A3B77] transition-all duration-200 active:scale-[0.97]"
+                    >
+                      <Lightbulb size={14} className="text-[#94A3B8] group-hover:text-[#6B7EF3] transition-colors" />
+                      <span className="leading-snug">{text}</span>
+                      <ArrowRight size={12} className="text-[#CBD5E1] group-hover:text-[#6B7EF3] group-hover:translate-x-0.5 transition-all" />
+                    </button>
+                  ))}
+                </div>
+              );
+            })()}
 
             {/* Pie Charts */}
             {message.financialData?.charts.map((chart, chartIndex) => {
@@ -750,6 +992,7 @@ export default function CommandCenter({
   onSendClick,
   onChipClick,
   onRemoveChip,
+  onPromptSuggestionClick,
   onDropdownToggle,
   onTestUI,
   onOpenLivePinModal,
@@ -768,6 +1011,14 @@ export default function CommandCenter({
   const router = useRouter();
   const [expandedTableId, setExpandedTableId] = useState<string | null>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  // Time-based greeting
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  }, []);
 
   // Handle expand button click - navigate to dynamic sheets with preview data
   const handleExpandTable = useCallback(
@@ -873,21 +1124,33 @@ export default function CommandCenter({
               {/* Chat Messages Area */}
               <div className="flex-1 overflow-y-auto space-y-6 mb-4 pr-4 pb-4 scrollbar-hide">
                 {/* Render all messages in chronological order with their data */}
-                {messages.map((message, index) => (
-                  <MessageItem
-                    key={message.id}
-                    message={message}
-                    index={index}
-                    isLoading={isLoading}
-                    messagesLength={messages.length}
-                    streamingEvents={streamingEvents}
-                    currentStreamingMessage={currentStreamingMessage}
-                    onOpenLivePinModal={onOpenLivePinModal}
-                    onOpenCreateWatchModal={onOpenCreateWatchModal}
-                    onOpenCreateTemplateModal={onOpenCreateTemplateModal}
-                    onExpandTable={handleExpandTable}
-                  />
-                ))}
+                {(() => {
+                  // Find the last assistant message index for follow-up prompts
+                  let lastAssistantIndex = -1;
+                  for (let i = messages.length - 1; i >= 0; i--) {
+                    if (messages[i].role === "assistant" && !messages[i].isStreaming) {
+                      lastAssistantIndex = i;
+                      break;
+                    }
+                  }
+                  return messages.map((message, index) => (
+                    <MessageItem
+                      key={message.id}
+                      message={message}
+                      index={index}
+                      isLoading={isLoading}
+                      messagesLength={messages.length}
+                      streamingEvents={streamingEvents}
+                      currentStreamingMessage={currentStreamingMessage}
+                      onOpenLivePinModal={onOpenLivePinModal}
+                      onOpenCreateWatchModal={onOpenCreateWatchModal}
+                      onOpenCreateTemplateModal={onOpenCreateTemplateModal}
+                      onExpandTable={handleExpandTable}
+                      onPromptSuggestionClick={onPromptSuggestionClick}
+                      isLastAssistantMessage={index === lastAssistantIndex}
+                    />
+                  ));
+                })()}
 
                 {/* Errors */}
                 {errors.map((error, index) => (
@@ -1031,8 +1294,8 @@ export default function CommandCenter({
               </div>
             </div>
           ) : (
-            <div className="h-[calc(100vh-350px)]">
-              <div className="w-full max-w-[821px] mx-auto px-4">
+            <div className="h-[calc(100vh-120px)] overflow-y-auto">
+              <div className="w-full max-w-[821px] mx-auto px-4 pb-8">
                 {/* Hero Greeting */}
                 <div
                   className={cn(
@@ -1051,7 +1314,7 @@ export default function CommandCenter({
                     )}
                   ></div>
                   <div className="text-[28px] text-[#0F172A] leading-tight">
-                    Good Morning Mai Lane,
+                    {greeting} Mai Lane,
                   </div>
                   <div
                     className={cn(
@@ -1169,65 +1432,25 @@ export default function CommandCenter({
                                 >
                                   <div className="p-2">
                                     <div className="space-y-1">
-                                      <button
-                                        onClick={() => {
-                                          onDropdownToggle(chip.id);
-                                          alert(
-                                            "Demo: Show me invoices overdue for more than 50 days"
-                                          );
-                                        }}
-                                        className="w-full text-left px-3 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] rounded-md transition-colors duration-150 flex items-center gap-2"
-                                      >
-                                        <ChevronRight size={12} className="text-[#9CA3AF]" />
-                                        Show me {chip.text.toLowerCase()} overdue for more than 50
-                                        days
-                                      </button>
-                                      <button
-                                        onClick={() => {
-                                          onDropdownToggle(chip.id);
-                                          alert(
-                                            `Demo: Show ${chip.text.toLowerCase()} for period Aug 2024`
-                                          );
-                                        }}
-                                        className="w-full text-left px-3 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] rounded-md transition-colors duration-150 flex items-center gap-2"
-                                      >
-                                        <ChevronRight size={12} className="text-[#9CA3AF]" />
-                                        Show {chip.text.toLowerCase()} for period Aug 2024
-                                      </button>
-                                      <button
-                                        onClick={() => {
-                                          onDropdownToggle(chip.id);
-                                          alert(
-                                            `Demo: Analyze ${chip.text.toLowerCase()} by Business Unit`
-                                          );
-                                        }}
-                                        className="w-full text-left px-3 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] rounded-md transition-colors duration-150 flex items-center gap-2"
-                                      >
-                                        <ChevronRight size={12} className="text-[#9CA3AF]" />
-                                        Analyze {chip.text.toLowerCase()} by Business Unit
-                                      </button>
-                                      <button
-                                        onClick={() => {
-                                          onDropdownToggle(chip.id);
-                                          alert(
-                                            `Demo: View most recent ${chip.text.toLowerCase().slice(0, -1)}`
-                                          );
-                                        }}
-                                        className="w-full text-left px-3 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] rounded-md transition-colors duration-150 flex items-center gap-2"
-                                      >
-                                        <ChevronRight size={12} className="text-[#9CA3AF]" />
-                                        View most recent {chip.text.toLowerCase().slice(0, -1)}
-                                      </button>
-                                      <button
-                                        onClick={() => {
-                                          onDropdownToggle(chip.id);
-                                          alert(`Demo: Get ${chip.text.toLowerCase()} by Market`);
-                                        }}
-                                        className="w-full text-left px-3 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] rounded-md transition-colors duration-150 flex items-center gap-2"
-                                      >
-                                        <ChevronRight size={12} className="text-[#9CA3AF]" />
-                                        Get {chip.text.toLowerCase()} by Market
-                                      </button>
+                                      {[
+                                        `Show me ${chip.text.toLowerCase()} overdue for more than 50 days`,
+                                        `Show ${chip.text.toLowerCase()} for period Aug 2024`,
+                                        `Analyze ${chip.text.toLowerCase()} by Business Unit`,
+                                        `View most recent ${chip.text.toLowerCase().slice(0, -1)}`,
+                                        `Get ${chip.text.toLowerCase()} by Market`,
+                                      ].map((suggestion) => (
+                                        <button
+                                          key={suggestion}
+                                          onClick={() => {
+                                            onDropdownToggle(chip.id);
+                                            onPromptSuggestionClick(suggestion);
+                                          }}
+                                          className="w-full text-left px-3 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] rounded-md transition-colors duration-150 flex items-center gap-2"
+                                        >
+                                          <ChevronRight size={12} className="text-[#9CA3AF]" />
+                                          {suggestion}
+                                        </button>
+                                      ))}
                                     </div>
                                   </div>
                                 </div>
@@ -1262,10 +1485,43 @@ export default function CommandCenter({
                   </div>
                 </div>
 
-                {/* Quick Chips */}
+                {/* Suggested Prompts */}
                 <div
                   className={cn(
-                    "flex flex-wrap items-center justify-center gap-[16px] my-4 transition-all duration-1000 ease-out delay-900",
+                    "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 my-6 transition-all duration-1000 ease-out delay-900",
+                    loadingState === "loading"
+                      ? "opacity-0 translate-y-6"
+                      : "opacity-100 translate-y-0"
+                  )}
+                >
+                  {SUGGESTED_PROMPTS.map((prompt, idx) => {
+                    const Icon = prompt.icon;
+                    return (
+                      <button
+                        key={prompt.id}
+                        onClick={() => onPromptSuggestionClick(prompt.text)}
+                        className="group flex items-start gap-3 text-left px-4 py-3.5 rounded-2xl border border-[#E5E7EB] bg-white hover:border-[#6B7EF3]/40 hover:bg-[#F5F8FF] hover:shadow-md transition-all duration-200 ease-out active:scale-[0.98]"
+                        style={{ animationDelay: `${900 + idx * 80}ms` }}
+                      >
+                        <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-[#EEF2FF] flex items-center justify-center group-hover:bg-[#6B7EF3]/15 transition-colors duration-200">
+                          <Icon size={16} className="text-[#6B7EF3]" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-[#1E293B] leading-snug group-hover:text-[#0A3B77] transition-colors duration-200">
+                            {prompt.text}
+                          </p>
+                          <span className="text-[11px] text-[#94A3B8] mt-1 inline-block">{prompt.category}</span>
+                        </div>
+                        <ArrowRight size={14} className="mt-1 flex-shrink-0 text-[#CBD5E1] group-hover:text-[#6B7EF3] group-hover:translate-x-0.5 transition-all duration-200" />
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Quick Filter Chips */}
+                <div
+                  className={cn(
+                    "flex flex-wrap items-center justify-center gap-2 mt-2 transition-all duration-1000 ease-out delay-1100",
                     loadingState === "loading"
                       ? "opacity-0 translate-y-6"
                       : "opacity-100 translate-y-0"
@@ -1286,13 +1542,6 @@ export default function CommandCenter({
                       {chip}
                     </button>
                   ))}
-                  <button
-                    onClick={onTestUI}
-                    className="h-8 px-[14px] border rounded-full text-sm hover:shadow-md hover:scale-105 transition-all duration-200 ease-out active:scale-95 bg-[#0A3B77] text-white border-[#0A3B77] hover:bg-[#0A3B77]/90"
-                    aria-label="Test UI"
-                  >
-                    Test UI
-                  </button>
                 </div>
               </div>
             </div>

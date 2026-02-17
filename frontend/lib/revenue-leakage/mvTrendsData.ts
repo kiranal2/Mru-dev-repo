@@ -155,7 +155,7 @@ const generateLocations = (sros: SroInfo[]): LocationSeed[] => {
       status,
       assigned_to:
         drr < 0.85 && rng() > 0.6
-          ? pick(["DIG", "DR", "Joint IG 1", "Joint IG 2", "Addl IG", "Audit DR"])
+          ? pick(["DR", "Joint IG 1", "Joint IG 2", "Addl IG", "IG", "Audit DR"])
           : null,
       rules_triggered: [],
     });

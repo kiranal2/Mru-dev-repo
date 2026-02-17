@@ -19,7 +19,7 @@
     "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
     "dates": { "pDate": "2024-11-28", "eDate": "2024-11-29", "rDate": "2024-12-01" },
     "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "200 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P001", "name": "Ramesh Kumar", "panNo": "ABCPK1234E" }],
+    "partiesSummary": [{ "code": "P001", "name": "Ramesh Naidu", "panNo": "ABCPK1234E" }],
     "payableBreakdown": { "sdPayable": 550000, "tdPayable": 150000, "rfPayable": 100000, "dsdPayable": 50000, "otherFee": 40000, "finalTaxableValue": 8500000 },
     "evidence": {
       "triggeredRules": [{ "ruleId": "R-VAL-001", "ruleName": "Market Value Gap", "category": "Valuation", "severity": "High", "impactInr": 245000, "explanation": "Declared value ₹85L vs rate card ₹109.5L (22% deviation)", "confidence": 92 }],

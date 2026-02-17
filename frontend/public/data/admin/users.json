@@ -61,8 +61,8 @@
   },
   {
     "id": "USR-005",
-    "name": "Priya Sharma",
-    "email": "priya.sharma@meeru.ai",
+    "name": "Lakshmi Reddy",
+    "email": "lakshmi.reddy@meeru.ai",
     "role": "Tax Manager",
     "department": "Tax",
     "modules": ["reports", "close"],
@@ -76,8 +76,8 @@
   },
   {
     "id": "USR-006",
-    "name": "Ravi Patel",
-    "email": "ravi.patel@meeru.ai",
+    "name": "Venkata Rao",
+    "email": "venkata.rao@meeru.ai",
     "role": "IGRS Analyst",
     "department": "Revenue Assurance",
     "modules": ["igrs"],

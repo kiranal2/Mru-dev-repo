@@ -47,9 +47,10 @@ export default function CommandCenterContainer({ initialSessionId }: CommandCent
     handleTextareaBlur,
     handleSendClick,
 
-    // Handlers - chips
+    // Handlers - chips & suggestions
     handleChipClick,
     handleRemoveChip,
+    handlePromptSuggestionClick,
 
     // Handlers - sessions
     handleNewChat,
@@ -112,6 +113,7 @@ export default function CommandCenterContainer({ initialSessionId }: CommandCent
         onSendClick={handleSendClick}
         onChipClick={handleChipClick}
         onRemoveChip={handleRemoveChip}
+        onPromptSuggestionClick={handlePromptSuggestionClick}
         onDropdownToggle={setOpenDropdownId}
         onTestUI={() => setShowFinancialResults(true)}
         onOpenLivePinModal={handleOpenLivePinModal}

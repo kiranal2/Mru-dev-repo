@@ -218,7 +218,7 @@ const SAMPLE_DATA: ManualCaseInput = {
   exemptions: [],
   holiday_registration: false,
   parties: [
-    { CODE: "BUY", NAME: "Ramesh Kumar", PAN_NO: "ABCPK1234F" },
+    { CODE: "BUY", NAME: "Ramesh Naidu", PAN_NO: "ABCPK1234F" },
     { CODE: "SEL", NAME: "Suresh Reddy", PAN_NO: "XYZPS5678G" },
   ],
 };

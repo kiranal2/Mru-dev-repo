@@ -179,9 +179,10 @@ export interface UseCommandCenterReturn {
   handleTextareaBlur: () => void;
   handleSendClick: () => Promise<void>;
 
-  // Handlers - chips
+  // Handlers - chips & suggestions
   handleChipClick: (chipText: string) => void;
   handleRemoveChip: (chipId: string) => void;
+  handlePromptSuggestionClick: (promptText: string) => Promise<void>;
 
   // Handlers - sessions
   handleNewChat: () => void;
@@ -638,6 +639,7 @@ export function useCommandCenter({
             recommendations: streamingResult.recommendations || [],
             nextSteps: streamingResult.next_steps || [],
             dataAnalysis: finalDataAnalysis,
+            followUpPrompts: streamingResult.follow_up_prompts || [],
             streamingEvents: [...currentStreamingEvents],
           };
         } else {
@@ -654,6 +656,7 @@ export function useCommandCenter({
             recommendations: streamingResult.recommendations || [],
             nextSteps: streamingResult.next_steps || [],
             dataAnalysis: newMessageContent,
+            followUpPrompts: streamingResult.follow_up_prompts || [],
             streamingEvents: [...currentStreamingEvents],
           });
         }
@@ -744,12 +747,13 @@ export function useCommandCenter({
     }
   }, [composerValue]);
 
-  const handleSendClick = useCallback(async () => {
-    if (!composerValue.trim() || isLoading) {
+  // Core send function — accepts an explicit message string
+  const sendMessage = useCallback(async (messageText: string) => {
+    if (!messageText.trim() || isLoading) {
       return;
     }
 
-    const userMessage = composerValue.trim();
+    const userMessage = messageText.trim();
     const queryId = Date.now().toString();
     setComposerValue("");
     setOpenDropdownId(null);
@@ -841,6 +845,10 @@ export function useCommandCenter({
             ? apiResponse.next_steps
             : [],
         dataAnalysis: apiResponse.data_analysis || "",
+        followUpPrompts:
+          apiResponse.follow_up_prompts && Array.isArray(apiResponse.follow_up_prompts)
+            ? apiResponse.follow_up_prompts
+            : [],
       };
 
       const assistantResponse = apiResponse.data_analysis || "Analysis completed successfully.";
@@ -868,7 +876,16 @@ export function useCommandCenter({
         },
       ]);
     }
-  }, [composerValue, isLoading, clearEvents, wsSendQuery]);
+  }, [isLoading, clearEvents, wsSendQuery]);
+
+  const handleSendClick = useCallback(async () => {
+    await sendMessage(composerValue);
+  }, [composerValue, sendMessage]);
+
+  // Handle prompt suggestion click — populate composer and auto-send
+  const handlePromptSuggestionClick = useCallback(async (promptText: string) => {
+    await sendMessage(promptText);
+  }, [sendMessage]);
 
   const handleChipClick = useCallback(
     (chipText: string) => {
@@ -1007,6 +1024,7 @@ export function useCommandCenter({
 
     handleChipClick,
     handleRemoveChip,
+    handlePromptSuggestionClick,
 
     handleNewChat,
     handleSessionClick,

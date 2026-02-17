@@ -38,6 +38,7 @@ export interface QueryResult {
   data_analysis: string;
   recommendations: string[];
   next_steps: string[];
+  follow_up_prompts?: string[];
   tool_results: any[];
 }
 
