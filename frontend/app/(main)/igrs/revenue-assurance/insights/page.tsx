@@ -24,7 +24,7 @@ import {
   Users as UsersIcon,
   Stamp,
 } from "lucide-react";
-import type { StampVendorAnalysis } from "@/lib/data/types";
+import type { StampVendorAnalysis, RepeatExemptionParty } from "@/lib/data/types";
 
 // ─── Inline SVG chart components ─────────────────────────────────────────────
 
@@ -89,48 +89,91 @@ function SignalBreakdownChart({
   );
 }
 
-/** SVG sparkline-style area chart for monthly trends */
+/** SVG area chart for monthly trends — full-width with value labels and gridlines */
 function MonthlyGapTrend({
   data,
 }: {
   data: Array<{ month: string; cases: number; gapInr: number; highRisk: number }>;
 }) {
   if (!data.length) return null;
-  const w = 400;
-  const h = 120;
-  const pad = { top: 10, right: 10, bottom: 24, left: 10 };
+  const w = 900;
+  const h = 220;
+  const pad = { top: 20, right: 20, bottom: 36, left: 60 };
   const iw = w - pad.left - pad.right;
   const ih = h - pad.top - pad.bottom;
   const maxGap = Math.max(...data.map((d) => d.gapInr), 1);
   const points = data.map((d, i) => ({
     x: pad.left + (i / Math.max(data.length - 1, 1)) * iw,
     y: pad.top + ih - (d.gapInr / maxGap) * ih,
+    gapInr: d.gapInr,
   }));
   const line = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
   const area = `${line} L${points[points.length - 1].x},${pad.top + ih} L${points[0].x},${pad.top + ih} Z`;
+
+  // Y-axis gridlines (4 ticks)
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((pct) => ({
+    y: pad.top + ih - pct * ih,
+    value: maxGap * pct,
+  }));
+
+  const fmtShort = (v: number) => {
+    if (v >= 10000000) return `${(v / 10000000).toFixed(1)}Cr`;
+    if (v >= 100000) return `${(v / 100000).toFixed(1)}L`;
+    if (v >= 1000) return `${(v / 1000).toFixed(0)}K`;
+    return `${v}`;
+  };
 
   return (
     <svg viewBox={`0 0 ${w} ${h}`} className="w-full" preserveAspectRatio="xMidYMid meet">
       <defs>
         <linearGradient id="gapGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.3} />
+          <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.25} />
           <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.02} />
         </linearGradient>
       </defs>
-      <path d={area} fill="url(#gapGrad)" />
-      <path d={line} fill="none" stroke="#3b82f6" strokeWidth={2} />
-      {points.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r={3} fill="#3b82f6" />
+      {/* Gridlines + Y labels */}
+      {yTicks.map((tick, i) => (
+        <g key={i}>
+          <line x1={pad.left} y1={tick.y} x2={w - pad.right} y2={tick.y} stroke="#e2e8f0" strokeWidth={1} strokeDasharray={i === 0 ? "0" : "4 3"} />
+          <text x={pad.left - 8} y={tick.y + 4} textAnchor="end" className="text-[10px] fill-slate-400">
+            {fmtShort(tick.value)}
+          </text>
+        </g>
       ))}
+      {/* Area + Line */}
+      <path d={area} fill="url(#gapGrad)" />
+      <path d={line} fill="none" stroke="#3b82f6" strokeWidth={2.5} strokeLinejoin="round" />
+      {/* Data points + value labels */}
+      {points.map((p, i) => (
+        <g key={i}>
+          <circle cx={p.x} cy={p.y} r={4} fill="#fff" stroke="#3b82f6" strokeWidth={2} />
+          <text x={p.x} y={p.y - 10} textAnchor="middle" className="text-[9px] fill-slate-600 font-medium">
+            {fmtShort(p.gapInr)}
+          </text>
+        </g>
+      ))}
+      {/* X-axis month labels */}
       {data.map((d, i) => (
         <text
           key={i}
           x={points[i].x}
-          y={pad.top + ih + 14}
+          y={pad.top + ih + 18}
+          textAnchor="middle"
+          className="text-[10px] fill-slate-500"
+        >
+          {d.month.slice(5)}
+        </text>
+      ))}
+      {/* Cases count below month */}
+      {data.map((d, i) => (
+        <text
+          key={`c-${i}`}
+          x={points[i].x}
+          y={pad.top + ih + 30}
           textAnchor="middle"
           className="text-[8px] fill-slate-400"
         >
-          {d.month.slice(5)}
+          {d.cases} cases
         </text>
       ))}
     </svg>
@@ -264,6 +307,154 @@ function ExemptionCategoryBars({
       ))}
       <div className="mt-2 text-xs text-slate-500">
         Total exempted amount: <span className="font-semibold">{formatInr(summary.totalAmount)}</span>
+      </div>
+    </div>
+  );
+}
+
+/** Detailed table showing parties with repeated exemption usage */
+function RepeatExemptionPartiesTable({
+  parties,
+}: {
+  parties: RepeatExemptionParty[];
+}) {
+  if (!parties.length) {
+    return (
+      <div className="text-xs text-slate-400 py-4 text-center">
+        No repeat exemption parties detected.
+      </div>
+    );
+  }
+
+  const sorted = [...parties].sort((a, b) => b.exemptionCount - a.exemptionCount);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-3 text-xs">
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-sm bg-red-500" /> High Risk
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-sm bg-amber-400" /> Medium Risk
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-sm bg-blue-300" /> Low Risk
+        </span>
+        <span className="text-slate-500 ml-auto">{parties.length} repeat offender parties</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b text-slate-500">
+              <th className="text-left py-2 px-2">Party</th>
+              <th className="text-left py-2 px-2">PAN</th>
+              <th className="text-left py-2 px-2">Entity</th>
+              <th className="text-center py-2 px-2">Claims</th>
+              <th className="text-right py-2 px-2">Exempted Amt</th>
+              <th className="text-left py-2 px-2">Offices</th>
+              <th className="text-left py-2 px-2">Categories</th>
+              <th className="text-left py-2 px-2">Period</th>
+              <th className="text-center py-2 px-2">Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((p) => (
+              <tr
+                key={p.pan}
+                className={`border-b hover:bg-slate-50 ${
+                  p.riskFlag === "High" ? "bg-red-50/40" : ""
+                }`}
+              >
+                <td className="py-2 px-2">
+                  <div className="font-medium">{p.partyName}</div>
+                  {p.aadhaarLast4 !== "—" && (
+                    <div className="text-[10px] text-slate-400">
+                      Aadhaar: ****{p.aadhaarLast4}
+                    </div>
+                  )}
+                </td>
+                <td className="py-2 px-2 font-mono text-[10px]">{p.pan}</td>
+                <td className="py-2 px-2 text-slate-500">{p.entityType}</td>
+                <td className="py-2 px-2 text-center">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-100 text-amber-700 font-bold text-sm">
+                    {p.exemptionCount}
+                  </span>
+                </td>
+                <td className="py-2 px-2 text-right font-medium">
+                  {formatInr(p.totalExemptedAmount)}
+                </td>
+                <td className="py-2 px-2">
+                  <div className="flex flex-wrap gap-1">
+                    {p.offices.filter((v, i, a) => a.indexOf(v) === i).map((office) => (
+                      <Badge key={office} variant="outline" className="text-[10px]">
+                        {office.replace(" SRO", "")}
+                      </Badge>
+                    ))}
+                  </div>
+                </td>
+                <td className="py-2 px-2">
+                  <div className="flex flex-wrap gap-1">
+                    {p.categories.map((cat) => (
+                      <Badge
+                        key={cat}
+                        variant={
+                          cat.includes("Misuse")
+                            ? "destructive"
+                            : cat.includes("Mismatch")
+                              ? "secondary"
+                              : "outline"
+                        }
+                        className="text-[10px]"
+                      >
+                        {cat}
+                      </Badge>
+                    ))}
+                  </div>
+                </td>
+                <td className="py-2 px-2 text-slate-500 whitespace-nowrap">
+                  {new Date(p.firstSeen).toLocaleDateString("en-GB", {
+                    month: "short",
+                    year: "2-digit",
+                  })}{" "}
+                  –{" "}
+                  {new Date(p.lastSeen).toLocaleDateString("en-GB", {
+                    month: "short",
+                    year: "2-digit",
+                  })}
+                </td>
+                <td className="py-2 px-2 text-center">
+                  <Badge
+                    variant={
+                      p.riskFlag === "High"
+                        ? "destructive"
+                        : p.riskFlag === "Medium"
+                          ? "secondary"
+                          : "outline"
+                    }
+                  >
+                    {p.riskFlag}
+                  </Badge>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {/* Remarks below the table */}
+      <div className="space-y-2 mt-2">
+        {sorted
+          .filter((p) => p.riskFlag === "High")
+          .map((p) => (
+            <div
+              key={p.pan}
+              className="flex items-start gap-2 px-3 py-2 bg-red-50 border border-red-100 rounded text-xs text-red-700"
+            >
+              <AlertTriangle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+              <span>
+                <strong>{p.partyName}</strong>: {p.remarks}
+              </span>
+            </div>
+          ))}
       </div>
     </div>
   );
@@ -468,50 +659,57 @@ export default function InsightsPage() {
 
       {/* Tab Content */}
       {activeTab === "overview" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="space-y-4">
+          {/* Signal cards — side by side */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Signal Breakdown by Severity</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SignalBreakdownChart data={kpi.leakageBySignal} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Signal Status Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CaseFunnel signals={signals.data} />
+                <div className="mt-4 text-xs text-slate-500">
+                  Total signals: {signals.data.length} across {new Set(signals.data.map((s) => s.caseId)).size} cases
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Monthly Revenue Gap Trend — full width */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Signal Breakdown by Severity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <SignalBreakdownChart data={kpi.leakageBySignal} />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Signal Status Distribution</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CaseFunnel signals={signals.data} />
-              <div className="mt-4 text-xs text-slate-500">
-                Total signals: {signals.data.length} across {new Set(signals.data.map((s) => s.caseId)).size} cases
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="lg:col-span-2">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Monthly Revenue Gap Trend</CardTitle>
+              <CardTitle className="text-sm flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-blue-600" />
+                Monthly Revenue Gap Trend
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <MonthlyGapTrend data={kpi.monthlyTrends} />
-              <div className="grid grid-cols-3 gap-4 mt-3 text-xs text-center">
+              <div className="grid grid-cols-3 gap-4 mt-4 text-xs text-center">
                 {kpi.monthlyTrends.length > 0 && (
                   <>
-                    <div>
+                    <div className="p-2 rounded bg-blue-50">
                       <div className="text-slate-500">Latest Month</div>
-                      <div className="font-semibold">
+                      <div className="font-semibold text-blue-700">
                         {formatInr(kpi.monthlyTrends[kpi.monthlyTrends.length - 1].gapInr)}
                       </div>
                     </div>
-                    <div>
+                    <div className="p-2 rounded bg-red-50">
                       <div className="text-slate-500">Peak Month</div>
-                      <div className="font-semibold">
+                      <div className="font-semibold text-red-700">
                         {formatInr(Math.max(...kpi.monthlyTrends.map((t) => t.gapInr)))}
                       </div>
                     </div>
-                    <div>
+                    <div className="p-2 rounded bg-slate-50">
                       <div className="text-slate-500">Total Cases (12m)</div>
                       <div className="font-semibold">
                         {kpi.monthlyTrends.reduce((sum, t) => sum + t.cases, 0)}
@@ -523,27 +721,32 @@ export default function InsightsPage() {
             </CardContent>
           </Card>
 
-          {/* Top Offices by Gap */}
-          <Card className="lg:col-span-2">
+          {/* Top Offices by Revenue Gap — full width */}
+          <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Top Offices by Revenue Gap</CardTitle>
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-indigo-600" />
+                Top Offices by Revenue Gap
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {kpi.topOfficesByGap.map((o, i) => {
                   const maxGap = Math.max(...kpi.topOfficesByGap.map((x) => x.gapInr), 1);
+                  const pct = (o.gapInr / maxGap) * 100;
+                  const barColor = pct >= 80 ? "bg-red-500" : pct >= 50 ? "bg-amber-500" : "bg-blue-500";
                   return (
-                    <div key={o.srCode} className="flex items-center gap-3 text-xs">
-                      <span className="w-5 text-slate-400 text-right">{i + 1}</span>
-                      <span className="w-40 truncate font-medium">{o.srName}</span>
-                      <div className="flex-1 h-4 bg-slate-100 rounded overflow-hidden">
+                    <div key={o.srCode} className="flex items-center gap-3 text-sm">
+                      <span className="w-6 text-slate-400 text-right font-mono">{i + 1}</span>
+                      <span className="w-44 truncate font-medium">{o.srName}</span>
+                      <div className="flex-1 h-5 bg-slate-100 rounded overflow-hidden">
                         <div
-                          className="h-full bg-blue-500 rounded transition-all"
-                          style={{ width: `${(o.gapInr / maxGap) * 100}%` }}
+                          className={`h-full ${barColor} rounded transition-all`}
+                          style={{ width: `${pct}%` }}
                         />
                       </div>
-                      <span className="w-16 text-right font-medium">{formatInr(o.gapInr)}</span>
-                      <span className="w-16 text-right text-slate-500">{o.cases} cases</span>
+                      <span className="w-20 text-right font-semibold">{formatInr(o.gapInr)}</span>
+                      <span className="w-20 text-right text-slate-500">{o.cases} cases</span>
                     </div>
                   );
                 })}
@@ -747,6 +950,24 @@ export default function InsightsPage() {
                   );
                 })}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Repeat Exemption Parties — detailed party-level view */}
+          <Card className="lg:col-span-2">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <UsersIcon className="w-4 h-4 text-amber-600" />
+                Repeat Exemption Parties
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">
+                Parties flagged for claiming exemptions repeatedly across multiple registrations, offices, or categories
+              </p>
+            </CardHeader>
+            <CardContent>
+              <RepeatExemptionPartiesTable
+                parties={kpi.exemptionSummary.repeatExemptionParties ?? []}
+              />
             </CardContent>
           </Card>
 

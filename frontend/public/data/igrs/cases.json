@@ -4056,5 +4056,132 @@
         "detail": "Fraud confirmed \u2014 recovery notice issued to SRO Guntur"
       }
     ]
+  },
+  {
+    "id": "IGRS-2024-0034",
+    "caseId": "IGRS-2024-0034",
+    "documentKey": {
+      "srCode": "209",
+      "bookNo": "1",
+      "doctNo": "5120",
+      "regYear": "2024"
+    },
+    "createdAt": "2024-12-22T11:15:00Z",
+    "updatedAt": "2025-01-02T14:30:00Z",
+    "riskLevel": "High",
+    "riskScore": 91,
+    "confidence": 95,
+    "status": "Confirmed",
+    "assignedTo": "SR",
+    "leakageSignals": [
+      "ExemptionRisk",
+      "RevenueGap"
+    ],
+    "impactAmountInr": 285000,
+    "payableTotalInr": 285000,
+    "paidTotalInr": 0,
+    "gapInr": 285000,
+    "office": {
+      "srCode": "SR02",
+      "srName": "Guntur Main",
+      "district": "Guntur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-20",
+      "eDate": "2024-12-21",
+      "rDate": "2024-12-22"
+    },
+    "propertySummary": {
+      "isUrban": false,
+      "landNature": "Commercial",
+      "extent": "2.5 acres",
+      "unit": "acres"
+    },
+    "partiesSummary": [
+      {
+        "code": "P034A",
+        "name": "Srinivasa Reddy K",
+        "panNo": "BPJPS5678K"
+      },
+      {
+        "code": "P034B",
+        "name": "Vamsi Krishna Enterprises",
+        "panNo": "AAFCV9012P"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 171000,
+      "tdPayable": 57000,
+      "rfPayable": 28500,
+      "dsdPayable": 17100,
+      "otherFee": 11400,
+      "finalTaxableValue": 2850000
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-EXM-007",
+          "ruleName": "Exemption on Misclassified Property",
+          "category": "Exemption",
+          "severity": "High",
+          "impactInr": 285000,
+          "explanation": "Agricultural exemption (Section 3(a)) claimed on Survey 312/B, Mangalagiri — Webland/MeeBhoomi records show land reclassified to 'Commercial' since April 2022. Actual stamp duty payable: ₹2.85L; amount paid: ₹0 (full exemption claimed). Exemption is invalid per current classification.",
+          "confidence": 95
+        }
+      ],
+      "receiptCount": 1,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 8.6,
+      "exemptionCount": 1
+    },
+    "sla": {
+      "ageingDays": 11,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "note-34a",
+        "author": "System",
+        "createdAt": "2024-12-22T11:15:00Z",
+        "note": "Webland cross-verification: Survey 312/B in Mangalagiri mandal was reclassified from Agricultural to Commercial via GO Ms. No. 142 dated 2022-04-18. Party declared as 'Agricultural' in Form 1 to avail Section 3(a) exemption."
+      },
+      {
+        "id": "note-34b",
+        "author": "SR",
+        "createdAt": "2024-12-28T10:30:00Z",
+        "note": "Confirmed: Webland record shows Commercial classification effective since Apr-2022. Party Srinivasa Reddy K (BPJPS5678K) is also flagged as repeat exemption claimant — 4th instance across Guntur & Chittoor SROs. Recovery notice prepared."
+      }
+    ],
+    "activityLog": [
+      {
+        "id": "log-34a",
+        "ts": "2024-12-22T11:15:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-EXM-007: Agricultural exemption claimed on commercially classified land (Survey 312/B, Mangalagiri)"
+      },
+      {
+        "id": "log-34b",
+        "ts": "2024-12-23T09:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to In Review",
+        "detail": "Verifying Webland classification history and exemption eligibility"
+      },
+      {
+        "id": "log-34c",
+        "ts": "2024-12-28T10:30:00Z",
+        "actor": "SR",
+        "action": "Status changed to Confirmed",
+        "detail": "Classification mismatch confirmed via Webland — exemption invalid, recovery of ₹2.85L initiated"
+      }
+    ]
   }
 ]

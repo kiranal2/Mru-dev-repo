@@ -734,5 +734,20 @@
     "requiredFields": ["PARTY_TYPE", "PARTY_PAN"],
     "falsePositiveNotes": ["Government-owned corporations with private PAN prefixes", "PSU entities registered under older PAN categories"],
     "example": "Party listed as 'Government of AP' but PAN prefix 'B' indicates private individual — ₹1.85L exemption potentially fraudulent"
+  },
+  {
+    "ruleId": "R-EXM-007",
+    "ruleName": "Exemption on Misclassified Property",
+    "category": "Exemption",
+    "description": "Detects exemptions applied to properties whose actual land classification (per Webland/MeeBhoomi records) does not match the classification required for the claimed exemption category. For example, agricultural exemptions claimed on commercially classified land.",
+    "severity": "High",
+    "inputs": ["EXEMPTION_CODE", "FORM1_CLASSIFICATION", "WEBLAND_CLASSIFICATION", "SURVEY_NUMBER", "PROPERTY_VALUE"],
+    "output": "exemption_classification_mismatch",
+    "enabled": true,
+    "phase": "Phase 3",
+    "logic": "IF exemption.requiredClassification !== webland.getClassification(surveyNo, village, mandal) THEN flag",
+    "requiredFields": ["EXEMPTION_CODE", "SURVEY_NUMBER", "FORM1_CLASSIFICATION"],
+    "falsePositiveNotes": ["Recent land-use conversion orders not yet reflected in Webland", "Mixed-use properties with partial agricultural use"],
+    "example": "Agricultural exemption (Section 3(a)) claimed on Survey 312/B in Mangalagiri — Webland shows 'Commercial' classification since 2022; stamp duty exemption of ₹2.85L is invalid"
   }
 ]

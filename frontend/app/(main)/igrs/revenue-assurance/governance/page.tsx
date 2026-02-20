@@ -1008,19 +1008,19 @@ function AnywhereRegistrationTab({ data }: { data: AnywhereRegistrationData }) {
           <CardTitle className="text-sm">Monthly Anywhere Registration Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-end gap-1 h-32">
+          <div className="flex items-end gap-1" style={{ height: 128 }}>
             {monthlyTrend.map((m) => {
               const maxCount = Math.max(...monthlyTrend.map((t) => t.count), 1);
-              const heightPct = (m.count / maxCount) * 100;
+              const barHeight = Math.max(4, (m.count / maxCount) * 100);
               return (
-                <div key={m.month} className="flex-1 flex flex-col items-center gap-1">
-                  <span className="text-[9px] text-slate-500">{m.count}</span>
+                <div key={m.month} className="flex-1 flex flex-col items-center justify-end h-full">
+                  <span className="text-[9px] text-slate-500 mb-1">{m.count}</span>
                   <div
                     className="w-full bg-blue-500 rounded-t transition-all"
-                    style={{ height: `${heightPct}%` }}
+                    style={{ height: `${barHeight}px` }}
                     title={`${m.month}: ${m.count} (${m.percent}%)`}
                   />
-                  <span className="text-[8px] text-slate-400">{m.month.slice(5)}</span>
+                  <span className="text-[8px] text-slate-400 mt-1">{m.month.slice(5)}</span>
                 </div>
               );
             })}

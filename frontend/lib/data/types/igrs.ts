@@ -481,6 +481,8 @@ export interface IGRSDashboardKPIs {
     failedEligibility: number;
     /** Parties with repeat exemption usage. */
     repeatOffenders: number;
+    /** Detailed repeat exemption party records. */
+    repeatExemptionParties?: RepeatExemptionParty[];
   };
 
   // --- Rules Engine ---
@@ -1734,4 +1736,25 @@ export interface OfficerAccountabilityData {
     flaggedCount: number;
     totalVariance: number;
   }[];
+}
+
+// ---------------------------------------------------------------------------
+// Repeat Exemption Parties
+// ---------------------------------------------------------------------------
+
+/** A party flagged for repeated exemption usage across registrations. */
+export interface RepeatExemptionParty {
+  partyName: string;
+  pan: string;
+  aadhaarLast4: string;
+  entityType: string;
+  exemptionCount: number;
+  documentsInvolved: string[];
+  totalExemptedAmount: number;
+  offices: string[];
+  categories: string[];
+  firstSeen: string;
+  lastSeen: string;
+  riskFlag: "High" | "Medium" | "Low";
+  remarks: string;
 }
