@@ -68,6 +68,16 @@
   "dailyCashRiskScore": 68,
   "exemptionAbuseFlags": 3,
   "cashReconAlerts": 5,
+  "exemptionAbuseByOffice": [
+    { "srCode": "SR10", "srName": "Anantapur SRO", "district": "Anantapur", "totalExemptions": 84, "flaggedExemptions": 18, "abuseRate": 21.4, "abuseScore": 86, "repeatPartyCount": 7, "estimatedLeakage": 1450000, "topCategory": "Government Party Misuse" },
+    { "srCode": "SR06", "srName": "East Godavari SRO", "district": "East Godavari", "totalExemptions": 72, "flaggedExemptions": 14, "abuseRate": 19.4, "abuseScore": 78, "repeatPartyCount": 5, "estimatedLeakage": 1180000, "topCategory": "Repeat Exemption" },
+    { "srCode": "SR02", "srName": "Guntur SRO", "district": "Guntur", "totalExemptions": 95, "flaggedExemptions": 12, "abuseRate": 12.6, "abuseScore": 65, "repeatPartyCount": 4, "estimatedLeakage": 920000, "topCategory": "Classification Mismatch" },
+    { "srCode": "SR03", "srName": "Chittoor SRO", "district": "Chittoor", "totalExemptions": 68, "flaggedExemptions": 8, "abuseRate": 11.8, "abuseScore": 58, "repeatPartyCount": 3, "estimatedLeakage": 680000, "topCategory": "Repeat Exemption" },
+    { "srCode": "SR05", "srName": "Visakhapatnam SRO", "district": "Visakhapatnam", "totalExemptions": 110, "flaggedExemptions": 9, "abuseRate": 8.2, "abuseScore": 45, "repeatPartyCount": 3, "estimatedLeakage": 540000, "topCategory": "Government Party Misuse" },
+    { "srCode": "SR01", "srName": "Krishna SRO", "district": "Krishna", "totalExemptions": 102, "flaggedExemptions": 6, "abuseRate": 5.9, "abuseScore": 32, "repeatPartyCount": 2, "estimatedLeakage": 350000, "topCategory": "Incorrect Classification" },
+    { "srCode": "SR07", "srName": "West Godavari SRO", "district": "West Godavari", "totalExemptions": 56, "flaggedExemptions": 3, "abuseRate": 5.4, "abuseScore": 28, "repeatPartyCount": 1, "estimatedLeakage": 210000, "topCategory": "Repeat Exemption" },
+    { "srCode": "SR08", "srName": "Prakasam SRO", "district": "Prakasam", "totalExemptions": 48, "flaggedExemptions": 2, "abuseRate": 4.2, "abuseScore": 22, "repeatPartyCount": 1, "estimatedLeakage": 145000, "topCategory": "Incorrect Classification" }
+  ],
   "lastRefresh": "2025-01-07T00:00:00Z",
   "syncStatus": "Healthy"
 }

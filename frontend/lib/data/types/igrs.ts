@@ -516,6 +516,21 @@ export interface IGRSDashboardKPIs {
   /** Count of cash reconciliation alerts pending resolution. */
   cashReconAlerts?: number;
 
+  // --- Exemption Abuse Index ---
+  /** Office-wise exemption abuse index for detecting exemption misuse patterns. */
+  exemptionAbuseByOffice?: Array<{
+    srCode: string;
+    srName: string;
+    district: string;
+    totalExemptions: number;
+    flaggedExemptions: number;
+    abuseRate: number;
+    abuseScore: number;
+    repeatPartyCount: number;
+    estimatedLeakage: number;
+    topCategory: string;
+  }>;
+
   // --- Meta ---
   /** ISO-8601 timestamp of the last data refresh. */
   lastRefresh: string;
@@ -1143,6 +1158,34 @@ export interface GovernanceClassification {
     mixed: number;
     govt: number;
   }[];
+  conversionCases?: {
+    summary: {
+      totalConversions: number;
+      commercialToResidential: number;
+      agriculturalToCommercial: number;
+      otherConversions: number;
+      estimatedRevenueImpact: number;
+      flaggedCases: number;
+    };
+    cases: {
+      caseId: string;
+      documentKey: string;
+      sroCode: string;
+      officeName: string;
+      district: string;
+      weblandClassification: string;
+      form1Classification: string;
+      form2Classification: string;
+      declaredClassification: string;
+      conversionType: string;
+      mvDeclared: number;
+      mvExpected: number;
+      revenueImpact: number;
+      status: "Flagged" | "Under Review" | "Confirmed" | "Cleared";
+      detectedDate: string;
+    }[];
+    monthlyTrend: { month: string; conversions: number; flagged: number; revenueImpact: number }[];
+  };
 }
 
 /** Governance Tab 5: Prohibited Property trends. */
@@ -1212,6 +1255,12 @@ export interface GovernanceSLAMonitoring {
   monthlyCompliance: { month: string; compliancePercent: number }[];
 }
 
+/** Entity type for party verification. */
+export type PartyEntityType = "Individual" | "Private Company" | "Government" | "Trust" | "Partnership" | "LLP";
+
+/** Verification status for PAN/Aadhaar cross-check. */
+export type PartyVerificationStatus = "Verified" | "Mismatch" | "Pending" | "Not Available";
+
 /** Governance Tab 8: Demographics. */
 export interface GovernanceDemographics {
   metadata: GovernanceMetadata;
@@ -1226,6 +1275,11 @@ export interface GovernanceDemographics {
   topParties: {
     partyName: string;
     pan: string;
+    aadhaar: string;
+    entityType: PartyEntityType;
+    declaredAs: "Government" | "Private" | "Individual";
+    verificationStatus: PartyVerificationStatus;
+    verificationRemark?: string;
     role: "Buyer" | "Seller" | "Both";
     registrations: number;
     totalValue: number;
@@ -1584,4 +1638,100 @@ export interface AIIntelligenceMetadata {
     riskScoring: "active" | "training" | "error";
     integrityIndex: "active" | "training" | "error";
   };
+}
+
+// ---------------------------------------------------------------------------
+// Webland Cross-Verification Types
+// ---------------------------------------------------------------------------
+
+/** Result of cross-verifying Webland classification with Form 1/Form 2 entries. */
+export interface WeblandVerificationRecord {
+  documentKey: string;
+  sroCode: string;
+  officeName: string;
+  district: string;
+  weblandClassification: string;
+  form1Classification: string;
+  form2Classification: string;
+  declaredClassification: string;
+  weblandVsForm1Match: boolean;
+  weblandVsForm2Match: boolean;
+  form1VsDeclaredMatch: boolean;
+  deviationReason?: string;
+  riskScore: number;
+  estimatedImpact: number;
+  status: "Match" | "Mismatch" | "Partial Match" | "Under Review";
+}
+
+/** Webland cross-verification data payload. */
+export interface WeblandVerificationData {
+  metadata: { lastUpdated: string; totalVerified: number; period: string };
+  summary: {
+    totalDocuments: number;
+    matchCount: number;
+    mismatchCount: number;
+    partialMatchCount: number;
+    mismatchRate: number;
+    estimatedRevenueImpact: number;
+  };
+  records: WeblandVerificationRecord[];
+  classificationMismatchBreakdown: {
+    fromType: string;
+    toType: string;
+    count: number;
+    revenueImpact: number;
+  }[];
+  sroMismatchHeatmap: {
+    sroCode: string;
+    officeName: string;
+    mismatchCount: number;
+    mismatchRate: number;
+    topMismatchType: string;
+  }[];
+}
+
+// ---------------------------------------------------------------------------
+// Officer Accountability Types
+// ---------------------------------------------------------------------------
+
+/** Individual officer accountability record. */
+export interface OfficerAccountabilityRecord {
+  officerId: string;
+  officerName: string;
+  designation: string;
+  sroCode: string;
+  officeName: string;
+  district: string;
+  dailyCashRiskScore: number;
+  challanAnomalyCount: number;
+  cashVarianceInr: number;
+  stampDiscrepancyCount: number;
+  pendingReconciliations: number;
+  slaBreachCount: number;
+  accountabilityScore: number;
+  trend: "improving" | "stable" | "declining";
+  lastAuditDate: string;
+  flagged: boolean;
+}
+
+/** Officer Accountability data payload (Governance Tab 9). */
+export interface OfficerAccountabilityData {
+  metadata: GovernanceMetadata;
+  summary: {
+    totalOfficers: number;
+    flaggedOfficers: number;
+    avgAccountabilityScore: number;
+    highRiskOfficers: number;
+    totalCashVariance: number;
+    pendingReconciliations: number;
+  };
+  officers: OfficerAccountabilityRecord[];
+  sroAccountabilitySummary: {
+    sroCode: string;
+    officeName: string;
+    avgScore: number;
+    officerCount: number;
+    flaggedCount: number;
+    totalVariance: number;
+  }[];
 }

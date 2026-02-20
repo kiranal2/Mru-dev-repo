@@ -875,6 +875,68 @@ export default function IGRSOverviewPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Office-wise Exemption Abuse Index */}
+      {dashboard.exemptionAbuseByOffice && dashboard.exemptionAbuseByOffice.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-purple-600" />
+              Office-wise Exemption Abuse Index
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Suspicious exemption score per SRO — flagged exemption rate, repeat offenders, and estimated leakage
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b text-left">
+                    <th className="py-2 pr-3 font-medium text-slate-500">Office</th>
+                    <th className="py-2 pr-3 font-medium text-slate-500">District</th>
+                    <th className="py-2 pr-3 font-medium text-slate-500 text-right">Total</th>
+                    <th className="py-2 pr-3 font-medium text-slate-500 text-right">Flagged</th>
+                    <th className="py-2 pr-3 font-medium text-slate-500 text-right">Abuse Rate</th>
+                    <th className="py-2 pr-3 font-medium text-slate-500 text-center">Abuse Score</th>
+                    <th className="py-2 pr-3 font-medium text-slate-500 text-right">Repeat Parties</th>
+                    <th className="py-2 pr-3 font-medium text-slate-500 text-right">Est. Leakage</th>
+                    <th className="py-2 font-medium text-slate-500">Top Category</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {dashboard.exemptionAbuseByOffice.map((office) => (
+                    <tr key={office.srCode} className={office.abuseScore >= 70 ? "bg-red-50/50" : ""}>
+                      <td className="py-2 pr-3 font-medium">{office.srName}</td>
+                      <td className="py-2 pr-3 text-slate-500">{office.district}</td>
+                      <td className="py-2 pr-3 text-right">{office.totalExemptions}</td>
+                      <td className="py-2 pr-3 text-right text-red-600 font-semibold">{office.flaggedExemptions}</td>
+                      <td className="py-2 pr-3 text-right">
+                        <span className={office.abuseRate >= 15 ? "text-red-600 font-semibold" : office.abuseRate >= 10 ? "text-amber-600" : "text-slate-600"}>
+                          {office.abuseRate.toFixed(1)}%
+                        </span>
+                      </td>
+                      <td className="py-2 pr-3 text-center">
+                        <Badge
+                          variant={office.abuseScore >= 70 ? "destructive" : office.abuseScore >= 50 ? "secondary" : "outline"}
+                          className="text-[10px]"
+                        >
+                          {office.abuseScore}
+                        </Badge>
+                      </td>
+                      <td className="py-2 pr-3 text-right">{office.repeatPartyCount}</td>
+                      <td className="py-2 pr-3 text-right font-bold text-red-700">{formatByMode(office.estimatedLeakage, currencyMode)}</td>
+                      <td className="py-2">
+                        <Badge variant="outline" className="text-[10px]">{office.topCategory}</Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

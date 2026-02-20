@@ -18,6 +18,7 @@ export { useIGRSStampIntelligence } from "./use-igrs-stamp-intelligence";
 export { useIGRSMVGrowthAttribution } from "./use-igrs-mv-growth-attribution";
 export { useIGRSMVRevisionComparison } from "./use-igrs-mv-revision-comparison";
 export { useIGRSMVAnomalies } from "./use-igrs-mv-anomalies";
+export { useIGRSWeblandVerification } from "./use-igrs-webland-verification";
 export { useIGRSGovernance } from "./use-igrs-governance";
 export { useAIIntelligence } from "./use-igrs-ai-intelligence";
 export { useAIChat } from "./use-igrs-ai-chat";

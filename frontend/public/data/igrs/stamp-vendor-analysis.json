@@ -22,7 +22,14 @@
       "vendorRiskScore": 92,
       "riskLevel": "High",
       "flaggedDate": "2024-11-18",
-      "monthlyUsage": [310, 295, 280, 320, 305, 310]
+      "monthlyUsage": [
+        310,
+        295,
+        280,
+        320,
+        305,
+        310
+      ]
     },
     {
       "vendorId": "SV-GN-003",
@@ -36,7 +43,14 @@
       "vendorRiskScore": 88,
       "riskLevel": "High",
       "flaggedDate": "2024-10-25",
-      "monthlyUsage": [370, 345, 360, 355, 340, 380]
+      "monthlyUsage": [
+        370,
+        345,
+        360,
+        355,
+        340,
+        380
+      ]
     },
     {
       "vendorId": "SV-EG-002",
@@ -50,7 +64,14 @@
       "vendorRiskScore": 85,
       "riskLevel": "High",
       "flaggedDate": "2024-12-02",
-      "monthlyUsage": [260, 245, 255, 270, 250, 260]
+      "monthlyUsage": [
+        260,
+        245,
+        255,
+        270,
+        250,
+        260
+      ]
     },
     {
       "vendorId": "SV-VS-004",
@@ -64,7 +85,14 @@
       "vendorRiskScore": 78,
       "riskLevel": "High",
       "flaggedDate": "2024-11-30",
-      "monthlyUsage": [520, 540, 530, 545, 535, 530]
+      "monthlyUsage": [
+        520,
+        540,
+        530,
+        545,
+        535,
+        530
+      ]
     },
     {
       "vendorId": "SV-NL-007",
@@ -78,7 +106,14 @@
       "vendorRiskScore": 75,
       "riskLevel": "High",
       "flaggedDate": "2024-12-10",
-      "monthlyUsage": [165, 160, 170, 155, 168, 162]
+      "monthlyUsage": [
+        165,
+        160,
+        170,
+        155,
+        168,
+        162
+      ]
     },
     {
       "vendorId": "SV-KR-005",
@@ -92,7 +127,14 @@
       "vendorRiskScore": 72,
       "riskLevel": "High",
       "flaggedDate": "2024-11-05",
-      "monthlyUsage": [460, 475, 470, 465, 460, 470]
+      "monthlyUsage": [
+        460,
+        475,
+        470,
+        465,
+        460,
+        470
+      ]
     },
     {
       "vendorId": "SV-CT-008",
@@ -106,7 +148,14 @@
       "vendorRiskScore": 68,
       "riskLevel": "High",
       "flaggedDate": "2024-12-08",
-      "monthlyUsage": [275, 280, 270, 278, 272, 275]
+      "monthlyUsage": [
+        275,
+        280,
+        270,
+        278,
+        272,
+        275
+      ]
     },
     {
       "vendorId": "SV-WG-006",
@@ -120,7 +169,14 @@
       "vendorRiskScore": 55,
       "riskLevel": "Medium",
       "flaggedDate": "2024-11-22",
-      "monthlyUsage": [185, 190, 188, 184, 186, 187]
+      "monthlyUsage": [
+        185,
+        190,
+        188,
+        184,
+        186,
+        187
+      ]
     },
     {
       "vendorId": "SV-AN-009",
@@ -134,7 +190,14 @@
       "vendorRiskScore": 42,
       "riskLevel": "Medium",
       "flaggedDate": "2024-12-15",
-      "monthlyUsage": [230, 235, 240, 228, 232, 235]
+      "monthlyUsage": [
+        230,
+        235,
+        240,
+        228,
+        232,
+        235
+      ]
     },
     {
       "vendorId": "SV-PR-010",
@@ -148,7 +211,14 @@
       "vendorRiskScore": 28,
       "riskLevel": "Low",
       "flaggedDate": "2024-12-18",
-      "monthlyUsage": [175, 172, 178, 176, 174, 175]
+      "monthlyUsage": [
+        175,
+        172,
+        178,
+        176,
+        174,
+        175
+      ]
     }
   ],
   "stampLeakageByType": [
@@ -183,7 +253,13 @@
       "vendorName": "Srinivasa Stamp Vendors",
       "jurisdiction": "Krishna",
       "njStampCount": 145,
-      "njStampDenominations": [100, 500, 1000, 5000, 10000],
+      "njStampDenominations": [
+        100,
+        500,
+        1000,
+        5000,
+        10000
+      ],
       "estimatedImpact": 52000,
       "detectedDate": "2024-11-18"
     },
@@ -192,7 +268,11 @@
       "vendorName": "Rajahmundry Stamps & Papers",
       "jurisdiction": "East Godavari",
       "njStampCount": 112,
-      "njStampDenominations": [500, 1000, 5000],
+      "njStampDenominations": [
+        500,
+        1000,
+        5000
+      ],
       "estimatedImpact": 38000,
       "detectedDate": "2024-12-02"
     },
@@ -201,7 +281,12 @@
       "vendorName": "Tirupati Stamp House",
       "jurisdiction": "Chittoor",
       "njStampCount": 98,
-      "njStampDenominations": [100, 500, 1000, 10000],
+      "njStampDenominations": [
+        100,
+        500,
+        1000,
+        10000
+      ],
       "estimatedImpact": 35000,
       "detectedDate": "2024-12-08"
     },
@@ -210,7 +295,10 @@
       "vendorName": "Lakshmi Franking Centre",
       "jurisdiction": "Guntur",
       "njStampCount": 87,
-      "njStampDenominations": [1000, 5000],
+      "njStampDenominations": [
+        1000,
+        5000
+      ],
       "estimatedImpact": 32000,
       "detectedDate": "2024-10-25"
     },
@@ -219,14 +307,18 @@
       "vendorName": "Nellore Judicial Stamps",
       "jurisdiction": "Nellore",
       "njStampCount": 74,
-      "njStampDenominations": [100, 500, 5000],
+      "njStampDenominations": [
+        100,
+        500,
+        5000
+      ],
       "estimatedImpact": 28000,
       "detectedDate": "2024-12-10"
     }
   ],
   "frankingAlerts": [
     {
-      "documentId": "SR01/A-IV/1245/2024",
+      "documentId": "101/4/1245/2024",
       "frankingDate": "2024-12-05",
       "frankingAmount": 85000,
       "sroCode": "SR01",
@@ -237,7 +329,7 @@
       "reviewStatus": "Pending"
     },
     {
-      "documentId": "SR05/B-II/0876/2024",
+      "documentId": "515/2/0876/2024",
       "frankingDate": "2024-11-28",
       "frankingAmount": 62000,
       "sroCode": "SR05",
@@ -248,7 +340,7 @@
       "reviewStatus": "Escalated"
     },
     {
-      "documentId": "SR12/A-I/2310/2024",
+      "documentId": "1209/1/2310/2024",
       "frankingDate": "2024-12-12",
       "frankingAmount": 145000,
       "sroCode": "SR12",
@@ -259,7 +351,7 @@
       "reviewStatus": "Reviewed"
     },
     {
-      "documentId": "SR02/C-III/0543/2024",
+      "documentId": "209/3/0543/2024",
       "frankingDate": "2024-12-01",
       "frankingAmount": 34000,
       "sroCode": "SR02",
@@ -270,7 +362,7 @@
       "reviewStatus": "Cleared"
     },
     {
-      "documentId": "SR14/A-II/0198/2024",
+      "documentId": "1407/2/0198/2024",
       "frankingDate": "2024-12-15",
       "frankingAmount": 28500,
       "sroCode": "SR14",
@@ -282,65 +374,425 @@
     }
   ],
   "usageTrends": [
-    { "month": "2024-01", "jurisdiction": "Krishna", "stampCount": 2450, "expectedCount": 2600, "anomaly": false },
-    { "month": "2024-01", "jurisdiction": "Guntur", "stampCount": 2100, "expectedCount": 2200, "anomaly": false },
-    { "month": "2024-01", "jurisdiction": "Visakhapatnam", "stampCount": 2800, "expectedCount": 2900, "anomaly": false },
-    { "month": "2024-01", "jurisdiction": "East Godavari", "stampCount": 1750, "expectedCount": 1800, "anomaly": false },
-    { "month": "2024-01", "jurisdiction": "Chittoor", "stampCount": 1600, "expectedCount": 1700, "anomaly": false },
-    { "month": "2024-02", "jurisdiction": "Krishna", "stampCount": 2380, "expectedCount": 2550, "anomaly": false },
-    { "month": "2024-02", "jurisdiction": "Guntur", "stampCount": 2050, "expectedCount": 2150, "anomaly": false },
-    { "month": "2024-02", "jurisdiction": "Visakhapatnam", "stampCount": 2750, "expectedCount": 2850, "anomaly": false },
-    { "month": "2024-02", "jurisdiction": "East Godavari", "stampCount": 1700, "expectedCount": 1780, "anomaly": false },
-    { "month": "2024-02", "jurisdiction": "Chittoor", "stampCount": 1550, "expectedCount": 1680, "anomaly": false },
-    { "month": "2024-03", "jurisdiction": "Krishna", "stampCount": 2520, "expectedCount": 2650, "anomaly": false },
-    { "month": "2024-03", "jurisdiction": "Guntur", "stampCount": 2200, "expectedCount": 2280, "anomaly": false },
-    { "month": "2024-03", "jurisdiction": "Visakhapatnam", "stampCount": 2900, "expectedCount": 2950, "anomaly": false },
-    { "month": "2024-03", "jurisdiction": "East Godavari", "stampCount": 1820, "expectedCount": 1850, "anomaly": false },
-    { "month": "2024-03", "jurisdiction": "Chittoor", "stampCount": 1620, "expectedCount": 1720, "anomaly": false },
-    { "month": "2024-04", "jurisdiction": "Krishna", "stampCount": 2600, "expectedCount": 2700, "anomaly": false },
-    { "month": "2024-04", "jurisdiction": "Guntur", "stampCount": 2280, "expectedCount": 2350, "anomaly": false },
-    { "month": "2024-04", "jurisdiction": "Visakhapatnam", "stampCount": 3050, "expectedCount": 3100, "anomaly": false },
-    { "month": "2024-04", "jurisdiction": "East Godavari", "stampCount": 1900, "expectedCount": 1920, "anomaly": false },
-    { "month": "2024-04", "jurisdiction": "Chittoor", "stampCount": 1700, "expectedCount": 1750, "anomaly": false },
-    { "month": "2024-05", "jurisdiction": "Krishna", "stampCount": 2550, "expectedCount": 2680, "anomaly": false },
-    { "month": "2024-05", "jurisdiction": "Guntur", "stampCount": 2150, "expectedCount": 2300, "anomaly": false },
-    { "month": "2024-05", "jurisdiction": "Visakhapatnam", "stampCount": 2980, "expectedCount": 3050, "anomaly": false },
-    { "month": "2024-05", "jurisdiction": "East Godavari", "stampCount": 1850, "expectedCount": 1900, "anomaly": false },
-    { "month": "2024-05", "jurisdiction": "Chittoor", "stampCount": 1680, "expectedCount": 1740, "anomaly": false },
-    { "month": "2024-06", "jurisdiction": "Krishna", "stampCount": 2480, "expectedCount": 2650, "anomaly": false },
-    { "month": "2024-06", "jurisdiction": "Guntur", "stampCount": 2080, "expectedCount": 2250, "anomaly": false },
-    { "month": "2024-06", "jurisdiction": "Visakhapatnam", "stampCount": 2850, "expectedCount": 3000, "anomaly": true },
-    { "month": "2024-06", "jurisdiction": "East Godavari", "stampCount": 1780, "expectedCount": 1880, "anomaly": false },
-    { "month": "2024-06", "jurisdiction": "Chittoor", "stampCount": 1550, "expectedCount": 1720, "anomaly": true },
-    { "month": "2024-07", "jurisdiction": "Krishna", "stampCount": 2350, "expectedCount": 2600, "anomaly": true },
-    { "month": "2024-07", "jurisdiction": "Guntur", "stampCount": 2000, "expectedCount": 2200, "anomaly": true },
-    { "month": "2024-07", "jurisdiction": "Visakhapatnam", "stampCount": 2780, "expectedCount": 2950, "anomaly": true },
-    { "month": "2024-07", "jurisdiction": "East Godavari", "stampCount": 1650, "expectedCount": 1860, "anomaly": true },
-    { "month": "2024-07", "jurisdiction": "Chittoor", "stampCount": 1480, "expectedCount": 1700, "anomaly": true },
-    { "month": "2024-08", "jurisdiction": "Krishna", "stampCount": 2420, "expectedCount": 2620, "anomaly": false },
-    { "month": "2024-08", "jurisdiction": "Guntur", "stampCount": 2120, "expectedCount": 2250, "anomaly": false },
-    { "month": "2024-08", "jurisdiction": "Visakhapatnam", "stampCount": 2900, "expectedCount": 2980, "anomaly": false },
-    { "month": "2024-08", "jurisdiction": "East Godavari", "stampCount": 1750, "expectedCount": 1870, "anomaly": false },
-    { "month": "2024-08", "jurisdiction": "Chittoor", "stampCount": 1580, "expectedCount": 1710, "anomaly": false },
-    { "month": "2024-09", "jurisdiction": "Krishna", "stampCount": 2500, "expectedCount": 2640, "anomaly": false },
-    { "month": "2024-09", "jurisdiction": "Guntur", "stampCount": 2180, "expectedCount": 2280, "anomaly": false },
-    { "month": "2024-09", "jurisdiction": "Visakhapatnam", "stampCount": 2950, "expectedCount": 3020, "anomaly": false },
-    { "month": "2024-09", "jurisdiction": "East Godavari", "stampCount": 1800, "expectedCount": 1890, "anomaly": false },
-    { "month": "2024-09", "jurisdiction": "Chittoor", "stampCount": 1620, "expectedCount": 1730, "anomaly": false },
-    { "month": "2024-10", "jurisdiction": "Krishna", "stampCount": 2300, "expectedCount": 2600, "anomaly": true },
-    { "month": "2024-10", "jurisdiction": "Guntur", "stampCount": 2050, "expectedCount": 2300, "anomaly": true },
-    { "month": "2024-10", "jurisdiction": "Visakhapatnam", "stampCount": 2820, "expectedCount": 3050, "anomaly": true },
-    { "month": "2024-10", "jurisdiction": "East Godavari", "stampCount": 1620, "expectedCount": 1880, "anomaly": true },
-    { "month": "2024-10", "jurisdiction": "Chittoor", "stampCount": 1450, "expectedCount": 1720, "anomaly": true },
-    { "month": "2024-11", "jurisdiction": "Krishna", "stampCount": 2280, "expectedCount": 2580, "anomaly": true },
-    { "month": "2024-11", "jurisdiction": "Guntur", "stampCount": 2020, "expectedCount": 2280, "anomaly": true },
-    { "month": "2024-11", "jurisdiction": "Visakhapatnam", "stampCount": 2780, "expectedCount": 3020, "anomaly": true },
-    { "month": "2024-11", "jurisdiction": "East Godavari", "stampCount": 1580, "expectedCount": 1870, "anomaly": true },
-    { "month": "2024-11", "jurisdiction": "Chittoor", "stampCount": 1420, "expectedCount": 1710, "anomaly": true },
-    { "month": "2024-12", "jurisdiction": "Krishna", "stampCount": 2250, "expectedCount": 2600, "anomaly": true },
-    { "month": "2024-12", "jurisdiction": "Guntur", "stampCount": 1980, "expectedCount": 2300, "anomaly": true },
-    { "month": "2024-12", "jurisdiction": "Visakhapatnam", "stampCount": 2700, "expectedCount": 3050, "anomaly": true },
-    { "month": "2024-12", "jurisdiction": "East Godavari", "stampCount": 1540, "expectedCount": 1880, "anomaly": true },
-    { "month": "2024-12", "jurisdiction": "Chittoor", "stampCount": 1380, "expectedCount": 1720, "anomaly": true }
+    {
+      "month": "2024-01",
+      "jurisdiction": "Krishna",
+      "stampCount": 2450,
+      "expectedCount": 2600,
+      "anomaly": false
+    },
+    {
+      "month": "2024-01",
+      "jurisdiction": "Guntur",
+      "stampCount": 2100,
+      "expectedCount": 2200,
+      "anomaly": false
+    },
+    {
+      "month": "2024-01",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2800,
+      "expectedCount": 2900,
+      "anomaly": false
+    },
+    {
+      "month": "2024-01",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1750,
+      "expectedCount": 1800,
+      "anomaly": false
+    },
+    {
+      "month": "2024-01",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1600,
+      "expectedCount": 1700,
+      "anomaly": false
+    },
+    {
+      "month": "2024-02",
+      "jurisdiction": "Krishna",
+      "stampCount": 2380,
+      "expectedCount": 2550,
+      "anomaly": false
+    },
+    {
+      "month": "2024-02",
+      "jurisdiction": "Guntur",
+      "stampCount": 2050,
+      "expectedCount": 2150,
+      "anomaly": false
+    },
+    {
+      "month": "2024-02",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2750,
+      "expectedCount": 2850,
+      "anomaly": false
+    },
+    {
+      "month": "2024-02",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1700,
+      "expectedCount": 1780,
+      "anomaly": false
+    },
+    {
+      "month": "2024-02",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1550,
+      "expectedCount": 1680,
+      "anomaly": false
+    },
+    {
+      "month": "2024-03",
+      "jurisdiction": "Krishna",
+      "stampCount": 2520,
+      "expectedCount": 2650,
+      "anomaly": false
+    },
+    {
+      "month": "2024-03",
+      "jurisdiction": "Guntur",
+      "stampCount": 2200,
+      "expectedCount": 2280,
+      "anomaly": false
+    },
+    {
+      "month": "2024-03",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2900,
+      "expectedCount": 2950,
+      "anomaly": false
+    },
+    {
+      "month": "2024-03",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1820,
+      "expectedCount": 1850,
+      "anomaly": false
+    },
+    {
+      "month": "2024-03",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1620,
+      "expectedCount": 1720,
+      "anomaly": false
+    },
+    {
+      "month": "2024-04",
+      "jurisdiction": "Krishna",
+      "stampCount": 2600,
+      "expectedCount": 2700,
+      "anomaly": false
+    },
+    {
+      "month": "2024-04",
+      "jurisdiction": "Guntur",
+      "stampCount": 2280,
+      "expectedCount": 2350,
+      "anomaly": false
+    },
+    {
+      "month": "2024-04",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 3050,
+      "expectedCount": 3100,
+      "anomaly": false
+    },
+    {
+      "month": "2024-04",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1900,
+      "expectedCount": 1920,
+      "anomaly": false
+    },
+    {
+      "month": "2024-04",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1700,
+      "expectedCount": 1750,
+      "anomaly": false
+    },
+    {
+      "month": "2024-05",
+      "jurisdiction": "Krishna",
+      "stampCount": 2550,
+      "expectedCount": 2680,
+      "anomaly": false
+    },
+    {
+      "month": "2024-05",
+      "jurisdiction": "Guntur",
+      "stampCount": 2150,
+      "expectedCount": 2300,
+      "anomaly": false
+    },
+    {
+      "month": "2024-05",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2980,
+      "expectedCount": 3050,
+      "anomaly": false
+    },
+    {
+      "month": "2024-05",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1850,
+      "expectedCount": 1900,
+      "anomaly": false
+    },
+    {
+      "month": "2024-05",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1680,
+      "expectedCount": 1740,
+      "anomaly": false
+    },
+    {
+      "month": "2024-06",
+      "jurisdiction": "Krishna",
+      "stampCount": 2480,
+      "expectedCount": 2650,
+      "anomaly": false
+    },
+    {
+      "month": "2024-06",
+      "jurisdiction": "Guntur",
+      "stampCount": 2080,
+      "expectedCount": 2250,
+      "anomaly": false
+    },
+    {
+      "month": "2024-06",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2850,
+      "expectedCount": 3000,
+      "anomaly": true
+    },
+    {
+      "month": "2024-06",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1780,
+      "expectedCount": 1880,
+      "anomaly": false
+    },
+    {
+      "month": "2024-06",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1550,
+      "expectedCount": 1720,
+      "anomaly": true
+    },
+    {
+      "month": "2024-07",
+      "jurisdiction": "Krishna",
+      "stampCount": 2350,
+      "expectedCount": 2600,
+      "anomaly": true
+    },
+    {
+      "month": "2024-07",
+      "jurisdiction": "Guntur",
+      "stampCount": 2000,
+      "expectedCount": 2200,
+      "anomaly": true
+    },
+    {
+      "month": "2024-07",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2780,
+      "expectedCount": 2950,
+      "anomaly": true
+    },
+    {
+      "month": "2024-07",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1650,
+      "expectedCount": 1860,
+      "anomaly": true
+    },
+    {
+      "month": "2024-07",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1480,
+      "expectedCount": 1700,
+      "anomaly": true
+    },
+    {
+      "month": "2024-08",
+      "jurisdiction": "Krishna",
+      "stampCount": 2420,
+      "expectedCount": 2620,
+      "anomaly": false
+    },
+    {
+      "month": "2024-08",
+      "jurisdiction": "Guntur",
+      "stampCount": 2120,
+      "expectedCount": 2250,
+      "anomaly": false
+    },
+    {
+      "month": "2024-08",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2900,
+      "expectedCount": 2980,
+      "anomaly": false
+    },
+    {
+      "month": "2024-08",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1750,
+      "expectedCount": 1870,
+      "anomaly": false
+    },
+    {
+      "month": "2024-08",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1580,
+      "expectedCount": 1710,
+      "anomaly": false
+    },
+    {
+      "month": "2024-09",
+      "jurisdiction": "Krishna",
+      "stampCount": 2500,
+      "expectedCount": 2640,
+      "anomaly": false
+    },
+    {
+      "month": "2024-09",
+      "jurisdiction": "Guntur",
+      "stampCount": 2180,
+      "expectedCount": 2280,
+      "anomaly": false
+    },
+    {
+      "month": "2024-09",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2950,
+      "expectedCount": 3020,
+      "anomaly": false
+    },
+    {
+      "month": "2024-09",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1800,
+      "expectedCount": 1890,
+      "anomaly": false
+    },
+    {
+      "month": "2024-09",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1620,
+      "expectedCount": 1730,
+      "anomaly": false
+    },
+    {
+      "month": "2024-10",
+      "jurisdiction": "Krishna",
+      "stampCount": 2300,
+      "expectedCount": 2600,
+      "anomaly": true
+    },
+    {
+      "month": "2024-10",
+      "jurisdiction": "Guntur",
+      "stampCount": 2050,
+      "expectedCount": 2300,
+      "anomaly": true
+    },
+    {
+      "month": "2024-10",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2820,
+      "expectedCount": 3050,
+      "anomaly": true
+    },
+    {
+      "month": "2024-10",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1620,
+      "expectedCount": 1880,
+      "anomaly": true
+    },
+    {
+      "month": "2024-10",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1450,
+      "expectedCount": 1720,
+      "anomaly": true
+    },
+    {
+      "month": "2024-11",
+      "jurisdiction": "Krishna",
+      "stampCount": 2280,
+      "expectedCount": 2580,
+      "anomaly": true
+    },
+    {
+      "month": "2024-11",
+      "jurisdiction": "Guntur",
+      "stampCount": 2020,
+      "expectedCount": 2280,
+      "anomaly": true
+    },
+    {
+      "month": "2024-11",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2780,
+      "expectedCount": 3020,
+      "anomaly": true
+    },
+    {
+      "month": "2024-11",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1580,
+      "expectedCount": 1870,
+      "anomaly": true
+    },
+    {
+      "month": "2024-11",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1420,
+      "expectedCount": 1710,
+      "anomaly": true
+    },
+    {
+      "month": "2024-12",
+      "jurisdiction": "Krishna",
+      "stampCount": 2250,
+      "expectedCount": 2600,
+      "anomaly": true
+    },
+    {
+      "month": "2024-12",
+      "jurisdiction": "Guntur",
+      "stampCount": 1980,
+      "expectedCount": 2300,
+      "anomaly": true
+    },
+    {
+      "month": "2024-12",
+      "jurisdiction": "Visakhapatnam",
+      "stampCount": 2700,
+      "expectedCount": 3050,
+      "anomaly": true
+    },
+    {
+      "month": "2024-12",
+      "jurisdiction": "East Godavari",
+      "stampCount": 1540,
+      "expectedCount": 1880,
+      "anomaly": true
+    },
+    {
+      "month": "2024-12",
+      "jurisdiction": "Chittoor",
+      "stampCount": 1380,
+      "expectedCount": 1720,
+      "anomaly": true
+    }
   ]
 }

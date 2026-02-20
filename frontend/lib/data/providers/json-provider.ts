@@ -9,7 +9,7 @@ import type {
   IGRSPattern, MVHotspot, IGRSSettings, IGRSExport, IGRSSignal,
   CashReconciliationRecord, StampInventoryRecord,
   StampVendorAnalysis, MVGrowthAttribution, MVRevisionComparison, MVAnomaliesData,
-  PredictiveForecastingData, DocumentRiskScoringData, SROIntegrityIndexData, PromptEngineData,
+  PredictiveForecastingData, DocumentRiskScoringData, SROIntegrityIndexData, PromptEngineData, WeblandVerificationData,
   RevenueCase, RevenueRule, Customer, Contract, RevenueDashboardKPIs,
   RevenueTrend, RevenuePattern, RevenueExport, RevenueSettings, RevenueSignal,
   CashPayment, CashRemittance, CashInvoice, CashMatchResult, CashException,
@@ -271,10 +271,15 @@ export const igrsRevenue = {
       'anywhere-registration': 'governance-anywhere-registration.json',
       'sla-monitoring': 'governance-sla-monitoring.json',
       'demographics': 'governance-demographics.json',
+      'officer-accountability': 'governance-officer-accountability.json',
     };
     const file = fileMap[tab];
     if (!file) throw new Error(`Unknown governance tab: ${tab}`);
     return loadJson<unknown>(`/data/igrs/${file}`);
+  },
+
+  async getWeblandVerification(): Promise<WeblandVerificationData> {
+    return loadJson<WeblandVerificationData>('/data/igrs/webland-verification.json');
   },
 };
 

@@ -11,7 +11,8 @@ type GovernanceTab =
   | "prohibited-property"
   | "anywhere-registration"
   | "sla-monitoring"
-  | "demographics";
+  | "demographics"
+  | "officer-accountability";
 
 export function useIGRSGovernance(activeTab: GovernanceTab) {
   const [data, setData] = useState<unknown>(null);

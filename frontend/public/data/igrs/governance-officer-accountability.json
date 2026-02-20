@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "lastUpdated": "2024-12-13T14:30:00Z",
+    "period": "2024-01 to 2024-12",
+    "totalDistricts": 13,
+    "totalSROs": 26
+  },
+  "summary": {
+    "totalOfficers": 78,
+    "flaggedOfficers": 12,
+    "avgAccountabilityScore": 72.4,
+    "highRiskOfficers": 5,
+    "totalCashVariance": 2850000,
+    "pendingReconciliations": 18
+  },
+  "officers": [
+    { "officerId": "OFF-001", "officerName": "Rajesh Kumar Patel", "designation": "Sub-Registrar", "sroCode": "SR10", "officeName": "Anantapur SRO", "district": "Anantapur", "dailyCashRiskScore": 82, "challanAnomalyCount": 8, "cashVarianceInr": 485000, "stampDiscrepancyCount": 3, "pendingReconciliations": 4, "slaBreachCount": 6, "accountabilityScore": 35, "trend": "declining", "lastAuditDate": "2024-11-15", "flagged": true },
+    { "officerId": "OFF-002", "officerName": "Venkatesh Reddy Myneni", "designation": "Sub-Registrar", "sroCode": "SR06", "officeName": "East Godavari SRO", "district": "East Godavari", "dailyCashRiskScore": 75, "challanAnomalyCount": 6, "cashVarianceInr": 380000, "stampDiscrepancyCount": 2, "pendingReconciliations": 3, "slaBreachCount": 4, "accountabilityScore": 42, "trend": "declining", "lastAuditDate": "2024-11-20", "flagged": true },
+    { "officerId": "OFF-003", "officerName": "Sita Devi Kommareddy", "designation": "Document Writer", "sroCode": "SR02", "officeName": "Guntur SRO", "district": "Guntur", "dailyCashRiskScore": 71, "challanAnomalyCount": 5, "cashVarianceInr": 310000, "stampDiscrepancyCount": 4, "pendingReconciliations": 2, "slaBreachCount": 3, "accountabilityScore": 48, "trend": "stable", "lastAuditDate": "2024-12-01", "flagged": true },
+    { "officerId": "OFF-004", "officerName": "Narasimha Rao Gadde", "designation": "Sub-Registrar", "sroCode": "SR03", "officeName": "Chittoor SRO", "district": "Chittoor", "dailyCashRiskScore": 68, "challanAnomalyCount": 4, "cashVarianceInr": 275000, "stampDiscrepancyCount": 1, "pendingReconciliations": 2, "slaBreachCount": 5, "accountabilityScore": 52, "trend": "stable", "lastAuditDate": "2024-12-05", "flagged": true },
+    { "officerId": "OFF-005", "officerName": "Priya Lakshmi Bandi", "designation": "Junior Registrar", "sroCode": "SR05", "officeName": "Visakhapatnam SRO", "district": "Visakhapatnam", "dailyCashRiskScore": 65, "challanAnomalyCount": 3, "cashVarianceInr": 250000, "stampDiscrepancyCount": 2, "pendingReconciliations": 1, "slaBreachCount": 2, "accountabilityScore": 58, "trend": "improving", "lastAuditDate": "2024-12-08", "flagged": true },
+    { "officerId": "OFF-006", "officerName": "Ramesh Babu Chintala", "designation": "Sub-Registrar", "sroCode": "SR01", "officeName": "Krishna SRO", "district": "Krishna", "dailyCashRiskScore": 42, "challanAnomalyCount": 2, "cashVarianceInr": 145000, "stampDiscrepancyCount": 1, "pendingReconciliations": 1, "slaBreachCount": 1, "accountabilityScore": 74, "trend": "improving", "lastAuditDate": "2024-12-10", "flagged": false },
+    { "officerId": "OFF-007", "officerName": "Swathi Reddy Gattu", "designation": "Document Writer", "sroCode": "SR07", "officeName": "West Godavari SRO", "district": "West Godavari", "dailyCashRiskScore": 35, "challanAnomalyCount": 1, "cashVarianceInr": 95000, "stampDiscrepancyCount": 0, "pendingReconciliations": 0, "slaBreachCount": 1, "accountabilityScore": 82, "trend": "stable", "lastAuditDate": "2024-12-12", "flagged": false },
+    { "officerId": "OFF-008", "officerName": "Kiran Kumar Alugonda", "designation": "Sub-Registrar", "sroCode": "SR08", "officeName": "Prakasam SRO", "district": "Prakasam", "dailyCashRiskScore": 58, "challanAnomalyCount": 3, "cashVarianceInr": 210000, "stampDiscrepancyCount": 2, "pendingReconciliations": 2, "slaBreachCount": 3, "accountabilityScore": 61, "trend": "declining", "lastAuditDate": "2024-11-28", "flagged": true },
+    { "officerId": "OFF-009", "officerName": "Lakshmi Prasanna Devi", "designation": "Junior Registrar", "sroCode": "SR01", "officeName": "Krishna SRO", "district": "Krishna", "dailyCashRiskScore": 22, "challanAnomalyCount": 0, "cashVarianceInr": 35000, "stampDiscrepancyCount": 0, "pendingReconciliations": 0, "slaBreachCount": 0, "accountabilityScore": 92, "trend": "stable", "lastAuditDate": "2024-12-13", "flagged": false },
+    { "officerId": "OFF-010", "officerName": "Srinivas Rao Maddula", "designation": "Sub-Registrar", "sroCode": "SR05", "officeName": "Visakhapatnam SRO", "district": "Visakhapatnam", "dailyCashRiskScore": 28, "challanAnomalyCount": 1, "cashVarianceInr": 68000, "stampDiscrepancyCount": 0, "pendingReconciliations": 1, "slaBreachCount": 0, "accountabilityScore": 88, "trend": "improving", "lastAuditDate": "2024-12-11", "flagged": false },
+    { "officerId": "OFF-011", "officerName": "Bhavani Shankar Reddy", "designation": "Sub-Registrar", "sroCode": "SR06", "officeName": "East Godavari SRO", "district": "East Godavari", "dailyCashRiskScore": 62, "challanAnomalyCount": 4, "cashVarianceInr": 295000, "stampDiscrepancyCount": 1, "pendingReconciliations": 2, "slaBreachCount": 2, "accountabilityScore": 55, "trend": "declining", "lastAuditDate": "2024-12-02", "flagged": true },
+    { "officerId": "OFF-012", "officerName": "Anusha Rani Dokka", "designation": "Document Writer", "sroCode": "SR03", "officeName": "Chittoor SRO", "district": "Chittoor", "dailyCashRiskScore": 18, "challanAnomalyCount": 0, "cashVarianceInr": 22000, "stampDiscrepancyCount": 0, "pendingReconciliations": 0, "slaBreachCount": 0, "accountabilityScore": 95, "trend": "stable", "lastAuditDate": "2024-12-13", "flagged": false }
+  ],
+  "sroAccountabilitySummary": [
+    { "sroCode": "SR10", "officeName": "Anantapur SRO", "avgScore": 38, "officerCount": 6, "flaggedCount": 3, "totalVariance": 685000 },
+    { "sroCode": "SR06", "officeName": "East Godavari SRO", "avgScore": 49, "officerCount": 8, "flaggedCount": 2, "totalVariance": 575000 },
+    { "sroCode": "SR02", "officeName": "Guntur SRO", "avgScore": 55, "officerCount": 7, "flaggedCount": 2, "totalVariance": 420000 },
+    { "sroCode": "SR03", "officeName": "Chittoor SRO", "avgScore": 62, "officerCount": 6, "flaggedCount": 1, "totalVariance": 340000 },
+    { "sroCode": "SR08", "officeName": "Prakasam SRO", "avgScore": 58, "officerCount": 5, "flaggedCount": 1, "totalVariance": 310000 },
+    { "sroCode": "SR05", "officeName": "Visakhapatnam SRO", "avgScore": 73, "officerCount": 9, "flaggedCount": 1, "totalVariance": 280000 },
+    { "sroCode": "SR01", "officeName": "Krishna SRO", "avgScore": 81, "officerCount": 8, "flaggedCount": 0, "totalVariance": 145000 },
+    { "sroCode": "SR07", "officeName": "West Godavari SRO", "avgScore": 84, "officerCount": 5, "flaggedCount": 0, "totalVariance": 95000 }
+  ]
+}

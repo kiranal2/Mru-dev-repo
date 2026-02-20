@@ -2,7 +2,12 @@
   {
     "id": "IGRS-2024-0001",
     "caseId": "IGRS-2024-0001",
-    "documentKey": { "srCode": "SR01", "bookNo": "B-101", "doctNo": "D-2024-0001", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "101",
+      "bookNo": "1",
+      "doctNo": "3374",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-01T09:00:00Z",
     "updatedAt": "2024-12-10T14:30:00Z",
     "riskLevel": "High",
@@ -10,32 +15,94 @@
     "confidence": 92,
     "status": "New",
     "assignedTo": "DR",
-    "leakageSignals": ["RevenueGap", "MarketValueRisk"],
+    "leakageSignals": [
+      "RevenueGap",
+      "MarketValueRisk"
+    ],
     "impactAmountInr": 245000,
     "payableTotalInr": 890000,
     "paidTotalInr": 645000,
     "gapInr": 245000,
-    "office": { "srCode": "SR01", "srName": "Vijayawada Central", "district": "Krishna", "zone": "South" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-11-28", "eDate": "2024-11-29", "rDate": "2024-12-01" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "200 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P001", "name": "Ramesh Naidu", "panNo": "ABCPK1234E" }],
-    "payableBreakdown": { "sdPayable": 550000, "tdPayable": 150000, "rfPayable": 100000, "dsdPayable": 50000, "otherFee": 40000, "finalTaxableValue": 8500000 },
+    "office": {
+      "srCode": "SR01",
+      "srName": "Vijayawada Central",
+      "district": "Krishna",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-11-28",
+      "eDate": "2024-11-29",
+      "rDate": "2024-12-01"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "200 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P001",
+        "name": "Ramesh Naidu",
+        "panNo": "ABCPK1234E"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 550000,
+      "tdPayable": 150000,
+      "rfPayable": 100000,
+      "dsdPayable": 50000,
+      "otherFee": 40000,
+      "finalTaxableValue": 8500000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-VAL-001", "ruleName": "Market Value Gap", "category": "Valuation", "severity": "High", "impactInr": 245000, "explanation": "Declared value ₹85L vs rate card ₹109.5L (22% deviation)", "confidence": 92 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-VAL-001",
+          "ruleName": "Market Value Gap",
+          "category": "Valuation",
+          "severity": "High",
+          "impactInr": 245000,
+          "explanation": "Declared value \u20b985L vs rate card \u20b9109.5L (22% deviation)",
+          "confidence": 92
+        }
+      ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 22.4,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 9, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 9,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
-    "activityLog": [{ "id": "log-1", "ts": "2024-12-01T09:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-VAL-001" }]
+    "activityLog": [
+      {
+        "id": "log-1",
+        "ts": "2024-12-01T09:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-VAL-001"
+      }
+    ]
   },
   {
     "id": "IGRS-2024-0002",
     "caseId": "IGRS-2024-0002",
-    "documentKey": { "srCode": "SR02", "bookNo": "B-201", "doctNo": "D-2024-0002", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "209",
+      "bookNo": "2",
+      "doctNo": "7922",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-02T10:15:00Z",
     "updatedAt": "2024-12-11T11:45:00Z",
     "riskLevel": "Medium",
@@ -43,35 +110,108 @@
     "confidence": 78,
     "status": "In Review",
     "assignedTo": "SR",
-    "leakageSignals": ["ChallanDelay", "RevenueGap"],
+    "leakageSignals": [
+      "ChallanDelay",
+      "RevenueGap"
+    ],
     "impactAmountInr": 87000,
     "payableTotalInr": 420000,
     "paidTotalInr": 333000,
     "gapInr": 87000,
-    "office": { "srCode": "SR02", "srName": "Guntur Main", "district": "Guntur", "zone": "South" },
-    "docType": { "tranMajCode": "02", "tranMinCode": "01", "tranDesc": "Gift Deed", "abDesc": "Gift" },
-    "dates": { "pDate": "2024-11-30", "eDate": "2024-12-01", "rDate": "2024-12-02" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "1200 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P002", "name": "Lakshmi Devi", "panNo": "BCDPL2345F" }],
-    "payableBreakdown": { "sdPayable": 250000, "tdPayable": 80000, "rfPayable": 50000, "dsdPayable": 25000, "otherFee": 15000, "finalTaxableValue": 4200000 },
+    "office": {
+      "srCode": "SR02",
+      "srName": "Guntur Main",
+      "district": "Guntur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "02",
+      "tranMinCode": "01",
+      "tranDesc": "Gift Deed",
+      "abDesc": "Gift"
+    },
+    "dates": {
+      "pDate": "2024-11-30",
+      "eDate": "2024-12-01",
+      "rDate": "2024-12-02"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "1200 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P002",
+        "name": "Lakshmi Devi",
+        "panNo": "BCDPL2345F"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 250000,
+      "tdPayable": 80000,
+      "rfPayable": 50000,
+      "dsdPayable": 25000,
+      "otherFee": 15000,
+      "finalTaxableValue": 4200000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-SD-001", "ruleName": "Challan Payment Delay", "category": "StampDuty", "severity": "Medium", "impactInr": 87000, "explanation": "Challan payment delayed by 18 days beyond registration date", "confidence": 78 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-SD-001",
+          "ruleName": "Challan Payment Delay",
+          "category": "StampDuty",
+          "severity": "Medium",
+          "impactInr": 87000,
+          "explanation": "Challan payment delayed by 18 days beyond registration date",
+          "confidence": 78
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 8.2,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 9, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-1", "ts": "2024-12-05T10:00:00Z", "author": "SR", "text": "Reviewing challan records" }],
+    "sla": {
+      "ageingDays": 9,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-1",
+        "ts": "2024-12-05T10:00:00Z",
+        "author": "SR",
+        "text": "Reviewing challan records"
+      }
+    ],
     "activityLog": [
-      { "id": "log-2a", "ts": "2024-12-02T10:15:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SD-001" },
-      { "id": "log-2b", "ts": "2024-12-05T10:00:00Z", "actor": "SR", "action": "Status changed to In Review", "detail": "Assigned for manual review" }
+      {
+        "id": "log-2a",
+        "ts": "2024-12-02T10:15:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SD-001"
+      },
+      {
+        "id": "log-2b",
+        "ts": "2024-12-05T10:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to In Review",
+        "detail": "Assigned for manual review"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0003",
     "caseId": "IGRS-2024-0003",
-    "documentKey": { "srCode": "SR03", "bookNo": "B-301", "doctNo": "D-2024-0003", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "314",
+      "bookNo": "3",
+      "doctNo": "2075",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-03T08:30:00Z",
     "updatedAt": "2024-12-12T16:00:00Z",
     "riskLevel": "High",
@@ -79,38 +219,118 @@
     "confidence": 95,
     "status": "Confirmed",
     "assignedTo": "DR",
-    "leakageSignals": ["ProhibitedLand", "MarketValueRisk", "RevenueGap"],
+    "leakageSignals": [
+      "ProhibitedLand",
+      "MarketValueRisk",
+      "RevenueGap"
+    ],
     "impactAmountInr": 500000,
     "payableTotalInr": 1450000,
     "paidTotalInr": 950000,
     "gapInr": 500000,
-    "office": { "srCode": "SR03", "srName": "Tirupati Urban", "district": "Chittoor", "zone": "South" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-11-25", "eDate": "2024-11-26", "rDate": "2024-12-03" },
-    "propertySummary": { "isUrban": true, "landNature": "Prohibited", "extent": "500 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P003", "name": "Venkata Subrahmanyam", "panNo": "CDEVS3456G" }],
-    "payableBreakdown": { "sdPayable": 870000, "tdPayable": 290000, "rfPayable": 145000, "dsdPayable": 87000, "otherFee": 58000, "finalTaxableValue": 14500000 },
+    "office": {
+      "srCode": "SR03",
+      "srName": "Tirupati Urban",
+      "district": "Chittoor",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-11-25",
+      "eDate": "2024-11-26",
+      "rDate": "2024-12-03"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "Prohibited",
+      "extent": "500 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P003",
+        "name": "Venkata Subrahmanyam",
+        "panNo": "CDEVS3456G"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 870000,
+      "tdPayable": 290000,
+      "rfPayable": 145000,
+      "dsdPayable": 87000,
+      "otherFee": 58000,
+      "finalTaxableValue": 14500000
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-CMP-003", "ruleName": "Prohibited Property Registration", "category": "Compliance", "severity": "High", "impactInr": 500000, "explanation": "Property registered in prohibited zone near Tirumala Hills", "confidence": 95 },
-        { "ruleId": "R-VAL-001", "ruleName": "Market Value Gap", "category": "Valuation", "severity": "High", "impactInr": 350000, "explanation": "Declared value ₹95L vs rate card ₹145L (34.5% deviation)", "confidence": 93 }
+        {
+          "ruleId": "R-CMP-003",
+          "ruleName": "Prohibited Property Registration",
+          "category": "Compliance",
+          "severity": "High",
+          "impactInr": 500000,
+          "explanation": "Property registered in prohibited zone near Tirumala Hills",
+          "confidence": 95
+        },
+        {
+          "ruleId": "R-VAL-001",
+          "ruleName": "Market Value Gap",
+          "category": "Valuation",
+          "severity": "High",
+          "impactInr": 350000,
+          "explanation": "Declared value \u20b995L vs rate card \u20b9145L (34.5% deviation)",
+          "confidence": 93
+        }
       ],
       "receiptCount": 3,
       "prohibitedMatchCount": 1,
       "mvDeviationPct": 34.5,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 9, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-2", "ts": "2024-12-08T14:00:00Z", "author": "DR", "text": "Confirmed prohibited land match with revenue records" }],
+    "sla": {
+      "ageingDays": 9,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-2",
+        "ts": "2024-12-08T14:00:00Z",
+        "author": "DR",
+        "text": "Confirmed prohibited land match with revenue records"
+      }
+    ],
     "activityLog": [
-      { "id": "log-3a", "ts": "2024-12-03T08:30:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rules R-CMP-003, R-VAL-001" },
-      { "id": "log-3b", "ts": "2024-12-08T14:00:00Z", "actor": "DR", "action": "Status changed to Confirmed", "detail": "Land falls in prohibited category per GO 111" }
+      {
+        "id": "log-3a",
+        "ts": "2024-12-03T08:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rules R-CMP-003, R-VAL-001"
+      },
+      {
+        "id": "log-3b",
+        "ts": "2024-12-08T14:00:00Z",
+        "actor": "DR",
+        "action": "Status changed to Confirmed",
+        "detail": "Land falls in prohibited category per GO 111"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0004",
     "caseId": "IGRS-2024-0004",
-    "documentKey": { "srCode": "SR04", "bookNo": "B-401", "doctNo": "D-2024-0004", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "423",
+      "bookNo": "4",
+      "doctNo": "3875",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-04T11:00:00Z",
     "updatedAt": "2024-12-14T09:30:00Z",
     "riskLevel": "Low",
@@ -118,35 +338,107 @@
     "confidence": 65,
     "status": "Resolved",
     "assignedTo": "SR",
-    "leakageSignals": ["DataIntegrity"],
+    "leakageSignals": [
+      "DataIntegrity"
+    ],
     "impactAmountInr": 12000,
     "payableTotalInr": 185000,
     "paidTotalInr": 173000,
     "gapInr": 12000,
-    "office": { "srCode": "SR04", "srName": "Kurnool Town", "district": "Kurnool", "zone": "Central" },
-    "docType": { "tranMajCode": "05", "tranMinCode": "01", "tranDesc": "Partition Deed", "abDesc": "Partition" },
-    "dates": { "pDate": "2024-12-01", "eDate": "2024-12-02", "rDate": "2024-12-04" },
-    "propertySummary": { "isUrban": false, "landNature": "Agricultural", "extent": "2.5 acres", "unit": "acres" },
-    "partiesSummary": [{ "code": "P004", "name": "Srinivasa Rao", "panNo": "DEFSR4567H" }],
-    "payableBreakdown": { "sdPayable": 110000, "tdPayable": 35000, "rfPayable": 20000, "dsdPayable": 12000, "otherFee": 8000, "finalTaxableValue": 1850000 },
+    "office": {
+      "srCode": "SR04",
+      "srName": "Kurnool Town",
+      "district": "Kurnool",
+      "zone": "Central"
+    },
+    "docType": {
+      "tranMajCode": "05",
+      "tranMinCode": "01",
+      "tranDesc": "Partition Deed",
+      "abDesc": "Partition"
+    },
+    "dates": {
+      "pDate": "2024-12-01",
+      "eDate": "2024-12-02",
+      "rDate": "2024-12-04"
+    },
+    "propertySummary": {
+      "isUrban": false,
+      "landNature": "Agricultural",
+      "extent": "2.5 acres",
+      "unit": "acres"
+    },
+    "partiesSummary": [
+      {
+        "code": "P004",
+        "name": "Srinivasa Rao",
+        "panNo": "DEFSR4567H"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 110000,
+      "tdPayable": 35000,
+      "rfPayable": 20000,
+      "dsdPayable": 12000,
+      "otherFee": 8000,
+      "finalTaxableValue": 1850000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-SYS-001", "ruleName": "Data Field Mismatch", "category": "Systemic", "severity": "Low", "impactInr": 12000, "explanation": "Extent field inconsistency between IGRS and land records", "confidence": 65 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-SYS-001",
+          "ruleName": "Data Field Mismatch",
+          "category": "Systemic",
+          "severity": "Low",
+          "impactInr": 12000,
+          "explanation": "Extent field inconsistency between IGRS and land records",
+          "confidence": 65
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 3.1,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-3", "ts": "2024-12-12T11:00:00Z", "author": "SR", "text": "Data corrected after cross-checking with tahsildar records" }],
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-3",
+        "ts": "2024-12-12T11:00:00Z",
+        "author": "SR",
+        "text": "Data corrected after cross-checking with tahsildar records"
+      }
+    ],
     "activityLog": [
-      { "id": "log-4a", "ts": "2024-12-04T11:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SYS-001" },
-      { "id": "log-4b", "ts": "2024-12-14T09:30:00Z", "actor": "SR", "action": "Status changed to Resolved", "detail": "Correction applied, gap recovered" }
+      {
+        "id": "log-4a",
+        "ts": "2024-12-04T11:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SYS-001"
+      },
+      {
+        "id": "log-4b",
+        "ts": "2024-12-14T09:30:00Z",
+        "actor": "SR",
+        "action": "Status changed to Resolved",
+        "detail": "Correction applied, gap recovered"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0005",
     "caseId": "IGRS-2024-0005",
-    "documentKey": { "srCode": "SR05", "bookNo": "B-501", "doctNo": "D-2024-0005", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "515",
+      "bookNo": "1",
+      "doctNo": "9011",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-05T14:20:00Z",
     "updatedAt": "2024-12-15T10:00:00Z",
     "riskLevel": "High",
@@ -154,32 +446,94 @@
     "confidence": 90,
     "status": "New",
     "assignedTo": "DR",
-    "leakageSignals": ["ExemptionRisk", "RevenueGap"],
+    "leakageSignals": [
+      "ExemptionRisk",
+      "RevenueGap"
+    ],
     "impactAmountInr": 375000,
     "payableTotalInr": 1100000,
     "paidTotalInr": 725000,
     "gapInr": 375000,
-    "office": { "srCode": "SR05", "srName": "Visakhapatnam Port", "district": "Visakhapatnam", "zone": "North" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-02", "eDate": "2024-12-03", "rDate": "2024-12-05" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "1500 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P005", "name": "Narayana Murthy", "panNo": "EFGNM5678I" }],
-    "payableBreakdown": { "sdPayable": 660000, "tdPayable": 220000, "rfPayable": 110000, "dsdPayable": 66000, "otherFee": 44000, "finalTaxableValue": 11000000 },
+    "office": {
+      "srCode": "SR05",
+      "srName": "Visakhapatnam Port",
+      "district": "Visakhapatnam",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-02",
+      "eDate": "2024-12-03",
+      "rDate": "2024-12-05"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "1500 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P005",
+        "name": "Narayana Murthy",
+        "panNo": "EFGNM5678I"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 660000,
+      "tdPayable": 220000,
+      "rfPayable": 110000,
+      "dsdPayable": 66000,
+      "otherFee": 44000,
+      "finalTaxableValue": 11000000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-EXM-001", "ruleName": "Invalid Exemption Claim", "category": "Exemption", "severity": "High", "impactInr": 375000, "explanation": "SC/ST exemption claimed but PAN-linked data shows non-eligible category", "confidence": 90 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-EXM-001",
+          "ruleName": "Invalid Exemption Claim",
+          "category": "Exemption",
+          "severity": "High",
+          "impactInr": 375000,
+          "explanation": "SC/ST exemption claimed but PAN-linked data shows non-eligible category",
+          "confidence": 90
+        }
+      ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 5.0,
       "exemptionCount": 1
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
-    "activityLog": [{ "id": "log-5", "ts": "2024-12-05T14:20:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-EXM-001" }]
+    "activityLog": [
+      {
+        "id": "log-5",
+        "ts": "2024-12-05T14:20:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-EXM-001"
+      }
+    ]
   },
   {
     "id": "IGRS-2024-0006",
     "caseId": "IGRS-2024-0006",
-    "documentKey": { "srCode": "SR06", "bookNo": "B-601", "doctNo": "D-2024-0006", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "608",
+      "bookNo": "2",
+      "doctNo": "5656",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-06T09:45:00Z",
     "updatedAt": "2024-12-16T13:00:00Z",
     "riskLevel": "Medium",
@@ -187,32 +541,94 @@
     "confidence": 74,
     "status": "New",
     "assignedTo": "SR",
-    "leakageSignals": ["RevenueGap", "ChallanDelay"],
+    "leakageSignals": [
+      "RevenueGap",
+      "ChallanDelay"
+    ],
     "impactAmountInr": 45000,
     "payableTotalInr": 310000,
     "paidTotalInr": 265000,
     "gapInr": 45000,
-    "office": { "srCode": "SR06", "srName": "Rajahmundry Central", "district": "East Godavari", "zone": "North" },
-    "docType": { "tranMajCode": "03", "tranMinCode": "01", "tranDesc": "Mortgage Deed", "abDesc": "Mortgage" },
-    "dates": { "pDate": "2024-12-04", "eDate": "2024-12-05", "rDate": "2024-12-06" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "800 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P006", "name": "Padmavathi Reddy", "panNo": "FGHPR6789J" }],
-    "payableBreakdown": { "sdPayable": 186000, "tdPayable": 62000, "rfPayable": 31000, "dsdPayable": 18600, "otherFee": 12400, "finalTaxableValue": 3100000 },
+    "office": {
+      "srCode": "SR06",
+      "srName": "Rajahmundry Central",
+      "district": "East Godavari",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "03",
+      "tranMinCode": "01",
+      "tranDesc": "Mortgage Deed",
+      "abDesc": "Mortgage"
+    },
+    "dates": {
+      "pDate": "2024-12-04",
+      "eDate": "2024-12-05",
+      "rDate": "2024-12-06"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "800 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P006",
+        "name": "Padmavathi Reddy",
+        "panNo": "FGHPR6789J"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 186000,
+      "tdPayable": 62000,
+      "rfPayable": 31000,
+      "dsdPayable": 18600,
+      "otherFee": 12400,
+      "finalTaxableValue": 3100000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-OPS-001", "ruleName": "Holiday Registration Fee", "category": "Operational", "severity": "Medium", "impactInr": 45000, "explanation": "Registration processed on a public holiday without additional fee collection", "confidence": 74 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-OPS-001",
+          "ruleName": "Holiday Registration Fee",
+          "category": "Operational",
+          "severity": "Medium",
+          "impactInr": 45000,
+          "explanation": "Registration processed on a public holiday without additional fee collection",
+          "confidence": 74
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 4.5,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
-    "activityLog": [{ "id": "log-6", "ts": "2024-12-06T09:45:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-OPS-001" }]
+    "activityLog": [
+      {
+        "id": "log-6",
+        "ts": "2024-12-06T09:45:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-OPS-001"
+      }
+    ]
   },
   {
     "id": "IGRS-2024-0007",
     "caseId": "IGRS-2024-0007",
-    "documentKey": { "srCode": "SR07", "bookNo": "B-701", "doctNo": "D-2024-0007", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "719",
+      "bookNo": "3",
+      "doctNo": "6712",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-07T10:30:00Z",
     "updatedAt": "2024-12-17T15:00:00Z",
     "riskLevel": "High",
@@ -220,35 +636,108 @@
     "confidence": 88,
     "status": "In Review",
     "assignedTo": "DR",
-    "leakageSignals": ["MarketValueRisk", "RevenueGap"],
+    "leakageSignals": [
+      "MarketValueRisk",
+      "RevenueGap"
+    ],
     "impactAmountInr": 320000,
     "payableTotalInr": 980000,
     "paidTotalInr": 660000,
     "gapInr": 320000,
-    "office": { "srCode": "SR07", "srName": "Eluru Town", "district": "West Godavari", "zone": "North" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-05", "eDate": "2024-12-06", "rDate": "2024-12-07" },
-    "propertySummary": { "isUrban": false, "landNature": "Agricultural", "extent": "1.2 acres", "unit": "acres" },
-    "partiesSummary": [{ "code": "P007", "name": "Gopal Krishna", "panNo": "GHIGK7890K" }],
-    "payableBreakdown": { "sdPayable": 588000, "tdPayable": 196000, "rfPayable": 98000, "dsdPayable": 58800, "otherFee": 39200, "finalTaxableValue": 9800000 },
+    "office": {
+      "srCode": "SR07",
+      "srName": "Eluru Town",
+      "district": "West Godavari",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-05",
+      "eDate": "2024-12-06",
+      "rDate": "2024-12-07"
+    },
+    "propertySummary": {
+      "isUrban": false,
+      "landNature": "Agricultural",
+      "extent": "1.2 acres",
+      "unit": "acres"
+    },
+    "partiesSummary": [
+      {
+        "code": "P007",
+        "name": "Gopal Krishna",
+        "panNo": "GHIGK7890K"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 588000,
+      "tdPayable": 196000,
+      "rfPayable": 98000,
+      "dsdPayable": 58800,
+      "otherFee": 39200,
+      "finalTaxableValue": 9800000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-VAL-002", "ruleName": "Agricultural Land Undervaluation", "category": "Valuation", "severity": "High", "impactInr": 320000, "explanation": "Agricultural land declared at ₹8.2L/acre vs market rate ₹14.8L/acre", "confidence": 88 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-VAL-002",
+          "ruleName": "Agricultural Land Undervaluation",
+          "category": "Valuation",
+          "severity": "High",
+          "impactInr": 320000,
+          "explanation": "Agricultural land declared at \u20b98.2L/acre vs market rate \u20b914.8L/acre",
+          "confidence": 88
+        }
+      ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 44.6,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-4", "ts": "2024-12-12T09:00:00Z", "author": "DR", "text": "Checking with local tahsildar for recent land sale records" }],
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-4",
+        "ts": "2024-12-12T09:00:00Z",
+        "author": "DR",
+        "text": "Checking with local tahsildar for recent land sale records"
+      }
+    ],
     "activityLog": [
-      { "id": "log-7a", "ts": "2024-12-07T10:30:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-VAL-002" },
-      { "id": "log-7b", "ts": "2024-12-10T09:00:00Z", "actor": "DR", "action": "Status changed to In Review", "detail": "Assigned for field verification" }
+      {
+        "id": "log-7a",
+        "ts": "2024-12-07T10:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-VAL-002"
+      },
+      {
+        "id": "log-7b",
+        "ts": "2024-12-10T09:00:00Z",
+        "actor": "DR",
+        "action": "Status changed to In Review",
+        "detail": "Assigned for field verification"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0008",
     "caseId": "IGRS-2024-0008",
-    "documentKey": { "srCode": "SR08", "bookNo": "B-801", "doctNo": "D-2024-0008", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "818",
+      "bookNo": "1",
+      "doctNo": "5457",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-08T08:00:00Z",
     "updatedAt": "2024-12-18T11:30:00Z",
     "riskLevel": "Medium",
@@ -256,35 +745,108 @@
     "confidence": 72,
     "status": "Confirmed",
     "assignedTo": "SR",
-    "leakageSignals": ["RevenueGap", "DataIntegrity"],
+    "leakageSignals": [
+      "RevenueGap",
+      "DataIntegrity"
+    ],
     "impactAmountInr": 68000,
     "payableTotalInr": 350000,
     "paidTotalInr": 282000,
     "gapInr": 68000,
-    "office": { "srCode": "SR08", "srName": "Ongole Main", "district": "Prakasam", "zone": "South" },
-    "docType": { "tranMajCode": "04", "tranMinCode": "01", "tranDesc": "Lease Deed", "abDesc": "Lease" },
-    "dates": { "pDate": "2024-12-06", "eDate": "2024-12-07", "rDate": "2024-12-08" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "600 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P008", "name": "Satyanarayana Prasad", "panNo": "HIJSP8901L" }],
-    "payableBreakdown": { "sdPayable": 210000, "tdPayable": 70000, "rfPayable": 35000, "dsdPayable": 21000, "otherFee": 14000, "finalTaxableValue": 3500000 },
+    "office": {
+      "srCode": "SR08",
+      "srName": "Ongole Main",
+      "district": "Prakasam",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "04",
+      "tranMinCode": "01",
+      "tranDesc": "Lease Deed",
+      "abDesc": "Lease"
+    },
+    "dates": {
+      "pDate": "2024-12-06",
+      "eDate": "2024-12-07",
+      "rDate": "2024-12-08"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "600 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P008",
+        "name": "Satyanarayana Prasad",
+        "panNo": "HIJSP8901L"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 210000,
+      "tdPayable": 70000,
+      "rfPayable": 35000,
+      "dsdPayable": 21000,
+      "otherFee": 14000,
+      "finalTaxableValue": 3500000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-SD-002", "ruleName": "Stamp Duty Short Collection", "category": "StampDuty", "severity": "Medium", "impactInr": 68000, "explanation": "Stamp duty collected at 5% instead of applicable 6% for lease deed", "confidence": 72 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-SD-002",
+          "ruleName": "Stamp Duty Short Collection",
+          "category": "StampDuty",
+          "severity": "Medium",
+          "impactInr": 68000,
+          "explanation": "Stamp duty collected at 5% instead of applicable 6% for lease deed",
+          "confidence": 72
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 6.8,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-5", "ts": "2024-12-15T10:00:00Z", "author": "SR", "text": "Confirmed wrong rate applied; recovery notice issued" }],
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-5",
+        "ts": "2024-12-15T10:00:00Z",
+        "author": "SR",
+        "text": "Confirmed wrong rate applied; recovery notice issued"
+      }
+    ],
     "activityLog": [
-      { "id": "log-8a", "ts": "2024-12-08T08:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SD-002" },
-      { "id": "log-8b", "ts": "2024-12-15T10:00:00Z", "actor": "SR", "action": "Status changed to Confirmed", "detail": "Short collection verified" }
+      {
+        "id": "log-8a",
+        "ts": "2024-12-08T08:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SD-002"
+      },
+      {
+        "id": "log-8b",
+        "ts": "2024-12-15T10:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to Confirmed",
+        "detail": "Short collection verified"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0009",
     "caseId": "IGRS-2024-0009",
-    "documentKey": { "srCode": "SR09", "bookNo": "B-901", "doctNo": "D-2024-0009", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "909",
+      "bookNo": "2",
+      "doctNo": "7155",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-09T12:00:00Z",
     "updatedAt": "2024-12-19T14:30:00Z",
     "riskLevel": "Low",
@@ -292,35 +854,107 @@
     "confidence": 60,
     "status": "Rejected",
     "assignedTo": "SR",
-    "leakageSignals": ["ChallanDelay"],
+    "leakageSignals": [
+      "ChallanDelay"
+    ],
     "impactAmountInr": 8000,
     "payableTotalInr": 95000,
     "paidTotalInr": 87000,
     "gapInr": 8000,
-    "office": { "srCode": "SR09", "srName": "Nellore City", "district": "Nellore", "zone": "South" },
-    "docType": { "tranMajCode": "02", "tranMinCode": "01", "tranDesc": "Gift Deed", "abDesc": "Gift" },
-    "dates": { "pDate": "2024-12-07", "eDate": "2024-12-08", "rDate": "2024-12-09" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "350 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P009", "name": "Annapurna Devi", "panNo": "IJKAD9012M" }],
-    "payableBreakdown": { "sdPayable": 57000, "tdPayable": 19000, "rfPayable": 9500, "dsdPayable": 5700, "otherFee": 3800, "finalTaxableValue": 950000 },
+    "office": {
+      "srCode": "SR09",
+      "srName": "Nellore City",
+      "district": "Nellore",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "02",
+      "tranMinCode": "01",
+      "tranDesc": "Gift Deed",
+      "abDesc": "Gift"
+    },
+    "dates": {
+      "pDate": "2024-12-07",
+      "eDate": "2024-12-08",
+      "rDate": "2024-12-09"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "350 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P009",
+        "name": "Annapurna Devi",
+        "panNo": "IJKAD9012M"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 57000,
+      "tdPayable": 19000,
+      "rfPayable": 9500,
+      "dsdPayable": 5700,
+      "otherFee": 3800,
+      "finalTaxableValue": 950000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-SD-001", "ruleName": "Challan Payment Delay", "category": "StampDuty", "severity": "Low", "impactInr": 8000, "explanation": "Minor challan delay of 3 days; within grace period", "confidence": 60 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-SD-001",
+          "ruleName": "Challan Payment Delay",
+          "category": "StampDuty",
+          "severity": "Low",
+          "impactInr": 8000,
+          "explanation": "Minor challan delay of 3 days; within grace period",
+          "confidence": 60
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 2.1,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-6", "ts": "2024-12-17T09:00:00Z", "author": "SR", "text": "False positive - delay within permissible grace period" }],
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-6",
+        "ts": "2024-12-17T09:00:00Z",
+        "author": "SR",
+        "text": "False positive - delay within permissible grace period"
+      }
+    ],
     "activityLog": [
-      { "id": "log-9a", "ts": "2024-12-09T12:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SD-001" },
-      { "id": "log-9b", "ts": "2024-12-19T14:30:00Z", "actor": "SR", "action": "Status changed to Rejected", "detail": "Grace period applicable; no leakage" }
+      {
+        "id": "log-9a",
+        "ts": "2024-12-09T12:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SD-001"
+      },
+      {
+        "id": "log-9b",
+        "ts": "2024-12-19T14:30:00Z",
+        "actor": "SR",
+        "action": "Status changed to Rejected",
+        "detail": "Grace period applicable; no leakage"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0010",
     "caseId": "IGRS-2024-0010",
-    "documentKey": { "srCode": "SR10", "bookNo": "B-1001", "doctNo": "D-2024-0010", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "1010",
+      "bookNo": "1",
+      "doctNo": "4098",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-10T07:30:00Z",
     "updatedAt": "2024-12-20T16:00:00Z",
     "riskLevel": "High",
@@ -328,35 +962,104 @@
     "confidence": 94,
     "status": "New",
     "assignedTo": "DR",
-    "leakageSignals": ["MarketValueRisk", "ExemptionRisk", "RevenueGap"],
+    "leakageSignals": [
+      "MarketValueRisk",
+      "ExemptionRisk",
+      "RevenueGap"
+    ],
     "impactAmountInr": 480000,
     "payableTotalInr": 1350000,
     "paidTotalInr": 870000,
     "gapInr": 480000,
-    "office": { "srCode": "SR10", "srName": "Anantapur Main", "district": "Anantapur", "zone": "Central" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-08", "eDate": "2024-12-09", "rDate": "2024-12-10" },
-    "propertySummary": { "isUrban": false, "landNature": "Agricultural", "extent": "5 acres", "unit": "acres" },
-    "partiesSummary": [{ "code": "P010", "name": "Obul Reddy", "panNo": "JKLOR0123N" }],
-    "payableBreakdown": { "sdPayable": 810000, "tdPayable": 270000, "rfPayable": 135000, "dsdPayable": 81000, "otherFee": 54000, "finalTaxableValue": 13500000 },
+    "office": {
+      "srCode": "SR10",
+      "srName": "Anantapur Main",
+      "district": "Anantapur",
+      "zone": "Central"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-08",
+      "eDate": "2024-12-09",
+      "rDate": "2024-12-10"
+    },
+    "propertySummary": {
+      "isUrban": false,
+      "landNature": "Agricultural",
+      "extent": "5 acres",
+      "unit": "acres"
+    },
+    "partiesSummary": [
+      {
+        "code": "P010",
+        "name": "Obul Reddy",
+        "panNo": "JKLOR0123N"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 810000,
+      "tdPayable": 270000,
+      "rfPayable": 135000,
+      "dsdPayable": 81000,
+      "otherFee": 54000,
+      "finalTaxableValue": 13500000
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-VAL-001", "ruleName": "Market Value Gap", "category": "Valuation", "severity": "High", "impactInr": 350000, "explanation": "5 acres declared at ₹2.7L/acre vs rate card ₹4.5L/acre", "confidence": 94 },
-        { "ruleId": "R-EXM-002", "ruleName": "Exemption Without Documentation", "category": "Exemption", "severity": "High", "impactInr": 130000, "explanation": "Agricultural exemption claimed without required passbook documentation", "confidence": 91 }
+        {
+          "ruleId": "R-VAL-001",
+          "ruleName": "Market Value Gap",
+          "category": "Valuation",
+          "severity": "High",
+          "impactInr": 350000,
+          "explanation": "5 acres declared at \u20b92.7L/acre vs rate card \u20b94.5L/acre",
+          "confidence": 94
+        },
+        {
+          "ruleId": "R-EXM-002",
+          "ruleName": "Exemption Without Documentation",
+          "category": "Exemption",
+          "severity": "High",
+          "impactInr": 130000,
+          "explanation": "Agricultural exemption claimed without required passbook documentation",
+          "confidence": 91
+        }
       ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 40.0,
       "exemptionCount": 1
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
-    "activityLog": [{ "id": "log-10", "ts": "2024-12-10T07:30:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rules R-VAL-001, R-EXM-002" }]
+    "activityLog": [
+      {
+        "id": "log-10",
+        "ts": "2024-12-10T07:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rules R-VAL-001, R-EXM-002"
+      }
+    ]
   },
   {
     "id": "IGRS-2024-0011",
     "caseId": "IGRS-2024-0011",
-    "documentKey": { "srCode": "SR01", "bookNo": "B-102", "doctNo": "D-2024-0011", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "101",
+      "bookNo": "1",
+      "doctNo": "7049",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-11T09:15:00Z",
     "updatedAt": "2024-12-21T10:00:00Z",
     "riskLevel": "Medium",
@@ -364,35 +1067,101 @@
     "confidence": 76,
     "status": "In Review",
     "assignedTo": "SR",
-    "leakageSignals": ["ChallanDelay", "RevenueGap"],
+    "leakageSignals": [
+      "ChallanDelay",
+      "RevenueGap"
+    ],
     "impactAmountInr": 55000,
     "payableTotalInr": 280000,
     "paidTotalInr": 225000,
     "gapInr": 55000,
-    "office": { "srCode": "SR01", "srName": "Vijayawada Central", "district": "Krishna", "zone": "South" },
-    "docType": { "tranMajCode": "03", "tranMinCode": "01", "tranDesc": "Mortgage Deed", "abDesc": "Mortgage" },
-    "dates": { "pDate": "2024-12-09", "eDate": "2024-12-10", "rDate": "2024-12-11" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "950 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P011", "name": "Madhavi Latha", "panNo": "KLMML1234O" }],
-    "payableBreakdown": { "sdPayable": 168000, "tdPayable": 56000, "rfPayable": 28000, "dsdPayable": 16800, "otherFee": 11200, "finalTaxableValue": 2800000 },
+    "office": {
+      "srCode": "SR01",
+      "srName": "Vijayawada Central",
+      "district": "Krishna",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "03",
+      "tranMinCode": "01",
+      "tranDesc": "Mortgage Deed",
+      "abDesc": "Mortgage"
+    },
+    "dates": {
+      "pDate": "2024-12-09",
+      "eDate": "2024-12-10",
+      "rDate": "2024-12-11"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "950 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P011",
+        "name": "Madhavi Latha",
+        "panNo": "KLMML1234O"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 168000,
+      "tdPayable": 56000,
+      "rfPayable": 28000,
+      "dsdPayable": 16800,
+      "otherFee": 11200,
+      "finalTaxableValue": 2800000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-OPS-002", "ruleName": "Sunday/Holiday Processing", "category": "Operational", "severity": "Medium", "impactInr": 55000, "explanation": "Document processed on Sunday without holiday fee surcharge", "confidence": 76 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-OPS-002",
+          "ruleName": "Sunday/Holiday Processing",
+          "category": "Operational",
+          "severity": "Medium",
+          "impactInr": 55000,
+          "explanation": "Document processed on Sunday without holiday fee surcharge",
+          "confidence": 76
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 3.2,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
     "activityLog": [
-      { "id": "log-11a", "ts": "2024-12-11T09:15:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-OPS-002" },
-      { "id": "log-11b", "ts": "2024-12-15T10:00:00Z", "actor": "SR", "action": "Status changed to In Review", "detail": "Verifying holiday processing records" }
+      {
+        "id": "log-11a",
+        "ts": "2024-12-11T09:15:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-OPS-002"
+      },
+      {
+        "id": "log-11b",
+        "ts": "2024-12-15T10:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to In Review",
+        "detail": "Verifying holiday processing records"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0012",
     "caseId": "IGRS-2024-0012",
-    "documentKey": { "srCode": "SR02", "bookNo": "B-202", "doctNo": "D-2024-0012", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "209",
+      "bookNo": "2",
+      "doctNo": "8234",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-12T10:00:00Z",
     "updatedAt": "2024-12-22T12:00:00Z",
     "riskLevel": "High",
@@ -400,35 +1169,108 @@
     "confidence": 91,
     "status": "Confirmed",
     "assignedTo": "DR",
-    "leakageSignals": ["RevenueGap", "MarketValueRisk"],
+    "leakageSignals": [
+      "RevenueGap",
+      "MarketValueRisk"
+    ],
     "impactAmountInr": 410000,
     "payableTotalInr": 1200000,
     "paidTotalInr": 790000,
     "gapInr": 410000,
-    "office": { "srCode": "SR02", "srName": "Guntur Main", "district": "Guntur", "zone": "South" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-10", "eDate": "2024-12-11", "rDate": "2024-12-12" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "2400 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P012", "name": "Bhaskar Rao Nalluri", "panNo": "LMNBR2345P" }],
-    "payableBreakdown": { "sdPayable": 720000, "tdPayable": 240000, "rfPayable": 120000, "dsdPayable": 72000, "otherFee": 48000, "finalTaxableValue": 12000000 },
+    "office": {
+      "srCode": "SR02",
+      "srName": "Guntur Main",
+      "district": "Guntur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-10",
+      "eDate": "2024-12-11",
+      "rDate": "2024-12-12"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "2400 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P012",
+        "name": "Bhaskar Rao Nalluri",
+        "panNo": "LMNBR2345P"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 720000,
+      "tdPayable": 240000,
+      "rfPayable": 120000,
+      "dsdPayable": 72000,
+      "otherFee": 48000,
+      "finalTaxableValue": 12000000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-VAL-003", "ruleName": "Flat Rate Underreporting", "category": "Valuation", "severity": "High", "impactInr": 410000, "explanation": "Apartment declared at ₹5000/sq.ft vs prevailing rate ₹7100/sq.ft in Guntur urban area", "confidence": 91 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-VAL-003",
+          "ruleName": "Flat Rate Underreporting",
+          "category": "Valuation",
+          "severity": "High",
+          "impactInr": 410000,
+          "explanation": "Apartment declared at \u20b95000/sq.ft vs prevailing rate \u20b97100/sq.ft in Guntur urban area",
+          "confidence": 91
+        }
+      ],
       "receiptCount": 3,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 29.6,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-7", "ts": "2024-12-20T11:00:00Z", "author": "DR", "text": "Confirmed undervaluation after checking builder rate filings" }],
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-7",
+        "ts": "2024-12-20T11:00:00Z",
+        "author": "DR",
+        "text": "Confirmed undervaluation after checking builder rate filings"
+      }
+    ],
     "activityLog": [
-      { "id": "log-12a", "ts": "2024-12-12T10:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-VAL-003" },
-      { "id": "log-12b", "ts": "2024-12-20T11:00:00Z", "actor": "DR", "action": "Status changed to Confirmed", "detail": "Undervaluation confirmed" }
+      {
+        "id": "log-12a",
+        "ts": "2024-12-12T10:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-VAL-003"
+      },
+      {
+        "id": "log-12b",
+        "ts": "2024-12-20T11:00:00Z",
+        "actor": "DR",
+        "action": "Status changed to Confirmed",
+        "detail": "Undervaluation confirmed"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0013",
     "caseId": "IGRS-2024-0013",
-    "documentKey": { "srCode": "SR03", "bookNo": "B-302", "doctNo": "D-2024-0013", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "314",
+      "bookNo": "3",
+      "doctNo": "4567",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-13T11:30:00Z",
     "updatedAt": "2024-12-23T09:00:00Z",
     "riskLevel": "Low",
@@ -436,35 +1278,107 @@
     "confidence": 58,
     "status": "Resolved",
     "assignedTo": "SR",
-    "leakageSignals": ["DataIntegrity"],
+    "leakageSignals": [
+      "DataIntegrity"
+    ],
     "impactAmountInr": 5000,
     "payableTotalInr": 120000,
     "paidTotalInr": 115000,
     "gapInr": 5000,
-    "office": { "srCode": "SR03", "srName": "Tirupati Urban", "district": "Chittoor", "zone": "South" },
-    "docType": { "tranMajCode": "05", "tranMinCode": "01", "tranDesc": "Partition Deed", "abDesc": "Partition" },
-    "dates": { "pDate": "2024-12-11", "eDate": "2024-12-12", "rDate": "2024-12-13" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "180 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P013", "name": "Kamala Kumari", "panNo": "MNOKK3456Q" }],
-    "payableBreakdown": { "sdPayable": 72000, "tdPayable": 24000, "rfPayable": 12000, "dsdPayable": 7200, "otherFee": 4800, "finalTaxableValue": 1200000 },
+    "office": {
+      "srCode": "SR03",
+      "srName": "Tirupati Urban",
+      "district": "Chittoor",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "05",
+      "tranMinCode": "01",
+      "tranDesc": "Partition Deed",
+      "abDesc": "Partition"
+    },
+    "dates": {
+      "pDate": "2024-12-11",
+      "eDate": "2024-12-12",
+      "rDate": "2024-12-13"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "180 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P013",
+        "name": "Kamala Kumari",
+        "panNo": "MNOKK3456Q"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 72000,
+      "tdPayable": 24000,
+      "rfPayable": 12000,
+      "dsdPayable": 7200,
+      "otherFee": 4800,
+      "finalTaxableValue": 1200000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-SYS-002", "ruleName": "Duplicate Receipt Entry", "category": "Systemic", "severity": "Low", "impactInr": 5000, "explanation": "Duplicate receipt entry detected; minor rounding difference", "confidence": 58 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-SYS-002",
+          "ruleName": "Duplicate Receipt Entry",
+          "category": "Systemic",
+          "severity": "Low",
+          "impactInr": 5000,
+          "explanation": "Duplicate receipt entry detected; minor rounding difference",
+          "confidence": 58
+        }
+      ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 1.5,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-8", "ts": "2024-12-21T09:00:00Z", "author": "SR", "text": "Duplicate receipt corrected in system" }],
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-8",
+        "ts": "2024-12-21T09:00:00Z",
+        "author": "SR",
+        "text": "Duplicate receipt corrected in system"
+      }
+    ],
     "activityLog": [
-      { "id": "log-13a", "ts": "2024-12-13T11:30:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SYS-002" },
-      { "id": "log-13b", "ts": "2024-12-23T09:00:00Z", "actor": "SR", "action": "Status changed to Resolved", "detail": "Duplicate receipt corrected" }
+      {
+        "id": "log-13a",
+        "ts": "2024-12-13T11:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SYS-002"
+      },
+      {
+        "id": "log-13b",
+        "ts": "2024-12-23T09:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to Resolved",
+        "detail": "Duplicate receipt corrected"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0014",
     "caseId": "IGRS-2024-0014",
-    "documentKey": { "srCode": "SR05", "bookNo": "B-502", "doctNo": "D-2024-0014", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "515",
+      "bookNo": "1",
+      "doctNo": "3891",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-14T08:45:00Z",
     "updatedAt": "2024-12-24T11:00:00Z",
     "riskLevel": "Medium",
@@ -472,32 +1386,93 @@
     "confidence": 70,
     "status": "New",
     "assignedTo": "SR",
-    "leakageSignals": ["ExemptionRisk"],
+    "leakageSignals": [
+      "ExemptionRisk"
+    ],
     "impactAmountInr": 78000,
     "payableTotalInr": 450000,
     "paidTotalInr": 372000,
     "gapInr": 78000,
-    "office": { "srCode": "SR05", "srName": "Visakhapatnam Port", "district": "Visakhapatnam", "zone": "North" },
-    "docType": { "tranMajCode": "02", "tranMinCode": "01", "tranDesc": "Gift Deed", "abDesc": "Gift" },
-    "dates": { "pDate": "2024-12-12", "eDate": "2024-12-13", "rDate": "2024-12-14" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "1100 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P014", "name": "Durga Bhavani", "panNo": "NOPDB4567R" }],
-    "payableBreakdown": { "sdPayable": 270000, "tdPayable": 90000, "rfPayable": 45000, "dsdPayable": 27000, "otherFee": 18000, "finalTaxableValue": 4500000 },
+    "office": {
+      "srCode": "SR05",
+      "srName": "Visakhapatnam Port",
+      "district": "Visakhapatnam",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "02",
+      "tranMinCode": "01",
+      "tranDesc": "Gift Deed",
+      "abDesc": "Gift"
+    },
+    "dates": {
+      "pDate": "2024-12-12",
+      "eDate": "2024-12-13",
+      "rDate": "2024-12-14"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "1100 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P014",
+        "name": "Durga Bhavani",
+        "panNo": "NOPDB4567R"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 270000,
+      "tdPayable": 90000,
+      "rfPayable": 45000,
+      "dsdPayable": 27000,
+      "otherFee": 18000,
+      "finalTaxableValue": 4500000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-EXM-003", "ruleName": "Family Transfer Exemption Abuse", "category": "Exemption", "severity": "Medium", "impactInr": 78000, "explanation": "Gift deed claims family exemption but parties appear unrelated per PAN records", "confidence": 70 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-EXM-003",
+          "ruleName": "Family Transfer Exemption Abuse",
+          "category": "Exemption",
+          "severity": "Medium",
+          "impactInr": 78000,
+          "explanation": "Gift deed claims family exemption but parties appear unrelated per PAN records",
+          "confidence": 70
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 4.0,
       "exemptionCount": 1
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
-    "activityLog": [{ "id": "log-14", "ts": "2024-12-14T08:45:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-EXM-003" }]
+    "activityLog": [
+      {
+        "id": "log-14",
+        "ts": "2024-12-14T08:45:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-EXM-003"
+      }
+    ]
   },
   {
     "id": "IGRS-2024-0015",
     "caseId": "IGRS-2024-0015",
-    "documentKey": { "srCode": "SR04", "bookNo": "B-402", "doctNo": "D-2024-0015", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "423",
+      "bookNo": "4",
+      "doctNo": "6023",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-15T13:00:00Z",
     "updatedAt": "2024-12-25T15:00:00Z",
     "riskLevel": "Medium",
@@ -505,35 +1480,101 @@
     "confidence": 73,
     "status": "In Review",
     "assignedTo": "SR",
-    "leakageSignals": ["RevenueGap", "ChallanDelay"],
+    "leakageSignals": [
+      "RevenueGap",
+      "ChallanDelay"
+    ],
     "impactAmountInr": 92000,
     "payableTotalInr": 520000,
     "paidTotalInr": 428000,
     "gapInr": 92000,
-    "office": { "srCode": "SR04", "srName": "Kurnool Town", "district": "Kurnool", "zone": "Central" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-13", "eDate": "2024-12-14", "rDate": "2024-12-15" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "1600 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P015", "name": "Ravindra Babu", "panNo": "OPQRB5678S" }],
-    "payableBreakdown": { "sdPayable": 312000, "tdPayable": 104000, "rfPayable": 52000, "dsdPayable": 31200, "otherFee": 20800, "finalTaxableValue": 5200000 },
+    "office": {
+      "srCode": "SR04",
+      "srName": "Kurnool Town",
+      "district": "Kurnool",
+      "zone": "Central"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-13",
+      "eDate": "2024-12-14",
+      "rDate": "2024-12-15"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "1600 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P015",
+        "name": "Ravindra Babu",
+        "panNo": "OPQRB5678S"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 312000,
+      "tdPayable": 104000,
+      "rfPayable": 52000,
+      "dsdPayable": 31200,
+      "otherFee": 20800,
+      "finalTaxableValue": 5200000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-SD-003", "ruleName": "Registration Fee Miscalculation", "category": "StampDuty", "severity": "Medium", "impactInr": 92000, "explanation": "Registration fee calculated at lower slab; correct slab is 1% for value above ₹50L", "confidence": 73 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-SD-003",
+          "ruleName": "Registration Fee Miscalculation",
+          "category": "StampDuty",
+          "severity": "Medium",
+          "impactInr": 92000,
+          "explanation": "Registration fee calculated at lower slab; correct slab is 1% for value above \u20b950L",
+          "confidence": 73
+        }
+      ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 7.5,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
     "activityLog": [
-      { "id": "log-15a", "ts": "2024-12-15T13:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SD-003" },
-      { "id": "log-15b", "ts": "2024-12-20T10:00:00Z", "actor": "SR", "action": "Status changed to In Review", "detail": "Verifying fee slab computation" }
+      {
+        "id": "log-15a",
+        "ts": "2024-12-15T13:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SD-003"
+      },
+      {
+        "id": "log-15b",
+        "ts": "2024-12-20T10:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to In Review",
+        "detail": "Verifying fee slab computation"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0016",
     "caseId": "IGRS-2024-0016",
-    "documentKey": { "srCode": "SR06", "bookNo": "B-602", "doctNo": "D-2024-0016", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "608",
+      "bookNo": "2",
+      "doctNo": "2789",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-16T09:30:00Z",
     "updatedAt": "2024-12-26T14:00:00Z",
     "riskLevel": "High",
@@ -541,32 +1582,94 @@
     "confidence": 89,
     "status": "New",
     "assignedTo": "DR",
-    "leakageSignals": ["ProhibitedLand", "RevenueGap"],
+    "leakageSignals": [
+      "ProhibitedLand",
+      "RevenueGap"
+    ],
     "impactAmountInr": 290000,
     "payableTotalInr": 850000,
     "paidTotalInr": 560000,
     "gapInr": 290000,
-    "office": { "srCode": "SR06", "srName": "Rajahmundry Central", "district": "East Godavari", "zone": "North" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-14", "eDate": "2024-12-15", "rDate": "2024-12-16" },
-    "propertySummary": { "isUrban": false, "landNature": "Mangrove", "extent": "3 acres", "unit": "acres" },
-    "partiesSummary": [{ "code": "P016", "name": "Krishna Mohan Rao", "panNo": "PQRKM6789T" }],
-    "payableBreakdown": { "sdPayable": 510000, "tdPayable": 170000, "rfPayable": 85000, "dsdPayable": 51000, "otherFee": 34000, "finalTaxableValue": 8500000 },
+    "office": {
+      "srCode": "SR06",
+      "srName": "Rajahmundry Central",
+      "district": "East Godavari",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-14",
+      "eDate": "2024-12-15",
+      "rDate": "2024-12-16"
+    },
+    "propertySummary": {
+      "isUrban": false,
+      "landNature": "Mangrove",
+      "extent": "3 acres",
+      "unit": "acres"
+    },
+    "partiesSummary": [
+      {
+        "code": "P016",
+        "name": "Krishna Mohan Rao",
+        "panNo": "PQRKM6789T"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 510000,
+      "tdPayable": 170000,
+      "rfPayable": 85000,
+      "dsdPayable": 51000,
+      "otherFee": 34000,
+      "finalTaxableValue": 8500000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-CMP-003", "ruleName": "Prohibited Property Registration", "category": "Compliance", "severity": "High", "impactInr": 290000, "explanation": "Land falls within Godavari mangrove protection zone", "confidence": 89 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-CMP-003",
+          "ruleName": "Prohibited Property Registration",
+          "category": "Compliance",
+          "severity": "High",
+          "impactInr": 290000,
+          "explanation": "Land falls within Godavari mangrove protection zone",
+          "confidence": 89
+        }
+      ],
       "receiptCount": 2,
       "prohibitedMatchCount": 1,
       "mvDeviationPct": 18.5,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
-    "activityLog": [{ "id": "log-16", "ts": "2024-12-16T09:30:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-CMP-003" }]
+    "activityLog": [
+      {
+        "id": "log-16",
+        "ts": "2024-12-16T09:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CMP-003"
+      }
+    ]
   },
   {
     "id": "IGRS-2024-0017",
     "caseId": "IGRS-2024-0017",
-    "documentKey": { "srCode": "SR07", "bookNo": "B-702", "doctNo": "D-2024-0017", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "719",
+      "bookNo": "3",
+      "doctNo": "8901",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-17T10:45:00Z",
     "updatedAt": "2024-12-27T11:30:00Z",
     "riskLevel": "Low",
@@ -574,32 +1677,93 @@
     "confidence": 62,
     "status": "New",
     "assignedTo": "SR",
-    "leakageSignals": ["DataIntegrity"],
+    "leakageSignals": [
+      "DataIntegrity"
+    ],
     "impactAmountInr": 15000,
     "payableTotalInr": 200000,
     "paidTotalInr": 185000,
     "gapInr": 15000,
-    "office": { "srCode": "SR07", "srName": "Eluru Town", "district": "West Godavari", "zone": "North" },
-    "docType": { "tranMajCode": "04", "tranMinCode": "01", "tranDesc": "Lease Deed", "abDesc": "Lease" },
-    "dates": { "pDate": "2024-12-15", "eDate": "2024-12-16", "rDate": "2024-12-17" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "400 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P017", "name": "Syamala Devi", "panNo": "QRSSD7890U" }],
-    "payableBreakdown": { "sdPayable": 120000, "tdPayable": 40000, "rfPayable": 20000, "dsdPayable": 12000, "otherFee": 8000, "finalTaxableValue": 2000000 },
+    "office": {
+      "srCode": "SR07",
+      "srName": "Eluru Town",
+      "district": "West Godavari",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "04",
+      "tranMinCode": "01",
+      "tranDesc": "Lease Deed",
+      "abDesc": "Lease"
+    },
+    "dates": {
+      "pDate": "2024-12-15",
+      "eDate": "2024-12-16",
+      "rDate": "2024-12-17"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "400 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P017",
+        "name": "Syamala Devi",
+        "panNo": "QRSSD7890U"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 120000,
+      "tdPayable": 40000,
+      "rfPayable": 20000,
+      "dsdPayable": 12000,
+      "otherFee": 8000,
+      "finalTaxableValue": 2000000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-SYS-001", "ruleName": "Data Field Mismatch", "category": "Systemic", "severity": "Low", "impactInr": 15000, "explanation": "Lease extent mismatch between registration document and municipal records", "confidence": 62 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-SYS-001",
+          "ruleName": "Data Field Mismatch",
+          "category": "Systemic",
+          "severity": "Low",
+          "impactInr": 15000,
+          "explanation": "Lease extent mismatch between registration document and municipal records",
+          "confidence": 62
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 2.8,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
-    "activityLog": [{ "id": "log-17", "ts": "2024-12-17T10:45:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SYS-001" }]
+    "activityLog": [
+      {
+        "id": "log-17",
+        "ts": "2024-12-17T10:45:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SYS-001"
+      }
+    ]
   },
   {
     "id": "IGRS-2024-0018",
     "caseId": "IGRS-2024-0018",
-    "documentKey": { "srCode": "SR08", "bookNo": "B-802", "doctNo": "D-2024-0018", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "818",
+      "bookNo": "1",
+      "doctNo": "1456",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-18T14:00:00Z",
     "updatedAt": "2024-12-28T10:30:00Z",
     "riskLevel": "Medium",
@@ -607,35 +1771,108 @@
     "confidence": 80,
     "status": "Confirmed",
     "assignedTo": "DR",
-    "leakageSignals": ["RevenueGap", "MarketValueRisk"],
+    "leakageSignals": [
+      "RevenueGap",
+      "MarketValueRisk"
+    ],
     "impactAmountInr": 135000,
     "payableTotalInr": 680000,
     "paidTotalInr": 545000,
     "gapInr": 135000,
-    "office": { "srCode": "SR08", "srName": "Ongole Main", "district": "Prakasam", "zone": "South" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-16", "eDate": "2024-12-17", "rDate": "2024-12-18" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "1800 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P018", "name": "Chandra Sekhar Reddy", "panNo": "RSTCS8901V" }],
-    "payableBreakdown": { "sdPayable": 408000, "tdPayable": 136000, "rfPayable": 68000, "dsdPayable": 40800, "otherFee": 27200, "finalTaxableValue": 6800000 },
+    "office": {
+      "srCode": "SR08",
+      "srName": "Ongole Main",
+      "district": "Prakasam",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-16",
+      "eDate": "2024-12-17",
+      "rDate": "2024-12-18"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "1800 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P018",
+        "name": "Chandra Sekhar Reddy",
+        "panNo": "RSTCS8901V"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 408000,
+      "tdPayable": 136000,
+      "rfPayable": 68000,
+      "dsdPayable": 40800,
+      "otherFee": 27200,
+      "finalTaxableValue": 6800000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-VAL-004", "ruleName": "Plot Area Rate Mismatch", "category": "Valuation", "severity": "Medium", "impactInr": 135000, "explanation": "Open plot rate applied for constructed property in Ongole municipality", "confidence": 80 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-VAL-004",
+          "ruleName": "Plot Area Rate Mismatch",
+          "category": "Valuation",
+          "severity": "Medium",
+          "impactInr": 135000,
+          "explanation": "Open plot rate applied for constructed property in Ongole municipality",
+          "confidence": 80
+        }
+      ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 16.2,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-9", "ts": "2024-12-26T10:00:00Z", "author": "DR", "text": "Confirmed: built-up rate should have been applied" }],
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-9",
+        "ts": "2024-12-26T10:00:00Z",
+        "author": "DR",
+        "text": "Confirmed: built-up rate should have been applied"
+      }
+    ],
     "activityLog": [
-      { "id": "log-18a", "ts": "2024-12-18T14:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-VAL-004" },
-      { "id": "log-18b", "ts": "2024-12-26T10:00:00Z", "actor": "DR", "action": "Status changed to Confirmed", "detail": "Wrong rate category verified" }
+      {
+        "id": "log-18a",
+        "ts": "2024-12-18T14:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-VAL-004"
+      },
+      {
+        "id": "log-18b",
+        "ts": "2024-12-26T10:00:00Z",
+        "actor": "DR",
+        "action": "Status changed to Confirmed",
+        "detail": "Wrong rate category verified"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0019",
     "caseId": "IGRS-2024-0019",
-    "documentKey": { "srCode": "SR09", "bookNo": "B-902", "doctNo": "D-2024-0019", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "909",
+      "bookNo": "2",
+      "doctNo": "5678",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-19T07:00:00Z",
     "updatedAt": "2024-12-29T13:00:00Z",
     "riskLevel": "Medium",
@@ -643,35 +1880,101 @@
     "confidence": 68,
     "status": "In Review",
     "assignedTo": "SR",
-    "leakageSignals": ["RevenueGap", "RevenueGap"],
+    "leakageSignals": [
+      "RevenueGap",
+      "RevenueGap"
+    ],
     "impactAmountInr": 42000,
     "payableTotalInr": 260000,
     "paidTotalInr": 218000,
     "gapInr": 42000,
-    "office": { "srCode": "SR09", "srName": "Nellore City", "district": "Nellore", "zone": "South" },
-    "docType": { "tranMajCode": "03", "tranMinCode": "01", "tranDesc": "Mortgage Deed", "abDesc": "Mortgage" },
-    "dates": { "pDate": "2024-12-17", "eDate": "2024-12-18", "rDate": "2024-12-19" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "700 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P019", "name": "Vijaya Lakshmi", "panNo": "STUVL9012W" }],
-    "payableBreakdown": { "sdPayable": 156000, "tdPayable": 52000, "rfPayable": 26000, "dsdPayable": 15600, "otherFee": 10400, "finalTaxableValue": 2600000 },
+    "office": {
+      "srCode": "SR09",
+      "srName": "Nellore City",
+      "district": "Nellore",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "03",
+      "tranMinCode": "01",
+      "tranDesc": "Mortgage Deed",
+      "abDesc": "Mortgage"
+    },
+    "dates": {
+      "pDate": "2024-12-17",
+      "eDate": "2024-12-18",
+      "rDate": "2024-12-19"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "700 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P019",
+        "name": "Vijaya Lakshmi",
+        "panNo": "STUVL9012W"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 156000,
+      "tdPayable": 52000,
+      "rfPayable": 26000,
+      "dsdPayable": 15600,
+      "otherFee": 10400,
+      "finalTaxableValue": 2600000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-OPS-001", "ruleName": "Holiday Registration Fee", "category": "Operational", "severity": "Medium", "impactInr": 42000, "explanation": "Registration on Sankranti festival day without holiday surcharge", "confidence": 68 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-OPS-001",
+          "ruleName": "Holiday Registration Fee",
+          "category": "Operational",
+          "severity": "Medium",
+          "impactInr": 42000,
+          "explanation": "Registration on Sankranti festival day without holiday surcharge",
+          "confidence": 68
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 5.5,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
     "activityLog": [
-      { "id": "log-19a", "ts": "2024-12-19T07:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-OPS-001" },
-      { "id": "log-19b", "ts": "2024-12-25T11:00:00Z", "actor": "SR", "action": "Status changed to In Review", "detail": "Checking holiday calendar" }
+      {
+        "id": "log-19a",
+        "ts": "2024-12-19T07:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-OPS-001"
+      },
+      {
+        "id": "log-19b",
+        "ts": "2024-12-25T11:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to In Review",
+        "detail": "Checking holiday calendar"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0020",
     "caseId": "IGRS-2024-0020",
-    "documentKey": { "srCode": "SR10", "bookNo": "B-1002", "doctNo": "D-2024-0020", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "1010",
+      "bookNo": "1",
+      "doctNo": "9012",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-20T09:30:00Z",
     "updatedAt": "2024-12-30T16:00:00Z",
     "riskLevel": "High",
@@ -679,35 +1982,104 @@
     "confidence": 93,
     "status": "New",
     "assignedTo": "DR",
-    "leakageSignals": ["MarketValueRisk", "RevenueGap", "ExemptionRisk"],
+    "leakageSignals": [
+      "MarketValueRisk",
+      "RevenueGap",
+      "ExemptionRisk"
+    ],
     "impactAmountInr": 350000,
     "payableTotalInr": 1050000,
     "paidTotalInr": 700000,
     "gapInr": 350000,
-    "office": { "srCode": "SR10", "srName": "Anantapur Main", "district": "Anantapur", "zone": "Central" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-18", "eDate": "2024-12-19", "rDate": "2024-12-20" },
-    "propertySummary": { "isUrban": false, "landNature": "Agricultural", "extent": "3.5 acres", "unit": "acres" },
-    "partiesSummary": [{ "code": "P020", "name": "Hanumantha Rao", "panNo": "TUVHR0123X" }],
-    "payableBreakdown": { "sdPayable": 630000, "tdPayable": 210000, "rfPayable": 105000, "dsdPayable": 63000, "otherFee": 42000, "finalTaxableValue": 10500000 },
+    "office": {
+      "srCode": "SR10",
+      "srName": "Anantapur Main",
+      "district": "Anantapur",
+      "zone": "Central"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-18",
+      "eDate": "2024-12-19",
+      "rDate": "2024-12-20"
+    },
+    "propertySummary": {
+      "isUrban": false,
+      "landNature": "Agricultural",
+      "extent": "3.5 acres",
+      "unit": "acres"
+    },
+    "partiesSummary": [
+      {
+        "code": "P020",
+        "name": "Hanumantha Rao",
+        "panNo": "TUVHR0123X"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 630000,
+      "tdPayable": 210000,
+      "rfPayable": 105000,
+      "dsdPayable": 63000,
+      "otherFee": 42000,
+      "finalTaxableValue": 10500000
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-VAL-001", "ruleName": "Market Value Gap", "category": "Valuation", "severity": "High", "impactInr": 250000, "explanation": "3.5 acres declared at ₹3L/acre vs rate card ₹4.8L/acre", "confidence": 93 },
-        { "ruleId": "R-EXM-001", "ruleName": "Invalid Exemption Claim", "category": "Exemption", "severity": "Medium", "impactInr": 100000, "explanation": "Ex-serviceman exemption claimed without discharge certificate on file", "confidence": 85 }
+        {
+          "ruleId": "R-VAL-001",
+          "ruleName": "Market Value Gap",
+          "category": "Valuation",
+          "severity": "High",
+          "impactInr": 250000,
+          "explanation": "3.5 acres declared at \u20b93L/acre vs rate card \u20b94.8L/acre",
+          "confidence": 93
+        },
+        {
+          "ruleId": "R-EXM-001",
+          "ruleName": "Invalid Exemption Claim",
+          "category": "Exemption",
+          "severity": "Medium",
+          "impactInr": 100000,
+          "explanation": "Ex-serviceman exemption claimed without discharge certificate on file",
+          "confidence": 85
+        }
       ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 37.5,
       "exemptionCount": 1
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
-    "activityLog": [{ "id": "log-20", "ts": "2024-12-20T09:30:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rules R-VAL-001, R-EXM-001" }]
+    "activityLog": [
+      {
+        "id": "log-20",
+        "ts": "2024-12-20T09:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rules R-VAL-001, R-EXM-001"
+      }
+    ]
   },
   {
     "id": "IGRS-2024-0021",
     "caseId": "IGRS-2024-0021",
-    "documentKey": { "srCode": "SR01", "bookNo": "B-103", "doctNo": "D-2024-0021", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "101",
+      "bookNo": "1",
+      "doctNo": "3456",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-21T10:00:00Z",
     "updatedAt": "2024-12-31T09:00:00Z",
     "riskLevel": "Medium",
@@ -715,35 +2087,108 @@
     "confidence": 71,
     "status": "Resolved",
     "assignedTo": "SR",
-    "leakageSignals": ["ChallanDelay", "RevenueGap"],
+    "leakageSignals": [
+      "ChallanDelay",
+      "RevenueGap"
+    ],
     "impactAmountInr": 63000,
     "payableTotalInr": 380000,
     "paidTotalInr": 317000,
     "gapInr": 63000,
-    "office": { "srCode": "SR01", "srName": "Vijayawada Central", "district": "Krishna", "zone": "South" },
-    "docType": { "tranMajCode": "02", "tranMinCode": "01", "tranDesc": "Gift Deed", "abDesc": "Gift" },
-    "dates": { "pDate": "2024-12-19", "eDate": "2024-12-20", "rDate": "2024-12-21" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "1050 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P021", "name": "Parvathi Devi", "panNo": "UVWPD1234Y" }],
-    "payableBreakdown": { "sdPayable": 228000, "tdPayable": 76000, "rfPayable": 38000, "dsdPayable": 22800, "otherFee": 15200, "finalTaxableValue": 3800000 },
+    "office": {
+      "srCode": "SR01",
+      "srName": "Vijayawada Central",
+      "district": "Krishna",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "02",
+      "tranMinCode": "01",
+      "tranDesc": "Gift Deed",
+      "abDesc": "Gift"
+    },
+    "dates": {
+      "pDate": "2024-12-19",
+      "eDate": "2024-12-20",
+      "rDate": "2024-12-21"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "1050 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P021",
+        "name": "Parvathi Devi",
+        "panNo": "UVWPD1234Y"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 228000,
+      "tdPayable": 76000,
+      "rfPayable": 38000,
+      "dsdPayable": 22800,
+      "otherFee": 15200,
+      "finalTaxableValue": 3800000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-SD-004", "ruleName": "Delayed Challan Reconciliation", "category": "StampDuty", "severity": "Medium", "impactInr": 63000, "explanation": "Challan reconciliation pending for 22 days; penalty interest not levied", "confidence": 71 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-SD-004",
+          "ruleName": "Delayed Challan Reconciliation",
+          "category": "StampDuty",
+          "severity": "Medium",
+          "impactInr": 63000,
+          "explanation": "Challan reconciliation pending for 22 days; penalty interest not levied",
+          "confidence": 71
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 6.2,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-10", "ts": "2024-12-29T10:00:00Z", "author": "SR", "text": "Challan reconciled; penalty interest recovered" }],
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-10",
+        "ts": "2024-12-29T10:00:00Z",
+        "author": "SR",
+        "text": "Challan reconciled; penalty interest recovered"
+      }
+    ],
     "activityLog": [
-      { "id": "log-21a", "ts": "2024-12-21T10:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SD-004" },
-      { "id": "log-21b", "ts": "2024-12-31T09:00:00Z", "actor": "SR", "action": "Status changed to Resolved", "detail": "Penalty interest collected" }
+      {
+        "id": "log-21a",
+        "ts": "2024-12-21T10:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SD-004"
+      },
+      {
+        "id": "log-21b",
+        "ts": "2024-12-31T09:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to Resolved",
+        "detail": "Penalty interest collected"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0022",
     "caseId": "IGRS-2024-0022",
-    "documentKey": { "srCode": "SR03", "bookNo": "B-303", "doctNo": "D-2024-0022", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "314",
+      "bookNo": "3",
+      "doctNo": "7890",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-22T08:30:00Z",
     "updatedAt": "2025-01-01T14:00:00Z",
     "riskLevel": "Low",
@@ -751,35 +2196,107 @@
     "confidence": 55,
     "status": "Rejected",
     "assignedTo": "SR",
-    "leakageSignals": ["DataIntegrity"],
+    "leakageSignals": [
+      "DataIntegrity"
+    ],
     "impactAmountInr": 7000,
     "payableTotalInr": 150000,
     "paidTotalInr": 143000,
     "gapInr": 7000,
-    "office": { "srCode": "SR03", "srName": "Tirupati Urban", "district": "Chittoor", "zone": "South" },
-    "docType": { "tranMajCode": "05", "tranMinCode": "01", "tranDesc": "Partition Deed", "abDesc": "Partition" },
-    "dates": { "pDate": "2024-12-20", "eDate": "2024-12-21", "rDate": "2024-12-22" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "250 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P022", "name": "Sita Ram Prasad", "panNo": "VWXSR2345Z" }],
-    "payableBreakdown": { "sdPayable": 90000, "tdPayable": 30000, "rfPayable": 15000, "dsdPayable": 9000, "otherFee": 6000, "finalTaxableValue": 1500000 },
+    "office": {
+      "srCode": "SR03",
+      "srName": "Tirupati Urban",
+      "district": "Chittoor",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "05",
+      "tranMinCode": "01",
+      "tranDesc": "Partition Deed",
+      "abDesc": "Partition"
+    },
+    "dates": {
+      "pDate": "2024-12-20",
+      "eDate": "2024-12-21",
+      "rDate": "2024-12-22"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "250 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P022",
+        "name": "Sita Ram Prasad",
+        "panNo": "VWXSR2345Z"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 90000,
+      "tdPayable": 30000,
+      "rfPayable": 15000,
+      "dsdPayable": 9000,
+      "otherFee": 6000,
+      "finalTaxableValue": 1500000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-SYS-001", "ruleName": "Data Field Mismatch", "category": "Systemic", "severity": "Low", "impactInr": 7000, "explanation": "Minor survey number format discrepancy; no actual leakage", "confidence": 55 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-SYS-001",
+          "ruleName": "Data Field Mismatch",
+          "category": "Systemic",
+          "severity": "Low",
+          "impactInr": 7000,
+          "explanation": "Minor survey number format discrepancy; no actual leakage",
+          "confidence": 55
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 1.2,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-11", "ts": "2024-12-30T09:00:00Z", "author": "SR", "text": "False positive; survey number format variation is valid" }],
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-11",
+        "ts": "2024-12-30T09:00:00Z",
+        "author": "SR",
+        "text": "False positive; survey number format variation is valid"
+      }
+    ],
     "activityLog": [
-      { "id": "log-22a", "ts": "2024-12-22T08:30:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SYS-001" },
-      { "id": "log-22b", "ts": "2025-01-01T14:00:00Z", "actor": "SR", "action": "Status changed to Rejected", "detail": "No actual leakage; format variation" }
+      {
+        "id": "log-22a",
+        "ts": "2024-12-22T08:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SYS-001"
+      },
+      {
+        "id": "log-22b",
+        "ts": "2025-01-01T14:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to Rejected",
+        "detail": "No actual leakage; format variation"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0023",
     "caseId": "IGRS-2024-0023",
-    "documentKey": { "srCode": "SR06", "bookNo": "B-603", "doctNo": "D-2024-0023", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "608",
+      "bookNo": "2",
+      "doctNo": "2345",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-23T11:15:00Z",
     "updatedAt": "2025-01-02T10:00:00Z",
     "riskLevel": "High",
@@ -787,35 +2304,109 @@
     "confidence": 87,
     "status": "Confirmed",
     "assignedTo": "DR",
-    "leakageSignals": ["RevenueGap", "MarketValueRisk", "ChallanDelay"],
+    "leakageSignals": [
+      "RevenueGap",
+      "MarketValueRisk",
+      "ChallanDelay"
+    ],
     "impactAmountInr": 275000,
     "payableTotalInr": 920000,
     "paidTotalInr": 645000,
     "gapInr": 275000,
-    "office": { "srCode": "SR06", "srName": "Rajahmundry Central", "district": "East Godavari", "zone": "North" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-21", "eDate": "2024-12-22", "rDate": "2024-12-23" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "2000 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P023", "name": "Rajendra Prasad", "panNo": "WXYRP3456A" }],
-    "payableBreakdown": { "sdPayable": 552000, "tdPayable": 184000, "rfPayable": 92000, "dsdPayable": 55200, "otherFee": 36800, "finalTaxableValue": 9200000 },
+    "office": {
+      "srCode": "SR06",
+      "srName": "Rajahmundry Central",
+      "district": "East Godavari",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-21",
+      "eDate": "2024-12-22",
+      "rDate": "2024-12-23"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "2000 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P023",
+        "name": "Rajendra Prasad",
+        "panNo": "WXYRP3456A"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 552000,
+      "tdPayable": 184000,
+      "rfPayable": 92000,
+      "dsdPayable": 55200,
+      "otherFee": 36800,
+      "finalTaxableValue": 9200000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-VAL-001", "ruleName": "Market Value Gap", "category": "Valuation", "severity": "High", "impactInr": 275000, "explanation": "Flat declared at ₹4600/sq.ft vs market rate ₹6250/sq.ft in Rajahmundry", "confidence": 87 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-VAL-001",
+          "ruleName": "Market Value Gap",
+          "category": "Valuation",
+          "severity": "High",
+          "impactInr": 275000,
+          "explanation": "Flat declared at \u20b94600/sq.ft vs market rate \u20b96250/sq.ft in Rajahmundry",
+          "confidence": 87
+        }
+      ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 26.4,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
-    "notes": [{ "id": "n-12", "ts": "2024-12-31T11:00:00Z", "author": "DR", "text": "Confirmed undervaluation; recovery demand raised" }],
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "n-12",
+        "ts": "2024-12-31T11:00:00Z",
+        "author": "DR",
+        "text": "Confirmed undervaluation; recovery demand raised"
+      }
+    ],
     "activityLog": [
-      { "id": "log-23a", "ts": "2024-12-23T11:15:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-VAL-001" },
-      { "id": "log-23b", "ts": "2025-01-02T10:00:00Z", "actor": "DR", "action": "Status changed to Confirmed", "detail": "Undervaluation confirmed after market survey" }
+      {
+        "id": "log-23a",
+        "ts": "2024-12-23T11:15:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-VAL-001"
+      },
+      {
+        "id": "log-23b",
+        "ts": "2025-01-02T10:00:00Z",
+        "actor": "DR",
+        "action": "Status changed to Confirmed",
+        "detail": "Undervaluation confirmed after market survey"
+      }
     ]
   },
   {
     "id": "IGRS-2024-0024",
     "caseId": "IGRS-2024-0024",
-    "documentKey": { "srCode": "SR05", "bookNo": "B-503", "doctNo": "D-2024-0024", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "515",
+      "bookNo": "1",
+      "doctNo": "6789",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-24T09:00:00Z",
     "updatedAt": "2025-01-03T12:00:00Z",
     "riskLevel": "Low",
@@ -823,32 +2414,93 @@
     "confidence": 66,
     "status": "New",
     "assignedTo": "SR",
-    "leakageSignals": ["RevenueGap"],
+    "leakageSignals": [
+      "RevenueGap"
+    ],
     "impactAmountInr": 18000,
     "payableTotalInr": 175000,
     "paidTotalInr": 157000,
     "gapInr": 18000,
-    "office": { "srCode": "SR05", "srName": "Visakhapatnam Port", "district": "Visakhapatnam", "zone": "North" },
-    "docType": { "tranMajCode": "04", "tranMinCode": "01", "tranDesc": "Lease Deed", "abDesc": "Lease" },
-    "dates": { "pDate": "2024-12-22", "eDate": "2024-12-23", "rDate": "2024-12-24" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "450 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P024", "name": "Ratna Kumari", "panNo": "XYZRK4567B" }],
-    "payableBreakdown": { "sdPayable": 105000, "tdPayable": 35000, "rfPayable": 17500, "dsdPayable": 10500, "otherFee": 7000, "finalTaxableValue": 1750000 },
+    "office": {
+      "srCode": "SR05",
+      "srName": "Visakhapatnam Port",
+      "district": "Visakhapatnam",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "04",
+      "tranMinCode": "01",
+      "tranDesc": "Lease Deed",
+      "abDesc": "Lease"
+    },
+    "dates": {
+      "pDate": "2024-12-22",
+      "eDate": "2024-12-23",
+      "rDate": "2024-12-24"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "450 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P024",
+        "name": "Ratna Kumari",
+        "panNo": "XYZRK4567B"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 105000,
+      "tdPayable": 35000,
+      "rfPayable": 17500,
+      "dsdPayable": 10500,
+      "otherFee": 7000,
+      "finalTaxableValue": 1750000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-OPS-003", "ruleName": "Christmas Holiday Processing", "category": "Operational", "severity": "Low", "impactInr": 18000, "explanation": "Registration on Christmas Eve without holiday fee; borderline case", "confidence": 66 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-OPS-003",
+          "ruleName": "Christmas Holiday Processing",
+          "category": "Operational",
+          "severity": "Low",
+          "impactInr": 18000,
+          "explanation": "Registration on Christmas Eve without holiday fee; borderline case",
+          "confidence": 66
+        }
+      ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 3.0,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
-    "activityLog": [{ "id": "log-24", "ts": "2024-12-24T09:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-OPS-003" }]
+    "activityLog": [
+      {
+        "id": "log-24",
+        "ts": "2024-12-24T09:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-OPS-003"
+      }
+    ]
   },
   {
     "id": "IGRS-2024-0025",
     "caseId": "IGRS-2024-0025",
-    "documentKey": { "srCode": "SR02", "bookNo": "B-203", "doctNo": "D-2024-0025", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "209",
+      "bookNo": "2",
+      "doctNo": "4321",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-25T08:00:00Z",
     "updatedAt": "2025-01-04T15:00:00Z",
     "riskLevel": "Medium",
@@ -856,35 +2508,101 @@
     "confidence": 75,
     "status": "In Review",
     "assignedTo": "SR",
-    "leakageSignals": ["ExemptionRisk", "RevenueGap"],
+    "leakageSignals": [
+      "ExemptionRisk",
+      "RevenueGap"
+    ],
     "impactAmountInr": 110000,
     "payableTotalInr": 590000,
     "paidTotalInr": 480000,
     "gapInr": 110000,
-    "office": { "srCode": "SR02", "srName": "Guntur Main", "district": "Guntur", "zone": "South" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-23", "eDate": "2024-12-24", "rDate": "2024-12-25" },
-    "propertySummary": { "isUrban": true, "landNature": "NA", "extent": "1350 sq.ft", "unit": "sq.ft" },
-    "partiesSummary": [{ "code": "P025", "name": "Venkateswara Rao", "panNo": "YZAVR5678C" }],
-    "payableBreakdown": { "sdPayable": 354000, "tdPayable": 118000, "rfPayable": 59000, "dsdPayable": 35400, "otherFee": 23600, "finalTaxableValue": 5900000 },
+    "office": {
+      "srCode": "SR02",
+      "srName": "Guntur Main",
+      "district": "Guntur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-23",
+      "eDate": "2024-12-24",
+      "rDate": "2024-12-25"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "NA",
+      "extent": "1350 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      {
+        "code": "P025",
+        "name": "Venkateswara Rao",
+        "panNo": "YZAVR5678C"
+      }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 354000,
+      "tdPayable": 118000,
+      "rfPayable": 59000,
+      "dsdPayable": 35400,
+      "otherFee": 23600,
+      "finalTaxableValue": 5900000
+    },
     "evidence": {
-      "triggeredRules": [{ "ruleId": "R-EXM-002", "ruleName": "Exemption Without Documentation", "category": "Exemption", "severity": "Medium", "impactInr": 110000, "explanation": "Woman buyer stamp duty concession claimed but registration shows male purchaser", "confidence": 75 }],
+      "triggeredRules": [
+        {
+          "ruleId": "R-EXM-002",
+          "ruleName": "Exemption Without Documentation",
+          "category": "Exemption",
+          "severity": "Medium",
+          "impactInr": 110000,
+          "explanation": "Woman buyer stamp duty concession claimed but registration shows male purchaser",
+          "confidence": 75
+        }
+      ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 8.8,
       "exemptionCount": 1
     },
-    "sla": { "ageingDays": 10, "ageingBucket": "8-14d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 10,
+      "ageingBucket": "8-14d",
+      "slaBreached": false
+    },
     "notes": [],
     "activityLog": [
-      { "id": "log-25a", "ts": "2024-12-25T08:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-EXM-002" },
-      { "id": "log-25b", "ts": "2024-12-30T09:00:00Z", "actor": "SR", "action": "Status changed to In Review", "detail": "Verifying purchaser identity documents" }
+      {
+        "id": "log-25a",
+        "ts": "2024-12-25T08:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-EXM-002"
+      },
+      {
+        "id": "log-25b",
+        "ts": "2024-12-30T09:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to In Review",
+        "detail": "Verifying purchaser identity documents"
+      }
     ]
   },
   {
     "id": "26",
     "caseId": "IGRS-2024-0026",
-    "documentKey": { "srCode": "SR01", "bookNo": "1", "doctNo": "5026", "regYear": "2025" },
+    "documentKey": {
+      "srCode": "101",
+      "bookNo": "1",
+      "doctNo": "5026",
+      "regYear": "2025"
+    },
     "createdAt": "2025-01-03T08:00:00Z",
     "updatedAt": "2025-01-05T10:00:00Z",
     "riskLevel": "High",
@@ -892,60 +2610,181 @@
     "confidence": 82,
     "status": "New",
     "assignedTo": null,
-    "leakageSignals": ["CashReconciliation"],
+    "leakageSignals": [
+      "CashReconciliation"
+    ],
     "impactAmountInr": 42000,
     "payableTotalInr": 452000,
     "paidTotalInr": 410000,
     "gapInr": 42000,
-    "office": { "srCode": "SR01", "srName": "Vijayawada Central", "district": "Krishna", "zone": "South" },
-    "docType": { "tranMajCode": "99", "tranMinCode": "01", "tranDesc": "Cash Reconciliation", "abDesc": "CashRecon" },
-    "dates": { "pDate": "2025-01-02", "eDate": "2025-01-02", "rDate": "2025-01-02" },
-    "propertySummary": { "isUrban": true, "extent": "N/A", "unit": "N/A" },
+    "office": {
+      "srCode": "SR01",
+      "srName": "Vijayawada Central",
+      "district": "Krishna",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "01",
+      "tranDesc": "Cash Reconciliation",
+      "abDesc": "CashRecon"
+    },
+    "dates": {
+      "pDate": "2025-01-02",
+      "eDate": "2025-01-02",
+      "rDate": "2025-01-02"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
     "partiesSummary": [],
-    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-CR-001", "ruleName": "Daily Cash Collection Mismatch", "category": "StampIntelligence", "severity": "High", "impactInr": 42000, "explanation": "₹4.52L collected but ₹4.10L deposited — ₹42K gap", "confidence": 82 },
-        { "ruleId": "R-CR-002", "ruleName": "Delayed Treasury Deposit", "category": "StampIntelligence", "severity": "Medium", "impactInr": 0, "explanation": "3-day deposit delay exceeds 2-day mandate", "confidence": 90 }
+        {
+          "ruleId": "R-CR-001",
+          "ruleName": "Daily Cash Collection Mismatch",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 42000,
+          "explanation": "\u20b94.52L collected but \u20b94.10L deposited \u2014 \u20b942K gap",
+          "confidence": 82
+        },
+        {
+          "ruleId": "R-CR-002",
+          "ruleName": "Delayed Treasury Deposit",
+          "category": "StampIntelligence",
+          "severity": "Medium",
+          "impactInr": 0,
+          "explanation": "3-day deposit delay exceeds 2-day mandate",
+          "confidence": 90
+        }
       ],
       "receiptCount": 28,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 0,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 3, "ageingBucket": "0-7d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 3,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
     "cashReconciliationEvidence": {
       "cashRiskScore": 78,
-      "challanId": "CH-SR01-20250102-001",
-      "challanStatus": "Deposited — Partial Mismatch",
-      "originalDocumentId": "SR01/1/5026/2025",
+      "challanId": "CH-101-20250102-001",
+      "challanStatus": "Deposited \u2014 Partial Mismatch",
+      "originalDocumentId": "101/1/5026/2025",
       "challanTimeline": [
-        { "date": "2025-01-02T09:00:00Z", "event": "Collection recorded", "documentId": null, "amount": 452000, "status": "normal", "detail": "28 receipts collected at counter" },
-        { "date": "2025-01-02T17:30:00Z", "event": "Day-end reconciliation", "documentId": null, "amount": 452000, "status": "normal", "detail": "Cash counted and sealed" },
-        { "date": "2025-01-03T10:15:00Z", "event": "Challan prepared", "documentId": "CH-SR01-20250102-001", "amount": 410000, "status": "warning", "detail": "Challan amount ₹4.10L vs collection ₹4.52L — variance ₹42K" },
-        { "date": "2025-01-04T14:00:00Z", "event": "Treasury deposit", "documentId": "TD-KR-20250104-008", "amount": 410000, "status": "critical", "detail": "Deposit confirms ₹42K shortfall; 2-day delay from collection" }
+        {
+          "date": "2025-01-02T09:00:00Z",
+          "event": "Collection recorded",
+          "documentId": null,
+          "amount": 452000,
+          "status": "normal",
+          "detail": "28 receipts collected at counter"
+        },
+        {
+          "date": "2025-01-02T17:30:00Z",
+          "event": "Day-end reconciliation",
+          "documentId": null,
+          "amount": 452000,
+          "status": "normal",
+          "detail": "Cash counted and sealed"
+        },
+        {
+          "date": "2025-01-03T10:15:00Z",
+          "event": "Challan prepared",
+          "documentId": "CH-SR01-20250102-001",
+          "amount": 410000,
+          "status": "warning",
+          "detail": "Challan amount \u20b94.10L vs collection \u20b94.52L \u2014 variance \u20b942K"
+        },
+        {
+          "date": "2025-01-04T14:00:00Z",
+          "event": "Treasury deposit",
+          "documentId": "TD-KR-20250104-008",
+          "amount": 410000,
+          "status": "critical",
+          "detail": "Deposit confirms \u20b942K shortfall; 2-day delay from collection"
+        }
       ],
       "cfmsComparison": [
-        { "field": "Challan Amount", "challanValue": "₹4,10,000", "cfmsValue": "₹4,10,000", "mismatch": false },
-        { "field": "Collection Date", "challanValue": "02-Jan-2025", "cfmsValue": "02-Jan-2025", "mismatch": false },
-        { "field": "Deposit Date", "challanValue": "04-Jan-2025", "cfmsValue": "04-Jan-2025", "mismatch": false },
-        { "field": "Receipt Count", "challanValue": "28", "cfmsValue": "28", "mismatch": false },
-        { "field": "Total Collected", "challanValue": "₹4,10,000", "cfmsValue": "₹4,52,000", "mismatch": true },
-        { "field": "Officer Code", "challanValue": "SR01-OFC-04", "cfmsValue": "SR01-OFC-04", "mismatch": false }
+        {
+          "field": "Challan Amount",
+          "challanValue": "\u20b94,10,000",
+          "cfmsValue": "\u20b94,10,000",
+          "mismatch": false
+        },
+        {
+          "field": "Collection Date",
+          "challanValue": "02-Jan-2025",
+          "cfmsValue": "02-Jan-2025",
+          "mismatch": false
+        },
+        {
+          "field": "Deposit Date",
+          "challanValue": "04-Jan-2025",
+          "cfmsValue": "04-Jan-2025",
+          "mismatch": false
+        },
+        {
+          "field": "Receipt Count",
+          "challanValue": "28",
+          "cfmsValue": "28",
+          "mismatch": false
+        },
+        {
+          "field": "Total Collected",
+          "challanValue": "\u20b94,10,000",
+          "cfmsValue": "\u20b94,52,000",
+          "mismatch": true
+        },
+        {
+          "field": "Officer Code",
+          "challanValue": "SR01-OFC-04",
+          "cfmsValue": "SR01-OFC-04",
+          "mismatch": false
+        }
       ],
-      "dailyCashSummary": { "officeDate": "2025-01-02", "cashCollected": 452000, "misRemittance": 410000, "variance": 42000 },
+      "dailyCashSummary": {
+        "officeDate": "2025-01-02",
+        "cashCollected": 452000,
+        "misRemittance": 410000,
+        "variance": 42000
+      },
       "officerName": "R. Venkatesh",
       "officerId": "SR01-OFC-04"
     },
     "notes": [],
     "activityLog": [
-      { "id": "log-26a", "ts": "2025-01-03T08:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-CR-001: daily cash mismatch at SR01" }
+      {
+        "id": "log-26a",
+        "ts": "2025-01-03T08:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-001: daily cash mismatch at 101"
+      }
     ]
   },
   {
     "id": "27",
     "caseId": "IGRS-2024-0027",
-    "documentKey": { "srCode": "SR02", "bookNo": "1", "doctNo": "5027", "regYear": "2025" },
+    "documentKey": {
+      "srCode": "209",
+      "bookNo": "1",
+      "doctNo": "5027",
+      "regYear": "2025"
+    },
     "createdAt": "2025-01-04T09:00:00Z",
     "updatedAt": "2025-01-06T11:00:00Z",
     "riskLevel": "High",
@@ -953,61 +2792,188 @@
     "confidence": 85,
     "status": "In Review",
     "assignedTo": "AK",
-    "leakageSignals": ["CashReconciliation"],
+    "leakageSignals": [
+      "CashReconciliation"
+    ],
     "impactAmountInr": 67000,
     "payableTotalInr": 387000,
     "paidTotalInr": 320000,
     "gapInr": 67000,
-    "office": { "srCode": "SR02", "srName": "Guntur Main", "district": "Guntur", "zone": "South" },
-    "docType": { "tranMajCode": "99", "tranMinCode": "01", "tranDesc": "Cash Reconciliation", "abDesc": "CashRecon" },
-    "dates": { "pDate": "2025-01-03", "eDate": "2025-01-03", "rDate": "2025-01-03" },
-    "propertySummary": { "isUrban": true, "extent": "N/A", "unit": "N/A" },
+    "office": {
+      "srCode": "SR02",
+      "srName": "Guntur Main",
+      "district": "Guntur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "01",
+      "tranDesc": "Cash Reconciliation",
+      "abDesc": "CashRecon"
+    },
+    "dates": {
+      "pDate": "2025-01-03",
+      "eDate": "2025-01-03",
+      "rDate": "2025-01-03"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
     "partiesSummary": [],
-    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-CR-001", "ruleName": "Daily Cash Collection Mismatch", "category": "StampIntelligence", "severity": "High", "impactInr": 67000, "explanation": "₹3.87L collected but ₹3.20L deposited — ₹67K unreconciled", "confidence": 85 },
-        { "ruleId": "R-CR-003", "ruleName": "Unusual Cash Pattern", "category": "StampIntelligence", "severity": "Medium", "impactInr": 0, "explanation": "Collection volume 180% above baseline", "confidence": 70 }
+        {
+          "ruleId": "R-CR-001",
+          "ruleName": "Daily Cash Collection Mismatch",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 67000,
+          "explanation": "\u20b93.87L collected but \u20b93.20L deposited \u2014 \u20b967K unreconciled",
+          "confidence": 85
+        },
+        {
+          "ruleId": "R-CR-003",
+          "ruleName": "Unusual Cash Pattern",
+          "category": "StampIntelligence",
+          "severity": "Medium",
+          "impactInr": 0,
+          "explanation": "Collection volume 180% above baseline",
+          "confidence": 70
+        }
       ],
       "receiptCount": 35,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 0,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 2, "ageingBucket": "0-7d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 2,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
     "cashReconciliationEvidence": {
       "cashRiskScore": 82,
-      "challanId": "CH-SR02-20250103-002",
+      "challanId": "CH-209-20250103-002",
       "challanStatus": "Pending Investigation",
-      "originalDocumentId": "SR02/1/5027/2025",
+      "originalDocumentId": "209/1/5027/2025",
       "challanTimeline": [
-        { "date": "2025-01-03T08:30:00Z", "event": "Collection recorded", "documentId": null, "amount": 387000, "status": "normal", "detail": "35 receipts collected; unusually high volume" },
-        { "date": "2025-01-03T18:00:00Z", "event": "Day-end reconciliation", "documentId": null, "amount": 387000, "status": "warning", "detail": "Volume 180% above baseline flagged" },
-        { "date": "2025-01-04T11:00:00Z", "event": "Challan prepared", "documentId": "CH-SR02-20250103-002", "amount": 320000, "status": "critical", "detail": "Challan amount ₹3.20L — ₹67K less than collection" },
-        { "date": "2025-01-05T09:30:00Z", "event": "Assigned for review", "documentId": null, "amount": 0, "status": "warning", "detail": "AK assigned to investigate discrepancy" }
+        {
+          "date": "2025-01-03T08:30:00Z",
+          "event": "Collection recorded",
+          "documentId": null,
+          "amount": 387000,
+          "status": "normal",
+          "detail": "35 receipts collected; unusually high volume"
+        },
+        {
+          "date": "2025-01-03T18:00:00Z",
+          "event": "Day-end reconciliation",
+          "documentId": null,
+          "amount": 387000,
+          "status": "warning",
+          "detail": "Volume 180% above baseline flagged"
+        },
+        {
+          "date": "2025-01-04T11:00:00Z",
+          "event": "Challan prepared",
+          "documentId": "CH-SR02-20250103-002",
+          "amount": 320000,
+          "status": "critical",
+          "detail": "Challan amount \u20b93.20L \u2014 \u20b967K less than collection"
+        },
+        {
+          "date": "2025-01-05T09:30:00Z",
+          "event": "Assigned for review",
+          "documentId": null,
+          "amount": 0,
+          "status": "warning",
+          "detail": "AK assigned to investigate discrepancy"
+        }
       ],
       "cfmsComparison": [
-        { "field": "Challan Amount", "challanValue": "₹3,20,000", "cfmsValue": "₹3,20,000", "mismatch": false },
-        { "field": "Collection Date", "challanValue": "03-Jan-2025", "cfmsValue": "03-Jan-2025", "mismatch": false },
-        { "field": "Receipt Count", "challanValue": "35", "cfmsValue": "35", "mismatch": false },
-        { "field": "Total Collected", "challanValue": "₹3,20,000", "cfmsValue": "₹3,87,000", "mismatch": true },
-        { "field": "Deposit Status", "challanValue": "Deposited", "cfmsValue": "Under Review", "mismatch": true },
-        { "field": "Officer Code", "challanValue": "SR02-OFC-02", "cfmsValue": "SR02-OFC-02", "mismatch": false }
+        {
+          "field": "Challan Amount",
+          "challanValue": "\u20b93,20,000",
+          "cfmsValue": "\u20b93,20,000",
+          "mismatch": false
+        },
+        {
+          "field": "Collection Date",
+          "challanValue": "03-Jan-2025",
+          "cfmsValue": "03-Jan-2025",
+          "mismatch": false
+        },
+        {
+          "field": "Receipt Count",
+          "challanValue": "35",
+          "cfmsValue": "35",
+          "mismatch": false
+        },
+        {
+          "field": "Total Collected",
+          "challanValue": "\u20b93,20,000",
+          "cfmsValue": "\u20b93,87,000",
+          "mismatch": true
+        },
+        {
+          "field": "Deposit Status",
+          "challanValue": "Deposited",
+          "cfmsValue": "Under Review",
+          "mismatch": true
+        },
+        {
+          "field": "Officer Code",
+          "challanValue": "SR02-OFC-02",
+          "cfmsValue": "SR02-OFC-02",
+          "mismatch": false
+        }
       ],
-      "dailyCashSummary": { "officeDate": "2025-01-03", "cashCollected": 387000, "misRemittance": 320000, "variance": 67000 },
+      "dailyCashSummary": {
+        "officeDate": "2025-01-03",
+        "cashCollected": 387000,
+        "misRemittance": 320000,
+        "variance": 67000
+      },
       "officerName": "S. Lakshmi Prasad",
       "officerId": "SR02-OFC-02"
     },
     "notes": [],
     "activityLog": [
-      { "id": "log-27a", "ts": "2025-01-04T09:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-CR-001: cash mismatch at SR02" },
-      { "id": "log-27b", "ts": "2025-01-05T10:00:00Z", "actor": "AK", "action": "Status changed to In Review", "detail": "Investigating collection records" }
+      {
+        "id": "log-27a",
+        "ts": "2025-01-04T09:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-001: cash mismatch at 209"
+      },
+      {
+        "id": "log-27b",
+        "ts": "2025-01-05T10:00:00Z",
+        "actor": "AK",
+        "action": "Status changed to In Review",
+        "detail": "Investigating collection records"
+      }
     ]
   },
   {
     "id": "28",
     "caseId": "IGRS-2024-0028",
-    "documentKey": { "srCode": "SR03", "bookNo": "1", "doctNo": "5028", "regYear": "2025" },
+    "documentKey": {
+      "srCode": "314",
+      "bookNo": "1",
+      "doctNo": "5028",
+      "regYear": "2025"
+    },
     "createdAt": "2025-01-05T10:00:00Z",
     "updatedAt": "2025-01-06T09:00:00Z",
     "riskLevel": "Medium",
@@ -1015,57 +2981,158 @@
     "confidence": 72,
     "status": "New",
     "assignedTo": null,
-    "leakageSignals": ["CashReconciliation"],
+    "leakageSignals": [
+      "CashReconciliation"
+    ],
     "impactAmountInr": 18000,
     "payableTotalInr": 95000,
     "paidTotalInr": 77000,
     "gapInr": 18000,
-    "office": { "srCode": "SR03", "srName": "Tirupati Urban", "district": "Chittoor", "zone": "South" },
-    "docType": { "tranMajCode": "99", "tranMinCode": "02", "tranDesc": "Receipt-Challan Recon", "abDesc": "RcptRecon" },
-    "dates": { "pDate": "2025-01-04", "eDate": "2025-01-04", "rDate": "2025-01-04" },
-    "propertySummary": { "isUrban": true, "extent": "N/A", "unit": "N/A" },
+    "office": {
+      "srCode": "SR03",
+      "srName": "Tirupati Urban",
+      "district": "Chittoor",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "02",
+      "tranDesc": "Receipt-Challan Recon",
+      "abDesc": "RcptRecon"
+    },
+    "dates": {
+      "pDate": "2025-01-04",
+      "eDate": "2025-01-04",
+      "rDate": "2025-01-04"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
     "partiesSummary": [],
-    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-CR-004", "ruleName": "Receipt-Challan Cross-Reference Failure", "category": "StampIntelligence", "severity": "Medium", "impactInr": 18000, "explanation": "Receipt R-45678 for ₹95K but challan C-12340 shows ₹77K", "confidence": 72 }
+        {
+          "ruleId": "R-CR-004",
+          "ruleName": "Receipt-Challan Cross-Reference Failure",
+          "category": "StampIntelligence",
+          "severity": "Medium",
+          "impactInr": 18000,
+          "explanation": "Receipt R-45678 for \u20b995K but challan C-12340 shows \u20b977K",
+          "confidence": 72
+        }
       ],
       "receiptCount": 1,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 0,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 1, "ageingBucket": "0-7d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 1,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
     "cashReconciliationEvidence": {
       "cashRiskScore": 55,
-      "challanId": "CH-SR03-20250104-001",
+      "challanId": "CH-314-20250104-001",
       "challanStatus": "Mismatch Confirmed",
-      "originalDocumentId": "SR03/1/5028/2025",
+      "originalDocumentId": "314/1/5028/2025",
       "challanTimeline": [
-        { "date": "2025-01-04T10:00:00Z", "event": "Receipt issued", "documentId": "R-45678", "amount": 95000, "status": "normal", "detail": "Single receipt for lease registration" },
-        { "date": "2025-01-04T17:00:00Z", "event": "Challan prepared", "documentId": "CH-SR03-20250104-001", "amount": 77000, "status": "critical", "detail": "Challan shows ₹77K — ₹18K less than receipt" },
-        { "date": "2025-01-05T10:00:00Z", "event": "CFMS cross-check", "documentId": null, "amount": 77000, "status": "warning", "detail": "CFMS confirms ₹77K deposited; receipt-challan gap flagged" }
+        {
+          "date": "2025-01-04T10:00:00Z",
+          "event": "Receipt issued",
+          "documentId": "R-45678",
+          "amount": 95000,
+          "status": "normal",
+          "detail": "Single receipt for lease registration"
+        },
+        {
+          "date": "2025-01-04T17:00:00Z",
+          "event": "Challan prepared",
+          "documentId": "CH-SR03-20250104-001",
+          "amount": 77000,
+          "status": "critical",
+          "detail": "Challan shows \u20b977K \u2014 \u20b918K less than receipt"
+        },
+        {
+          "date": "2025-01-05T10:00:00Z",
+          "event": "CFMS cross-check",
+          "documentId": null,
+          "amount": 77000,
+          "status": "warning",
+          "detail": "CFMS confirms \u20b977K deposited; receipt-challan gap flagged"
+        }
       ],
       "cfmsComparison": [
-        { "field": "Receipt Amount", "challanValue": "₹95,000", "cfmsValue": "N/A", "mismatch": false },
-        { "field": "Challan Amount", "challanValue": "₹77,000", "cfmsValue": "₹77,000", "mismatch": false },
-        { "field": "Receipt-Challan Variance", "challanValue": "₹18,000", "cfmsValue": "₹18,000", "mismatch": true },
-        { "field": "Transaction Date", "challanValue": "04-Jan-2025", "cfmsValue": "04-Jan-2025", "mismatch": false },
-        { "field": "Officer Code", "challanValue": "SR03-OFC-01", "cfmsValue": "SR03-OFC-01", "mismatch": false }
+        {
+          "field": "Receipt Amount",
+          "challanValue": "\u20b995,000",
+          "cfmsValue": "N/A",
+          "mismatch": false
+        },
+        {
+          "field": "Challan Amount",
+          "challanValue": "\u20b977,000",
+          "cfmsValue": "\u20b977,000",
+          "mismatch": false
+        },
+        {
+          "field": "Receipt-Challan Variance",
+          "challanValue": "\u20b918,000",
+          "cfmsValue": "\u20b918,000",
+          "mismatch": true
+        },
+        {
+          "field": "Transaction Date",
+          "challanValue": "04-Jan-2025",
+          "cfmsValue": "04-Jan-2025",
+          "mismatch": false
+        },
+        {
+          "field": "Officer Code",
+          "challanValue": "SR03-OFC-01",
+          "cfmsValue": "SR03-OFC-01",
+          "mismatch": false
+        }
       ],
-      "dailyCashSummary": { "officeDate": "2025-01-04", "cashCollected": 95000, "misRemittance": 77000, "variance": 18000 },
+      "dailyCashSummary": {
+        "officeDate": "2025-01-04",
+        "cashCollected": 95000,
+        "misRemittance": 77000,
+        "variance": 18000
+      },
       "officerName": "K. Nagaraju",
       "officerId": "SR03-OFC-01"
     },
     "notes": [],
     "activityLog": [
-      { "id": "log-28a", "ts": "2025-01-05T10:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-CR-004: receipt-challan mismatch at SR03" }
+      {
+        "id": "log-28a",
+        "ts": "2025-01-05T10:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-004: receipt-challan mismatch at 314"
+      }
     ]
   },
   {
     "id": "29",
     "caseId": "IGRS-2024-0029",
-    "documentKey": { "srCode": "SR06", "bookNo": "1", "doctNo": "5029", "regYear": "2025" },
+    "documentKey": {
+      "srCode": "608",
+      "bookNo": "1",
+      "doctNo": "5029",
+      "regYear": "2025"
+    },
     "createdAt": "2025-01-05T11:00:00Z",
     "updatedAt": "2025-01-07T08:00:00Z",
     "riskLevel": "High",
@@ -1073,28 +3140,75 @@
     "confidence": 88,
     "status": "In Review",
     "assignedTo": "PK",
-    "leakageSignals": ["StampInventory"],
+    "leakageSignals": [
+      "StampInventory"
+    ],
     "impactAmountInr": 120000,
-    "payableTotalInr": 0,
+    "payableTotalInr": 120000,
     "paidTotalInr": 0,
     "gapInr": 120000,
-    "office": { "srCode": "SR06", "srName": "Rajahmundry Central", "district": "East Godavari", "zone": "North" },
-    "docType": { "tranMajCode": "98", "tranMinCode": "01", "tranDesc": "Stamp Inventory Audit", "abDesc": "StampAudit" },
-    "dates": { "pDate": "2025-01-05", "eDate": "2025-01-05", "rDate": "2025-01-05" },
-    "propertySummary": { "isUrban": true, "extent": "N/A", "unit": "N/A" },
+    "office": {
+      "srCode": "SR06",
+      "srName": "Rajahmundry Central",
+      "district": "East Godavari",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "98",
+      "tranMinCode": "01",
+      "tranDesc": "Stamp Inventory Audit",
+      "abDesc": "StampAudit"
+    },
+    "dates": {
+      "pDate": "2025-01-05",
+      "eDate": "2025-01-05",
+      "rDate": "2025-01-05"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
     "partiesSummary": [],
-    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-SI-001", "ruleName": "Stamp Paper Inventory Shortage", "category": "StampIntelligence", "severity": "High", "impactInr": 120000, "explanation": "Expected 450 stamps, physical count 438 — 12 stamps missing", "confidence": 88 },
-        { "ruleId": "R-SI-003", "ruleName": "High-Denomination Stamp Velocity", "category": "StampIntelligence", "severity": "Medium", "impactInr": 0, "explanation": "₹10K stamp usage 280% above daily average", "confidence": 75 }
+        {
+          "ruleId": "R-SI-001",
+          "ruleName": "Stamp Paper Inventory Shortage",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 120000,
+          "explanation": "Expected 450 stamps, physical count 438 \u2014 12 stamps missing",
+          "confidence": 88
+        },
+        {
+          "ruleId": "R-SI-003",
+          "ruleName": "High-Denomination Stamp Velocity",
+          "category": "StampIntelligence",
+          "severity": "Medium",
+          "impactInr": 0,
+          "explanation": "\u20b910K stamp usage 280% above daily average",
+          "confidence": 75
+        }
       ],
       "receiptCount": 0,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 0,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 2, "ageingBucket": "0-7d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 2,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
     "stampInventoryEvidence": {
       "vendorRiskScore": 88,
       "vendorId": "SV-EG-002",
@@ -1105,53 +3219,163 @@
       "expectedUsage": 450,
       "deviationPercent": -2.7,
       "monthlyUsage": [
-        { "month": "2024-08", "count": 82, "expected": 75 },
-        { "month": "2024-09", "count": 78, "expected": 75 },
-        { "month": "2024-10", "count": 70, "expected": 75 },
-        { "month": "2024-11", "count": 68, "expected": 75 },
-        { "month": "2024-12", "count": 72, "expected": 75 },
-        { "month": "2025-01", "count": 68, "expected": 75 }
+        {
+          "month": "2024-08",
+          "count": 82,
+          "expected": 75
+        },
+        {
+          "month": "2024-09",
+          "count": 78,
+          "expected": 75
+        },
+        {
+          "month": "2024-10",
+          "count": 70,
+          "expected": 75
+        },
+        {
+          "month": "2024-11",
+          "count": 68,
+          "expected": 75
+        },
+        {
+          "month": "2024-12",
+          "count": 72,
+          "expected": 75
+        },
+        {
+          "month": "2025-01",
+          "count": 68,
+          "expected": 75
+        }
       ],
       "revenuePerStamp": [
-        { "month": "2024-08", "avgRevenue": 8200 },
-        { "month": "2024-09", "avgRevenue": 8500 },
-        { "month": "2024-10", "avgRevenue": 9100 },
-        { "month": "2024-11", "avgRevenue": 9800 },
-        { "month": "2024-12", "avgRevenue": 10200 },
-        { "month": "2025-01", "avgRevenue": 10500 }
+        {
+          "month": "2024-08",
+          "avgRevenue": 8200
+        },
+        {
+          "month": "2024-09",
+          "avgRevenue": 8500
+        },
+        {
+          "month": "2024-10",
+          "avgRevenue": 9100
+        },
+        {
+          "month": "2024-11",
+          "avgRevenue": 9800
+        },
+        {
+          "month": "2024-12",
+          "avgRevenue": 10200
+        },
+        {
+          "month": "2025-01",
+          "avgRevenue": 10500
+        }
       ],
       "peerVendors": [
-        { "vendorId": "SV-EG-001", "vendorName": "Sri Sai Stamps", "usage": 480, "expected": 470, "deviation": 2.1, "riskScore": 22 },
-        { "vendorId": "SV-EG-003", "vendorName": "Godavari Paper House", "usage": 410, "expected": 420, "deviation": -2.4, "riskScore": 35 },
-        { "vendorId": "SV-EG-004", "vendorName": "Eastern Stamps Co.", "usage": 395, "expected": 400, "deviation": -1.3, "riskScore": 18 }
+        {
+          "vendorId": "SV-EG-001",
+          "vendorName": "Sri Sai Stamps",
+          "usage": 480,
+          "expected": 470,
+          "deviation": 2.1,
+          "riskScore": 22
+        },
+        {
+          "vendorId": "SV-EG-003",
+          "vendorName": "Godavari Paper House",
+          "usage": 410,
+          "expected": 420,
+          "deviation": -2.4,
+          "riskScore": 35
+        },
+        {
+          "vendorId": "SV-EG-004",
+          "vendorName": "Eastern Stamps Co.",
+          "usage": 395,
+          "expected": 400,
+          "deviation": -1.3,
+          "riskScore": 18
+        }
       ],
       "stampTypeDistribution": {
         "vendor": [
-          { "type": "₹100", "percent": 35 },
-          { "type": "₹500", "percent": 25 },
-          { "type": "₹1000", "percent": 20 },
-          { "type": "₹5000", "percent": 12 },
-          { "type": "₹10000", "percent": 8 }
+          {
+            "type": "\u20b9100",
+            "percent": 35
+          },
+          {
+            "type": "\u20b9500",
+            "percent": 25
+          },
+          {
+            "type": "\u20b91000",
+            "percent": 20
+          },
+          {
+            "type": "\u20b95000",
+            "percent": 12
+          },
+          {
+            "type": "\u20b910000",
+            "percent": 8
+          }
         ],
         "jurisdictionAvg": [
-          { "type": "₹100", "percent": 30 },
-          { "type": "₹500", "percent": 28 },
-          { "type": "₹1000", "percent": 22 },
-          { "type": "₹5000", "percent": 13 },
-          { "type": "₹10000", "percent": 7 }
+          {
+            "type": "\u20b9100",
+            "percent": 30
+          },
+          {
+            "type": "\u20b9500",
+            "percent": 28
+          },
+          {
+            "type": "\u20b91000",
+            "percent": 22
+          },
+          {
+            "type": "\u20b95000",
+            "percent": 13
+          },
+          {
+            "type": "\u20b910000",
+            "percent": 7
+          }
         ]
       }
     },
     "notes": [],
     "activityLog": [
-      { "id": "log-29a", "ts": "2025-01-05T11:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SI-001: stamp shortage at SR06" },
-      { "id": "log-29b", "ts": "2025-01-06T09:00:00Z", "actor": "PK", "action": "Status changed to In Review", "detail": "Physical inventory recount ordered" }
+      {
+        "id": "log-29a",
+        "ts": "2025-01-05T11:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SI-001: stamp shortage at 608"
+      },
+      {
+        "id": "log-29b",
+        "ts": "2025-01-06T09:00:00Z",
+        "actor": "PK",
+        "action": "Status changed to In Review",
+        "detail": "Physical inventory recount ordered"
+      }
     ]
   },
   {
     "id": "30",
     "caseId": "IGRS-2024-0030",
-    "documentKey": { "srCode": "SR09", "bookNo": "1", "doctNo": "5030", "regYear": "2025" },
+    "documentKey": {
+      "srCode": "909",
+      "bookNo": "1",
+      "doctNo": "5030",
+      "regYear": "2025"
+    },
     "createdAt": "2025-01-06T08:30:00Z",
     "updatedAt": "2025-01-07T10:00:00Z",
     "riskLevel": "Medium",
@@ -1159,28 +3383,75 @@
     "confidence": 68,
     "status": "New",
     "assignedTo": null,
-    "leakageSignals": ["StampInventory"],
+    "leakageSignals": [
+      "StampInventory"
+    ],
     "impactAmountInr": 8000,
-    "payableTotalInr": 0,
+    "payableTotalInr": 8000,
     "paidTotalInr": 0,
     "gapInr": 8000,
-    "office": { "srCode": "SR09", "srName": "Nellore City", "district": "Nellore", "zone": "South" },
-    "docType": { "tranMajCode": "98", "tranMinCode": "01", "tranDesc": "Stamp Inventory Audit", "abDesc": "StampAudit" },
-    "dates": { "pDate": "2025-01-06", "eDate": "2025-01-06", "rDate": "2025-01-06" },
-    "propertySummary": { "isUrban": true, "extent": "N/A", "unit": "N/A" },
+    "office": {
+      "srCode": "SR09",
+      "srName": "Nellore City",
+      "district": "Nellore",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "98",
+      "tranMinCode": "01",
+      "tranDesc": "Stamp Inventory Audit",
+      "abDesc": "StampAudit"
+    },
+    "dates": {
+      "pDate": "2025-01-06",
+      "eDate": "2025-01-06",
+      "rDate": "2025-01-06"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
     "partiesSummary": [],
-    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-SI-002", "ruleName": "Stamp Paper Surplus Anomaly", "category": "StampIntelligence", "severity": "Medium", "impactInr": 0, "explanation": "15 surplus stamps of ₹5K denomination unexplained", "confidence": 68 },
-        { "ruleId": "R-SI-004", "ruleName": "Stamp Denomination Mismatch", "category": "StampIntelligence", "severity": "Low", "impactInr": 8000, "explanation": "₹5K stamp used where ₹8K duty required on lease deed", "confidence": 65 }
+        {
+          "ruleId": "R-SI-002",
+          "ruleName": "Stamp Paper Surplus Anomaly",
+          "category": "StampIntelligence",
+          "severity": "Medium",
+          "impactInr": 0,
+          "explanation": "15 surplus stamps of \u20b95K denomination unexplained",
+          "confidence": 68
+        },
+        {
+          "ruleId": "R-SI-004",
+          "ruleName": "Stamp Denomination Mismatch",
+          "category": "StampIntelligence",
+          "severity": "Low",
+          "impactInr": 8000,
+          "explanation": "\u20b95K stamp used where \u20b98K duty required on lease deed",
+          "confidence": 65
+        }
       ],
       "receiptCount": 0,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 0,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 1, "ageingBucket": "0-7d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 1,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
     "stampInventoryEvidence": {
       "vendorRiskScore": 42,
       "vendorId": "SV-NL-001",
@@ -1191,49 +3462,140 @@
       "expectedUsage": 325,
       "deviationPercent": 4.6,
       "monthlyUsage": [
-        { "month": "2024-08", "count": 52, "expected": 54 },
-        { "month": "2024-09", "count": 55, "expected": 54 },
-        { "month": "2024-10", "count": 58, "expected": 54 },
-        { "month": "2024-11", "count": 56, "expected": 54 },
-        { "month": "2024-12", "count": 59, "expected": 54 },
-        { "month": "2025-01", "count": 60, "expected": 55 }
+        {
+          "month": "2024-08",
+          "count": 52,
+          "expected": 54
+        },
+        {
+          "month": "2024-09",
+          "count": 55,
+          "expected": 54
+        },
+        {
+          "month": "2024-10",
+          "count": 58,
+          "expected": 54
+        },
+        {
+          "month": "2024-11",
+          "count": 56,
+          "expected": 54
+        },
+        {
+          "month": "2024-12",
+          "count": 59,
+          "expected": 54
+        },
+        {
+          "month": "2025-01",
+          "count": 60,
+          "expected": 55
+        }
       ],
       "revenuePerStamp": [
-        { "month": "2024-08", "avgRevenue": 4800 },
-        { "month": "2024-09", "avgRevenue": 4900 },
-        { "month": "2024-10", "avgRevenue": 5000 },
-        { "month": "2024-11", "avgRevenue": 5100 },
-        { "month": "2024-12", "avgRevenue": 4600 },
-        { "month": "2025-01", "avgRevenue": 4200 }
+        {
+          "month": "2024-08",
+          "avgRevenue": 4800
+        },
+        {
+          "month": "2024-09",
+          "avgRevenue": 4900
+        },
+        {
+          "month": "2024-10",
+          "avgRevenue": 5000
+        },
+        {
+          "month": "2024-11",
+          "avgRevenue": 5100
+        },
+        {
+          "month": "2024-12",
+          "avgRevenue": 4600
+        },
+        {
+          "month": "2025-01",
+          "avgRevenue": 4200
+        }
       ],
       "peerVendors": [
-        { "vendorId": "SV-NL-002", "vendorName": "Sri Rama Stamps", "usage": 310, "expected": 320, "deviation": -3.1, "riskScore": 30 },
-        { "vendorId": "SV-NL-003", "vendorName": "Kavali Papers", "usage": 280, "expected": 285, "deviation": -1.8, "riskScore": 15 }
+        {
+          "vendorId": "SV-NL-002",
+          "vendorName": "Sri Rama Stamps",
+          "usage": 310,
+          "expected": 320,
+          "deviation": -3.1,
+          "riskScore": 30
+        },
+        {
+          "vendorId": "SV-NL-003",
+          "vendorName": "Kavali Papers",
+          "usage": 280,
+          "expected": 285,
+          "deviation": -1.8,
+          "riskScore": 15
+        }
       ],
       "stampTypeDistribution": {
         "vendor": [
-          { "type": "₹100", "percent": 40 },
-          { "type": "₹500", "percent": 30 },
-          { "type": "₹1000", "percent": 15 },
-          { "type": "₹5000", "percent": 15 }
+          {
+            "type": "\u20b9100",
+            "percent": 40
+          },
+          {
+            "type": "\u20b9500",
+            "percent": 30
+          },
+          {
+            "type": "\u20b91000",
+            "percent": 15
+          },
+          {
+            "type": "\u20b95000",
+            "percent": 15
+          }
         ],
         "jurisdictionAvg": [
-          { "type": "₹100", "percent": 32 },
-          { "type": "₹500", "percent": 28 },
-          { "type": "₹1000", "percent": 22 },
-          { "type": "₹5000", "percent": 18 }
+          {
+            "type": "\u20b9100",
+            "percent": 32
+          },
+          {
+            "type": "\u20b9500",
+            "percent": 28
+          },
+          {
+            "type": "\u20b91000",
+            "percent": 22
+          },
+          {
+            "type": "\u20b95000",
+            "percent": 18
+          }
         ]
       }
     },
     "notes": [],
     "activityLog": [
-      { "id": "log-30a", "ts": "2025-01-06T08:30:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SI-002: stamp surplus at SR09" }
+      {
+        "id": "log-30a",
+        "ts": "2025-01-06T08:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SI-002: stamp surplus at 909"
+      }
     ]
   },
   {
     "id": "31",
     "caseId": "IGRS-2024-0031",
-    "documentKey": { "srCode": "SR10", "bookNo": "1", "doctNo": "5031", "regYear": "2025" },
+    "documentKey": {
+      "srCode": "1010",
+      "bookNo": "1",
+      "doctNo": "5031",
+      "regYear": "2025"
+    },
     "createdAt": "2025-01-06T14:00:00Z",
     "updatedAt": "2025-01-07T15:00:00Z",
     "riskLevel": "High",
@@ -1241,27 +3603,66 @@
     "confidence": 90,
     "status": "New",
     "assignedTo": null,
-    "leakageSignals": ["StampInventory"],
+    "leakageSignals": [
+      "StampInventory"
+    ],
     "impactAmountInr": 250000,
-    "payableTotalInr": 0,
+    "payableTotalInr": 250000,
     "paidTotalInr": 0,
     "gapInr": 250000,
-    "office": { "srCode": "SR10", "srName": "Anantapur Main", "district": "Anantapur", "zone": "Central" },
-    "docType": { "tranMajCode": "98", "tranMinCode": "01", "tranDesc": "Stamp Inventory Audit", "abDesc": "StampAudit" },
-    "dates": { "pDate": "2025-01-06", "eDate": "2025-01-06", "rDate": "2025-01-06" },
-    "propertySummary": { "isUrban": false, "extent": "N/A", "unit": "N/A" },
+    "office": {
+      "srCode": "SR10",
+      "srName": "Anantapur Main",
+      "district": "Anantapur",
+      "zone": "Central"
+    },
+    "docType": {
+      "tranMajCode": "98",
+      "tranMinCode": "01",
+      "tranDesc": "Stamp Inventory Audit",
+      "abDesc": "StampAudit"
+    },
+    "dates": {
+      "pDate": "2025-01-06",
+      "eDate": "2025-01-06",
+      "rDate": "2025-01-06"
+    },
+    "propertySummary": {
+      "isUrban": false,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
     "partiesSummary": [],
-    "payableBreakdown": { "sdPayable": 0, "tdPayable": 0, "rfPayable": 0, "dsdPayable": 0, "otherFee": 0, "finalTaxableValue": 0 },
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-SI-001", "ruleName": "Stamp Paper Inventory Shortage", "category": "StampIntelligence", "severity": "High", "impactInr": 250000, "explanation": "25 stamps of ₹10K unaccounted — ₹2.5L inventory gap", "confidence": 90 }
+        {
+          "ruleId": "R-SI-001",
+          "ruleName": "Stamp Paper Inventory Shortage",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 250000,
+          "explanation": "25 stamps of \u20b910K unaccounted \u2014 \u20b92.5L inventory gap",
+          "confidence": 90
+        }
       ],
       "receiptCount": 0,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 0,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 1, "ageingBucket": "0-7d", "slaBreached": false },
+    "sla": {
+      "ageingDays": 1,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
     "stampInventoryEvidence": {
       "vendorRiskScore": 92,
       "vendorId": "SV-AN-001",
@@ -1272,52 +3673,156 @@
       "expectedUsage": 400,
       "deviationPercent": -6.3,
       "monthlyUsage": [
-        { "month": "2024-08", "count": 72, "expected": 67 },
-        { "month": "2024-09", "count": 68, "expected": 67 },
-        { "month": "2024-10", "count": 65, "expected": 67 },
-        { "month": "2024-11", "count": 60, "expected": 67 },
-        { "month": "2024-12", "count": 58, "expected": 67 },
-        { "month": "2025-01", "count": 52, "expected": 65 }
+        {
+          "month": "2024-08",
+          "count": 72,
+          "expected": 67
+        },
+        {
+          "month": "2024-09",
+          "count": 68,
+          "expected": 67
+        },
+        {
+          "month": "2024-10",
+          "count": 65,
+          "expected": 67
+        },
+        {
+          "month": "2024-11",
+          "count": 60,
+          "expected": 67
+        },
+        {
+          "month": "2024-12",
+          "count": 58,
+          "expected": 67
+        },
+        {
+          "month": "2025-01",
+          "count": 52,
+          "expected": 65
+        }
       ],
       "revenuePerStamp": [
-        { "month": "2024-08", "avgRevenue": 9200 },
-        { "month": "2024-09", "avgRevenue": 9500 },
-        { "month": "2024-10", "avgRevenue": 10200 },
-        { "month": "2024-11", "avgRevenue": 10800 },
-        { "month": "2024-12", "avgRevenue": 11500 },
-        { "month": "2025-01", "avgRevenue": 12000 }
+        {
+          "month": "2024-08",
+          "avgRevenue": 9200
+        },
+        {
+          "month": "2024-09",
+          "avgRevenue": 9500
+        },
+        {
+          "month": "2024-10",
+          "avgRevenue": 10200
+        },
+        {
+          "month": "2024-11",
+          "avgRevenue": 10800
+        },
+        {
+          "month": "2024-12",
+          "avgRevenue": 11500
+        },
+        {
+          "month": "2025-01",
+          "avgRevenue": 12000
+        }
       ],
       "peerVendors": [
-        { "vendorId": "SV-AN-002", "vendorName": "Rayalaseema Papers", "usage": 420, "expected": 410, "deviation": 2.4, "riskScore": 20 },
-        { "vendorId": "SV-AN-003", "vendorName": "Kurnool Stamp House", "usage": 380, "expected": 390, "deviation": -2.6, "riskScore": 28 },
-        { "vendorId": "SV-AN-004", "vendorName": "Penukonda Stamps", "usage": 290, "expected": 300, "deviation": -3.3, "riskScore": 32 }
+        {
+          "vendorId": "SV-AN-002",
+          "vendorName": "Rayalaseema Papers",
+          "usage": 420,
+          "expected": 410,
+          "deviation": 2.4,
+          "riskScore": 20
+        },
+        {
+          "vendorId": "SV-AN-003",
+          "vendorName": "Kurnool Stamp House",
+          "usage": 380,
+          "expected": 390,
+          "deviation": -2.6,
+          "riskScore": 28
+        },
+        {
+          "vendorId": "SV-AN-004",
+          "vendorName": "Penukonda Stamps",
+          "usage": 290,
+          "expected": 300,
+          "deviation": -3.3,
+          "riskScore": 32
+        }
       ],
       "stampTypeDistribution": {
         "vendor": [
-          { "type": "₹100", "percent": 20 },
-          { "type": "₹500", "percent": 18 },
-          { "type": "₹1000", "percent": 15 },
-          { "type": "₹5000", "percent": 22 },
-          { "type": "₹10000", "percent": 25 }
+          {
+            "type": "\u20b9100",
+            "percent": 20
+          },
+          {
+            "type": "\u20b9500",
+            "percent": 18
+          },
+          {
+            "type": "\u20b91000",
+            "percent": 15
+          },
+          {
+            "type": "\u20b95000",
+            "percent": 22
+          },
+          {
+            "type": "\u20b910000",
+            "percent": 25
+          }
         ],
         "jurisdictionAvg": [
-          { "type": "₹100", "percent": 30 },
-          { "type": "₹500", "percent": 25 },
-          { "type": "₹1000", "percent": 20 },
-          { "type": "₹5000", "percent": 15 },
-          { "type": "₹10000", "percent": 10 }
+          {
+            "type": "\u20b9100",
+            "percent": 30
+          },
+          {
+            "type": "\u20b9500",
+            "percent": 25
+          },
+          {
+            "type": "\u20b91000",
+            "percent": 20
+          },
+          {
+            "type": "\u20b95000",
+            "percent": 15
+          },
+          {
+            "type": "\u20b910000",
+            "percent": 10
+          }
         ]
       }
     },
     "notes": [],
     "activityLog": [
-      { "id": "log-31a", "ts": "2025-01-06T14:00:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-SI-001: major stamp shortage at SR10" }
+      {
+        "id": "log-31a",
+        "ts": "2025-01-06T14:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-SI-001: major stamp shortage at 1010"
+      }
     ]
   },
   {
     "id": "32",
     "caseId": "IGRS-2024-0032",
-    "documentKey": { "srCode": "SR05", "bookNo": "1", "doctNo": "4892", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "515",
+      "bookNo": "1",
+      "doctNo": "4892",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-10T09:45:00Z",
     "updatedAt": "2024-12-15T11:00:00Z",
     "riskLevel": "High",
@@ -1325,41 +3830,122 @@
     "confidence": 92,
     "status": "In Review",
     "assignedTo": "PK",
-    "leakageSignals": ["MarketValueRisk", "RevenueGap"],
+    "leakageSignals": [
+      "MarketValueRisk",
+      "RevenueGap"
+    ],
     "impactAmountInr": 145000,
     "payableTotalInr": 480000,
     "paidTotalInr": 335000,
     "gapInr": 145000,
-    "office": { "srCode": "SR05", "srName": "Visakhapatnam Port", "district": "Visakhapatnam", "zone": "North" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-08", "eDate": "2024-12-09", "rDate": "2024-12-10" },
-    "propertySummary": { "isUrban": false, "landNature": "Commercial (misclassified as Agricultural)", "extent": "2.5 acres", "unit": "acres" },
+    "office": {
+      "srCode": "SR05",
+      "srName": "Visakhapatnam Port",
+      "district": "Visakhapatnam",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-08",
+      "eDate": "2024-12-09",
+      "rDate": "2024-12-10"
+    },
+    "propertySummary": {
+      "isUrban": false,
+      "landNature": "Commercial (misclassified as Agricultural)",
+      "extent": "2.5 acres",
+      "unit": "acres"
+    },
     "partiesSummary": [
-      { "code": "P032A", "name": "Srinivasa Developers Pvt Ltd", "panNo": "AABCS1234D" },
-      { "code": "P032B", "name": "Ramesh Babu", "panNo": "BKRPB5678E" }
+      {
+        "code": "P032A",
+        "name": "Srinivasa Developers Pvt Ltd",
+        "panNo": "AABCS1234D"
+      },
+      {
+        "code": "P032B",
+        "name": "Ramesh Babu",
+        "panNo": "BKRPB5678E"
+      }
     ],
-    "payableBreakdown": { "sdPayable": 288000, "tdPayable": 96000, "rfPayable": 48000, "dsdPayable": 28800, "otherFee": 19200, "finalTaxableValue": 4800000 },
+    "payableBreakdown": {
+      "sdPayable": 288000,
+      "tdPayable": 96000,
+      "rfPayable": 48000,
+      "dsdPayable": 28800,
+      "otherFee": 19200,
+      "finalTaxableValue": 4800000
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-VAL-007", "ruleName": "Webland Classification Cross-Verify", "category": "Valuation", "severity": "High", "impactInr": 145000, "explanation": "Survey 245/A in Kondapur mandal declared as 'Agricultural' in Form 1 but Webland/MeeBhoomi records show 'Commercial' — stamp duty differential of ₹1.45L", "confidence": 92 },
-        { "ruleId": "R-VAL-001", "ruleName": "Market Value Deviation", "category": "Valuation", "severity": "Medium", "impactInr": 0, "explanation": "Declared value aligned with agricultural rate card, but commercial rate card applies per Webland classification", "confidence": 85 }
+        {
+          "ruleId": "R-VAL-007",
+          "ruleName": "Webland Classification Cross-Verify",
+          "category": "Valuation",
+          "severity": "High",
+          "impactInr": 145000,
+          "explanation": "Survey 245/A in Kondapur mandal declared as 'Agricultural' in Form 1 but Webland/MeeBhoomi records show 'Commercial' \u2014 stamp duty differential of \u20b91.45L",
+          "confidence": 92
+        },
+        {
+          "ruleId": "R-VAL-001",
+          "ruleName": "Market Value Deviation",
+          "category": "Valuation",
+          "severity": "Medium",
+          "impactInr": 0,
+          "explanation": "Declared value aligned with agricultural rate card, but commercial rate card applies per Webland classification",
+          "confidence": 85
+        }
       ],
       "receiptCount": 3,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 38.2,
       "exemptionCount": 0
     },
-    "sla": { "ageingDays": 5, "ageingBucket": "0-7d", "slaBreached": false },
-    "notes": [{ "id": "note-32a", "author": "PK", "createdAt": "2024-12-12T10:00:00Z", "note": "Webland API confirmed commercial classification. Requesting Form 1 amendment from SRO." }],
+    "sla": {
+      "ageingDays": 5,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "note-32a",
+        "author": "PK",
+        "createdAt": "2024-12-12T10:00:00Z",
+        "note": "Webland API confirmed commercial classification. Requesting Form 1 amendment from SRO."
+      }
+    ],
     "activityLog": [
-      { "id": "log-32a", "ts": "2024-12-10T09:45:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-VAL-007: Webland classification mismatch at SR05" },
-      { "id": "log-32b", "ts": "2024-12-11T10:00:00Z", "actor": "PK", "action": "Status changed to In Review", "detail": "Cross-referencing MeeBhoomi records for survey 245/A" }
+      {
+        "id": "log-32a",
+        "ts": "2024-12-10T09:45:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-VAL-007: Webland classification mismatch at 515"
+      },
+      {
+        "id": "log-32b",
+        "ts": "2024-12-11T10:00:00Z",
+        "actor": "PK",
+        "action": "Status changed to In Review",
+        "detail": "Cross-referencing MeeBhoomi records for survey 245/A"
+      }
     ]
   },
   {
     "id": "33",
     "caseId": "IGRS-2024-0033",
-    "documentKey": { "srCode": "SR02", "bookNo": "1", "doctNo": "4910", "regYear": "2024" },
+    "documentKey": {
+      "srCode": "209",
+      "bookNo": "1",
+      "doctNo": "4910",
+      "regYear": "2024"
+    },
     "createdAt": "2024-12-06T15:20:00Z",
     "updatedAt": "2024-12-12T09:00:00Z",
     "riskLevel": "High",
@@ -1367,35 +3953,108 @@
     "confidence": 94,
     "status": "Confirmed",
     "assignedTo": "SR",
-    "leakageSignals": ["ExemptionRisk", "RevenueGap"],
+    "leakageSignals": [
+      "ExemptionRisk",
+      "RevenueGap"
+    ],
     "impactAmountInr": 185000,
     "payableTotalInr": 185000,
     "paidTotalInr": 0,
     "gapInr": 185000,
-    "office": { "srCode": "SR02", "srName": "Guntur Main", "district": "Guntur", "zone": "South" },
-    "docType": { "tranMajCode": "01", "tranMinCode": "01", "tranDesc": "Sale Deed", "abDesc": "Conveyance" },
-    "dates": { "pDate": "2024-12-04", "eDate": "2024-12-05", "rDate": "2024-12-06" },
-    "propertySummary": { "isUrban": true, "extent": "1200 sq.ft", "unit": "sq.ft" },
+    "office": {
+      "srCode": "SR02",
+      "srName": "Guntur Main",
+      "district": "Guntur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-04",
+      "eDate": "2024-12-05",
+      "rDate": "2024-12-06"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "1200 sq.ft",
+      "unit": "sq.ft"
+    },
     "partiesSummary": [
-      { "code": "P033A", "name": "AP State Housing Corporation (claimed)", "panNo": "BXYPK4567F" },
-      { "code": "P033B", "name": "Lakshmi Devi", "panNo": "CNLPD8901G" }
+      {
+        "code": "P033A",
+        "name": "AP State Housing Corporation (claimed)",
+        "panNo": "BXYPK4567F"
+      },
+      {
+        "code": "P033B",
+        "name": "Lakshmi Devi",
+        "panNo": "CNLPD8901G"
+      }
     ],
-    "payableBreakdown": { "sdPayable": 111000, "tdPayable": 37000, "rfPayable": 18500, "dsdPayable": 11100, "otherFee": 7400, "finalTaxableValue": 1850000 },
+    "payableBreakdown": {
+      "sdPayable": 111000,
+      "tdPayable": 37000,
+      "rfPayable": 18500,
+      "dsdPayable": 11100,
+      "otherFee": 7400,
+      "finalTaxableValue": 1850000
+    },
     "evidence": {
       "triggeredRules": [
-        { "ruleId": "R-EXM-006", "ruleName": "Government Party Impersonation via PAN/Aadhaar", "category": "Exemption", "severity": "High", "impactInr": 185000, "explanation": "Party listed as 'AP State Housing Corporation' (Government) but PAN prefix 'B' indicates private individual — ₹1.85L stamp duty exemption potentially fraudulent", "confidence": 94 }
+        {
+          "ruleId": "R-EXM-006",
+          "ruleName": "Government Party Impersonation via PAN/Aadhaar",
+          "category": "Exemption",
+          "severity": "High",
+          "impactInr": 185000,
+          "explanation": "Party listed as 'AP State Housing Corporation' (Government) but PAN prefix 'B' indicates private individual \u2014 \u20b91.85L stamp duty exemption potentially fraudulent",
+          "confidence": 94
+        }
       ],
       "receiptCount": 2,
       "prohibitedMatchCount": 0,
       "mvDeviationPct": 5.2,
       "exemptionCount": 1
     },
-    "sla": { "ageingDays": 6, "ageingBucket": "0-7d", "slaBreached": false },
-    "notes": [{ "id": "note-33a", "author": "SR", "createdAt": "2024-12-08T14:00:00Z", "note": "PAN verification confirmed: BXYPK4567F belongs to private individual Bhaskara Rao, not a government entity. Exemption claim is fraudulent." }],
+    "sla": {
+      "ageingDays": 6,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "notes": [
+      {
+        "id": "note-33a",
+        "author": "SR",
+        "createdAt": "2024-12-08T14:00:00Z",
+        "note": "PAN verification confirmed: BXYPK4567F belongs to private individual Bhaskara Rao, not a government entity. Exemption claim is fraudulent."
+      }
+    ],
     "activityLog": [
-      { "id": "log-33a", "ts": "2024-12-06T15:20:00Z", "actor": "System", "action": "Case created", "detail": "Auto-detected by rule R-EXM-006: Government party impersonation at SR02" },
-      { "id": "log-33b", "ts": "2024-12-07T09:00:00Z", "actor": "SR", "action": "Status changed to In Review", "detail": "Verifying PAN/Aadhaar against government entity database" },
-      { "id": "log-33c", "ts": "2024-12-10T11:00:00Z", "actor": "SR", "action": "Status changed to Confirmed", "detail": "Fraud confirmed — recovery notice issued to SRO Guntur" }
+      {
+        "id": "log-33a",
+        "ts": "2024-12-06T15:20:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-EXM-006: Government party impersonation at 209"
+      },
+      {
+        "id": "log-33b",
+        "ts": "2024-12-07T09:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to In Review",
+        "detail": "Verifying PAN/Aadhaar against government entity database"
+      },
+      {
+        "id": "log-33c",
+        "ts": "2024-12-10T11:00:00Z",
+        "actor": "SR",
+        "action": "Status changed to Confirmed",
+        "detail": "Fraud confirmed \u2014 recovery notice issued to SRO Guntur"
+      }
     ]
   }
 ]

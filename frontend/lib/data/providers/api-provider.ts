@@ -36,6 +36,7 @@ export const igrsRevenue = {
   getAIRiskScoring: notConfigured,
   getAISROIntegrity: notConfigured,
   getAIPromptEngine: notConfigured,
+  getWeblandVerification: notConfigured,
 };
 
 export const revenueAssurance = {

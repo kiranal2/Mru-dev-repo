@@ -7,6 +7,7 @@ import {
   useIGRSMVGrowthAttribution,
   useIGRSMVRevisionComparison,
   useIGRSMVAnomalies,
+  useIGRSWeblandVerification,
 } from "@/hooks/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -43,10 +44,11 @@ import type {
   MVGrowthAttribution,
   MVRevisionComparison,
   MVAnomaliesData,
+  WeblandVerificationData,
 } from "@/lib/data/types";
 
 // ── Types ────────────────────────────────────────────────────────────────────
-type TabKey = "dashboard" | "growth" | "comparison" | "anomalies";
+type TabKey = "dashboard" | "growth" | "comparison" | "anomalies" | "webland";
 
 // ── DRR Severity Bands ──────────────────────────────────────────────────────
 type DRRBand = {
@@ -102,6 +104,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "growth", label: "Growth Attribution" },
   { key: "comparison", label: "Revision Comparison" },
   { key: "anomalies", label: "Anomalies" },
+  { key: "webland", label: "Webland Verification" },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1019,6 +1022,211 @@ function AnomaliesTab({ data, loading }: { data: MVAnomaliesData | null; loading
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// Webland Cross-Verification Tab
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function WeblandVerificationTab({ data, loading }: { data: WeblandVerificationData | null; loading: boolean }) {
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  if (loading) return <div className="animate-pulse space-y-4">{Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-20 bg-gray-200 rounded" />)}</div>;
+  if (!data) return <p className="text-sm text-muted-foreground">No Webland verification data available.</p>;
+
+  const { summary, records, classificationMismatchBreakdown, sroMismatchHeatmap } = data;
+
+  const filteredRecords = statusFilter === "all" ? records : records.filter((r) => r.status === statusFilter);
+  const statuses = Array.from(new Set(records.map((r) => r.status)));
+
+  return (
+    <div className="space-y-6">
+      {/* KPI Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <Card className="border-blue-200 bg-blue-50/30">
+          <CardContent className="pt-4">
+            <p className="text-xs text-muted-foreground">Total Verified</p>
+            <p className="text-2xl font-bold text-blue-700">{summary.totalDocuments.toLocaleString()}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-green-200 bg-green-50/30">
+          <CardContent className="pt-4">
+            <p className="text-xs text-muted-foreground">Match</p>
+            <p className="text-2xl font-bold text-green-700">{summary.matchCount.toLocaleString()}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-red-200 bg-red-50/30">
+          <CardContent className="pt-4">
+            <p className="text-xs text-muted-foreground">Mismatch</p>
+            <p className="text-2xl font-bold text-red-700">{summary.mismatchCount}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4">
+            <p className="text-xs text-muted-foreground">Partial Match</p>
+            <p className="text-2xl font-bold">{summary.partialMatchCount}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-amber-200 bg-amber-50/30">
+          <CardContent className="pt-4">
+            <p className="text-xs text-muted-foreground">Mismatch Rate</p>
+            <p className="text-2xl font-bold text-amber-700">{summary.mismatchRate}%</p>
+          </CardContent>
+        </Card>
+        <Card className="border-orange-200 bg-orange-50/30">
+          <CardContent className="pt-4">
+            <p className="text-xs text-muted-foreground">Revenue Impact</p>
+            <p className="text-2xl font-bold text-orange-700">{formatINR(summary.estimatedRevenueImpact, true)}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Classification Mismatch Breakdown */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <BarChart3 className="w-4 h-4" />
+            Classification Mismatch Breakdown
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Webland vs Form 1/Form 2 classification discrepancies by type
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {classificationMismatchBreakdown.map((row) => {
+              const maxCount = Math.max(...classificationMismatchBreakdown.map((r) => r.count), 1);
+              const pct = (row.count / maxCount) * 100;
+              return (
+                <div key={`${row.fromType}-${row.toType}`} className="flex items-center gap-3">
+                  <span className="w-48 text-sm font-medium text-right">{row.fromType} → {row.toType}</span>
+                  <div className="flex-1 h-5 bg-slate-100 rounded overflow-hidden">
+                    <div className="h-full bg-red-400 rounded" style={{ width: `${pct}%` }} />
+                  </div>
+                  <span className="w-8 text-right text-sm font-bold">{row.count}</span>
+                  <span className="w-20 text-right text-xs text-muted-foreground">{formatINR(row.revenueImpact, true)}</span>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* SRO Mismatch Heatmap */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4" />
+            SRO Mismatch Heatmap
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {sroMismatchHeatmap.map((sro) => {
+              const bg = sro.mismatchRate >= 15 ? "bg-red-100 border-red-300" : sro.mismatchRate >= 12 ? "bg-orange-100 border-orange-300" : sro.mismatchRate >= 10 ? "bg-amber-100 border-amber-300" : "bg-green-100 border-green-300";
+              const textColor = sro.mismatchRate >= 15 ? "text-red-800" : sro.mismatchRate >= 12 ? "text-orange-800" : sro.mismatchRate >= 10 ? "text-amber-800" : "text-green-800";
+              return (
+                <div key={sro.sroCode} className={`rounded-lg border p-3 text-center ${bg}`}>
+                  <p className="text-xs font-semibold text-slate-600">{sro.officeName}</p>
+                  <p className={`text-2xl font-bold mt-1 ${textColor}`}>{sro.mismatchRate}%</p>
+                  <p className="text-[10px] text-muted-foreground">{sro.mismatchCount} mismatches</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">{sro.topMismatchType}</p>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Detailed Records Table */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" />
+              Webland vs Form Cross-Verification Records
+            </CardTitle>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[160px] h-8 text-xs">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                {statuses.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Document</TableHead>
+                  <TableHead>Office</TableHead>
+                  <TableHead>Webland</TableHead>
+                  <TableHead>Form 1</TableHead>
+                  <TableHead>Form 2</TableHead>
+                  <TableHead>Declared</TableHead>
+                  <TableHead className="text-center">W↔F1</TableHead>
+                  <TableHead className="text-center">W↔F2</TableHead>
+                  <TableHead className="text-center">F1↔Dec</TableHead>
+                  <TableHead className="text-center">Risk</TableHead>
+                  <TableHead className="text-right">Impact</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredRecords.map((r) => (
+                  <TableRow key={r.documentKey} className={r.status === "Mismatch" ? "bg-red-50/50" : ""}>
+                    <TableCell className="font-mono text-xs">{r.documentKey}</TableCell>
+                    <TableCell className="text-xs">{r.officeName}</TableCell>
+                    <TableCell className="text-xs font-medium">{r.weblandClassification}</TableCell>
+                    <TableCell className="text-xs">{r.form1Classification}</TableCell>
+                    <TableCell className="text-xs">{r.form2Classification}</TableCell>
+                    <TableCell className="text-xs font-medium">{r.declaredClassification}</TableCell>
+                    <TableCell className="text-center">
+                      <span className={r.weblandVsForm1Match ? "text-green-600" : "text-red-600"}>{r.weblandVsForm1Match ? "✓" : "✗"}</span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span className={r.weblandVsForm2Match ? "text-green-600" : "text-red-600"}>{r.weblandVsForm2Match ? "✓" : "✗"}</span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span className={r.form1VsDeclaredMatch ? "text-green-600" : "text-red-600"}>{r.form1VsDeclaredMatch ? "✓" : "✗"}</span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <div className="w-8 h-2 bg-slate-200 rounded-full overflow-hidden">
+                          <div className="h-full bg-red-500" style={{ width: `${r.riskScore}%` }} />
+                        </div>
+                        <span className="text-xs font-bold">{r.riskScore}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right font-bold text-red-700 text-xs">{r.estimatedImpact > 0 ? formatINR(r.estimatedImpact, true) : "--"}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          r.status === "Mismatch" ? "destructive"
+                            : r.status === "Under Review" ? "secondary"
+                            : r.status === "Partial Match" ? "outline"
+                            : "default"
+                        }
+                        className="text-[10px]"
+                      >
+                        {r.status}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // Main Page
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -1030,6 +1238,7 @@ export default function MVTrendsPage() {
   const growth = useIGRSMVGrowthAttribution();
   const comparison = useIGRSMVRevisionComparison();
   const anomalies = useIGRSMVAnomalies();
+  const webland = useIGRSWeblandVerification();
 
   const loading = trendsLoading || hotspotsLoading;
   const error = trendsError || hotspotsError;
@@ -1100,6 +1309,7 @@ export default function MVTrendsPage() {
       {activeTab === "growth" && <GrowthAttributionTab data={growth.data} loading={growth.loading} />}
       {activeTab === "comparison" && <RevisionComparisonTab data={comparison.data} loading={comparison.loading} />}
       {activeTab === "anomalies" && <AnomaliesTab data={anomalies.data} loading={anomalies.loading} />}
+      {activeTab === "webland" && <WeblandVerificationTab data={webland.data} loading={webland.loading} />}
     </div>
   );
 }

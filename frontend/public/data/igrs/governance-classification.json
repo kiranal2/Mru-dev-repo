@@ -179,5 +179,31 @@
       "mixed": 25200000,
       "govt": 16800000
     }
-  ]
+  ],
+  "conversionCases": {
+    "summary": {
+      "totalConversions": 245,
+      "commercialToResidential": 78,
+      "agriculturalToCommercial": 142,
+      "otherConversions": 25,
+      "estimatedRevenueImpact": 156000000,
+      "flaggedCases": 48
+    },
+    "cases": [
+      { "caseId": "CONV-2024-001", "documentKey": "SR05/B1/2024/0341", "sroCode": "SR05", "officeName": "Visakhapatnam SRO", "district": "Visakhapatnam", "weblandClassification": "Commercial", "form1Classification": "Commercial", "form2Classification": "Residential", "declaredClassification": "Residential", "conversionType": "Commercial → Residential", "mvDeclared": 4200000, "mvExpected": 6800000, "revenueImpact": 5200000, "status": "Confirmed", "detectedDate": "2024-11-15" },
+      { "caseId": "CONV-2024-002", "documentKey": "SR01/B1/2024/1045", "sroCode": "SR01", "officeName": "Krishna SRO", "district": "Krishna", "weblandClassification": "Agricultural", "form1Classification": "Agricultural", "form2Classification": "Commercial", "declaredClassification": "Commercial", "conversionType": "Agricultural → Commercial", "mvDeclared": 3500000, "mvExpected": 5200000, "revenueImpact": 3400000, "status": "Under Review", "detectedDate": "2024-11-20" },
+      { "caseId": "CONV-2024-003", "documentKey": "SR02/B3/2024/0892", "sroCode": "SR02", "officeName": "Guntur SRO", "district": "Guntur", "weblandClassification": "Agricultural", "form1Classification": "Residential", "form2Classification": "Residential", "declaredClassification": "Residential", "conversionType": "Agricultural → Residential", "mvDeclared": 2800000, "mvExpected": 4100000, "revenueImpact": 2600000, "status": "Flagged", "detectedDate": "2024-12-01" },
+      { "caseId": "CONV-2024-004", "documentKey": "SR10/B1/2024/0456", "sroCode": "SR10", "officeName": "Anantapur SRO", "district": "Anantapur", "weblandClassification": "Agricultural", "form1Classification": "Agricultural", "form2Classification": "Industrial", "declaredClassification": "Industrial", "conversionType": "Agricultural → Industrial", "mvDeclared": 5100000, "mvExpected": 7800000, "revenueImpact": 5400000, "status": "Confirmed", "detectedDate": "2024-11-28" },
+      { "caseId": "CONV-2024-005", "documentKey": "SR03/B2/2024/1523", "sroCode": "SR03", "officeName": "Chittoor SRO", "district": "Chittoor", "weblandClassification": "Agricultural", "form1Classification": "Residential", "form2Classification": "Residential", "declaredClassification": "Residential", "conversionType": "Agricultural → Residential", "mvDeclared": 1900000, "mvExpected": 2800000, "revenueImpact": 1800000, "status": "Under Review", "detectedDate": "2024-12-05" },
+      { "caseId": "CONV-2024-006", "documentKey": "SR08/B1/2024/0678", "sroCode": "SR08", "officeName": "Prakasam SRO", "district": "Prakasam", "weblandClassification": "Agricultural", "form1Classification": "Commercial", "form2Classification": "Commercial", "declaredClassification": "Residential", "conversionType": "Agricultural → Residential", "mvDeclared": 1600000, "mvExpected": 3200000, "revenueImpact": 3200000, "status": "Flagged", "detectedDate": "2024-12-08" }
+    ],
+    "monthlyTrend": [
+      { "month": "2024-07", "conversions": 18, "flagged": 4, "revenueImpact": 11200000 },
+      { "month": "2024-08", "conversions": 22, "flagged": 5, "revenueImpact": 14500000 },
+      { "month": "2024-09", "conversions": 19, "flagged": 4, "revenueImpact": 12800000 },
+      { "month": "2024-10", "conversions": 24, "flagged": 6, "revenueImpact": 16200000 },
+      { "month": "2024-11", "conversions": 28, "flagged": 8, "revenueImpact": 19800000 },
+      { "month": "2024-12", "conversions": 32, "flagged": 9, "revenueImpact": 22400000 }
+    ]
+  }
 }

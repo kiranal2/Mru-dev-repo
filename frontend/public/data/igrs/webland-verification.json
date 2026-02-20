@@ -1,0 +1,41 @@
+{
+  "metadata": { "lastUpdated": "2024-12-13T14:30:00Z", "totalVerified": 3420, "period": "2024-01 to 2024-12" },
+  "summary": {
+    "totalDocuments": 3420,
+    "matchCount": 2890,
+    "mismatchCount": 380,
+    "partialMatchCount": 150,
+    "mismatchRate": 11.1,
+    "estimatedRevenueImpact": 184500000
+  },
+  "records": [
+    { "documentKey": "SR01/B1/2024/1045", "sroCode": "SR01", "officeName": "Krishna SRO", "district": "Krishna", "weblandClassification": "Agricultural", "form1Classification": "Agricultural", "form2Classification": "Commercial", "declaredClassification": "Commercial", "weblandVsForm1Match": true, "weblandVsForm2Match": false, "form1VsDeclaredMatch": false, "deviationReason": "Form 2 and declaration show Commercial but Webland records Agricultural land", "riskScore": 82, "estimatedImpact": 4500000, "status": "Mismatch" },
+    { "documentKey": "SR02/B3/2024/0892", "sroCode": "SR02", "officeName": "Guntur SRO", "district": "Guntur", "weblandClassification": "Residential", "form1Classification": "Commercial", "form2Classification": "Commercial", "declaredClassification": "Commercial", "weblandVsForm1Match": false, "weblandVsForm2Match": false, "form1VsDeclaredMatch": true, "deviationReason": "Webland shows Residential; forms and declaration show Commercial", "riskScore": 75, "estimatedImpact": 3200000, "status": "Mismatch" },
+    { "documentKey": "SR03/B2/2024/1523", "sroCode": "SR03", "officeName": "Chittoor SRO", "district": "Chittoor", "weblandClassification": "Agricultural", "form1Classification": "Residential", "form2Classification": "Residential", "declaredClassification": "Residential", "weblandVsForm1Match": false, "weblandVsForm2Match": false, "form1VsDeclaredMatch": true, "deviationReason": "Agricultural to Residential conversion not updated in Webland", "riskScore": 68, "estimatedImpact": 2800000, "status": "Under Review" },
+    { "documentKey": "SR05/B1/2024/0341", "sroCode": "SR05", "officeName": "Visakhapatnam SRO", "district": "Visakhapatnam", "weblandClassification": "Commercial", "form1Classification": "Commercial", "form2Classification": "Commercial", "declaredClassification": "Residential", "weblandVsForm1Match": true, "weblandVsForm2Match": true, "form1VsDeclaredMatch": false, "deviationReason": "Declared as Residential to reduce stamp duty; all source records show Commercial", "riskScore": 91, "estimatedImpact": 6100000, "status": "Mismatch" },
+    { "documentKey": "SR06/B2/2024/0789", "sroCode": "SR06", "officeName": "East Godavari SRO", "district": "East Godavari", "weblandClassification": "Agricultural", "form1Classification": "Agricultural", "form2Classification": "Agricultural", "declaredClassification": "Agricultural", "weblandVsForm1Match": true, "weblandVsForm2Match": true, "form1VsDeclaredMatch": true, "riskScore": 5, "estimatedImpact": 0, "status": "Match" },
+    { "documentKey": "SR07/B1/2024/1201", "sroCode": "SR07", "officeName": "West Godavari SRO", "district": "West Godavari", "weblandClassification": "Agricultural", "form1Classification": "Mixed Use", "form2Classification": "Agricultural", "declaredClassification": "Mixed Use", "weblandVsForm1Match": false, "weblandVsForm2Match": true, "form1VsDeclaredMatch": true, "deviationReason": "Form 1 and declaration differ from Webland/Form 2", "riskScore": 52, "estimatedImpact": 1500000, "status": "Partial Match" },
+    { "documentKey": "SR10/B1/2024/0456", "sroCode": "SR10", "officeName": "Anantapur SRO", "district": "Anantapur", "weblandClassification": "Agricultural", "form1Classification": "Agricultural", "form2Classification": "Industrial", "declaredClassification": "Industrial", "weblandVsForm1Match": true, "weblandVsForm2Match": false, "form1VsDeclaredMatch": false, "deviationReason": "Industrial classification in Form 2 and declaration contradicts Agricultural in Webland", "riskScore": 78, "estimatedImpact": 3800000, "status": "Mismatch" },
+    { "documentKey": "SR01/B2/2024/2105", "sroCode": "SR01", "officeName": "Krishna SRO", "district": "Krishna", "weblandClassification": "Residential", "form1Classification": "Residential", "form2Classification": "Residential", "declaredClassification": "Residential", "weblandVsForm1Match": true, "weblandVsForm2Match": true, "form1VsDeclaredMatch": true, "riskScore": 3, "estimatedImpact": 0, "status": "Match" },
+    { "documentKey": "SR08/B1/2024/0678", "sroCode": "SR08", "officeName": "Prakasam SRO", "district": "Prakasam", "weblandClassification": "Agricultural", "form1Classification": "Commercial", "form2Classification": "Commercial", "declaredClassification": "Residential", "weblandVsForm1Match": false, "weblandVsForm2Match": false, "form1VsDeclaredMatch": false, "deviationReason": "Triple mismatch: Webland=Agricultural, Forms=Commercial, Declaration=Residential", "riskScore": 95, "estimatedImpact": 7200000, "status": "Mismatch" },
+    { "documentKey": "SR05/B3/2024/1890", "sroCode": "SR05", "officeName": "Visakhapatnam SRO", "district": "Visakhapatnam", "weblandClassification": "Industrial", "form1Classification": "Industrial", "form2Classification": "Commercial", "declaredClassification": "Commercial", "weblandVsForm1Match": true, "weblandVsForm2Match": false, "form1VsDeclaredMatch": false, "deviationReason": "Industrial to Commercial downgrade in Form 2 and declaration", "riskScore": 70, "estimatedImpact": 2400000, "status": "Partial Match" }
+  ],
+  "classificationMismatchBreakdown": [
+    { "fromType": "Agricultural", "toType": "Commercial", "count": 142, "revenueImpact": 68000000 },
+    { "fromType": "Agricultural", "toType": "Residential", "count": 89, "revenueImpact": 35000000 },
+    { "fromType": "Commercial", "toType": "Residential", "count": 78, "revenueImpact": 42000000 },
+    { "fromType": "Industrial", "toType": "Commercial", "count": 38, "revenueImpact": 18000000 },
+    { "fromType": "Agricultural", "toType": "Industrial", "count": 22, "revenueImpact": 12500000 },
+    { "fromType": "Residential", "toType": "Agricultural", "count": 11, "revenueImpact": 9000000 }
+  ],
+  "sroMismatchHeatmap": [
+    { "sroCode": "SR05", "officeName": "Visakhapatnam SRO", "mismatchCount": 68, "mismatchRate": 18.4, "topMismatchType": "Commercial → Residential" },
+    { "sroCode": "SR01", "officeName": "Krishna SRO", "mismatchCount": 52, "mismatchRate": 14.1, "topMismatchType": "Agricultural → Commercial" },
+    { "sroCode": "SR02", "officeName": "Guntur SRO", "mismatchCount": 48, "mismatchRate": 13.0, "topMismatchType": "Agricultural → Residential" },
+    { "sroCode": "SR10", "officeName": "Anantapur SRO", "mismatchCount": 45, "mismatchRate": 15.8, "topMismatchType": "Agricultural → Industrial" },
+    { "sroCode": "SR03", "officeName": "Chittoor SRO", "mismatchCount": 42, "mismatchRate": 12.2, "topMismatchType": "Agricultural → Commercial" },
+    { "sroCode": "SR08", "officeName": "Prakasam SRO", "mismatchCount": 38, "mismatchRate": 14.6, "topMismatchType": "Agricultural → Commercial" },
+    { "sroCode": "SR06", "officeName": "East Godavari SRO", "mismatchCount": 35, "mismatchRate": 10.2, "topMismatchType": "Agricultural → Residential" },
+    { "sroCode": "SR07", "officeName": "West Godavari SRO", "mismatchCount": 28, "mismatchRate": 9.8, "topMismatchType": "Agricultural → Mixed Use" }
+  ]
+}

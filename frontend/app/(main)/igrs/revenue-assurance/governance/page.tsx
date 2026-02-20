@@ -37,7 +37,8 @@ type TabKey =
   | "prohibited-property"
   | "anywhere-registration"
   | "sla-monitoring"
-  | "demographics";
+  | "demographics"
+  | "officer-accountability";
 
 const tabs: { key: TabKey; label: string }[] = [
   { key: "revenue-growth", label: "Revenue Growth" },
@@ -48,6 +49,7 @@ const tabs: { key: TabKey; label: string }[] = [
   { key: "anywhere-registration", label: "Anywhere Registration" },
   { key: "sla-monitoring", label: "SLA Monitoring" },
   { key: "demographics", label: "Demographics" },
+  { key: "officer-accountability", label: "Officer Accountability" },
 ];
 
 // ─── Data Type Interfaces ────────────────────────────────────────────────────
@@ -131,6 +133,34 @@ interface ClassificationData {
     mixed: number;
     govt: number;
   }>;
+  conversionCases?: {
+    summary: {
+      totalConversions: number;
+      commercialToResidential: number;
+      agriculturalToCommercial: number;
+      otherConversions: number;
+      estimatedRevenueImpact: number;
+      flaggedCases: number;
+    };
+    cases: Array<{
+      caseId: string;
+      documentKey: string;
+      sroCode: string;
+      officeName: string;
+      district: string;
+      weblandClassification: string;
+      form1Classification: string;
+      form2Classification: string;
+      declaredClassification: string;
+      conversionType: string;
+      mvDeclared: number;
+      mvExpected: number;
+      revenueImpact: number;
+      status: string;
+      detectedDate: string;
+    }>;
+    monthlyTrend: Array<{ month: string; conversions: number; flagged: number; revenueImpact: number }>;
+  };
 }
 
 interface ProhibitedPropertyData {
@@ -215,6 +245,11 @@ interface DemographicsData {
   topParties: Array<{
     partyName: string;
     pan: string;
+    aadhaar: string;
+    entityType: string;
+    declaredAs: string;
+    verificationStatus: string;
+    verificationRemark?: string;
     role: string;
     registrations: number;
     totalValue: number;
@@ -228,6 +263,44 @@ interface DemographicsData {
     exemptionsClaimed: number;
     exemptAmount: number;
     netRevenue: number;
+  }>;
+}
+
+interface OfficerAccountabilityData {
+  metadata: { lastUpdated: string; period: string; totalDistricts: number; totalSROs: number };
+  summary: {
+    totalOfficers: number;
+    flaggedOfficers: number;
+    avgAccountabilityScore: number;
+    highRiskOfficers: number;
+    totalCashVariance: number;
+    pendingReconciliations: number;
+  };
+  officers: Array<{
+    officerId: string;
+    officerName: string;
+    designation: string;
+    sroCode: string;
+    officeName: string;
+    district: string;
+    dailyCashRiskScore: number;
+    challanAnomalyCount: number;
+    cashVarianceInr: number;
+    stampDiscrepancyCount: number;
+    pendingReconciliations: number;
+    slaBreachCount: number;
+    accountabilityScore: number;
+    trend: string;
+    lastAuditDate: string;
+    flagged: boolean;
+  }>;
+  sroAccountabilitySummary: Array<{
+    sroCode: string;
+    officeName: string;
+    avgScore: number;
+    officerCount: number;
+    flaggedCount: number;
+    totalVariance: number;
   }>;
 }
 
@@ -561,7 +634,7 @@ function LowPerformingTab({ data }: { data: LowPerformersData }) {
 }
 
 function ClassificationTab({ data }: { data: ClassificationData }) {
-  const { classifications, districtClassificationMatrix } = data;
+  const { classifications, districtClassificationMatrix, conversionCases } = data;
 
   return (
     <div className="space-y-4">
@@ -652,6 +725,126 @@ function ClassificationTab({ data }: { data: ClassificationData }) {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Commercial-to-Residential Conversion Tracking */}
+      {conversionCases && (
+        <>
+          <Card className="border-l-4 border-l-amber-400">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Classification Conversion Tracking</CardTitle>
+              <p className="text-xs text-muted-foreground">
+                Tracks commercial to residential and other classification conversions that may reduce stamp duty
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+                <div className="bg-amber-50 rounded-lg border border-amber-100 p-3">
+                  <p className="text-[10px] text-slate-500 uppercase">Total Conversions</p>
+                  <p className="text-xl font-bold text-amber-700">{conversionCases.summary.totalConversions}</p>
+                </div>
+                <div className="bg-red-50 rounded-lg border border-red-100 p-3">
+                  <p className="text-[10px] text-slate-500 uppercase">Commercial → Residential</p>
+                  <p className="text-xl font-bold text-red-700">{conversionCases.summary.commercialToResidential}</p>
+                </div>
+                <div className="bg-orange-50 rounded-lg border border-orange-100 p-3">
+                  <p className="text-[10px] text-slate-500 uppercase">Agri → Commercial</p>
+                  <p className="text-xl font-bold text-orange-700">{conversionCases.summary.agriculturalToCommercial}</p>
+                </div>
+                <div className="bg-slate-50 rounded-lg border border-slate-100 p-3">
+                  <p className="text-[10px] text-slate-500 uppercase">Other</p>
+                  <p className="text-xl font-bold text-slate-700">{conversionCases.summary.otherConversions}</p>
+                </div>
+                <div className="bg-purple-50 rounded-lg border border-purple-100 p-3">
+                  <p className="text-[10px] text-slate-500 uppercase">Revenue Impact</p>
+                  <p className="text-xl font-bold text-purple-700">{formatINR(conversionCases.summary.estimatedRevenueImpact, true)}</p>
+                </div>
+                <div className="bg-red-50 rounded-lg border border-red-100 p-3">
+                  <p className="text-[10px] text-slate-500 uppercase">Flagged Cases</p>
+                  <p className="text-xl font-bold text-red-700">{conversionCases.summary.flaggedCases}</p>
+                </div>
+              </div>
+
+              {/* Monthly Conversion Trend */}
+              <p className="text-xs font-semibold text-slate-700 mb-2">Monthly Conversion Trend</p>
+              <div className="flex items-end gap-1 h-24 mb-4">
+                {conversionCases.monthlyTrend.map((m) => {
+                  const maxConv = Math.max(...conversionCases.monthlyTrend.map((t) => t.conversions), 1);
+                  const heightPct = (m.conversions / maxConv) * 100;
+                  return (
+                    <div key={m.month} className="flex-1 flex flex-col items-center gap-0.5">
+                      <span className="text-[9px] text-slate-500">{m.conversions}</span>
+                      <div className="w-full relative">
+                        <div
+                          className="w-full bg-amber-400 rounded-t"
+                          style={{ height: `${heightPct * 0.8}px` }}
+                          title={`${m.month}: ${m.conversions} conversions, ${m.flagged} flagged`}
+                        />
+                        {m.flagged > 0 && (
+                          <div
+                            className="w-full bg-red-400 rounded-t absolute bottom-0"
+                            style={{ height: `${(m.flagged / maxConv) * 80}px` }}
+                          />
+                        )}
+                      </div>
+                      <span className="text-[8px] text-slate-400">{m.month.slice(5)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Conversion Cases Table */}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Case ID</TableHead>
+                    <TableHead>Office</TableHead>
+                    <TableHead>Conversion Type</TableHead>
+                    <TableHead>Webland</TableHead>
+                    <TableHead>Form 1</TableHead>
+                    <TableHead>Form 2</TableHead>
+                    <TableHead>Declared</TableHead>
+                    <TableHead className="text-right">MV Declared</TableHead>
+                    <TableHead className="text-right">MV Expected</TableHead>
+                    <TableHead className="text-right">Impact</TableHead>
+                    <TableHead className="text-center">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {conversionCases.cases.map((c) => (
+                    <TableRow key={c.caseId}>
+                      <TableCell className="font-mono text-xs">{c.caseId}</TableCell>
+                      <TableCell className="text-xs">{c.officeName}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className="text-[10px]">{c.conversionType}</Badge>
+                      </TableCell>
+                      <TableCell className="text-xs">{c.weblandClassification}</TableCell>
+                      <TableCell className="text-xs">{c.form1Classification}</TableCell>
+                      <TableCell className="text-xs">{c.form2Classification}</TableCell>
+                      <TableCell className="text-xs font-medium">{c.declaredClassification}</TableCell>
+                      <TableCell className="text-right text-xs">{formatINR(c.mvDeclared, true)}</TableCell>
+                      <TableCell className="text-right text-xs">{formatINR(c.mvExpected, true)}</TableCell>
+                      <TableCell className="text-right font-bold text-red-700 text-xs">{formatINR(c.revenueImpact, true)}</TableCell>
+                      <TableCell className="text-center">
+                        <Badge
+                          variant={
+                            c.status === "Confirmed" ? "destructive"
+                              : c.status === "Flagged" ? "secondary"
+                              : c.status === "Cleared" ? "default"
+                              : "outline"
+                          }
+                          className="text-[10px]"
+                        >
+                          {c.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }
@@ -1098,12 +1291,12 @@ function DemographicsTab({ data }: { data: DemographicsData }) {
         </CardContent>
       </Card>
 
-      {/* Top Parties Table */}
+      {/* PAN/Aadhaar Cross-Verification */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Top Parties by Registration Volume</CardTitle>
+          <CardTitle className="text-sm">PAN/Aadhaar Cross-Verification</CardTitle>
           <p className="text-xs text-muted-foreground">
-            High-volume registrants flagged for review
+            Party identity verification — flags government party selections where PAN/Aadhaar indicates private entity
           </p>
         </CardHeader>
         <CardContent>
@@ -1112,18 +1305,48 @@ function DemographicsTab({ data }: { data: DemographicsData }) {
               <TableRow>
                 <TableHead>Party Name</TableHead>
                 <TableHead>PAN</TableHead>
+                <TableHead>Aadhaar</TableHead>
+                <TableHead>Entity Type</TableHead>
+                <TableHead>Declared As</TableHead>
+                <TableHead className="text-center">Verification</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead className="text-right">Registrations</TableHead>
                 <TableHead className="text-right">Total Value</TableHead>
                 <TableHead>Districts</TableHead>
-                <TableHead className="text-center">Flagged</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {topParties.map((row) => (
-                <TableRow key={row.pan}>
+                <TableRow key={row.pan} className={row.verificationStatus === "Mismatch" ? "bg-red-50/50" : ""}>
                   <TableCell className="font-medium">{row.partyName}</TableCell>
                   <TableCell className="font-mono text-xs">{row.pan}</TableCell>
+                  <TableCell className="font-mono text-xs">{row.aadhaar}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="text-[10px]">
+                      {row.entityType}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={row.declaredAs === "Government" && row.entityType !== "Government" ? "destructive" : "outline"}
+                      className="text-[10px]"
+                    >
+                      {row.declaredAs}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge
+                      variant={
+                        row.verificationStatus === "Mismatch" ? "destructive"
+                          : row.verificationStatus === "Pending" ? "secondary"
+                          : row.verificationStatus === "Not Available" ? "outline"
+                          : "default"
+                      }
+                      className="text-[10px]"
+                    >
+                      {row.verificationStatus}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="text-[10px]">
                       {row.role}
@@ -1136,21 +1359,38 @@ function DemographicsTab({ data }: { data: DemographicsData }) {
                   <TableCell className="text-xs text-slate-500 max-w-xs truncate">
                     {row.districts.join(", ")}
                   </TableCell>
-                  <TableCell className="text-center">
-                    {row.flagged ? (
-                      <Badge variant="destructive" className="text-[10px]">
-                        Flagged
-                      </Badge>
-                    ) : (
-                      <span className="text-xs text-slate-400">--</span>
-                    )}
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      {/* Mismatch Details */}
+      {topParties.filter(p => p.verificationRemark).length > 0 && (
+        <Card className="border-l-4 border-l-red-400">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Verification Alerts</CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Parties with identity verification issues requiring investigation
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {topParties.filter(p => p.verificationRemark).map((p) => (
+                <div key={p.pan} className="flex items-start gap-2 text-xs border rounded-lg p-2 bg-red-50/30">
+                  <AlertTriangle className="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold text-slate-700">{p.partyName}</span>
+                    <span className="text-slate-400 mx-1">({p.pan})</span>
+                    <span className="text-slate-600">{p.verificationRemark}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Department-wise Registrations */}
       <Card>
@@ -1185,6 +1425,164 @@ function DemographicsTab({ data }: { data: DemographicsData }) {
                   </TableCell>
                   <TableCell className="text-right font-semibold">
                     {formatINR(row.netRevenue, true)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function OfficerAccountabilityTab({ data }: { data: OfficerAccountabilityData }) {
+  const { summary, officers, sroAccountabilitySummary } = data;
+  const sortedOfficers = [...officers].sort((a, b) => a.accountabilityScore - b.accountabilityScore);
+
+  return (
+    <div className="space-y-4">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <KPICard
+          icon={<Users className="w-4 h-4 text-blue-600" />}
+          label="Total Officers"
+          value={summary.totalOfficers.toString()}
+          sub={`Across ${data.metadata.totalSROs} SROs`}
+          accent="blue"
+        />
+        <KPICard
+          icon={<AlertTriangle className="w-4 h-4 text-red-600" />}
+          label="Flagged Officers"
+          value={summary.flaggedOfficers.toString()}
+          sub={`${summary.highRiskOfficers} high risk`}
+          accent="red"
+        />
+        <KPICard
+          icon={<Activity className="w-4 h-4 text-emerald-600" />}
+          label="Avg Score"
+          value={summary.avgAccountabilityScore.toFixed(1)}
+          sub="Accountability index"
+          accent="emerald"
+        />
+        <KPICard
+          icon={<BarChart3 className="w-4 h-4 text-amber-600" />}
+          label="High Risk"
+          value={summary.highRiskOfficers.toString()}
+          sub="Score below 50"
+          accent="amber"
+        />
+        <KPICard
+          icon={<TrendingUp className="w-4 h-4 text-purple-600" />}
+          label="Cash Variance"
+          value={formatINR(summary.totalCashVariance, true)}
+          sub="Total unreconciled"
+          accent="purple"
+        />
+        <KPICard
+          icon={<Clock className="w-4 h-4 text-indigo-600" />}
+          label="Pending Recon"
+          value={summary.pendingReconciliations.toString()}
+          sub="Awaiting reconciliation"
+          accent="indigo"
+        />
+      </div>
+
+      {/* SRO Accountability Heatmap */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">SRO Accountability Summary</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Average accountability score by office — lower scores indicate higher risk
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {sroAccountabilitySummary.map((sro) => {
+              const bg = sro.avgScore < 50 ? "bg-red-100 border-red-200" : sro.avgScore < 65 ? "bg-amber-100 border-amber-200" : sro.avgScore < 80 ? "bg-blue-100 border-blue-200" : "bg-green-100 border-green-200";
+              const textColor = sro.avgScore < 50 ? "text-red-800" : sro.avgScore < 65 ? "text-amber-800" : sro.avgScore < 80 ? "text-blue-800" : "text-green-800";
+              return (
+                <div key={sro.sroCode} className={`rounded-lg border p-3 ${bg}`}>
+                  <p className="text-xs font-semibold text-slate-600">{sro.officeName}</p>
+                  <p className={`text-2xl font-bold mt-1 ${textColor}`}>{sro.avgScore}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-[10px] text-slate-500">{sro.officerCount} officers</span>
+                    {sro.flaggedCount > 0 && (
+                      <Badge variant="destructive" className="text-[9px] px-1">{sro.flaggedCount} flagged</Badge>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Variance: {formatINR(sro.totalVariance, true)}</p>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Officers Table */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Officer Accountability Index</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Individual officer metrics — sorted by accountability score (ascending) to highlight underperformers
+          </p>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Officer</TableHead>
+                <TableHead>Designation</TableHead>
+                <TableHead>Office</TableHead>
+                <TableHead className="text-right">Cash Risk</TableHead>
+                <TableHead className="text-right">Challan Anomalies</TableHead>
+                <TableHead className="text-right">Cash Variance</TableHead>
+                <TableHead className="text-right">Stamp Issues</TableHead>
+                <TableHead className="text-right">SLA Breaches</TableHead>
+                <TableHead className="text-center">Score</TableHead>
+                <TableHead className="text-center">Trend</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedOfficers.map((officer) => (
+                <TableRow key={officer.officerId} className={officer.flagged ? "bg-red-50/50" : ""}>
+                  <TableCell className="font-medium text-sm">{officer.officerName}</TableCell>
+                  <TableCell className="text-xs text-slate-500">{officer.designation}</TableCell>
+                  <TableCell className="text-xs">{officer.officeName}</TableCell>
+                  <TableCell className="text-right">
+                    <span className={officer.dailyCashRiskScore >= 70 ? "text-red-600 font-semibold" : officer.dailyCashRiskScore >= 50 ? "text-amber-600" : "text-slate-600"}>
+                      {officer.dailyCashRiskScore}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <span className={officer.challanAnomalyCount >= 5 ? "text-red-600 font-semibold" : ""}>{officer.challanAnomalyCount}</span>
+                  </TableCell>
+                  <TableCell className="text-right">{formatINR(officer.cashVarianceInr, true)}</TableCell>
+                  <TableCell className="text-right">{officer.stampDiscrepancyCount}</TableCell>
+                  <TableCell className="text-right">{officer.slaBreachCount}</TableCell>
+                  <TableCell className="text-center">
+                    <Badge
+                      variant={
+                        officer.accountabilityScore < 50 ? "destructive"
+                          : officer.accountabilityScore < 70 ? "secondary"
+                          : "default"
+                      }
+                    >
+                      {officer.accountabilityScore}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <span className={`text-xs ${officer.trend === "declining" ? "text-red-600" : officer.trend === "improving" ? "text-emerald-600" : "text-slate-500"}`}>
+                      {officer.trend === "declining" ? "↓" : officer.trend === "improving" ? "↑" : "→"} {officer.trend}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {officer.flagged ? (
+                      <Badge variant="destructive" className="text-[10px]">Flagged</Badge>
+                    ) : (
+                      <span className="text-xs text-slate-400">--</span>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -1261,6 +1659,8 @@ export default function GovernanceDashboardsPage() {
         return <SLAMonitoringTab data={data as SLAMonitoringData} />;
       case "demographics":
         return <DemographicsTab data={data as DemographicsData} />;
+      case "officer-accountability":
+        return <OfficerAccountabilityTab data={data as OfficerAccountabilityData} />;
       default:
         return null;
     }
