@@ -6,7 +6,6 @@ import { CashAppFilterRail } from "@/components/cash-app/cash-app-filter-rail";
 import { CashAppEmptyState } from "@/components/cash-app/cash-app-empty-state";
 import { WhyIndicator } from "@/components/cash-app/why-indicator";
 import { PaymentQueuePagination } from "@/components/cash-app/payment-queue-pagination";
-import { KPISummaryStrip } from "@/components/cash-app/kpi-summary-strip";
 import { SegmentedControl } from "@/components/cash-app/segmented-control";
 import { ConfidenceMeter } from "@/components/cash-app/confidence-meter";
 import { TableRowActions } from "@/components/cash-app/table-row-actions";
@@ -145,31 +144,27 @@ export default function PaymentsQueuePage() {
   return (
     <div className="h-full flex flex-col bg-slate-50">
       <div className="flex-1 overflow-auto">
-        <div className="px-4 pt-2 pb-4">
-          <KPISummaryStrip stats={q.stats} />
-
-          <div className="mb-3 space-y-2">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Button
-                  size="sm"
-                  variant="outline"
+        <div className="px-5 py-2">
+          <div className="mb-2 space-y-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <button
                   onClick={() => q.setShowFilterSidebar(!q.showFilterSidebar)}
-                  className="h-[38px] border-slate-200 hover:bg-slate-100"
+                  className="flex items-center justify-center h-7 w-7 rounded border border-slate-200 hover:bg-slate-100 transition-colors"
                 >
                   {q.showFilterSidebar ? (
-                    <PanelLeftClose className="w-4 h-4" />
+                    <PanelLeftClose className="w-3.5 h-3.5 text-slate-500" />
                   ) : (
-                    <PanelLeft className="w-4 h-4" />
+                    <PanelLeft className="w-3.5 h-3.5 text-slate-500" />
                   )}
-                </Button>
+                </button>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
                   <Input
                     placeholder="Search payments..."
                     value={q.filters.search}
                     onChange={(e) => q.setFilters({ ...q.filters, search: e.target.value })}
-                    className="pl-9 w-64 h-[38px] bg-white"
+                    className="pl-8 w-52 h-7 text-xs bg-white"
                   />
                 </div>
                 <SegmentedControl
@@ -189,9 +184,9 @@ export default function PaymentsQueuePage() {
               q.filters.status === "PendingToPost" ||
               q.filters.status === "SettlementPending" ||
               q.activeSignalFilter) && (
-              <div className="flex items-center gap-2 pl-1">
+              <div className="flex items-center gap-1.5 pl-0.5">
                 {q.activeSegment && (
-                  <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wide mr-0.5">
+                  <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide mr-0.5">
                     {q.activeSegment === "critical"
                       ? "Critical"
                       : q.filters.status === "AutoMatched"
@@ -250,11 +245,11 @@ export default function PaymentsQueuePage() {
                 {q.activeSignalFilter && (
                   <Badge
                     variant="secondary"
-                    className="flex items-center gap-1.5 px-2.5 py-1 text-xs"
+                    className="flex items-center gap-1 px-2 py-0.5 text-[11px]"
                   >
                     <span>Signal: {q.activeSignalFilter}</span>
                     <button onClick={q.handleClearSignalFilter} className="ml-0.5 hover:text-red-600">
-                      <X className="w-3 h-3" />
+                      <X className="w-2.5 h-2.5" />
                     </button>
                   </Badge>
                 )}
@@ -269,12 +264,12 @@ export default function PaymentsQueuePage() {
             q.filters.method !== "all" ||
             q.filters.remittanceSource !== "all" ||
             q.filters.assignedTo !== "all") && (
-            <div className="flex items-center gap-2 flex-wrap mb-3">
-              <span className="text-xs font-medium text-slate-500">Filters:</span>
+            <div className="flex items-center gap-1.5 flex-wrap mb-2">
+              <span className="text-[11px] font-medium text-slate-500">Filters:</span>
               {q.filters.bankAccount !== "all" && (
                 <Badge
                   variant="secondary"
-                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
                 >
                   Bank:{" "}
                   {q.filters.bankAccount === "us-bank"
@@ -290,14 +285,14 @@ export default function PaymentsQueuePage() {
                     onClick={() => q.setFilters({ ...q.filters, bankAccount: "all" })}
                     className="ml-0.5 hover:text-red-600"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-2.5 h-2.5" />
                   </button>
                 </Badge>
               )}
               {q.filters.dateRange !== "all" && (
                 <Badge
                   variant="secondary"
-                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
                 >
                   Date:{" "}
                   {q.filters.dateRange === "today"
@@ -313,63 +308,63 @@ export default function PaymentsQueuePage() {
                     onClick={() => q.setFilters({ ...q.filters, dateRange: "all" })}
                     className="ml-0.5 hover:text-red-600"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-2.5 h-2.5" />
                   </button>
                 </Badge>
               )}
               {q.filters.amountRange !== "all" && (
                 <Badge
                   variant="secondary"
-                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
                 >
                   Amount: {q.filters.amountRange}
                   <button
                     onClick={() => q.setFilters({ ...q.filters, amountRange: "all" })}
                     className="ml-0.5 hover:text-red-600"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-2.5 h-2.5" />
                   </button>
                 </Badge>
               )}
               {q.filters.method !== "all" && (
                 <Badge
                   variant="secondary"
-                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
                 >
                   Method: {q.filters.method}
                   <button
                     onClick={() => q.setFilters({ ...q.filters, method: "all" })}
                     className="ml-0.5 hover:text-red-600"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-2.5 h-2.5" />
                   </button>
                 </Badge>
               )}
               {q.filters.remittanceSource !== "all" && (
                 <Badge
                   variant="secondary"
-                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
                 >
                   Source: {q.filters.remittanceSource}
                   <button
                     onClick={() => q.setFilters({ ...q.filters, remittanceSource: "all" })}
                     className="ml-0.5 hover:text-red-600"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-2.5 h-2.5" />
                   </button>
                 </Badge>
               )}
               {q.filters.assignedTo !== "all" && (
                 <Badge
                   variant="secondary"
-                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
                 >
                   Assigned: {q.filters.assignedTo}
                   <button
                     onClick={() => q.setFilters({ ...q.filters, assignedTo: "all" })}
                     className="ml-0.5 hover:text-red-600"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-2.5 h-2.5" />
                   </button>
                 </Badge>
               )}
@@ -385,52 +380,52 @@ export default function PaymentsQueuePage() {
                     assignedTo: "all",
                   })
                 }
-                className="text-xs text-slate-500 hover:text-red-600 underline ml-1"
+                className="text-[11px] text-slate-500 hover:text-red-600 underline ml-0.5"
               >
                 Clear all
               </button>
             </div>
           )}
 
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             {q.showFilterSidebar && (
               <CashAppFilterRail filters={q.filters} onFilterChange={q.setFilters} />
             )}
 
             <div className="flex-1">
               {q.selectedIds.length > 0 && (
-                <Card className="mb-4 p-4">
+                <Card className="mb-2 p-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">
+                    <span className="text-xs font-medium">
                       {q.selectedIds.length} payment{q.selectedIds.length !== 1 ? "s" : ""} selected
                     </span>
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" variant="outline" onClick={() => q.handleBulkAction("approve")}>
-                        <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Approve Auto-Matches
+                    <div className="flex items-center gap-1.5">
+                      <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => q.handleBulkAction("approve")}>
+                        <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                        Approve
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => q.handleBulkAction("reprocess")}>
-                        <RefreshCw className="w-4 h-4 mr-2" />
+                      <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => q.handleBulkAction("reprocess")}>
+                        <RefreshCw className="w-3.5 h-3.5 mr-1" />
                         Reprocess
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => q.handleBulkAction("generate")}>
-                        <Download className="w-4 h-4 mr-2" />
-                        Generate Output
+                      <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => q.handleBulkAction("generate")}>
+                        <Download className="w-3.5 h-3.5 mr-1" />
+                        Export
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => q.handleBulkAction("email")}>
-                        <Mail className="w-4 h-4 mr-2" />
-                        Send Email
+                      <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => q.handleBulkAction("email")}>
+                        <Mail className="w-3.5 h-3.5 mr-1" />
+                        Email
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => q.handleBulkAction("assign")}>
-                        <UserPlus className="w-4 h-4 mr-2" />
+                      <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => q.handleBulkAction("assign")}>
+                        <UserPlus className="w-3.5 h-3.5 mr-1" />
                         Assign
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => q.handleBulkAction("non-ar")}>
-                        <Ban className="w-4 h-4 mr-2" />
-                        Mark Non-AR
+                      <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => q.handleBulkAction("non-ar")}>
+                        <Ban className="w-3.5 h-3.5 mr-1" />
+                        Non-AR
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => q.handleBulkAction("ignore")}>
-                        <EyeOff className="w-4 h-4 mr-2" />
+                      <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => q.handleBulkAction("ignore")}>
+                        <EyeOff className="w-3.5 h-3.5 mr-1" />
                         Ignore
                       </Button>
                     </div>
@@ -446,7 +441,7 @@ export default function PaymentsQueuePage() {
                     <table className="w-full">
                       <thead className="border-b bg-slate-50 sticky top-0 z-10">
                         <tr>
-                          <th className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"} text-left w-10`}>
+                          <th className="px-3 py-2 text-left w-8">
                             <Checkbox
                               checked={q.areAllOnPageSelected}
                               onCheckedChange={q.handleSelectAll}
@@ -456,7 +451,7 @@ export default function PaymentsQueuePage() {
                           {["Payment #", "Date", "Amount", "Payer Name", "Customer", "Remittance", "Status", "Match Type", "JE", "Bank Match", "Confidence", "Actions"].map((header) => (
                             <th
                               key={header}
-                              className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"} text-left text-xs font-semibold text-slate-700 uppercase tracking-wider`}
+                              className="px-3 py-2 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider"
                             >
                               {header}
                             </th>
@@ -469,13 +464,13 @@ export default function PaymentsQueuePage() {
                         ) : (
                           <>
                             {q.showSelectAllBanner && (
-                              <tr className="bg-blue-50 border-b-2 border-blue-200">
+                              <tr className="bg-blue-50 border-b border-blue-200">
                                 <td
                                   colSpan={13}
-                                  className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"}`}
+                                  className="px-3 py-1.5"
                                 >
                                   <div className="flex items-center justify-between">
-                                    <span className="text-sm text-blue-900">
+                                    <span className="text-xs text-blue-900">
                                       All{" "}
                                       <span className="font-semibold">
                                         {q.paginatedPayments.length}
@@ -515,7 +510,7 @@ export default function PaymentsQueuePage() {
                                     q.handleRowClick(payment);
                                   }}
                                 >
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"}`}>
+                                  <td className={`px-3 py-1.5`}>
                                     <div className="flex items-center gap-2">
                                       {isCritical && <AlertCircle className="w-3.5 h-3.5 text-red-500" />}
                                       <Checkbox
@@ -526,25 +521,25 @@ export default function PaymentsQueuePage() {
                                       />
                                     </div>
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"} text-sm font-medium text-blue-600`}>
+                                  <td className={`px-3 py-1.5 text-xs font-medium text-blue-600`}>
                                     {payment.paymentNumber}
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"} text-sm text-slate-700`}>
+                                  <td className={`px-3 py-1.5 text-xs text-slate-700`}>
                                     {payment.date}
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"} text-sm font-semibold text-slate-900`}>
+                                  <td className={`px-3 py-1.5 text-xs font-semibold text-slate-900`}>
                                     {q.formatCurrency(payment.amount)}
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"} text-sm font-medium text-slate-800`}>
+                                  <td className={`px-3 py-1.5 text-xs font-medium text-slate-800`}>
                                     {payment.payerNameRaw}
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"} text-sm text-slate-700`}>
+                                  <td className={`px-3 py-1.5 text-xs text-slate-700`}>
                                     {payment.customerName}
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"} text-sm text-slate-500`}>
+                                  <td className={`px-3 py-1.5 text-xs text-slate-500`}>
                                     {payment.remittanceSource}
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"}`}>
+                                  <td className={`px-3 py-1.5`}>
                                     <div className="flex flex-col gap-1">
                                       {getStatusBadge(
                                         payment.je_workflow_state === "POSTED" ? "Posted" : payment.status
@@ -552,7 +547,7 @@ export default function PaymentsQueuePage() {
                                       {payment.status === "Exception" && getExceptionReasonBadge(payment)}
                                     </div>
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"}`}>
+                                  <td className={`px-3 py-1.5`}>
                                     {payment.status === "AutoMatched" ? (
                                       <div className="flex items-center gap-1.5">
                                         {payment.match_type === "EXACT" && <Target className="w-3.5 h-3.5 text-emerald-600" />}
@@ -564,7 +559,7 @@ export default function PaymentsQueuePage() {
                                       <span className="text-xs text-slate-400">-</span>
                                     )}
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"}`}>
+                                  <td className={`px-3 py-1.5`}>
                                     {payment.je_flow_state === "SUBMITTED" ? (
                                       <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300 text-xs">
                                         Pending
@@ -578,16 +573,16 @@ export default function PaymentsQueuePage() {
                                       <span className="text-xs text-slate-400">-</span>
                                     )}
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"}`}>
+                                  <td className={`px-3 py-1.5`}>
                                     {getBankMatchBadge(payment)}
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"}`}>
+                                  <td className={`px-3 py-1.5`}>
                                     <div className="flex items-center gap-2">
                                       <ConfidenceMeter confidence={payment.confidenceScore} />
                                       <WhyIndicator explainability={payment.explainability} />
                                     </div>
                                   </td>
-                                  <td className={`${q.density === "compact" ? "px-3 py-2" : "px-4 py-3"}`}>
+                                  <td className={`px-3 py-1.5`}>
                                     <TableRowActions
                                       payment={payment}
                                       onViewDetails={q.handleRowClick}
