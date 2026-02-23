@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useAIIntelligence } from "@/hooks/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +33,13 @@ import {
   IndianRupee,
   Shield,
   Brain,
+  BarChart3,
+  Clock,
+  ShieldCheck,
+  Search,
+  ChevronDown,
+  ChevronUp,
+  MessageSquare,
 } from "lucide-react";
 import type {
   PredictiveForecastingData,
@@ -44,16 +51,23 @@ import type {
   SROIntegrityIndexData,
   SROIntegrityRecord,
   IntegrityComponent,
+  PromptEngineData,
+  PromptTemplate,
+  PromptCategory,
+  PromptCategoryDefinition,
+  InlineChartData,
+  InlineTableData,
 } from "@/lib/data/types/igrs";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-type TabKey = "forecasting" | "risk-scoring" | "integrity-index";
+type TabKey = "forecasting" | "risk-scoring" | "integrity-index" | "prompt-engine";
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: "forecasting", label: "Predictive Forecasting", icon: <TrendingUp className="w-3.5 h-3.5" /> },
   { key: "risk-scoring", label: "Risk Scoring", icon: <ShieldAlert className="w-3.5 h-3.5" /> },
   { key: "integrity-index", label: "SRO Integrity", icon: <Building2 className="w-3.5 h-3.5" /> },
+  { key: "prompt-engine", label: "Prompt Engine", icon: <MessageSquare className="w-3.5 h-3.5" /> },
 ];
 
 // ── Format Helper ────────────────────────────────────────────────────────────
@@ -1433,22 +1447,408 @@ function IntegrityIndexTab({ data }: { data: SROIntegrityIndexData }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// Sub-Tab 4: Prompt Engine
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
+  IndianRupee: <IndianRupee className="w-3.5 h-3.5" />,
+  BarChart3: <BarChart3 className="w-3.5 h-3.5" />,
+  AlertTriangle: <AlertTriangle className="w-3.5 h-3.5" />,
+  TrendingUp: <TrendingUp className="w-3.5 h-3.5" />,
+  ShieldCheck: <ShieldCheck className="w-3.5 h-3.5" />,
+  Clock: <Clock className="w-3.5 h-3.5" />,
+};
+
+function PromptInlineChart({ chart }: { chart: InlineChartData }) {
+  if (chart.type === "bar") {
+    const maxVal = Math.max(...chart.datasets.flatMap((d) => d.data), 1);
+    const barGroupW = 400 / Math.max(chart.labels.length, 1);
+    const barW = (barGroupW * 0.6) / Math.max(chart.datasets.length, 1);
+    return (
+      <svg viewBox="0 0 420 160" className="w-full max-w-md mt-2">
+        {chart.labels.map((label, li) => (
+          <g key={label}>
+            {chart.datasets.map((ds, di) => {
+              const h = (ds.data[li] / maxVal) * 110;
+              const x = 30 + li * barGroupW + di * barW;
+              return (
+                <rect key={di} x={x} y={130 - h} width={barW - 2} height={h} fill={ds.color} rx={2} />
+              );
+            })}
+            <text x={30 + li * barGroupW + (barGroupW * 0.3) / 2} y={148} textAnchor="middle" className="text-[8px] fill-slate-500">
+              {label}
+            </text>
+          </g>
+        ))}
+        {chart.datasets.map((ds, di) => (
+          <g key={di}>
+            <rect x={30 + di * 80} y={2} width={8} height={8} rx={1} fill={ds.color} />
+            <text x={42 + di * 80} y={10} className="text-[8px] fill-slate-500">{ds.label}</text>
+          </g>
+        ))}
+      </svg>
+    );
+  }
+
+  if (chart.type === "line") {
+    const maxVal = Math.max(...chart.datasets.flatMap((d) => d.data), 1);
+    const minVal = Math.min(...chart.datasets.flatMap((d) => d.data), 0);
+    const rng = maxVal - minVal || 1;
+    return (
+      <svg viewBox="0 0 420 160" className="w-full max-w-md mt-2">
+        {chart.datasets.map((ds, di) => {
+          const path = ds.data
+            .map((v, i) => {
+              const x = 30 + (i / Math.max(ds.data.length - 1, 1)) * 360;
+              const y = 130 - ((v - minVal) / rng) * 110;
+              return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+            })
+            .join(" ");
+          return (
+            <g key={di}>
+              <path d={path} fill="none" stroke={ds.color} strokeWidth={2} />
+              {ds.data.map((v, i) => {
+                const x = 30 + (i / Math.max(ds.data.length - 1, 1)) * 360;
+                const y = 130 - ((v - minVal) / rng) * 110;
+                return <circle key={i} cx={x} cy={y} r={2.5} fill={ds.color} />;
+              })}
+            </g>
+          );
+        })}
+        {chart.labels.map((label, i) => (
+          <text key={i} x={30 + (i / Math.max(chart.labels.length - 1, 1)) * 360} y={148} textAnchor="middle" className="text-[8px] fill-slate-500">
+            {label}
+          </text>
+        ))}
+        {chart.datasets.map((ds, di) => (
+          <g key={di}>
+            <rect x={30 + di * 80} y={2} width={8} height={8} rx={1} fill={ds.color} />
+            <text x={42 + di * 80} y={10} className="text-[8px] fill-slate-500">{ds.label}</text>
+          </g>
+        ))}
+      </svg>
+    );
+  }
+
+  if (chart.type === "donut") {
+    const total = chart.datasets[0]?.data.reduce((s, v) => s + v, 0) || 1;
+    let angle = -90;
+    const cx = 80;
+    const cy = 80;
+    const r = 60;
+    const innerR = 35;
+    const colors = ["#7c3aed", "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#ec4899"];
+    return (
+      <svg viewBox="0 0 250 170" className="w-full max-w-xs mt-2">
+        {chart.datasets[0]?.data.map((val, i) => {
+          const sliceAngle = (val / total) * 360;
+          const startAngle = angle;
+          const endAngle = angle + sliceAngle;
+          angle = endAngle;
+          const startRad = (startAngle * Math.PI) / 180;
+          const endRad = (endAngle * Math.PI) / 180;
+          const largeArc = sliceAngle > 180 ? 1 : 0;
+          const x1 = cx + r * Math.cos(startRad);
+          const y1 = cy + r * Math.sin(startRad);
+          const x2 = cx + r * Math.cos(endRad);
+          const y2 = cy + r * Math.sin(endRad);
+          const ix1 = cx + innerR * Math.cos(startRad);
+          const iy1 = cy + innerR * Math.sin(startRad);
+          const ix2 = cx + innerR * Math.cos(endRad);
+          const iy2 = cy + innerR * Math.sin(endRad);
+          const d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${innerR} ${innerR} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
+          return <path key={i} d={d} fill={colors[i % colors.length]} />;
+        })}
+        {chart.labels.map((label, i) => (
+          <g key={i}>
+            <rect x={170} y={20 + i * 18} width={8} height={8} rx={1} fill={colors[i % 6]} />
+            <text x={182} y={28 + i * 18} className="text-[8px] fill-slate-600">{label}</text>
+          </g>
+        ))}
+      </svg>
+    );
+  }
+
+  return null;
+}
+
+function PromptEngineTab({ data }: { data: PromptEngineData }) {
+  const [selectedCategory, setSelectedCategory] = useState<PromptCategory | "all">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [expandedPrompt, setExpandedPrompt] = useState<string | null>(null);
+
+  const togglePrompt = useCallback((id: string) => {
+    setExpandedPrompt((prev) => (prev === id ? null : id));
+  }, []);
+
+  const categoryMap = useMemo(() => {
+    const map = new Map<string, PromptCategoryDefinition>();
+    for (const cat of data.categories) map.set(cat.id, cat);
+    return map;
+  }, [data.categories]);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of data.prompts) {
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    }
+    return counts;
+  }, [data.prompts]);
+
+  const withCharts = useMemo(() => data.prompts.filter((p) => p.response.inlineChart).length, [data.prompts]);
+  const withTables = useMemo(() => data.prompts.filter((p) => p.response.inlineTable).length, [data.prompts]);
+
+  const filteredPrompts = useMemo(() => {
+    let list = data.prompts;
+    if (selectedCategory !== "all") {
+      list = list.filter((p) => p.category === selectedCategory);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(
+        (p) =>
+          p.promptText.toLowerCase().includes(q) ||
+          p.response.narrative.toLowerCase().includes(q) ||
+          p.response.keyInsight.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [data.prompts, selectedCategory, searchQuery]);
+
+  return (
+    <div className="space-y-6">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="rounded-lg border border-violet-200 bg-violet-50/30 p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <MessageSquare className="w-4 h-4 text-violet-600" />
+            <span className="text-xs text-slate-500 uppercase tracking-wide">Total Prompts</span>
+          </div>
+          <p className="text-2xl font-bold text-violet-700">{data.metadata.totalPrompts}</p>
+          <p className="text-xs text-slate-500">v{data.metadata.version}</p>
+        </div>
+        <div className="rounded-lg border border-blue-200 bg-blue-50/30 p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <BarChart3 className="w-4 h-4 text-blue-600" />
+            <span className="text-xs text-slate-500 uppercase tracking-wide">Categories</span>
+          </div>
+          <p className="text-2xl font-bold text-blue-700">{data.categories.length}</p>
+          <p className="text-xs text-slate-500">Prompt categories</p>
+        </div>
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50/30 p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <TrendingUp className="w-4 h-4 text-emerald-600" />
+            <span className="text-xs text-slate-500 uppercase tracking-wide">With Charts</span>
+          </div>
+          <p className="text-2xl font-bold text-emerald-700">{withCharts}</p>
+          <p className="text-xs text-slate-500">Prompts with visualizations</p>
+        </div>
+        <div className="rounded-lg border border-amber-200 bg-amber-50/30 p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FileText className="w-4 h-4 text-amber-600" />
+            <span className="text-xs text-slate-500 uppercase tracking-wide">With Tables</span>
+          </div>
+          <p className="text-2xl font-bold text-amber-700">{withTables}</p>
+          <p className="text-xs text-slate-500">Prompts with data tables</p>
+        </div>
+      </div>
+
+      {/* Category Filter Bar */}
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          onClick={() => setSelectedCategory("all")}
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
+            selectedCategory === "all"
+              ? "bg-slate-800 text-white"
+              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          All
+          <span className="ml-0.5 text-[10px] opacity-75">{data.prompts.length}</span>
+        </button>
+        {data.categories.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => setSelectedCategory(cat.id)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
+              selectedCategory === cat.id
+                ? "text-white"
+                : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+            }`}
+            style={selectedCategory === cat.id ? { backgroundColor: cat.color } : undefined}
+          >
+            {CATEGORY_ICON_MAP[cat.icon] || null}
+            {cat.label}
+            <span className="ml-0.5 text-[10px] opacity-75">{categoryCounts[cat.id] || 0}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Search Input */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input
+          type="text"
+          placeholder="Search prompts by text, narrative, or insight..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-300"
+        />
+      </div>
+
+      {/* Results Count */}
+      <p className="text-xs text-slate-500">
+        Showing {filteredPrompts.length} of {data.prompts.length} prompts
+      </p>
+
+      {/* Prompt List */}
+      <div className="space-y-3">
+        {filteredPrompts.map((prompt) => {
+          const cat = categoryMap.get(prompt.category);
+          const isExpanded = expandedPrompt === prompt.id;
+          return (
+            <Card key={prompt.id} className={isExpanded ? "border-violet-300 shadow-sm" : ""}>
+              <div
+                className="flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-slate-50/50 transition-colors"
+                onClick={() => togglePrompt(prompt.id)}
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] px-1.5 py-0 border"
+                      style={{ borderColor: cat?.color, color: cat?.color }}
+                    >
+                      {cat?.label || prompt.category}
+                    </Badge>
+                    {prompt.response.inlineChart && (
+                      <span className="text-[10px] text-slate-400 flex items-center gap-0.5">
+                        <BarChart3 className="w-3 h-3" /> Chart
+                      </span>
+                    )}
+                    {prompt.response.inlineTable && (
+                      <span className="text-[10px] text-slate-400 flex items-center gap-0.5">
+                        <FileText className="w-3 h-3" /> Table
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm font-medium text-slate-800">{prompt.promptText}</p>
+                </div>
+                {isExpanded ? (
+                  <ChevronUp className="w-4 h-4 text-slate-400 flex-shrink-0 mt-1" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0 mt-1" />
+                )}
+              </div>
+
+              {/* Expanded Content */}
+              {isExpanded && (
+                <CardContent className="pt-0 pb-4 px-4 space-y-4 border-t border-slate-100">
+                  {/* Narrative */}
+                  <p className="text-sm text-slate-600 leading-relaxed mt-3">{prompt.response.narrative}</p>
+
+                  {/* Inline Table */}
+                  {prompt.response.inlineTable && (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs border-collapse">
+                        <thead>
+                          <tr>
+                            {prompt.response.inlineTable.headers.map((h, hi) => (
+                              <th
+                                key={hi}
+                                className={`text-left px-2 py-1.5 border-b border-slate-200 font-semibold ${
+                                  prompt.response.inlineTable?.highlightColumn === hi
+                                    ? "bg-violet-50 text-violet-700"
+                                    : "text-slate-600"
+                                }`}
+                              >
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {prompt.response.inlineTable.rows.map((row, ri) => (
+                            <tr key={ri}>
+                              {row.map((cell, ci) => (
+                                <td
+                                  key={ci}
+                                  className={`px-2 py-1.5 border-b border-slate-100 ${
+                                    prompt.response.inlineTable?.highlightColumn === ci
+                                      ? "bg-violet-50/50 font-medium"
+                                      : ""
+                                  }`}
+                                >
+                                  {typeof cell === "number" ? cell.toLocaleString("en-IN") : cell}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Inline Chart */}
+                  {prompt.response.inlineChart && (
+                    <PromptInlineChart chart={prompt.response.inlineChart} />
+                  )}
+
+                  {/* Key Insight */}
+                  <div className="rounded-lg bg-violet-50 border-l-4 border-l-violet-400 p-3">
+                    <div className="flex items-start gap-2">
+                      <Sparkles className="w-3.5 h-3.5 text-violet-600 flex-shrink-0 mt-0.5" />
+                      <p className="text-xs text-violet-800 font-medium">{prompt.response.keyInsight}</p>
+                    </div>
+                  </div>
+
+                  {/* Follow-up Prompts */}
+                  {prompt.response.followUpPrompts.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {prompt.response.followUpPrompts.map((fp, fi) => (
+                        <span
+                          key={fi}
+                          className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-medium"
+                        >
+                          {fp}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              )}
+            </Card>
+          );
+        })}
+
+        {filteredPrompts.length === 0 && (
+          <div className="text-center py-12">
+            <Search className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+            <p className="text-sm text-slate-500">No prompts match your search</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // Main Page Component
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export default function AIIntelligencePage() {
   const [activeTab, setActiveTab] = useState<TabKey>("forecasting");
-  const { forecasting, riskScoring, integrityIndex, isLoading, error } = useAIIntelligence(activeTab);
+  const { forecasting, riskScoring, integrityIndex, promptEngine, isLoading, error } = useAIIntelligence(activeTab);
 
   // Loading state
-  if (isLoading && !forecasting && !riskScoring && !integrityIndex) {
+  if (isLoading && !forecasting && !riskScoring && !integrityIndex && !promptEngine) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 rounded w-1/3" />
           <div className="h-4 bg-gray-200 rounded w-1/2" />
           <div className="flex gap-2">
-            {Array.from({ length: 3 }).map((_, i) => (
+            {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="h-9 bg-gray-200 rounded w-36" />
             ))}
           </div>
@@ -1484,6 +1884,8 @@ export default function AIIntelligencePage() {
         return riskScoring ? <RiskScoringTab data={riskScoring} /> : <LoadingSkeleton />;
       case "integrity-index":
         return integrityIndex ? <IntegrityIndexTab data={integrityIndex} /> : <LoadingSkeleton />;
+      case "prompt-engine":
+        return promptEngine ? <PromptEngineTab data={promptEngine} /> : <LoadingSkeleton />;
       default:
         return null;
     }

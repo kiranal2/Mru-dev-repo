@@ -5,14 +5,16 @@ import type {
   PredictiveForecastingData,
   DocumentRiskScoringData,
   SROIntegrityIndexData,
+  PromptEngineData,
 } from "@/lib/data/types/igrs";
 
-type AIIntelligenceTab = "forecasting" | "risk-scoring" | "integrity-index";
+type AIIntelligenceTab = "forecasting" | "risk-scoring" | "integrity-index" | "prompt-engine";
 
 interface AIIntelligenceState {
   forecasting: PredictiveForecastingData | null;
   riskScoring: DocumentRiskScoringData | null;
   integrityIndex: SROIntegrityIndexData | null;
+  promptEngine: PromptEngineData | null;
   isLoading: boolean;
   error: string | null;
 }
@@ -22,6 +24,7 @@ export function useAIIntelligence(activeTab: AIIntelligenceTab) {
     forecasting: null,
     riskScoring: null,
     integrityIndex: null,
+    promptEngine: null,
     isLoading: true,
     error: null,
   });
@@ -59,6 +62,16 @@ export function useAIIntelligence(activeTab: AIIntelligenceTab) {
               const res = await fetch("/data/igrs/ai-sro-integrity.json");
               const data: SROIntegrityIndexData = await res.json();
               if (!cancelled) setState(prev => ({ ...prev, integrityIndex: data, isLoading: false }));
+            } else {
+              if (!cancelled) setState(prev => ({ ...prev, isLoading: false }));
+            }
+            break;
+          }
+          case "prompt-engine": {
+            if (!state.promptEngine) {
+              const res = await fetch("/data/igrs/ai-prompt-engine.json");
+              const data: PromptEngineData = await res.json();
+              if (!cancelled) setState(prev => ({ ...prev, promptEngine: data, isLoading: false }));
             } else {
               if (!cancelled) setState(prev => ({ ...prev, isLoading: false }));
             }
