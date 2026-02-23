@@ -12,9 +12,16 @@ import Breadcrumb from "@/components/layout/breadcrumb";
 import { useAccountActivity } from "./hooks/useAccountActivity";
 import { MOCK_DATA, OPENING_BALANCE, CLOSING_BALANCE } from "./constants";
 import FilterBar from "./components/FilterBar";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default function AccountActivityPage() {
+  const searchParams = useSearchParams();
+  const jeFilter = searchParams.get("je");
+  const fromClose = searchParams.get("from") === "close";
+  const closeTaskId = searchParams.get("taskId");
   const {
     gridRef,
     dataLoading,
@@ -61,19 +68,42 @@ export default function AccountActivityPage() {
   } = useAccountActivity();
 
   // Prefer data-layer rows, fall back to inline mock data
+  // If ?je= is present, filter to show only that journal entry's rows
   const rowData = useMemo(() => {
-    if (dataLayerRows && dataLayerRows.length > 0) {
-      return dataLayerRows;
+    const base = dataLayerRows && dataLayerRows.length > 0 ? dataLayerRows : MOCK_DATA;
+    if (jeFilter) {
+      // Match the JE entry number pattern (e.g., JE-006 → JE-2024-12-006)
+      return base.filter((row) => {
+        const docNum = row.documentNumber || "";
+        // Match either the short ID (JE-006) or the full entry number (JE-2024-12-006)
+        return docNum === jeFilter || docNum.endsWith(jeFilter.replace("JE-", ""));
+      });
     }
-    return MOCK_DATA;
-  }, [dataLayerRows]);
+    return base;
+  }, [dataLayerRows, jeFilter]);
 
   return (
     <div className="flex flex-col bg-white" style={{ height: "100%", minHeight: 0 }}>
       {/* Page Header */}
       <header className="sticky top-0 z-10 bg-white px-6 py-2 flex-shrink-0">
         <Breadcrumb activeRoute="reports/financials/account-activity" className="mb-1.5" />
-        <h1 className="text-2xl font-bold text-[#000000] mt-2">Account Activity</h1>
+        {fromClose && closeTaskId && (
+          <Link
+            href="/workbench/record-to-report/close"
+            className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 mb-1"
+          >
+            <ArrowLeft className="w-3 h-3" />
+            Back to Close Task {closeTaskId}
+          </Link>
+        )}
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-[#000000] mt-2">Account Activity</h1>
+          {jeFilter && (
+            <span className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+              Filtered: {jeFilter}
+            </span>
+          )}
+        </div>
         <div className="border-b border-[#B7B7B7] mt-4"></div>
       </header>
 
@@ -169,6 +199,10 @@ export default function AccountActivityPage() {
               domLayout="normal"
               className="ag-theme-alpine"
               getRowStyle={(params) => {
+                // Highlight rows when filtering by JE
+                if (jeFilter) {
+                  return { backgroundColor: "#eef2ff" }; // indigo-50
+                }
                 const rowIndex = params.node.rowIndex;
                 if (rowIndex !== null && rowIndex !== undefined && rowIndex % 2 === 0) {
                   return { backgroundColor: "#fafafa" };

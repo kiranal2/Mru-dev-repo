@@ -77,6 +77,8 @@ export interface CloseTask {
     /** Whether the sub-step has been completed. */
     checked: boolean;
   }>;
+  /** IDs of journal entries linked to this close task. */
+  linkedJournalEntryIds?: string[];
   /** Free-form notes or comments. */
   notes?: string;
   /** Timestamp when the record was created (ISO 8601). */

@@ -395,6 +395,9 @@
     "confidenceScore": 93,
     "assignedTo": "USR-004",
     "tags": ["approved", "pending-post"],
+    "pending_post_state": "READY",
+    "posted_status": "NOT_POSTED",
+    "je_workflow_state": "SUBMITTED",
     "createdAt": "2024-12-09T09:00:00Z",
     "updatedAt": "2024-12-09T14:00:00Z"
   },
@@ -414,6 +417,9 @@
     "confidenceScore": 89,
     "assignedTo": "USR-005",
     "tags": ["approved", "pending-post"],
+    "pending_post_state": "SYNC_PENDING",
+    "posted_status": "NOT_POSTED",
+    "je_workflow_state": "SUBMITTED",
     "createdAt": "2024-12-10T07:00:00Z",
     "updatedAt": "2024-12-10T12:30:00Z"
   },
@@ -433,6 +439,13 @@
     "confidenceScore": 91,
     "assignedTo": "USR-003",
     "tags": ["approved", "pending-post"],
+    "pending_post_state": "FAILED",
+    "posted_status": "NOT_POSTED",
+    "je_workflow_state": "SUBMITTED",
+    "postingRefs": {
+      "postStatus": "PostFailed",
+      "postError": "NetSuite sync timeout — retry scheduled"
+    },
     "createdAt": "2024-12-10T10:00:00Z",
     "updatedAt": "2024-12-10T15:00:00Z"
   },
@@ -452,6 +465,9 @@
     "confidenceScore": 86,
     "assignedTo": "USR-004",
     "tags": ["approved", "pending-post"],
+    "pending_post_state": "READY",
+    "posted_status": "NOT_POSTED",
+    "je_workflow_state": "SUBMITTED",
     "createdAt": "2024-12-11T08:00:00Z",
     "updatedAt": "2024-12-11T13:00:00Z"
   },
@@ -471,6 +487,15 @@
     "confidenceScore": 99,
     "assignedTo": null,
     "tags": ["posted", "high-value"],
+    "postingRefs": {
+      "nsPaymentId": "NS-PAY-025",
+      "nsJeId": "NS-JE-025",
+      "postedAt": "2024-12-12T09:00:00Z",
+      "postStatus": "Posted"
+    },
+    "je_workflow_state": "POSTED",
+    "posted_status": "POSTED",
+    "posted_at": "2024-12-12T09:00:00Z",
     "createdAt": "2024-12-11T06:00:00Z",
     "updatedAt": "2024-12-12T09:00:00Z"
   },
@@ -490,6 +515,15 @@
     "confidenceScore": 95,
     "assignedTo": null,
     "tags": ["posted"],
+    "postingRefs": {
+      "nsPaymentId": "NS-PAY-026",
+      "nsJeId": "NS-JE-026",
+      "postedAt": "2024-12-13T08:00:00Z",
+      "postStatus": "Posted"
+    },
+    "je_workflow_state": "POSTED",
+    "posted_status": "POSTED",
+    "posted_at": "2024-12-13T08:00:00Z",
     "createdAt": "2024-12-12T07:30:00Z",
     "updatedAt": "2024-12-13T08:00:00Z"
   },
@@ -509,6 +543,15 @@
     "confidenceScore": 97,
     "assignedTo": null,
     "tags": ["posted"],
+    "postingRefs": {
+      "nsPaymentId": "NS-PAY-027",
+      "nsJeId": "NS-JE-027",
+      "postedAt": "2024-12-13T10:00:00Z",
+      "postStatus": "Posted"
+    },
+    "je_workflow_state": "POSTED",
+    "posted_status": "POSTED",
+    "posted_at": "2024-12-13T10:00:00Z",
     "createdAt": "2024-12-12T09:00:00Z",
     "updatedAt": "2024-12-13T10:00:00Z"
   },

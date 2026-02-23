@@ -93,6 +93,7 @@
     "status": "Posted",
     "createdBy": "USR-005",
     "approvedBy": "USR-002",
+    "relatedCloseTaskId": "CLT-003",
     "subsidiary": "Meeru Inc",
     "lines": [
       { "accountNumber": "6200", "accountName": "General & Administrative", "debit": 4200000, "credit": 0, "department": "Corporate" },
@@ -112,6 +113,7 @@
     "status": "Posted",
     "createdBy": "USR-005",
     "approvedBy": "USR-002",
+    "relatedCloseTaskId": "CLT-003",
     "subsidiary": "Meeru Inc",
     "lines": [
       { "accountNumber": "6300", "accountName": "Depreciation & Amortization", "debit": 2083333, "credit": 0, "department": "Corporate" },
@@ -129,6 +131,7 @@
     "status": "Posted",
     "createdBy": "USR-003",
     "approvedBy": "USR-002",
+    "relatedCloseTaskId": "CLT-003",
     "subsidiary": "Meeru Inc",
     "lines": [
       { "accountNumber": "6100", "accountName": "Sales & Marketing", "debit": 500.00, "credit": 0, "department": "Sales" },
@@ -163,6 +166,7 @@
     "status": "Posted",
     "createdBy": "USR-005",
     "approvedBy": "USR-001",
+    "relatedCloseTaskId": "CLT-004",
     "subsidiary": "Meeru Inc",
     "lines": [
       { "accountNumber": "6200", "accountName": "General & Administrative", "debit": 1500000, "credit": 0, "department": "Corporate" },
@@ -197,6 +201,7 @@
     "status": "Posted",
     "createdBy": "USR-005",
     "approvedBy": "USR-001",
+    "relatedCloseTaskId": "CLT-004",
     "subsidiary": "Meeru Inc",
     "lines": [
       { "accountNumber": "7100", "accountName": "FX Gain/Loss", "debit": 350000, "credit": 0, "department": "Treasury" },
@@ -248,6 +253,7 @@
     "status": "PendingApproval",
     "createdBy": "USR-005",
     "approvedBy": null,
+    "relatedCloseTaskId": "CLT-004",
     "subsidiary": "Meeru Inc",
     "lines": [
       { "accountNumber": "2500", "accountName": "Long-Term Debt", "debit": 12500000, "credit": 0, "department": "Treasury" },
@@ -265,6 +271,7 @@
     "status": "PendingApproval",
     "createdBy": "USR-005",
     "approvedBy": null,
+    "relatedCloseTaskId": "CLT-009",
     "subsidiary": "Meeru Inc",
     "lines": [
       { "accountNumber": "6000", "accountName": "Research & Development", "debit": 3500000, "credit": 0, "department": "Engineering" },
@@ -284,6 +291,7 @@
     "status": "Draft",
     "createdBy": "USR-005",
     "approvedBy": null,
+    "relatedCloseTaskId": "CLT-004",
     "subsidiary": "Meeru Inc",
     "lines": [
       { "accountNumber": "7100", "accountName": "Income Tax Expense", "debit": 7000000, "credit": 0, "department": "Tax" },
@@ -302,6 +310,7 @@
     "status": "Draft",
     "createdBy": "USR-004",
     "approvedBy": null,
+    "relatedCloseTaskId": "CLT-014",
     "subsidiary": "Meeru Inc",
     "lines": [
       { "accountNumber": "1500", "accountName": "Right-of-Use Asset", "debit": 8500000, "credit": 0, "department": "Facilities" },
@@ -319,6 +328,7 @@
     "status": "Draft",
     "createdBy": "USR-003",
     "approvedBy": null,
+    "relatedCloseTaskId": "CLT-004",
     "subsidiary": "Meeru Inc",
     "lines": [
       { "accountNumber": "5000", "accountName": "Cost of Product Revenue", "debit": 750000, "credit": 0, "department": "Product" },

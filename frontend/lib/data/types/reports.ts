@@ -133,6 +133,8 @@ export interface JournalEntry {
   totalDebit: number;
   /** Sum of all line credits (should equal totalDebit). */
   totalCredit: number;
+  /** ID of the related close task, if this JE is linked to the close process. */
+  relatedCloseTaskId?: string;
   /** Timestamp when the entry was created (ISO 8601). */
   createdAt: string;
 }

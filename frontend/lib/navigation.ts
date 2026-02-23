@@ -224,6 +224,12 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
           icon: React.createElement(LayoutGrid, { size: 16 }),
           route: "/workbench/order-to-cash/cash-application",
         },
+        {
+          id: "disputes",
+          label: "Disputes",
+          icon: React.createElement(FileText, { size: 16 }),
+          route: "/workbench/order-to-cash/disputes",
+        },
       ],
     },
     {
@@ -237,6 +243,12 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
           label: "SaaS Renewal Workbench",
           icon: React.createElement(Calculator, { size: 16 }),
           route: "/workbench/procure-to-pay/saas-renewal",
+        },
+        {
+          id: "ap-exceptions",
+          label: "AP Exceptions",
+          icon: React.createElement(Shield, { size: 16 }),
+          route: "/workbench/procure-to-pay/ap-exceptions",
         },
       ],
     },
@@ -271,6 +283,54 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
           label: "MRP Workbench",
           icon: React.createElement(Package, { size: 16 }),
           route: "/workbench/supply-chain-finance/mrp",
+        },
+      ],
+    },
+    {
+      id: "bpo-setup",
+      label: "BPO Setup",
+      icon: React.createElement(Settings, { size: 18 }),
+      route: "/workbench/bpo-setup",
+    },
+    {
+      id: "fpa",
+      label: "FP&A",
+      icon: React.createElement(TrendingUp, { size: 18 }),
+      route: "/workbench/fpa",
+      children: [
+        {
+          id: "variance-drivers",
+          label: "Variance Drivers",
+          icon: React.createElement(BarChart3, { size: 16 }),
+          route: "/workbench/fpa/variance-drivers",
+        },
+      ],
+    },
+    {
+      id: "revenue-ops",
+      label: "Revenue Ops",
+      icon: React.createElement(Banknote, { size: 18 }),
+      route: "/workbench/revenue-ops",
+      children: [
+        {
+          id: "revenue-recognition",
+          label: "Revenue Recognition",
+          icon: React.createElement(Calculator, { size: 16 }),
+          route: "/workbench/revenue-ops/revenue-recognition",
+        },
+      ],
+    },
+    {
+      id: "treasury",
+      label: "Treasury",
+      icon: React.createElement(Landmark, { size: 18 }),
+      route: "/workbench/treasury",
+      children: [
+        {
+          id: "liquidity",
+          label: "Liquidity",
+          icon: React.createElement(Wallet, { size: 16 }),
+          route: "/workbench/treasury/liquidity",
         },
       ],
     },

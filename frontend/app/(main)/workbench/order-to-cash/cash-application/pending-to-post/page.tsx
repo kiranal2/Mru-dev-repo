@@ -8,8 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cashAppStore } from "@/lib/cash-app-store";
 import { useCashPayments } from "@/hooks/data/use-cash-payments";
-import { Clock, CheckCircle2, Send } from "lucide-react";
+import { Clock, CheckCircle2, Send, AlertTriangle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import type { Payment } from "@/lib/cash-app-types";
 
 export default function PendingToPostPage() {
   const router = useRouter();
@@ -32,22 +33,76 @@ export default function PendingToPostPage() {
     }
   };
 
+  const getSyncStatusIndicator = (payment: Payment) => {
+    const state = payment.pending_post_state;
+    const postStatus = payment.postingRefs?.postStatus;
+
+    if (postStatus === "Posted" || payment.posted_status === "POSTED") {
+      return <CheckCircle2 className="w-4 h-4 text-green-500" />;
+    }
+    if (state === "FAILED" || postStatus === "PostFailed") {
+      return <AlertTriangle className="w-4 h-4 text-red-500" />;
+    }
+    if (state === "SYNC_PENDING") {
+      return <Loader2 className="w-4 h-4 text-amber-500 animate-spin" />;
+    }
+    // READY or default
+    return <CheckCircle2 className="w-4 h-4 text-green-500" />;
+  };
+
+  const getSyncStatusBadge = (payment: Payment) => {
+    const state = payment.pending_post_state;
+    const postStatus = payment.postingRefs?.postStatus;
+
+    if (state === "FAILED" || postStatus === "PostFailed") {
+      return (
+        <Badge variant="destructive" className="text-[10px]">
+          Failed
+        </Badge>
+      );
+    }
+    if (state === "SYNC_PENDING") {
+      return (
+        <Badge variant="outline" className="text-[10px] bg-amber-50 text-amber-700 border-amber-200">
+          Sync Pending
+        </Badge>
+      );
+    }
+    return (
+      <Badge variant="outline" className="text-[10px] bg-green-50 text-green-700 border-green-200">
+        Ready
+      </Badge>
+    );
+  };
+
   const handlePostSelected = () => {
     if (selectedIds.length === 0) {
       toast.error("Please select payments to post");
       return;
     }
 
-    selectedIds.forEach((id) => {
+    const now = new Date().toISOString();
+
+    selectedIds.forEach((id, index) => {
       cashAppStore.updatePayment(id, {
         status: "Posted",
+        posted_status: "POSTED",
+        posted_at: now,
+        je_workflow_state: "POSTED",
+        pending_post_state: undefined,
+        postingRefs: {
+          nsPaymentId: `NS-PAY-${id.replace("PAY-", "")}`,
+          nsJeId: `NS-JE-${id.replace("PAY-", "")}`,
+          postedAt: now,
+          postStatus: "Posted",
+        },
       });
 
       cashAppStore.addActivityLog(id, {
-        timestamp: new Date().toISOString(),
+        timestamp: now,
         user: "Current User",
         action: "Posted",
-        details: "Payment posted to GL",
+        details: `Payment posted to GL — NS-PAY-${id.replace("PAY-", "")}`,
       });
     });
 
@@ -150,6 +205,9 @@ export default function PendingToPostPage() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Confidence
                   </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Sync Status
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -193,6 +251,17 @@ export default function PendingToPostPage() {
                         </div>
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
                       </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        {getSyncStatusIndicator(payment)}
+                        {getSyncStatusBadge(payment)}
+                      </div>
+                      {payment.postingRefs?.postError && (
+                        <div className="text-[10px] text-red-600 mt-0.5 truncate max-w-[160px]" title={payment.postingRefs.postError}>
+                          {payment.postingRefs.postError}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}

@@ -539,6 +539,11 @@ export const reports = {
   async getFluxAnalysis(): Promise<FluxVariance[]> {
     return loadJson<FluxVariance[]>('/data/reports/flux-analysis.json');
   },
+
+  async getJournalEntriesForTask(taskId: string): Promise<JournalEntry[]> {
+    const entries = await this.getJournalEntries();
+    return entries.filter(e => e.relatedCloseTaskId === taskId);
+  },
 };
 
 // ─── Close Management ──────────────────────────────────────────────────────────
@@ -568,6 +573,11 @@ export const closeManagement = {
     if (idx === -1) return undefined;
     items[idx] = { ...items[idx], ...updates, updatedAt: new Date().toISOString() };
     return items[idx];
+  },
+
+  async getTasksForJournalEntry(jeId: string): Promise<CloseTask[]> {
+    const tasks = await getCloseTasks();
+    return tasks.filter(t => t.linkedJournalEntryIds?.includes(jeId));
   },
 };
 

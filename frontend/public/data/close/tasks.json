@@ -58,6 +58,7 @@
     "estimatedHours": 3,
     "actualHours": 2.5,
     "dependencies": [],
+    "linkedJournalEntryIds": ["JE-006", "JE-007", "JE-008"],
     "description": "Post all recurring JEs: payroll accrual, depreciation, amortization, insurance, interest.",
     "checklist": [
       { "item": "Payroll accrual (JE-006)", "completed": true },
@@ -82,6 +83,7 @@
     "estimatedHours": 6,
     "actualHours": 4,
     "dependencies": ["CLT-003"],
+    "linkedJournalEntryIds": ["JE-010", "JE-012", "JE-015", "JE-017", "JE-019"],
     "description": "Prepare and submit all adjusting entries for Q4 close.",
     "checklist": [
       { "item": "Bad debt adjustment (JE-010)", "completed": true },
@@ -204,6 +206,7 @@
     "estimatedHours": 3,
     "actualHours": 0,
     "dependencies": [],
+    "linkedJournalEntryIds": ["JE-016"],
     "description": "Review and approve stock-based compensation entries for December. Verify grant schedules.",
     "checklist": [
       { "item": "Verify vesting schedules", "completed": false },
@@ -322,6 +325,7 @@
     "estimatedHours": 3,
     "actualHours": 0,
     "dependencies": [],
+    "linkedJournalEntryIds": ["JE-018"],
     "description": "Review new office lease entry JE-018 and verify ASC 842 compliance.",
     "checklist": [
       { "item": "Calculate present value of lease payments", "completed": false },

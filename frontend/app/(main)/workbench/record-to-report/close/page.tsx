@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, Download, AlertCircle, Clock, Ban, Link2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, Download, AlertCircle, Clock, Ban, Link2, FileText } from 'lucide-react';
 import { LinkReconModal } from '@/components/modals/link-recon-modal';
 import { QuickCreateTaskModal } from '@/components/modals/quick-create-task-modal';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -47,6 +48,7 @@ import { useCloseTasks } from '@/hooks/data';
 import type { CloseTask, CloseTaskFilters } from '@/lib/data/types';
 
 export default function CloseWorkbenchPage() {
+  const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectedTask, setSelectedTask] = useState<CloseTask | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -477,7 +479,17 @@ export default function CloseWorkbenchPage() {
                           />
                         </td>
                         <td className="px-4 py-3 text-sm text-slate-600">{task.phase}</td>
-                        <td className="px-4 py-3 text-sm font-medium text-slate-900">{task.name}</td>
+                        <td className="px-4 py-3 text-sm font-medium text-slate-900">
+                          <span className="flex items-center gap-1.5">
+                            {task.name}
+                            {task.linkedJournalEntryIds && task.linkedJournalEntryIds.length > 0 && (
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                <FileText className="w-3 h-3" />
+                                {task.linkedJournalEntryIds.length} JE
+                              </span>
+                            )}
+                          </span>
+                        </td>
                         <td className="px-4 py-3 text-sm text-slate-600">{task.subsidiary || '—'}</td>
                         <td className="px-4 py-3 text-sm text-slate-600">{task.assignedTo || 'Unassigned'}</td>
                         <td className="px-4 py-3 text-sm text-slate-600">{task.dueDate ? formatDate(task.dueDate) : '—'}</td>
@@ -578,7 +590,30 @@ export default function CloseWorkbenchPage() {
 
                 <TabsContent value="linked" className="mt-4">
                   <div className="space-y-4">
-                    <div>
+                    {/* Linked Journal Entries */}
+                    {selectedTask.linkedJournalEntryIds && selectedTask.linkedJournalEntryIds.length > 0 && (
+                      <div>
+                        <div className="text-sm font-medium mb-2">Linked Journal Entries</div>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedTask.linkedJournalEntryIds.map((jeId) => (
+                            <Badge
+                              key={jeId}
+                              variant="outline"
+                              className="cursor-pointer bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 transition-colors"
+                              onClick={() => {
+                                router.push(`/reports/financials/account-activity?je=${jeId}&from=close&taskId=${selectedTask.id}`);
+                                setDrawerOpen(false);
+                              }}
+                            >
+                              <FileText className="w-3 h-3 mr-1" />
+                              {jeId}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {/* Reconciliation Link */}
+                    <div className={selectedTask.linkedJournalEntryIds?.length ? 'border-t pt-4' : ''}>
                       <div className="flex items-center justify-between mb-2">
                         <div className="text-sm font-medium">Reconciliation Link</div>
                         <Button size="sm" variant="outline" onClick={() => setLinkReconOpen(true)}>
