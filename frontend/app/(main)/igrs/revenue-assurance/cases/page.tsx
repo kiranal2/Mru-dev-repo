@@ -646,6 +646,180 @@ function CaseDrawer({
                     </Card>
                   )}
 
+                  {/* Challan Reuse Detection */}
+                  {caseItem.cashReconciliationEvidence?.cashReconSubtype === "challanReuse" && caseItem.cashReconciliationEvidence.challanReuseEvidence && (() => {
+                    const re = caseItem.cashReconciliationEvidence.challanReuseEvidence;
+                    return (
+                      <Card className="p-4 border-amber-200">
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide">Challan Reuse Detection</h5>
+                          <div className="flex items-center gap-2">
+                            <Badge variant={re.reuseSeverity === "critical" ? "destructive" : "secondary"} className="text-[10px]">
+                              {re.reuseSeverity === "critical" ? "Critical" : "Warning"}
+                            </Badge>
+                            {re.crossHOA && (
+                              <Badge variant="destructive" className="text-[10px] bg-red-100 text-red-700 border-red-300">Cross-HOA</Badge>
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3 mb-4">
+                          <div className="bg-amber-50 rounded p-3">
+                            <p className="text-xs text-amber-600">Reused Challan</p>
+                            <p className="text-sm font-bold text-amber-800 font-mono">{re.reusedChallanId}</p>
+                          </div>
+                          <div className="bg-orange-50 rounded p-3">
+                            <p className="text-xs text-orange-600">Reuse Count</p>
+                            <p className="text-xl font-bold text-orange-800">{re.reuseCount}x</p>
+                          </div>
+                          <div className="bg-red-50 rounded p-3">
+                            <p className="text-xs text-red-600">Total Amount</p>
+                            <p className="text-xl font-bold text-red-700">{formatINR(re.totalAmountInvolvedInr)}</p>
+                          </div>
+                        </div>
+                        <div className="border rounded">
+                          <div className="bg-slate-50 px-3 py-2 border-b">
+                            <p className="text-xs font-bold text-slate-500 uppercase">Linked Documents</p>
+                          </div>
+                          <div className="divide-y">
+                            {re.linkedDocuments.map((doc, i) => (
+                              <div key={doc.documentId} className={`px-3 py-2 text-sm flex items-center gap-3 ${i === 0 ? "bg-amber-50" : ""} ${re.crossHOA && i > 0 && doc.hoaCode !== re.linkedDocuments[0].hoaCode ? "border-l-2 border-red-400" : ""}`}>
+                                <span className="w-36 font-mono text-xs text-slate-600">{doc.documentId}</span>
+                                <span className="w-32 text-xs">{doc.documentKey}</span>
+                                <span className="w-24 text-xs text-slate-500">{doc.registrationDate}</span>
+                                <span className={`flex-1 text-xs ${re.crossHOA && i > 0 && doc.hoaCode !== re.linkedDocuments[0].hoaCode ? "text-red-700 font-semibold" : "text-slate-600"}`}>{doc.hoaDescription}</span>
+                                <span className="w-20 text-right font-medium text-xs">{formatINR(doc.amountInr)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })()}
+
+                  {/* Failed Challan Detection */}
+                  {caseItem.cashReconciliationEvidence?.cashReconSubtype === "failedChallan" && caseItem.cashReconciliationEvidence.failedChallanEvidence && (() => {
+                    const fe = caseItem.cashReconciliationEvidence.failedChallanEvidence;
+                    return (
+                      <Card className="p-4 border-rose-200">
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide">Failed Challan Detection</h5>
+                          <div className="flex items-center gap-2">
+                            <Badge variant={fe.failureSeverity === "critical" ? "destructive" : "secondary"} className="text-[10px]">
+                              {fe.failureSeverity === "critical" ? "Critical" : "Warning"}
+                            </Badge>
+                            <Badge variant="destructive" className="text-[10px]">{fe.cfmsStatus}</Badge>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3 mb-4">
+                          <div className="bg-rose-50 rounded p-3">
+                            <p className="text-xs text-rose-600">Challan Amount</p>
+                            <p className="text-xl font-bold text-rose-800">{formatINR(fe.challanAmountInr)}</p>
+                          </div>
+                          <div className="bg-orange-50 rounded p-3">
+                            <p className="text-xs text-orange-600">Time Gap</p>
+                            <p className="text-xl font-bold text-orange-800">{fe.timeGapDays} days</p>
+                          </div>
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-600">Registration</p>
+                            <p className="text-lg font-bold text-slate-800">{fe.registrationCompleted ? "Completed" : "Pending"}</p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-500">Failed Challan ID</p>
+                            <p className="text-sm font-medium font-mono">{fe.failedChallanId}</p>
+                          </div>
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-500">CFMS Status</p>
+                            <p className="text-sm font-medium text-red-700">{fe.cfmsStatus}</p>
+                          </div>
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-500">Rejection Date</p>
+                            <p className="text-sm font-medium">{fe.cfmsRejectionDate}</p>
+                          </div>
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-500">Registration Date</p>
+                            <p className="text-sm font-medium">{fe.registrationDate}</p>
+                          </div>
+                          <div className="bg-slate-50 rounded p-3 col-span-2">
+                            <p className="text-xs text-slate-500">Failure Reason</p>
+                            <p className="text-sm text-slate-700">{fe.failureReason}</p>
+                          </div>
+                          <div className="bg-slate-50 rounded p-3 col-span-2">
+                            <p className="text-xs text-slate-500">Registration Document ID</p>
+                            <p className="text-sm font-medium font-mono">{fe.registrationDocumentId}</p>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })()}
+
+                  {/* MIS Remittance Mismatch Detection */}
+                  {caseItem.cashReconciliationEvidence?.cashReconSubtype === "misRemittance" && caseItem.cashReconciliationEvidence.misRemittanceEvidence && (() => {
+                    const me = caseItem.cashReconciliationEvidence.misRemittanceEvidence;
+                    return (
+                      <Card className="p-4 border-indigo-200">
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide">MIS Remittance Mismatch</h5>
+                          <div className="flex items-center gap-2">
+                            <Badge variant={me.remittanceSeverity === "critical" ? "destructive" : "secondary"} className="text-[10px]">
+                              {me.remittanceSeverity === "critical" ? "Critical" : "Warning"}
+                            </Badge>
+                            {me.delayDays > 1 && (
+                              <Badge variant="destructive" className="text-[10px] bg-orange-100 text-orange-700 border-orange-300">{me.delayDays - 1}d Late</Badge>
+                            )}
+                            {me.receiptCountMismatch && (
+                              <Badge variant="destructive" className="text-[10px] bg-red-100 text-red-700 border-red-300">Receipt Mismatch</Badge>
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-4 gap-3 mb-4">
+                          <div className="bg-blue-50 rounded p-3">
+                            <p className="text-xs text-blue-600">Day-1 Collection</p>
+                            <p className="text-lg font-bold text-blue-800">{formatINR(me.collectionAmountInr)}</p>
+                            <p className="text-[10px] text-blue-500">{me.receiptCount} receipts</p>
+                          </div>
+                          <div className="bg-indigo-50 rounded p-3">
+                            <p className="text-xs text-indigo-600">MIS Reported</p>
+                            <p className="text-lg font-bold text-indigo-800">{formatINR(me.misReportedAmountInr)}</p>
+                            <p className="text-[10px] text-indigo-500">{me.misReportedReceiptCount} receipts</p>
+                          </div>
+                          <div className="bg-red-50 rounded p-3">
+                            <p className="text-xs text-red-600">Variance</p>
+                            <p className="text-lg font-bold text-red-700">{formatINR(me.varianceInr)}</p>
+                            <p className="text-[10px] text-red-500">{me.variancePercent.toFixed(1)}%</p>
+                          </div>
+                          <div className="bg-amber-50 rounded p-3">
+                            <p className="text-xs text-amber-600">Submission Delay</p>
+                            <p className="text-lg font-bold text-amber-800">{me.delayDays} day{me.delayDays !== 1 ? "s" : ""}</p>
+                            <p className="text-[10px] text-amber-500">{me.delayDays <= 1 ? "On time" : `${me.delayDays - 1}d late`}</p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-500">Collection Date</p>
+                            <p className="text-sm font-medium">{me.collectionDate}</p>
+                          </div>
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-500">MIS Submission Date</p>
+                            <p className="text-sm font-medium">{me.misSubmissionDate}</p>
+                            <p className="text-[10px] text-slate-400">Expected: {me.expectedSubmissionDate}</p>
+                          </div>
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-500">MIS Report ID</p>
+                            <p className="text-sm font-medium font-mono">{me.misReportId}</p>
+                          </div>
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-500">Receipt Count Check</p>
+                            <p className={`text-sm font-medium ${me.receiptCountMismatch ? "text-red-700" : "text-emerald-700"}`}>
+                              {me.receiptCountMismatch ? `Mismatch: ${me.receiptCount} vs ${me.misReportedReceiptCount}` : `Match: ${me.receiptCount} receipts`}
+                            </p>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })()}
+
                   {/* Triggered Rules */}
                   <Card className="p-4">
                     <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Triggered Rules</h5>

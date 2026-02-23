@@ -97,11 +97,11 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     }
   }, [pathname]);
 
-  // Handle workspace default route - redirect to my-workspace
+  // Handle workspace default route - redirect to workspace-2
   useEffect(() => {
     if (pathname === "/home/workspace") {
       startTransition(() => {
-        router.push("/home/workspace/my-workspace");
+        router.push("/home/workspace/workspace-2");
       });
     }
   }, [pathname, router]);

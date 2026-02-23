@@ -4183,5 +4183,1688 @@
         "detail": "Classification mismatch confirmed via Webland — exemption invalid, recovery of ₹2.85L initiated"
       }
     ]
+  },
+  {
+    "id": "35",
+    "caseId": "IGRS-2024-0035",
+    "documentKey": {
+      "srCode": "1010",
+      "bookNo": "1",
+      "doctNo": "5035",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-16T09:30:00Z",
+    "updatedAt": "2025-01-18T14:00:00Z",
+    "riskLevel": "Medium",
+    "riskScore": 65,
+    "confidence": 78,
+    "status": "New",
+    "assignedTo": null,
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 175000,
+    "payableTotalInr": 175000,
+    "paidTotalInr": 0,
+    "gapInr": 175000,
+    "office": {
+      "srCode": "SR10",
+      "srName": "Anantapur SRO",
+      "district": "Anantapur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "02",
+      "tranDesc": "Challan Reuse Detection",
+      "abDesc": "ChallanReuse"
+    },
+    "dates": {
+      "pDate": "2025-01-15",
+      "eDate": "2025-01-15",
+      "rDate": "2025-01-15"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
+    "partiesSummary": [],
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CR-005",
+          "ruleName": "Challan Reuse Across Documents",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 175000,
+          "explanation": "Challan CH-1010-20250115-003 used for 2 separate Sale Deeds — same HOA, ₹1.75L total involved",
+          "confidence": 78
+        }
+      ],
+      "receiptCount": 2,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 2,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 65,
+      "challanId": "CH-1010-20250115-003",
+      "challanStatus": "Reused — Duplicate Application",
+      "originalDocumentId": "1010/1/5035/2025",
+      "challanTimeline": [
+        {
+          "date": "2025-01-15T09:00:00Z",
+          "event": "Challan generated",
+          "documentId": "CH-1010-20250115-003",
+          "amount": 95000,
+          "status": "normal",
+          "detail": "Original challan for Sale Deed DOC-2025-00412"
+        },
+        {
+          "date": "2025-01-15T11:30:00Z",
+          "event": "First registration",
+          "documentId": "DOC-2025-00412",
+          "amount": 95000,
+          "status": "normal",
+          "detail": "Sale Deed registered using challan CH-1010-20250115-003"
+        },
+        {
+          "date": "2025-01-15T14:45:00Z",
+          "event": "Challan reused",
+          "documentId": "DOC-2025-00418",
+          "amount": 80000,
+          "status": "warning",
+          "detail": "Same challan applied to second Sale Deed — duplicate use detected"
+        }
+      ],
+      "cfmsComparison": [
+        {
+          "field": "Challan ID",
+          "challanValue": "CH-1010-20250115-003",
+          "cfmsValue": "CH-1010-20250115-003",
+          "mismatch": false
+        },
+        {
+          "field": "Challan Amount",
+          "challanValue": "₹95,000",
+          "cfmsValue": "₹95,000",
+          "mismatch": false
+        },
+        {
+          "field": "Documents Linked",
+          "challanValue": "2",
+          "cfmsValue": "1",
+          "mismatch": true
+        },
+        {
+          "field": "Total Claimed",
+          "challanValue": "₹1,75,000",
+          "cfmsValue": "₹95,000",
+          "mismatch": true
+        }
+      ],
+      "dailyCashSummary": {
+        "officeDate": "2025-01-15",
+        "cashCollected": 580000,
+        "misRemittance": 580000,
+        "variance": 0
+      },
+      "officerName": "Rajesh Kumar Patel",
+      "officerId": "OFF-001",
+      "cashReconSubtype": "challanReuse",
+      "challanReuseEvidence": {
+        "reusedChallanId": "CH-1010-20250115-003",
+        "originalChallanAmountInr": 95000,
+        "totalAmountInvolvedInr": 175000,
+        "reuseCount": 2,
+        "reuseSeverity": "warning",
+        "crossHOA": false,
+        "linkedDocuments": [
+          {
+            "documentId": "DOC-2025-00412",
+            "documentKey": "1010/1/5035/2025",
+            "registrationDate": "2025-01-15",
+            "hoaCode": "0030-01-101",
+            "hoaDescription": "Stamp Duty — Sale Deed",
+            "amountInr": 95000,
+            "sroCode": "SR10",
+            "officeName": "Anantapur SRO"
+          },
+          {
+            "documentId": "DOC-2025-00418",
+            "documentKey": "1010/1/5041/2025",
+            "registrationDate": "2025-01-15",
+            "hoaCode": "0030-01-101",
+            "hoaDescription": "Stamp Duty — Sale Deed",
+            "amountInr": 80000,
+            "sroCode": "SR10",
+            "officeName": "Anantapur SRO"
+          }
+        ]
+      }
+    },
+    "notes": [],
+    "activityLog": [
+      {
+        "id": "log-35a",
+        "ts": "2025-01-16T09:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-005: Challan CH-1010-20250115-003 reused across 2 documents"
+      }
+    ]
+  },
+  {
+    "id": "36",
+    "caseId": "IGRS-2024-0036",
+    "documentKey": {
+      "srCode": "608",
+      "bookNo": "1",
+      "doctNo": "5036",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-12T10:00:00Z",
+    "updatedAt": "2025-01-15T16:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 88,
+    "confidence": 91,
+    "status": "In Review",
+    "assignedTo": "VR",
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 425000,
+    "payableTotalInr": 425000,
+    "paidTotalInr": 0,
+    "gapInr": 425000,
+    "office": {
+      "srCode": "SR06",
+      "srName": "East Godavari SRO",
+      "district": "East Godavari",
+      "zone": "East"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "02",
+      "tranDesc": "Challan Reuse Detection",
+      "abDesc": "ChallanReuse"
+    },
+    "dates": {
+      "pDate": "2025-01-10",
+      "eDate": "2025-01-10",
+      "rDate": "2025-01-10"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
+    "partiesSummary": [],
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CR-005",
+          "ruleName": "Challan Reuse Across Documents",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 425000,
+          "explanation": "Challan CH-608-20250110-007 reused across 3 documents under different HOAs — cross-HOA critical reuse, ₹4.25L total",
+          "confidence": 91
+        }
+      ],
+      "receiptCount": 3,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 5,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 88,
+      "challanId": "CH-608-20250110-007",
+      "challanStatus": "Reused — Cross-HOA Critical",
+      "originalDocumentId": "608/1/5036/2025",
+      "challanTimeline": [
+        {
+          "date": "2025-01-10T08:30:00Z",
+          "event": "Challan generated",
+          "documentId": "CH-608-20250110-007",
+          "amount": 180000,
+          "status": "normal",
+          "detail": "Original challan for Sale Deed DOC-2025-00289"
+        },
+        {
+          "date": "2025-01-10T10:00:00Z",
+          "event": "First registration",
+          "documentId": "DOC-2025-00289",
+          "amount": 180000,
+          "status": "normal",
+          "detail": "Sale Deed registered — HOA 0030-01-101 (Stamp Duty)"
+        },
+        {
+          "date": "2025-01-10T13:15:00Z",
+          "event": "Challan reused (2nd)",
+          "documentId": "DOC-2025-00295",
+          "amount": 135000,
+          "status": "warning",
+          "detail": "Gift Deed registered under different HOA 0030-02-201 (Transfer Duty)"
+        },
+        {
+          "date": "2025-01-10T16:00:00Z",
+          "event": "Challan reused (3rd)",
+          "documentId": "DOC-2025-00301",
+          "amount": 110000,
+          "status": "critical",
+          "detail": "Mortgage Deed under HOA 0030-03-301 (Registration Fee) — 3rd reuse, cross-HOA"
+        }
+      ],
+      "cfmsComparison": [
+        {
+          "field": "Challan ID",
+          "challanValue": "CH-608-20250110-007",
+          "cfmsValue": "CH-608-20250110-007",
+          "mismatch": false
+        },
+        {
+          "field": "Challan Amount",
+          "challanValue": "₹1,80,000",
+          "cfmsValue": "₹1,80,000",
+          "mismatch": false
+        },
+        {
+          "field": "Documents Linked",
+          "challanValue": "3",
+          "cfmsValue": "1",
+          "mismatch": true
+        },
+        {
+          "field": "Total Claimed",
+          "challanValue": "₹4,25,000",
+          "cfmsValue": "₹1,80,000",
+          "mismatch": true
+        },
+        {
+          "field": "HOA Codes Used",
+          "challanValue": "3 different HOAs",
+          "cfmsValue": "1 HOA",
+          "mismatch": true
+        }
+      ],
+      "dailyCashSummary": {
+        "officeDate": "2025-01-10",
+        "cashCollected": 920000,
+        "misRemittance": 920000,
+        "variance": 0
+      },
+      "officerName": "Venkatesh Reddy Myneni",
+      "officerId": "OFF-002",
+      "cashReconSubtype": "challanReuse",
+      "challanReuseEvidence": {
+        "reusedChallanId": "CH-608-20250110-007",
+        "originalChallanAmountInr": 180000,
+        "totalAmountInvolvedInr": 425000,
+        "reuseCount": 3,
+        "reuseSeverity": "critical",
+        "crossHOA": true,
+        "linkedDocuments": [
+          {
+            "documentId": "DOC-2025-00289",
+            "documentKey": "608/1/5036/2025",
+            "registrationDate": "2025-01-10",
+            "hoaCode": "0030-01-101",
+            "hoaDescription": "Stamp Duty — Sale Deed",
+            "amountInr": 180000,
+            "sroCode": "SR06",
+            "officeName": "East Godavari SRO"
+          },
+          {
+            "documentId": "DOC-2025-00295",
+            "documentKey": "608/1/5042/2025",
+            "registrationDate": "2025-01-10",
+            "hoaCode": "0030-02-201",
+            "hoaDescription": "Transfer Duty — Gift Deed",
+            "amountInr": 135000,
+            "sroCode": "SR06",
+            "officeName": "East Godavari SRO"
+          },
+          {
+            "documentId": "DOC-2025-00301",
+            "documentKey": "608/1/5048/2025",
+            "registrationDate": "2025-01-10",
+            "hoaCode": "0030-03-301",
+            "hoaDescription": "Registration Fee — Mortgage Deed",
+            "amountInr": 110000,
+            "sroCode": "SR06",
+            "officeName": "East Godavari SRO"
+          }
+        ]
+      }
+    },
+    "notes": [
+      {
+        "id": "note-36a",
+        "author": "System",
+        "createdAt": "2025-01-12T10:00:00Z",
+        "note": "Critical: Challan CH-608-20250110-007 reused across 3 documents under 3 different HOAs. Original amount ₹1.80L but total of ₹4.25L claimed. Cross-HOA reuse indicates deliberate manipulation."
+      }
+    ],
+    "activityLog": [
+      {
+        "id": "log-36a",
+        "ts": "2025-01-12T10:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-005: Challan CH-608-20250110-007 reused across 3 documents, cross-HOA"
+      },
+      {
+        "id": "log-36b",
+        "ts": "2025-01-13T09:00:00Z",
+        "actor": "VR",
+        "action": "Status changed to In Review",
+        "detail": "Investigating cross-HOA challan reuse — escalated to district audit"
+      }
+    ]
+  },
+  {
+    "id": "37",
+    "caseId": "IGRS-2024-0037",
+    "documentKey": {
+      "srCode": "209",
+      "bookNo": "1",
+      "doctNo": "5037",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-17T08:00:00Z",
+    "updatedAt": "2025-01-18T10:00:00Z",
+    "riskLevel": "Medium",
+    "riskScore": 60,
+    "confidence": 75,
+    "status": "New",
+    "assignedTo": null,
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 85000,
+    "payableTotalInr": 85000,
+    "paidTotalInr": 0,
+    "gapInr": 85000,
+    "office": {
+      "srCode": "SR02",
+      "srName": "Guntur Main",
+      "district": "Guntur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "02",
+      "tranDesc": "Challan Reuse Detection",
+      "abDesc": "ChallanReuse"
+    },
+    "dates": {
+      "pDate": "2025-01-16",
+      "eDate": "2025-01-16",
+      "rDate": "2025-01-16"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
+    "partiesSummary": [],
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CR-005",
+          "ruleName": "Challan Reuse Across Documents",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 85000,
+          "explanation": "Challan CH-209-20250116-011 used for 2 Sale Deeds — same HOA, ₹85K total involved",
+          "confidence": 75
+        }
+      ],
+      "receiptCount": 2,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 1,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 60,
+      "challanId": "CH-209-20250116-011",
+      "challanStatus": "Reused — Duplicate Application",
+      "originalDocumentId": "209/1/5037/2025",
+      "challanTimeline": [
+        {
+          "date": "2025-01-16T09:15:00Z",
+          "event": "Challan generated",
+          "documentId": "CH-209-20250116-011",
+          "amount": 48000,
+          "status": "normal",
+          "detail": "Original challan for Sale Deed DOC-2025-00456"
+        },
+        {
+          "date": "2025-01-16T11:00:00Z",
+          "event": "First registration",
+          "documentId": "DOC-2025-00456",
+          "amount": 48000,
+          "status": "normal",
+          "detail": "Sale Deed registered using challan CH-209-20250116-011"
+        },
+        {
+          "date": "2025-01-16T15:30:00Z",
+          "event": "Challan reused",
+          "documentId": "DOC-2025-00461",
+          "amount": 37000,
+          "status": "warning",
+          "detail": "Same challan applied to second Sale Deed — duplicate use detected"
+        }
+      ],
+      "cfmsComparison": [
+        {
+          "field": "Challan ID",
+          "challanValue": "CH-209-20250116-011",
+          "cfmsValue": "CH-209-20250116-011",
+          "mismatch": false
+        },
+        {
+          "field": "Challan Amount",
+          "challanValue": "₹48,000",
+          "cfmsValue": "₹48,000",
+          "mismatch": false
+        },
+        {
+          "field": "Documents Linked",
+          "challanValue": "2",
+          "cfmsValue": "1",
+          "mismatch": true
+        },
+        {
+          "field": "Total Claimed",
+          "challanValue": "₹85,000",
+          "cfmsValue": "₹48,000",
+          "mismatch": true
+        }
+      ],
+      "dailyCashSummary": {
+        "officeDate": "2025-01-16",
+        "cashCollected": 410000,
+        "misRemittance": 410000,
+        "variance": 0
+      },
+      "officerName": "Sita Devi Kommareddy",
+      "officerId": "OFF-003",
+      "cashReconSubtype": "challanReuse",
+      "challanReuseEvidence": {
+        "reusedChallanId": "CH-209-20250116-011",
+        "originalChallanAmountInr": 48000,
+        "totalAmountInvolvedInr": 85000,
+        "reuseCount": 2,
+        "reuseSeverity": "warning",
+        "crossHOA": false,
+        "linkedDocuments": [
+          {
+            "documentId": "DOC-2025-00456",
+            "documentKey": "209/1/5037/2025",
+            "registrationDate": "2025-01-16",
+            "hoaCode": "0030-01-101",
+            "hoaDescription": "Stamp Duty — Sale Deed",
+            "amountInr": 48000,
+            "sroCode": "SR02",
+            "officeName": "Guntur Main"
+          },
+          {
+            "documentId": "DOC-2025-00461",
+            "documentKey": "209/1/5043/2025",
+            "registrationDate": "2025-01-16",
+            "hoaCode": "0030-01-101",
+            "hoaDescription": "Stamp Duty — Sale Deed",
+            "amountInr": 37000,
+            "sroCode": "SR02",
+            "officeName": "Guntur Main"
+          }
+        ]
+      }
+    },
+    "notes": [],
+    "activityLog": [
+      {
+        "id": "log-37a",
+        "ts": "2025-01-17T08:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-005: Challan CH-209-20250116-011 reused across 2 documents"
+      }
+    ]
+  },
+  {
+    "id": "38",
+    "caseId": "IGRS-2024-0038",
+    "documentKey": {
+      "srCode": "1010",
+      "bookNo": "1",
+      "doctNo": "5038",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-14T11:00:00Z",
+    "updatedAt": "2025-01-17T16:30:00Z",
+    "riskLevel": "High",
+    "riskScore": 92,
+    "confidence": 95,
+    "status": "In Review",
+    "assignedTo": "RK",
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 320000,
+    "payableTotalInr": 320000,
+    "paidTotalInr": 0,
+    "gapInr": 320000,
+    "office": {
+      "srCode": "SR10",
+      "srName": "Anantapur SRO",
+      "district": "Anantapur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "03",
+      "tranDesc": "Failed Challan Detection",
+      "abDesc": "FailedChallan"
+    },
+    "dates": {
+      "pDate": "2025-01-13",
+      "eDate": "2025-01-13",
+      "rDate": "2025-01-13"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
+    "partiesSummary": [],
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CR-006",
+          "ruleName": "Failed/Rejected Challan Used for Registration",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 320000,
+          "explanation": "Challan CH-1010-20250108-012 rejected by Treasury on Jan 8, but registration completed on Jan 13 — ₹3.20L at risk",
+          "confidence": 95
+        }
+      ],
+      "receiptCount": 1,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 4,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 92,
+      "challanId": "CH-1010-20250108-012",
+      "challanStatus": "Rejected by Treasury — Used for Registration",
+      "originalDocumentId": "1010/1/5038/2025",
+      "challanTimeline": [
+        {
+          "date": "2025-01-08T09:00:00Z",
+          "event": "Challan generated",
+          "documentId": "CH-1010-20250108-012",
+          "amount": 320000,
+          "status": "normal",
+          "detail": "Challan created for Sale Deed registration"
+        },
+        {
+          "date": "2025-01-08T14:00:00Z",
+          "event": "Treasury rejection",
+          "documentId": null,
+          "amount": 320000,
+          "status": "critical",
+          "detail": "CFMS returned rejection — insufficient HOA budget allocation"
+        },
+        {
+          "date": "2025-01-13T10:30:00Z",
+          "event": "Registration completed",
+          "documentId": "DOC-2025-00378",
+          "amount": 320000,
+          "status": "critical",
+          "detail": "Registration proceeded using rejected challan — 5-day gap after rejection"
+        }
+      ],
+      "cfmsComparison": [
+        {
+          "field": "Challan ID",
+          "challanValue": "CH-1010-20250108-012",
+          "cfmsValue": "CH-1010-20250108-012",
+          "mismatch": false
+        },
+        {
+          "field": "Challan Amount",
+          "challanValue": "₹3,20,000",
+          "cfmsValue": "₹3,20,000",
+          "mismatch": false
+        },
+        {
+          "field": "CFMS Status",
+          "challanValue": "Active",
+          "cfmsValue": "Rejected by Treasury",
+          "mismatch": true
+        },
+        {
+          "field": "Rejection Date",
+          "challanValue": "—",
+          "cfmsValue": "08-Jan-2025",
+          "mismatch": true
+        },
+        {
+          "field": "Registration Date",
+          "challanValue": "13-Jan-2025",
+          "cfmsValue": "—",
+          "mismatch": true
+        }
+      ],
+      "dailyCashSummary": {
+        "officeDate": "2025-01-13",
+        "cashCollected": 680000,
+        "misRemittance": 680000,
+        "variance": 0
+      },
+      "officerName": "Rajesh Kumar Patel",
+      "officerId": "OFF-001",
+      "cashReconSubtype": "failedChallan",
+      "failedChallanEvidence": {
+        "failedChallanId": "CH-1010-20250108-012",
+        "cfmsStatus": "Rejected by Treasury",
+        "failureReason": "Insufficient HOA budget allocation — Treasury returned challan for resubmission under correct HOA head",
+        "cfmsRejectionDate": "2025-01-08",
+        "registrationDate": "2025-01-13",
+        "timeGapDays": 5,
+        "challanAmountInr": 320000,
+        "registrationDocumentId": "DOC-2025-00378",
+        "registrationCompleted": true,
+        "failureSeverity": "critical"
+      }
+    },
+    "notes": [
+      {
+        "id": "note-38a",
+        "author": "System",
+        "createdAt": "2025-01-14T11:00:00Z",
+        "note": "Critical: Challan CH-1010-20250108-012 was rejected by Treasury on Jan 8 due to insufficient HOA budget. Despite rejection, registration was completed on Jan 13 using the same challan — ₹3.20L revenue at risk."
+      }
+    ],
+    "activityLog": [
+      {
+        "id": "log-38a",
+        "ts": "2025-01-14T11:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-006: Rejected challan CH-1010-20250108-012 used for registration"
+      },
+      {
+        "id": "log-38b",
+        "ts": "2025-01-15T09:00:00Z",
+        "actor": "RK",
+        "action": "Status changed to In Review",
+        "detail": "Investigating rejected challan usage — confirming with Treasury records"
+      }
+    ]
+  },
+  {
+    "id": "39",
+    "caseId": "IGRS-2024-0039",
+    "documentKey": {
+      "srCode": "818",
+      "bookNo": "1",
+      "doctNo": "5039",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-09T10:00:00Z",
+    "updatedAt": "2025-01-11T12:00:00Z",
+    "riskLevel": "Medium",
+    "riskScore": 58,
+    "confidence": 72,
+    "status": "New",
+    "assignedTo": null,
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 48000,
+    "payableTotalInr": 48000,
+    "paidTotalInr": 0,
+    "gapInr": 48000,
+    "office": {
+      "srCode": "SR08",
+      "srName": "Prakasam SRO",
+      "district": "Prakasam",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "03",
+      "tranDesc": "Failed Challan Detection",
+      "abDesc": "FailedChallan"
+    },
+    "dates": {
+      "pDate": "2025-01-07",
+      "eDate": "2025-01-07",
+      "rDate": "2025-01-07"
+    },
+    "propertySummary": {
+      "isUrban": false,
+      "landNature": "Agricultural",
+      "extent": "1.2 acres",
+      "unit": "acres"
+    },
+    "partiesSummary": [],
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CR-006",
+          "ruleName": "Failed/Rejected Challan Used for Registration",
+          "category": "StampIntelligence",
+          "severity": "Medium",
+          "impactInr": 48000,
+          "explanation": "Challan CH-818-20241220-005 expired on Dec 20, but registration completed on Jan 7 — ₹48K, 18-day gap",
+          "confidence": 72
+        }
+      ],
+      "receiptCount": 1,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 2,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 58,
+      "challanId": "CH-818-20241220-005",
+      "challanStatus": "Expired — Used for Registration",
+      "originalDocumentId": "818/1/5039/2025",
+      "challanTimeline": [
+        {
+          "date": "2024-12-20T09:00:00Z",
+          "event": "Challan generated",
+          "documentId": "CH-818-20241220-005",
+          "amount": 48000,
+          "status": "normal",
+          "detail": "Challan created for Sale Deed registration"
+        },
+        {
+          "date": "2024-12-20T18:00:00Z",
+          "event": "Challan expired",
+          "documentId": null,
+          "amount": 48000,
+          "status": "warning",
+          "detail": "Challan validity period ended — not deposited within stipulated time"
+        },
+        {
+          "date": "2025-01-07T11:00:00Z",
+          "event": "Registration completed",
+          "documentId": "DOC-2025-00198",
+          "amount": 48000,
+          "status": "warning",
+          "detail": "Registration proceeded using expired challan — 18-day gap after expiry"
+        }
+      ],
+      "cfmsComparison": [
+        {
+          "field": "Challan ID",
+          "challanValue": "CH-818-20241220-005",
+          "cfmsValue": "CH-818-20241220-005",
+          "mismatch": false
+        },
+        {
+          "field": "Challan Amount",
+          "challanValue": "₹48,000",
+          "cfmsValue": "₹48,000",
+          "mismatch": false
+        },
+        {
+          "field": "CFMS Status",
+          "challanValue": "Active",
+          "cfmsValue": "Expired",
+          "mismatch": true
+        },
+        {
+          "field": "Expiry Date",
+          "challanValue": "—",
+          "cfmsValue": "20-Dec-2024",
+          "mismatch": true
+        },
+        {
+          "field": "Registration Date",
+          "challanValue": "07-Jan-2025",
+          "cfmsValue": "—",
+          "mismatch": true
+        }
+      ],
+      "dailyCashSummary": {
+        "officeDate": "2025-01-07",
+        "cashCollected": 290000,
+        "misRemittance": 290000,
+        "variance": 0
+      },
+      "officerName": "Kiran Kumar Alugonda",
+      "officerId": "OFF-008",
+      "cashReconSubtype": "failedChallan",
+      "failedChallanEvidence": {
+        "failedChallanId": "CH-818-20241220-005",
+        "cfmsStatus": "Expired",
+        "failureReason": "Challan validity period of 7 days expired — challan was not deposited to Treasury within the stipulated timeframe",
+        "cfmsRejectionDate": "2024-12-20",
+        "registrationDate": "2025-01-07",
+        "timeGapDays": 18,
+        "challanAmountInr": 48000,
+        "registrationDocumentId": "DOC-2025-00198",
+        "registrationCompleted": true,
+        "failureSeverity": "warning"
+      }
+    },
+    "notes": [],
+    "activityLog": [
+      {
+        "id": "log-39a",
+        "ts": "2025-01-09T10:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-006: Expired challan CH-818-20241220-005 used for registration 18 days after expiry"
+      }
+    ]
+  },
+  {
+    "id": "40",
+    "caseId": "IGRS-2024-0040",
+    "documentKey": {
+      "srCode": "303",
+      "bookNo": "1",
+      "doctNo": "5040",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-20T09:00:00Z",
+    "updatedAt": "2025-01-22T15:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 89,
+    "confidence": 93,
+    "status": "In Review",
+    "assignedTo": "NR",
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 405000,
+    "payableTotalInr": 450000,
+    "paidTotalInr": 45000,
+    "gapInr": 405000,
+    "office": {
+      "srCode": "SR03",
+      "srName": "Chittoor SRO",
+      "district": "Chittoor",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "03",
+      "tranDesc": "Defaced Challan Detection",
+      "abDesc": "DefacedChallan"
+    },
+    "dates": {
+      "pDate": "2025-01-05",
+      "eDate": "2025-01-05",
+      "rDate": "2025-01-05"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
+    "partiesSummary": [],
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CR-007",
+          "ruleName": "Defaced Challan Cross-Verification with CFMS",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 405000,
+          "explanation": "Challan CH-SR03-20250105-009 shows amount overwriting — physical challan reads ₹4.50L but CFMS confirms original amount ₹45K. ₹4.05L discrepancy indicates intentional defacement.",
+          "confidence": 93
+        }
+      ],
+      "receiptCount": 1,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 2,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 89,
+      "challanId": "CH-SR03-20250105-009",
+      "challanStatus": "Defaced — Amount Overwritten",
+      "originalDocumentId": "303/1/5040/2025",
+      "challanTimeline": [
+        {
+          "date": "2025-01-05T09:30:00Z",
+          "event": "Challan generated",
+          "documentId": "CH-SR03-20250105-009",
+          "amount": 45000,
+          "status": "normal",
+          "detail": "Original challan generated for ₹45,000 — Sale Deed stamp duty"
+        },
+        {
+          "date": "2025-01-05T11:00:00Z",
+          "event": "Challan deposited to Treasury",
+          "documentId": "TD-CT-20250105-003",
+          "amount": 45000,
+          "status": "normal",
+          "detail": "Treasury deposit confirmed for ₹45,000"
+        },
+        {
+          "date": "2025-01-05T14:30:00Z",
+          "event": "Registration with defaced challan",
+          "documentId": "DOC-2025-00512",
+          "amount": 450000,
+          "status": "critical",
+          "detail": "Registration proceeded with challan showing ₹4,50,000 — amount overwritten from ₹45K to ₹4.5L"
+        },
+        {
+          "date": "2025-01-20T09:00:00Z",
+          "event": "CFMS cross-verification flagged",
+          "documentId": null,
+          "amount": 0,
+          "status": "critical",
+          "detail": "CFMS sync detected mismatch — original challan ₹45K vs presented amount ₹4.5L"
+        }
+      ],
+      "cfmsComparison": [
+        {
+          "field": "Challan ID",
+          "challanValue": "CH-SR03-20250105-009",
+          "cfmsValue": "CH-SR03-20250105-009",
+          "mismatch": false
+        },
+        {
+          "field": "Challan Amount (Physical)",
+          "challanValue": "₹4,50,000",
+          "cfmsValue": "₹45,000",
+          "mismatch": true
+        },
+        {
+          "field": "CFMS Status",
+          "challanValue": "Valid",
+          "cfmsValue": "Defaced — Amount Altered",
+          "mismatch": true
+        },
+        {
+          "field": "Serial Number",
+          "challanValue": "SR03-2025-009",
+          "cfmsValue": "SR03-2025-009",
+          "mismatch": false
+        },
+        {
+          "field": "Defacement Type",
+          "challanValue": "—",
+          "cfmsValue": "Amount overwriting detected",
+          "mismatch": true
+        }
+      ],
+      "dailyCashSummary": {
+        "officeDate": "2025-01-05",
+        "cashCollected": 720000,
+        "misRemittance": 720000,
+        "variance": 0
+      },
+      "officerName": "Narasimha Rao Gadde",
+      "officerId": "OFF-004",
+      "cashReconSubtype": "failedChallan",
+      "failedChallanEvidence": {
+        "failedChallanId": "CH-SR03-20250105-009",
+        "cfmsStatus": "Defaced",
+        "failureReason": "Physical challan shows amount overwriting — original ₹45,000 altered to ₹4,50,000 by adding a zero. CFMS-synced record confirms original amount as ₹45,000. Ink analysis indicates secondary handwriting on amount field.",
+        "cfmsRejectionDate": "2025-01-20",
+        "registrationDate": "2025-01-05",
+        "timeGapDays": 0,
+        "challanAmountInr": 450000,
+        "registrationDocumentId": "DOC-2025-00512",
+        "registrationCompleted": true,
+        "failureSeverity": "critical"
+      }
+    },
+    "notes": [
+      {
+        "id": "note-40a",
+        "author": "System",
+        "createdAt": "2025-01-20T09:00:00Z",
+        "note": "Critical: CFMS cross-verification detected defaced challan CH-SR03-20250105-009. Physical challan presented during registration shows ₹4,50,000 but CFMS treasury record confirms original deposit of only ₹45,000. Amount overwriting detected — the trailing zero appears to have been added post-issuance. Revenue at risk: ₹4,05,000."
+      }
+    ],
+    "activityLog": [
+      {
+        "id": "log-40a",
+        "ts": "2025-01-20T09:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-007: Defaced challan CH-SR03-20250105-009 — amount overwriting detected via CFMS cross-verification"
+      },
+      {
+        "id": "log-40b",
+        "ts": "2025-01-21T10:00:00Z",
+        "actor": "NR",
+        "action": "Status changed to In Review",
+        "detail": "Investigating defaced challan — requesting physical challan from SRO for forensic examination"
+      }
+    ]
+  },
+  {
+    "id": "41",
+    "caseId": "IGRS-2024-0041",
+    "documentKey": {
+      "srCode": "505",
+      "bookNo": "1",
+      "doctNo": "5041",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-22T08:30:00Z",
+    "updatedAt": "2025-01-23T11:00:00Z",
+    "riskLevel": "Medium",
+    "riskScore": 72,
+    "confidence": 80,
+    "status": "New",
+    "assignedTo": null,
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 125000,
+    "payableTotalInr": 185000,
+    "paidTotalInr": 60000,
+    "gapInr": 125000,
+    "office": {
+      "srCode": "SR05",
+      "srName": "Visakhapatnam SRO",
+      "district": "Visakhapatnam",
+      "zone": "East"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "03",
+      "tranDesc": "Defaced Challan Detection",
+      "abDesc": "DefacedChallan"
+    },
+    "dates": {
+      "pDate": "2025-01-18",
+      "eDate": "2025-01-18",
+      "rDate": "2025-01-18"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
+    "partiesSummary": [],
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CR-007",
+          "ruleName": "Defaced Challan Cross-Verification with CFMS",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 125000,
+          "explanation": "Challan CH-SR05-20250118-014 serial number altered — physical challan serial does not match CFMS record. Original challan for ₹60K re-presented as ₹1.85L after serial/amount erasure.",
+          "confidence": 80
+        }
+      ],
+      "receiptCount": 1,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 1,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 72,
+      "challanId": "CH-SR05-20250118-014",
+      "challanStatus": "Defaced — Serial & Amount Erasure",
+      "originalDocumentId": "505/1/5041/2025",
+      "challanTimeline": [
+        {
+          "date": "2025-01-18T09:00:00Z",
+          "event": "Original challan generated",
+          "documentId": "CH-SR05-20250118-014",
+          "amount": 60000,
+          "status": "normal",
+          "detail": "Challan issued for ₹60,000 — mortgage deed registration fee"
+        },
+        {
+          "date": "2025-01-18T13:00:00Z",
+          "event": "Registration with defaced challan",
+          "documentId": "DOC-2025-00589",
+          "amount": 185000,
+          "status": "critical",
+          "detail": "Challan presented with altered serial and amount — ₹60K changed to ₹1.85L with erasure marks"
+        },
+        {
+          "date": "2025-01-22T08:30:00Z",
+          "event": "CFMS cross-verification flagged",
+          "documentId": null,
+          "amount": 0,
+          "status": "warning",
+          "detail": "CFMS sync detected serial number and amount mismatch"
+        }
+      ],
+      "cfmsComparison": [
+        {
+          "field": "Challan ID",
+          "challanValue": "CH-SR05-20250118-014",
+          "cfmsValue": "CH-SR05-20250118-014",
+          "mismatch": false
+        },
+        {
+          "field": "Challan Amount (Physical)",
+          "challanValue": "₹1,85,000",
+          "cfmsValue": "₹60,000",
+          "mismatch": true
+        },
+        {
+          "field": "CFMS Status",
+          "challanValue": "Valid",
+          "cfmsValue": "Defaced — Erasure Detected",
+          "mismatch": true
+        },
+        {
+          "field": "Serial Number (Physical)",
+          "challanValue": "SR05-2025-014A",
+          "cfmsValue": "SR05-2025-014",
+          "mismatch": true
+        },
+        {
+          "field": "Defacement Type",
+          "challanValue": "—",
+          "cfmsValue": "Serial alteration + amount erasure",
+          "mismatch": true
+        }
+      ],
+      "dailyCashSummary": {
+        "officeDate": "2025-01-18",
+        "cashCollected": 490000,
+        "misRemittance": 490000,
+        "variance": 0
+      },
+      "officerName": "Priya Lakshmi Bandi",
+      "officerId": "OFF-005",
+      "cashReconSubtype": "failedChallan",
+      "failedChallanEvidence": {
+        "failedChallanId": "CH-SR05-20250118-014",
+        "cfmsStatus": "Defaced",
+        "failureReason": "Physical challan shows signs of erasure on both serial number and amount fields. Serial suffix 'A' appended to original serial. Amount field shows chemical erasure marks — original ₹60,000 altered to ₹1,85,000. CFMS record confirms original issuance for ₹60,000.",
+        "cfmsRejectionDate": "2025-01-22",
+        "registrationDate": "2025-01-18",
+        "timeGapDays": 0,
+        "challanAmountInr": 185000,
+        "registrationDocumentId": "DOC-2025-00589",
+        "registrationCompleted": true,
+        "failureSeverity": "warning"
+      }
+    },
+    "notes": [],
+    "activityLog": [
+      {
+        "id": "log-41a",
+        "ts": "2025-01-22T08:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-007: Defaced challan CH-SR05-20250118-014 — serial alteration and amount erasure detected via CFMS cross-verification"
+      }
+    ]
+  },
+  {
+    "id": "42",
+    "caseId": "IGRS-2024-0042",
+    "documentKey": {
+      "srCode": "303",
+      "bookNo": "1",
+      "doctNo": "5042",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-19T10:00:00Z",
+    "updatedAt": "2025-01-21T14:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 81,
+    "confidence": 88,
+    "status": "In Review",
+    "assignedTo": "NR",
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 90000,
+    "payableTotalInr": 680000,
+    "paidTotalInr": 590000,
+    "gapInr": 90000,
+    "office": {
+      "srCode": "SR03",
+      "srName": "Chittoor SRO",
+      "district": "Chittoor",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "04",
+      "tranDesc": "MIS Remittance Mismatch",
+      "abDesc": "MISRecon"
+    },
+    "dates": {
+      "pDate": "2025-01-17",
+      "eDate": "2025-01-17",
+      "rDate": "2025-01-17"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
+    "partiesSummary": [],
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CR-008",
+          "ruleName": "Next-Day MIS Remittance Mismatch",
+          "category": "StampIntelligence",
+          "severity": "High",
+          "impactInr": 90000,
+          "explanation": "SRO Chittoor: Day-1 collection ₹6.80L (32 receipts) vs Day-2 MIS report ₹5.90L (28 receipts) — ₹90K variance and 4 receipt shortfall",
+          "confidence": 88
+        }
+      ],
+      "receiptCount": 32,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 2,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 81,
+      "challanId": "MIS-SR03-20250118-RPT",
+      "challanStatus": "MIS Remittance Mismatch",
+      "originalDocumentId": "303/1/5042/2025",
+      "challanTimeline": [
+        {
+          "date": "2025-01-17T09:00:00Z",
+          "event": "Day-1: Cash collection started",
+          "documentId": null,
+          "amount": 680000,
+          "status": "normal",
+          "detail": "32 receipts collected at counter totalling ₹6,80,000"
+        },
+        {
+          "date": "2025-01-17T17:30:00Z",
+          "event": "Day-1: Day-end cash count",
+          "documentId": null,
+          "amount": 680000,
+          "status": "normal",
+          "detail": "Cash counted, sealed, and signed off — ₹6,80,000 against 32 receipts"
+        },
+        {
+          "date": "2025-01-18T10:00:00Z",
+          "event": "Day-2: MIS remittance submitted",
+          "documentId": "MIS-SR03-20250118-RPT",
+          "amount": 590000,
+          "status": "critical",
+          "detail": "MIS report filed with ₹5,90,000 against 28 receipts — ₹90K short, 4 receipts missing"
+        },
+        {
+          "date": "2025-01-19T10:00:00Z",
+          "event": "System flagged variance",
+          "documentId": null,
+          "amount": 0,
+          "status": "critical",
+          "detail": "Automated comparison detected 13.2% variance between collection and MIS remittance"
+        }
+      ],
+      "cfmsComparison": [
+        {
+          "field": "Collection Date",
+          "challanValue": "17-Jan-2025",
+          "cfmsValue": "17-Jan-2025",
+          "mismatch": false
+        },
+        {
+          "field": "MIS Submission Date",
+          "challanValue": "18-Jan-2025 (Expected)",
+          "cfmsValue": "18-Jan-2025 (Actual)",
+          "mismatch": false
+        },
+        {
+          "field": "Collection Amount",
+          "challanValue": "₹6,80,000",
+          "cfmsValue": "₹5,90,000",
+          "mismatch": true
+        },
+        {
+          "field": "Receipt Count",
+          "challanValue": "32",
+          "cfmsValue": "28",
+          "mismatch": true
+        },
+        {
+          "field": "Variance",
+          "challanValue": "—",
+          "cfmsValue": "₹90,000 (13.2%)",
+          "mismatch": true
+        }
+      ],
+      "dailyCashSummary": {
+        "officeDate": "2025-01-17",
+        "cashCollected": 680000,
+        "misRemittance": 590000,
+        "variance": 90000
+      },
+      "officerName": "Narasimha Rao Gadde",
+      "officerId": "OFF-004",
+      "cashReconSubtype": "misRemittance",
+      "misRemittanceEvidence": {
+        "collectionDate": "2025-01-17",
+        "misSubmissionDate": "2025-01-18",
+        "collectionAmountInr": 680000,
+        "misReportedAmountInr": 590000,
+        "varianceInr": 90000,
+        "variancePercent": 13.2,
+        "delayDays": 1,
+        "expectedSubmissionDate": "2025-01-18",
+        "misReportId": "MIS-SR03-20250118-RPT",
+        "receiptCount": 32,
+        "misReportedReceiptCount": 28,
+        "receiptCountMismatch": true,
+        "remittanceSeverity": "critical"
+      }
+    },
+    "notes": [
+      {
+        "id": "note-42a",
+        "author": "System",
+        "createdAt": "2025-01-19T10:00:00Z",
+        "note": "Day-1 collection of ₹6.80L (32 receipts) at Chittoor SRO does not match Day-2 MIS remittance report of ₹5.90L (28 receipts). Variance of ₹90,000 (13.2%) and 4 missing receipts. MIS submitted on time but with reduced amounts."
+      }
+    ],
+    "activityLog": [
+      {
+        "id": "log-42a",
+        "ts": "2025-01-19T10:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-008: MIS remittance mismatch at SR03 — ₹90K variance, 4 receipt shortfall"
+      },
+      {
+        "id": "log-42b",
+        "ts": "2025-01-20T09:30:00Z",
+        "actor": "NR",
+        "action": "Status changed to In Review",
+        "detail": "Investigating receipt count discrepancy — requesting day-end register from SRO"
+      }
+    ]
+  },
+  {
+    "id": "43",
+    "caseId": "IGRS-2024-0043",
+    "documentKey": {
+      "srCode": "608",
+      "bookNo": "1",
+      "doctNo": "5043",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-21T09:00:00Z",
+    "updatedAt": "2025-01-22T10:00:00Z",
+    "riskLevel": "Medium",
+    "riskScore": 64,
+    "confidence": 76,
+    "status": "New",
+    "assignedTo": null,
+    "leakageSignals": ["CashReconciliation"],
+    "impactAmountInr": 55000,
+    "payableTotalInr": 520000,
+    "paidTotalInr": 465000,
+    "gapInr": 55000,
+    "office": {
+      "srCode": "SR06",
+      "srName": "East Godavari SRO",
+      "district": "East Godavari",
+      "zone": "East"
+    },
+    "docType": {
+      "tranMajCode": "99",
+      "tranMinCode": "04",
+      "tranDesc": "MIS Remittance Mismatch",
+      "abDesc": "MISRecon"
+    },
+    "dates": {
+      "pDate": "2025-01-19",
+      "eDate": "2025-01-19",
+      "rDate": "2025-01-19"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "extent": "N/A",
+      "unit": "N/A"
+    },
+    "partiesSummary": [],
+    "payableBreakdown": {
+      "sdPayable": 0,
+      "tdPayable": 0,
+      "rfPayable": 0,
+      "dsdPayable": 0,
+      "otherFee": 0,
+      "finalTaxableValue": 0
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CR-008",
+          "ruleName": "Next-Day MIS Remittance Mismatch",
+          "category": "StampIntelligence",
+          "severity": "Medium",
+          "impactInr": 55000,
+          "explanation": "SRO East Godavari: Day-1 collection ₹5.20L (24 receipts) vs Day-2 MIS report ₹4.65L (24 receipts) — ₹55K variance, MIS submitted 2 days late",
+          "confidence": 76
+        }
+      ],
+      "receiptCount": 24,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 1,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "cashReconciliationEvidence": {
+      "cashRiskScore": 64,
+      "challanId": "MIS-SR06-20250121-RPT",
+      "challanStatus": "MIS Remittance Mismatch — Delayed",
+      "originalDocumentId": "608/1/5043/2025",
+      "challanTimeline": [
+        {
+          "date": "2025-01-19T09:00:00Z",
+          "event": "Day-1: Cash collection",
+          "documentId": null,
+          "amount": 520000,
+          "status": "normal",
+          "detail": "24 receipts collected at counter totalling ₹5,20,000"
+        },
+        {
+          "date": "2025-01-19T17:00:00Z",
+          "event": "Day-1: Day-end cash count",
+          "documentId": null,
+          "amount": 520000,
+          "status": "normal",
+          "detail": "Cash counted and sealed — ₹5,20,000"
+        },
+        {
+          "date": "2025-01-20T18:00:00Z",
+          "event": "Day-2: MIS submission deadline passed",
+          "documentId": null,
+          "amount": 0,
+          "status": "warning",
+          "detail": "MIS report not submitted by expected deadline (Day-2 end-of-day)"
+        },
+        {
+          "date": "2025-01-21T11:00:00Z",
+          "event": "Day-3: Late MIS remittance submitted",
+          "documentId": "MIS-SR06-20250121-RPT",
+          "amount": 465000,
+          "status": "warning",
+          "detail": "MIS report filed 1 day late with ₹4,65,000 against 24 receipts — ₹55K variance"
+        }
+      ],
+      "cfmsComparison": [
+        {
+          "field": "Collection Date",
+          "challanValue": "19-Jan-2025",
+          "cfmsValue": "19-Jan-2025",
+          "mismatch": false
+        },
+        {
+          "field": "MIS Submission Date",
+          "challanValue": "20-Jan-2025 (Expected)",
+          "cfmsValue": "21-Jan-2025 (Actual — 1 day late)",
+          "mismatch": true
+        },
+        {
+          "field": "Collection Amount",
+          "challanValue": "₹5,20,000",
+          "cfmsValue": "₹4,65,000",
+          "mismatch": true
+        },
+        {
+          "field": "Receipt Count",
+          "challanValue": "24",
+          "cfmsValue": "24",
+          "mismatch": false
+        },
+        {
+          "field": "Variance",
+          "challanValue": "—",
+          "cfmsValue": "₹55,000 (10.6%)",
+          "mismatch": true
+        },
+        {
+          "field": "Submission Delay",
+          "challanValue": "—",
+          "cfmsValue": "1 day late",
+          "mismatch": true
+        }
+      ],
+      "dailyCashSummary": {
+        "officeDate": "2025-01-19",
+        "cashCollected": 520000,
+        "misRemittance": 465000,
+        "variance": 55000
+      },
+      "officerName": "Bhavani Shankar Reddy",
+      "officerId": "OFF-011",
+      "cashReconSubtype": "misRemittance",
+      "misRemittanceEvidence": {
+        "collectionDate": "2025-01-19",
+        "misSubmissionDate": "2025-01-21",
+        "collectionAmountInr": 520000,
+        "misReportedAmountInr": 465000,
+        "varianceInr": 55000,
+        "variancePercent": 10.6,
+        "delayDays": 2,
+        "expectedSubmissionDate": "2025-01-20",
+        "misReportId": "MIS-SR06-20250121-RPT",
+        "receiptCount": 24,
+        "misReportedReceiptCount": 24,
+        "receiptCountMismatch": false,
+        "remittanceSeverity": "warning"
+      }
+    },
+    "notes": [],
+    "activityLog": [
+      {
+        "id": "log-43a",
+        "ts": "2025-01-21T09:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CR-008: MIS remittance mismatch at SR06 — ₹55K variance, 1-day late submission"
+      }
+    ]
   }
 ]

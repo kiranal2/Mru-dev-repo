@@ -25,6 +25,10 @@ import {
   Activity,
   AlertTriangle,
   RefreshCw,
+  Copy,
+  XCircle,
+  ShieldAlert,
+  FileSpreadsheet,
 } from "lucide-react";
 
 // ─── Tab Types ───────────────────────────────────────────────────────────────
@@ -293,6 +297,10 @@ interface OfficerAccountabilityData {
     trend: string;
     lastAuditDate: string;
     flagged: boolean;
+    challanReuseCount?: number;
+    failedChallanCount?: number;
+    defacedChallanCount?: number;
+    misRemittanceCount?: number;
   }>;
   sroAccountabilitySummary: Array<{
     sroCode: string;
@@ -1443,7 +1451,7 @@ function OfficerAccountabilityTab({ data }: { data: OfficerAccountabilityData })
   return (
     <div className="space-y-4">
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-3">
         <KPICard
           icon={<Users className="w-4 h-4 text-blue-600" />}
           label="Total Officers"
@@ -1485,6 +1493,34 @@ function OfficerAccountabilityTab({ data }: { data: OfficerAccountabilityData })
           value={summary.pendingReconciliations.toString()}
           sub="Awaiting reconciliation"
           accent="indigo"
+        />
+        <KPICard
+          icon={<Copy className="w-4 h-4 text-orange-600" />}
+          label="Challan Reuse"
+          value={officers.reduce((s, o) => s + (o.challanReuseCount ?? 0), 0).toString()}
+          sub="Reuse incidents"
+          accent="orange"
+        />
+        <KPICard
+          icon={<XCircle className="w-4 h-4 text-rose-600" />}
+          label="Failed Challans"
+          value={officers.reduce((s, o) => s + (o.failedChallanCount ?? 0), 0).toString()}
+          sub="Rejected/expired used"
+          accent="rose"
+        />
+        <KPICard
+          icon={<ShieldAlert className="w-4 h-4 text-red-600" />}
+          label="Defaced Challans"
+          value={officers.reduce((s, o) => s + (o.defacedChallanCount ?? 0), 0).toString()}
+          sub="CFMS cross-verified"
+          accent="red"
+        />
+        <KPICard
+          icon={<FileSpreadsheet className="w-4 h-4 text-cyan-600" />}
+          label="MIS Mismatch"
+          value={officers.reduce((s, o) => s + (o.misRemittanceCount ?? 0), 0).toString()}
+          sub="Next-day remittance gap"
+          accent="cyan"
         />
       </div>
 
@@ -1536,6 +1572,10 @@ function OfficerAccountabilityTab({ data }: { data: OfficerAccountabilityData })
                 <TableHead>Office</TableHead>
                 <TableHead className="text-right">Cash Risk</TableHead>
                 <TableHead className="text-right">Challan Anomalies</TableHead>
+                <TableHead className="text-right">Reuse</TableHead>
+                <TableHead className="text-right">Failed</TableHead>
+                <TableHead className="text-right">Defaced</TableHead>
+                <TableHead className="text-right">MIS</TableHead>
                 <TableHead className="text-right">Cash Variance</TableHead>
                 <TableHead className="text-right">Stamp Issues</TableHead>
                 <TableHead className="text-right">SLA Breaches</TableHead>
@@ -1557,6 +1597,18 @@ function OfficerAccountabilityTab({ data }: { data: OfficerAccountabilityData })
                   </TableCell>
                   <TableCell className="text-right">
                     <span className={officer.challanAnomalyCount >= 5 ? "text-red-600 font-semibold" : ""}>{officer.challanAnomalyCount}</span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <span className={(officer.challanReuseCount ?? 0) >= 2 ? "text-red-600 font-semibold" : ""}>{officer.challanReuseCount ?? 0}</span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <span className={(officer.failedChallanCount ?? 0) >= 1 ? "text-red-600 font-semibold" : ""}>{officer.failedChallanCount ?? 0}</span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <span className={(officer.defacedChallanCount ?? 0) >= 1 ? "text-red-600 font-semibold" : ""}>{officer.defacedChallanCount ?? 0}</span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <span className={(officer.misRemittanceCount ?? 0) >= 1 ? "text-red-600 font-semibold" : ""}>{officer.misRemittanceCount ?? 0}</span>
                   </TableCell>
                   <TableCell className="text-right">{formatINR(officer.cashVarianceInr, true)}</TableCell>
                   <TableCell className="text-right">{officer.stampDiscrepancyCount}</TableCell>

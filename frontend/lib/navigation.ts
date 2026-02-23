@@ -66,12 +66,6 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       id: "my-workspace",
       label: "My Workspace",
       icon: React.createElement(FolderKanban, { size: 18 }),
-      route: "/home/workspace/my-workspace",
-    },
-    {
-      id: "workspace-2",
-      label: "My Workspace 2",
-      icon: React.createElement(FolderKanban, { size: 18 }),
       route: "/home/workspace/workspace-2",
     },
     {

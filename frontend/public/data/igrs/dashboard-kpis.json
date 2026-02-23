@@ -11,7 +11,7 @@
     { "signal": "ChallanDelay", "high": 2, "medium": 4, "low": 2 },
     { "signal": "ExemptionRisk", "high": 3, "medium": 2, "low": 1 },
     { "signal": "DataIntegrity", "high": 1, "medium": 3, "low": 2 },
-    { "signal": "CashReconciliation", "high": 2, "medium": 2, "low": 0 },
+    { "signal": "CashReconciliation", "high": 6, "medium": 6, "low": 0 },
     { "signal": "StampInventory", "high": 2, "medium": 1, "low": 1 },
     { "signal": "ProhibitedLand", "high": 1, "medium": 1, "low": 0 }
   ],
@@ -174,7 +174,7 @@
   "estimatedMVLeakage": 2350000,
   "dailyCashRiskScore": 68,
   "exemptionAbuseFlags": 3,
-  "cashReconAlerts": 5,
+  "cashReconAlerts": 14,
   "exemptionAbuseByOffice": [
     { "srCode": "SR10", "srName": "Anantapur SRO", "district": "Anantapur", "totalExemptions": 84, "flaggedExemptions": 18, "abuseRate": 21.4, "abuseScore": 86, "repeatPartyCount": 7, "estimatedLeakage": 1450000, "topCategory": "Government Party Misuse" },
     { "srCode": "SR06", "srName": "East Godavari SRO", "district": "East Godavari", "totalExemptions": 72, "flaggedExemptions": 14, "abuseRate": 19.4, "abuseScore": 78, "repeatPartyCount": 5, "estimatedLeakage": 1180000, "topCategory": "Repeat Exemption" },

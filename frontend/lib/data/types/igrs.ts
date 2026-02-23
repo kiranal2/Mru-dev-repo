@@ -1336,6 +1336,60 @@ export interface CashReconciliationEvidenceExtended {
   };
   officerName: string;
   officerId: string;
+  cashReconSubtype?: "mismatch" | "challanReuse" | "failedChallan" | "misRemittance";
+  challanReuseEvidence?: ChallanReuseEvidence;
+  failedChallanEvidence?: FailedChallanEvidence;
+  misRemittanceEvidence?: MISRemittanceEvidence;
+}
+
+export interface ChallanReuseLinkedDocument {
+  documentId: string;
+  documentKey: string;
+  registrationDate: string;
+  hoaCode: string;
+  hoaDescription: string;
+  amountInr: number;
+  sroCode: string;
+  officeName: string;
+}
+
+export interface ChallanReuseEvidence {
+  reusedChallanId: string;
+  originalChallanAmountInr: number;
+  totalAmountInvolvedInr: number;
+  reuseCount: number;
+  reuseSeverity: "warning" | "critical";
+  crossHOA: boolean;
+  linkedDocuments: ChallanReuseLinkedDocument[];
+}
+
+export interface FailedChallanEvidence {
+  failedChallanId: string;
+  cfmsStatus: "Rejected by Treasury" | "Expired" | "Invalid HOA" | "Cancelled" | "Bounced" | "Defaced";
+  failureReason: string;
+  cfmsRejectionDate: string;
+  registrationDate: string;
+  timeGapDays: number;
+  challanAmountInr: number;
+  registrationDocumentId: string;
+  registrationCompleted: boolean;
+  failureSeverity: "warning" | "critical";
+}
+
+export interface MISRemittanceEvidence {
+  collectionDate: string;
+  misSubmissionDate: string;
+  collectionAmountInr: number;
+  misReportedAmountInr: number;
+  varianceInr: number;
+  variancePercent: number;
+  delayDays: number;
+  expectedSubmissionDate: string;
+  misReportId: string;
+  receiptCount: number;
+  misReportedReceiptCount: number;
+  receiptCountMismatch: boolean;
+  remittanceSeverity: "warning" | "critical";
 }
 
 /** Extended Stamp Inventory evidence for enriched case drawer. */
