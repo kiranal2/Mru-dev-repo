@@ -2,7 +2,6 @@
 
 import { CashAppSubFilterChips } from "@/components/cash-app/cash-app-sub-filter-chips";
 import { CashAppContextualSubFilters } from "@/components/cash-app/cash-app-contextual-sub-filters";
-import { CashAppFilterRail } from "@/components/cash-app/cash-app-filter-rail";
 import { CashAppEmptyState } from "@/components/cash-app/cash-app-empty-state";
 import { WhyIndicator } from "@/components/cash-app/why-indicator";
 import { PaymentQueuePagination } from "@/components/cash-app/payment-queue-pagination";
@@ -37,13 +36,12 @@ import {
   Clock,
   AlertCircle,
   Tag,
-  PanelLeftClose,
-  PanelLeft,
   Target,
   SlidersHorizontal,
   ArrowLeftRight,
   BookOpen,
   Search,
+  ListFilter,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -62,6 +60,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
@@ -70,6 +69,15 @@ import { usePaymentsQueue } from "./hooks/usePaymentsQueue";
 
 export default function PaymentsQueuePage() {
   const q = usePaymentsQueue();
+
+  const activeFilterCount = [
+    q.filters.bankAccount,
+    q.filters.dateRange,
+    q.filters.amountRange,
+    q.filters.method,
+    q.filters.remittanceSource,
+    q.filters.assignedTo,
+  ].filter((v) => v !== "all").length;
 
   const getStatusBadge = (status: Payment["status"]) => {
     const variants: Record<Payment["status"], any> = {
@@ -148,16 +156,6 @@ export default function PaymentsQueuePage() {
           <div className="mb-2 space-y-1.5">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => q.setShowFilterSidebar(!q.showFilterSidebar)}
-                  className="flex items-center justify-center h-7 w-7 rounded border border-slate-200 hover:bg-slate-100 transition-colors"
-                >
-                  {q.showFilterSidebar ? (
-                    <PanelLeftClose className="w-3.5 h-3.5 text-slate-500" />
-                  ) : (
-                    <PanelLeft className="w-3.5 h-3.5 text-slate-500" />
-                  )}
-                </button>
                 <div className="relative">
                   <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
                   <Input
@@ -167,6 +165,115 @@ export default function PaymentsQueuePage() {
                     className="pl-8 w-52 h-7 text-xs bg-white"
                   />
                 </div>
+
+                {/* More Filters popover */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className={`flex items-center gap-1.5 h-7 px-2.5 rounded border text-xs font-medium transition-colors ${activeFilterCount > 0 ? "border-blue-400 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:bg-slate-100"}`}>
+                      <ListFilter className="w-3.5 h-3.5" />
+                      Filters
+                      {activeFilterCount > 0 && (
+                        <span className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-bold">{activeFilterCount}</span>
+                      )}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="start" className="w-72 p-3">
+                    <div className="space-y-3">
+                      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Filters</div>
+                      <div className="space-y-2.5">
+                        <div>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Bank Account</label>
+                          <Select value={q.filters.bankAccount} onValueChange={(v) => q.setFilters({ ...q.filters, bankAccount: v })}>
+                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All Accounts" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Accounts</SelectItem>
+                              <SelectItem value="us-bank">US Bank - *****4521</SelectItem>
+                              <SelectItem value="chase">Chase - *****7892</SelectItem>
+                              <SelectItem value="wells">Wells Fargo - *****3456</SelectItem>
+                              <SelectItem value="boa">Bank of America - *****9012</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Date Range</label>
+                          <Select value={q.filters.dateRange} onValueChange={(v) => q.setFilters({ ...q.filters, dateRange: v })}>
+                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All Time" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Time</SelectItem>
+                              <SelectItem value="today">Today</SelectItem>
+                              <SelectItem value="week">This Week</SelectItem>
+                              <SelectItem value="month">This Month</SelectItem>
+                              <SelectItem value="quarter">This Quarter</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Amount Range</label>
+                          <Select value={q.filters.amountRange} onValueChange={(v) => q.setFilters({ ...q.filters, amountRange: v })}>
+                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All Amounts" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Amounts</SelectItem>
+                              <SelectItem value="0-10k">$0 - $10,000</SelectItem>
+                              <SelectItem value="10k-50k">$10,000 - $50,000</SelectItem>
+                              <SelectItem value="50k-100k">$50,000 - $100,000</SelectItem>
+                              <SelectItem value="100k+">$100,000+</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Payment Method</label>
+                          <Select value={q.filters.method} onValueChange={(v) => q.setFilters({ ...q.filters, method: v })}>
+                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All Methods" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Methods</SelectItem>
+                              <SelectItem value="ACH">ACH</SelectItem>
+                              <SelectItem value="Wire">Wire</SelectItem>
+                              <SelectItem value="Check">Check</SelectItem>
+                              <SelectItem value="Credit Card">Credit Card</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Remittance Source</label>
+                          <Select value={q.filters.remittanceSource} onValueChange={(v) => q.setFilters({ ...q.filters, remittanceSource: v })}>
+                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All Sources" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Sources</SelectItem>
+                              <SelectItem value="Email">Email</SelectItem>
+                              <SelectItem value="Bank Portal">Bank Portal</SelectItem>
+                              <SelectItem value="EDI">EDI</SelectItem>
+                              <SelectItem value="API">API</SelectItem>
+                              <SelectItem value="Manual Upload">Manual Upload</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Assigned To</label>
+                          <Select value={q.filters.assignedTo} onValueChange={(v) => q.setFilters({ ...q.filters, assignedTo: v })}>
+                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Anyone" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">Anyone</SelectItem>
+                              <SelectItem value="Sarah Chen">Sarah Chen</SelectItem>
+                              <SelectItem value="Michael Roberts">Michael Roberts</SelectItem>
+                              <SelectItem value="Jessica Martinez">Jessica Martinez</SelectItem>
+                              <SelectItem value="David Kim">David Kim</SelectItem>
+                              <SelectItem value="Emily Taylor">Emily Taylor</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      {activeFilterCount > 0 && (
+                        <button
+                          onClick={() => q.setFilters({ ...q.filters, bankAccount: "all", dateRange: "all", amountRange: "all", method: "all", remittanceSource: "all", assignedTo: "all" })}
+                          className="w-full text-center text-[11px] text-slate-500 hover:text-red-600 py-1 border-t border-slate-100 mt-1"
+                        >
+                          Clear all filters
+                        </button>
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+
                 <SegmentedControl
                   stats={q.stats}
                   activeSegment={q.activeSegment}
@@ -387,12 +494,7 @@ export default function PaymentsQueuePage() {
             </div>
           )}
 
-          <div className="flex gap-3">
-            {q.showFilterSidebar && (
-              <CashAppFilterRail filters={q.filters} onFilterChange={q.setFilters} />
-            )}
-
-            <div className="flex-1">
+          <div>
               {q.selectedIds.length > 0 && (
                 <Card className="mb-2 p-2.5">
                   <div className="flex items-center justify-between">
@@ -521,13 +623,13 @@ export default function PaymentsQueuePage() {
                                       />
                                     </div>
                                   </td>
-                                  <td className={`px-3 py-1.5 text-xs font-medium text-blue-600`}>
+                                  <td className={`px-3 py-1.5 text-xs font-medium text-blue-600 whitespace-nowrap`}>
                                     {payment.paymentNumber}
                                   </td>
-                                  <td className={`px-3 py-1.5 text-xs text-slate-700`}>
+                                  <td className={`px-3 py-1.5 text-xs text-slate-700 whitespace-nowrap`}>
                                     {payment.date}
                                   </td>
-                                  <td className={`px-3 py-1.5 text-xs font-semibold text-slate-900`}>
+                                  <td className={`px-3 py-1.5 text-xs font-semibold text-slate-900 whitespace-nowrap`}>
                                     {q.formatCurrency(payment.amount)}
                                   </td>
                                   <td className={`px-3 py-1.5 text-xs font-medium text-slate-800`}>
@@ -616,7 +718,6 @@ export default function PaymentsQueuePage() {
                   />
                 </Card>
               )}
-            </div>
           </div>
         </div>
       </div>

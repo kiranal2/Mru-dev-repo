@@ -18,7 +18,12 @@ import {
   Landmark,
   ChevronDown,
   ChevronUp,
+  PanelLeft,
+  PanelLeftClose,
+  Target,
+  BookOpen,
 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +39,8 @@ export default function CashApplicationLayout({ children }: { children: React.Re
   const searchParams = useSearchParams();
   const dataHealth = cashAppStore.getDataHealth();
   const [isKpiExpanded, setIsKpiExpanded] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
+  const stats = cashAppStore.getStats();
 
   const isPaymentsPage =
     pathname === "/workbench/order-to-cash/cash-application/payments" ||
@@ -123,8 +130,13 @@ export default function CashApplicationLayout({ children }: { children: React.Re
     },
   ];
 
-  const primaryNavItems = navItems.slice(0, 4);
-  const overflowNavItems = navItems.slice(4);
+  const sidebarPaths = new Set([
+    "/workbench/order-to-cash/cash-application/exceptions",
+    "/workbench/order-to-cash/cash-application/pending-to-post",
+  ]);
+  const topNavItems = navItems.filter((item) => !sidebarPaths.has(item.path));
+  const primaryNavItems = topNavItems.slice(0, 3);
+  const overflowNavItems = topNavItems.slice(3);
 
   const isActive = (path: string) => {
     // When on a payment detail page, use the `from` query param to determine
@@ -146,7 +158,7 @@ export default function CashApplicationLayout({ children }: { children: React.Re
       {/* Page Header with Breadcrumb */}
       <header className="sticky top-0 z-10 bg-white border-b flex-shrink-0">
         <div className="px-6 pt-2.5 pb-1">
-          <Breadcrumb activeRoute={activeRoute} className="mb-0.5" />
+          {/* Breadcrumb hidden for cleaner layout */}
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <LayoutGrid className="w-4.5 h-4.5 text-slate-700" />
@@ -219,6 +231,16 @@ export default function CashApplicationLayout({ children }: { children: React.Re
         <div className="px-6 pb-1.5 pt-1">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-1">
+              <button
+                onClick={() => setShowSidebar(!showSidebar)}
+                className="flex items-center justify-center h-7 w-7 rounded border border-slate-200 hover:bg-slate-100 transition-colors mr-1"
+              >
+                {showSidebar ? (
+                  <PanelLeftClose className="w-3.5 h-3.5 text-slate-500" />
+                ) : (
+                  <PanelLeft className="w-3.5 h-3.5 text-slate-500" />
+                )}
+              </button>
               {primaryNavItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -324,7 +346,63 @@ export default function CashApplicationLayout({ children }: { children: React.Re
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-auto">{children}</div>
+      <div className="flex-1 flex overflow-hidden">
+        {showSidebar && (
+          <div className="w-48 flex-shrink-0 bg-slate-50 border-r border-slate-200 overflow-y-auto py-3 px-2 space-y-1">
+            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-2 mb-1.5">Quick Access</div>
+            {[
+              { path: "/workbench/order-to-cash/cash-application/exceptions", label: "Exceptions", icon: AlertCircle, iconColor: "text-amber-500", count: stats.exceptions },
+              { path: "/workbench/order-to-cash/cash-application/pending-to-post", label: "Pending to Post", icon: CheckCircle2, iconColor: "text-blue-500", count: stats.pendingToPost },
+              { path: "/workbench/order-to-cash/cash-application/matching-studio", label: "Matching Studio", icon: Target, iconColor: "text-emerald-500" },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => router.push(item.path)}
+                  className={`flex items-center gap-2 w-full px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    isActive(item.path)
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-600 hover:bg-white hover:text-slate-900"
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 ${item.iconColor}`} />
+                  {item.label}
+                  {item.count !== undefined && (
+                    <span className="ml-auto text-[10px] text-slate-400">{item.count}</span>
+                  )}
+                </button>
+              );
+            })}
+            <Separator className="my-2" />
+            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-2 mb-1.5">More</div>
+            {[
+              { path: "/workbench/order-to-cash/cash-application/reports", label: "Reports", icon: BarChart3, iconColor: "text-slate-400" },
+              { path: "/workbench/order-to-cash/cash-application/payment-batches", label: "Payment Batches", icon: BookOpen, iconColor: "text-slate-400" },
+              { path: "/workbench/order-to-cash/cash-application/bank-reconciliation", label: "Bank Recon", icon: Landmark, iconColor: "text-slate-400" },
+              { path: "/workbench/order-to-cash/cash-application/remittances/email-inbox", label: "Email Inbox", icon: Mail, iconColor: "text-slate-400" },
+              { path: "/workbench/order-to-cash/cash-application/admin", label: "Admin", icon: Settings, iconColor: "text-slate-400" },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => router.push(item.path)}
+                  className={`flex items-center gap-2 w-full px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    isActive(item.path)
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-600 hover:bg-white hover:text-slate-900"
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 ${item.iconColor}`} />
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
+        <div className="flex-1 overflow-auto">{children}</div>
+      </div>
     </div>
   );
 }
