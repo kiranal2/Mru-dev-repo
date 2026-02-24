@@ -11,6 +11,8 @@ import {
   Download,
   MessageSquare,
   ListTodo,
+  MoreHorizontal,
+  PinOff,
 } from "lucide-react";
 import { useIGRSRole } from "@/lib/ai-chat-intelligence/role-context";
 import { useIGRSEscalations } from "@/hooks/data";
@@ -506,11 +508,13 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [taskOpen, setTaskOpen] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const [showMore, setShowMore] = useState(false);
 
   const taskDefaultTitle =
     msg.data?.keyInsight || msg.content.slice(0, 60) + (msg.content.length > 60 ? "..." : "");
 
-  const actions = [
+  const primaryActions = [
     {
       label: "Drill Down",
       icon: Search,
@@ -527,12 +531,19 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
       onClick: () => setEscalateOpen(true),
     },
     {
-      label: "Pin",
-      icon: Pin,
-      onClick: () => toast.success("Pinned to workspace"),
+      label: pinned ? "Unpin" : "Pin",
+      icon: pinned ? PinOff : Pin,
+      active: pinned,
+      onClick: () => {
+        setPinned(!pinned);
+        toast.success(pinned ? "Unpinned" : "Pinned to workspace");
+      },
     },
+  ];
+
+  const secondaryActions = [
     {
-      label: "Export",
+      label: "Export CSV",
       icon: Download,
       onClick: () => {
         exportResponseAsCSV(msg);
@@ -553,21 +564,74 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
 
   return (
     <>
-      <div className="mb-3 pb-2 border-b border-slate-100 flex flex-wrap gap-1">
-        {actions.map((action) => (
-          <Tooltip key={action.label} delayDuration={150}>
+      <div className="flex items-center gap-0.5 mt-1">
+        {/* Primary actions - always visible */}
+        <div className="flex items-center bg-slate-50 rounded-lg p-0.5 gap-0.5">
+          {primaryActions.map((action) => (
+            <Tooltip key={action.label} delayDuration={200}>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={action.onClick}
+                  className={
+                    "w-7 h-7 rounded-md flex items-center justify-center transition-all duration-150 " +
+                    (action.active
+                      ? "bg-violet-100 text-violet-600"
+                      : "text-slate-400 hover:text-violet-600 hover:bg-white hover:shadow-sm")
+                  }
+                >
+                  <action.icon className="w-3.5 h-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="text-xs">
+                {action.label}
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div className="w-px h-4 bg-slate-200 mx-1" />
+
+        {/* More actions dropdown */}
+        <div className="relative">
+          <Tooltip delayDuration={200}>
             <TooltipTrigger asChild>
               <button
-                onClick={action.onClick}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-slate-500 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                onClick={() => setShowMore(!showMore)}
+                className={
+                  "w-7 h-7 rounded-md flex items-center justify-center transition-all duration-150 " +
+                  (showMore
+                    ? "bg-violet-50 text-violet-600"
+                    : "text-slate-400 hover:text-violet-600 hover:bg-slate-50")
+                }
               >
-                <action.icon className="w-3.5 h-3.5" />
-                <span>{action.label}</span>
+                <MoreHorizontal className="w-3.5 h-3.5" />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="bottom">{action.label}</TooltipContent>
+            <TooltipContent side="bottom" className="text-xs">More actions</TooltipContent>
           </Tooltip>
-        ))}
+
+          {showMore && (
+            <>
+              <div className="fixed inset-0 z-20" onClick={() => setShowMore(false)} />
+              <div className="absolute top-full left-0 mt-1 z-30 bg-white border border-slate-200 rounded-lg shadow-lg py-1 min-w-[140px]">
+                {secondaryActions.map((action) => (
+                  <button
+                    key={action.label}
+                    onClick={() => {
+                      action.onClick();
+                      setShowMore(false);
+                    }}
+                    className="w-full text-left px-3 py-1.5 text-xs text-slate-600 hover:bg-violet-50 hover:text-violet-700 transition-colors flex items-center gap-2"
+                  >
+                    <action.icon className="w-3.5 h-3.5" />
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <AssignDialog open={assignOpen} onOpenChange={setAssignOpen} />

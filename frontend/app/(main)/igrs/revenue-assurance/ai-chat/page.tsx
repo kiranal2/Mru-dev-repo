@@ -5,8 +5,11 @@ import { useAIChat } from "@/hooks/data/use-igrs-ai-chat";
 import { cn } from "@/lib/utils";
 import {
   ArrowRight,
+  BarChart3,
   Brain,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Lightbulb,
   MessageSquarePlus,
   Sparkles,
@@ -192,31 +195,32 @@ function AIBubble({
   msg: ConversationMessage;
   onFollowUp: (text: string) => void;
 }) {
+  const [chartVisible, setChartVisible] = useState(false);
+  const hasChart = !!msg.data?.inlineChart;
+
   return (
-    <div className="flex justify-start gap-2">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-1">
+    <div className="flex justify-start gap-2.5">
+      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
         <Brain className="w-4 h-4 text-white" />
       </div>
-      <div className="rounded-2xl px-4 py-3 max-w-[80%] bg-white border border-slate-200">
-        {/* Action toolbar */}
-        <ResponseActionBar msg={msg} />
-
+      <div className="rounded-2xl px-5 py-4 max-w-[80%] bg-white border border-slate-200 shadow-sm">
+        {/* Narrative text */}
         <p className="text-sm text-slate-700 leading-relaxed">{msg.content}</p>
 
         {/* Inline Table */}
         {msg.data?.inlineTable && (
-          <div className="mt-3 overflow-x-auto">
+          <div className="mt-3 overflow-x-auto rounded-lg border border-slate-100">
             <table className="w-full text-xs border-collapse">
               <thead>
-                <tr>
+                <tr className="bg-slate-50">
                   {msg.data.inlineTable.headers.map((h, hi) => (
                     <th
                       key={hi}
                       className={cn(
-                        "text-left px-2 py-1 border-b border-slate-200 font-semibold",
+                        "text-left px-3 py-2 border-b border-slate-200 font-semibold text-[11px] uppercase tracking-wider",
                         msg.data?.inlineTable?.highlightColumn === hi
                           ? "bg-violet-50 text-violet-700"
-                          : "text-slate-600"
+                          : "text-slate-500"
                       )}
                     >
                       {h}
@@ -226,13 +230,13 @@ function AIBubble({
               </thead>
               <tbody>
                 {msg.data.inlineTable.rows.map((row, ri) => (
-                  <tr key={ri}>
+                  <tr key={ri} className="hover:bg-slate-50/50 transition-colors">
                     {row.map((cell, ci) => (
                       <td
                         key={ci}
                         className={cn(
-                          "px-2 py-1 border-b border-slate-100",
-                          msg.data?.inlineTable?.highlightColumn === ci && "bg-violet-50/50 font-medium"
+                          "px-3 py-2 border-b border-slate-50 text-slate-600",
+                          msg.data?.inlineTable?.highlightColumn === ci && "bg-violet-50/50 font-medium text-violet-700"
                         )}
                       >
                         {typeof cell === "number" ? cell.toLocaleString("en-IN") : cell}
@@ -245,28 +249,66 @@ function AIBubble({
           </div>
         )}
 
-        {/* Inline Chart */}
-        {msg.data?.inlineChart && <InlineChart chart={msg.data.inlineChart} />}
+        {/* Chart Toggle Button */}
+        {hasChart && (
+          <div className="mt-3">
+            <button
+              onClick={() => setChartVisible(!chartVisible)}
+              className={cn(
+                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200",
+                chartVisible
+                  ? "bg-violet-100 text-violet-700 hover:bg-violet-150"
+                  : "bg-slate-50 text-slate-500 hover:bg-violet-50 hover:text-violet-600 border border-slate-200"
+              )}
+            >
+              <BarChart3 className="w-3.5 h-3.5" />
+              <span>{chartVisible ? "Hide Chart" : "View Chart"}</span>
+              {chartVisible ? (
+                <ChevronUp className="w-3 h-3" />
+              ) : (
+                <ChevronDown className="w-3 h-3" />
+              )}
+            </button>
 
-        {/* Key Insight */}
-        {msg.data?.keyInsight && (
-          <div className="mt-3 rounded-lg bg-violet-50 border-l-4 border-l-violet-400 p-3">
-            <div className="flex items-start gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-violet-600 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-violet-800 font-medium">{msg.data.keyInsight}</p>
+            {/* Collapsible Chart */}
+            <div
+              className={cn(
+                "overflow-hidden transition-all duration-300 ease-in-out",
+                chartVisible ? "max-h-[300px] opacity-100 mt-2" : "max-h-0 opacity-0"
+              )}
+            >
+              <div className="rounded-lg bg-slate-50/50 border border-slate-100 p-3">
+                <InlineChart chart={msg.data!.inlineChart!} />
+              </div>
             </div>
           </div>
         )}
 
+        {/* Key Insight */}
+        {msg.data?.keyInsight && (
+          <div className="mt-3 rounded-lg bg-gradient-to-r from-violet-50 to-purple-50 border-l-4 border-l-violet-400 p-3">
+            <div className="flex items-start gap-2">
+              <Sparkles className="w-3.5 h-3.5 text-violet-500 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-violet-800 font-medium leading-relaxed">{msg.data.keyInsight}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Action toolbar — compact, at bottom */}
+        <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+          <ResponseActionBar msg={msg} />
+        </div>
+
         {/* Follow-up prompts */}
         {msg.data?.followUpPrompts && msg.data.followUpPrompts.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {msg.data.followUpPrompts.map((fp, fi) => (
               <button
                 key={fi}
                 onClick={() => onFollowUp(fp)}
-                className="px-3 py-1 rounded-full bg-violet-50 text-violet-700 text-xs font-medium hover:bg-violet-100 transition-colors"
+                className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-violet-200 bg-white text-violet-600 text-xs font-medium hover:bg-violet-50 hover:border-violet-300 hover:shadow-sm transition-all duration-150"
               >
+                <ChevronRight className="w-3 h-3 text-violet-400 group-hover:text-violet-600 transition-colors" />
                 {fp}
               </button>
             ))}
