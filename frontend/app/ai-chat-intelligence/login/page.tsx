@@ -236,6 +236,14 @@ export default function AIChatIntelligenceLoginPage() {
       await new Promise((r) => setTimeout(r, stage.duration));
     }
 
+    // Open IGRS panel by default after login and keep IGRS selected in rail.
+    try {
+      localStorage.setItem("igrs-open-panel-default", "1");
+      localStorage.setItem("meeru-selected-rail", "igrs");
+    } catch {
+      // no-op
+    }
+
     router.push("/igrs/revenue-assurance/ai-chat");
   };
 

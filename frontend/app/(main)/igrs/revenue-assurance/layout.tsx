@@ -1,22 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 import { IGRSRoleProvider, useIGRSRole } from "@/lib/ai-chat-intelligence/role-context";
-
-const IGRS_TABS = [
-  { label: "AI Chat", path: "/igrs/revenue-assurance/ai-chat" },
-  { label: "Overview", path: "/igrs/revenue-assurance/overview" },
-  { label: "Cases", path: "/igrs/revenue-assurance/cases" },
-  { label: "Insights", path: "/igrs/revenue-assurance/insights" },
-  { label: "Patterns", path: "/igrs/revenue-assurance/patterns" },
-  { label: "MV Trends", path: "/igrs/revenue-assurance/mv-trends" },
-  { label: "Governance", path: "/igrs/revenue-assurance/governance" },
-  { label: "AI Intelligence", path: "/igrs/revenue-assurance/ai-intelligence" },
-  { label: "Escalations", path: "/igrs/revenue-assurance/escalations" },
-  { label: "Admin", path: "/igrs/revenue-assurance/admin" },
-];
 
 // Role icon SVG for header badge
 const ShieldIcon = (
@@ -45,7 +31,6 @@ function getJurisdictionLabel(session: NonNullable<ReturnType<typeof useIGRSRole
 }
 
 function RevenueAssuranceInner({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
   const router = useRouter();
   const { session, logout } = useIGRSRole();
 
@@ -56,62 +41,34 @@ function RevenueAssuranceInner({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="bg-white border-b">
-        <div className="px-6 pt-3 pb-1 flex items-center justify-between">
-          <h1 className="text-base font-bold text-slate-900">
-            Revenue Intelligence &amp; Leakage Detection System
-          </h1>
-
-          {/* Role Badge */}
-          {session && (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
-                <span className="text-slate-600">{ShieldIcon}</span>
-                <span className="text-xs font-semibold text-slate-700">
-                  {session.designation}
-                </span>
-                <span className="text-[10px] text-slate-400">·</span>
-                <span className="text-[10px] text-slate-500">
-                  {getJurisdictionLabel(session)}
-                </span>
-              </div>
-              <Link
-                href="/ai-chat-intelligence/login"
-                className="text-[10px] text-blue-600 hover:text-blue-800 font-medium"
-              >
-                Switch Role
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="text-[10px] text-red-500 hover:text-red-700 font-medium"
-              >
-                Logout
-              </button>
+      {session && (
+        <div className="bg-white border-b px-6 py-2 flex items-center justify-end">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
+              <span className="text-slate-600">{ShieldIcon}</span>
+              <span className="text-xs font-semibold text-slate-700">
+                {session.designation}
+              </span>
+              <span className="text-[10px] text-slate-400">·</span>
+              <span className="text-[10px] text-slate-500">
+                {getJurisdictionLabel(session)}
+              </span>
             </div>
-          )}
-        </div>
-        <div className="px-6 pb-2 pt-1">
-          <div className="flex items-center gap-1">
-            {IGRS_TABS.map((tab) => {
-              const isActive = pathname === tab.path;
-              return (
-                <Link
-                  key={tab.path}
-                  href={tab.path}
-                  className={cn(
-                    "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-slate-900 text-white"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  )}
-                >
-                  {tab.label}
-                </Link>
-              );
-            })}
+            <Link
+              href="/ai-chat-intelligence/login"
+              className="text-[10px] text-blue-600 hover:text-blue-800 font-medium"
+            >
+              Switch Role
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="text-[10px] text-red-500 hover:text-red-700 font-medium"
+            >
+              Logout
+            </button>
           </div>
         </div>
-      </div>
+      )}
       <div className="flex-1 overflow-auto">{children}</div>
     </div>
   );

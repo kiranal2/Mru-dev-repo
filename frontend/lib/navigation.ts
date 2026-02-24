@@ -389,6 +389,12 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
   // ─── IGRS ───────────────────────────────────────────────
   igrs: [
     {
+      id: "igrs-ai-chat",
+      label: "AI Chat",
+      icon: React.createElement(MessageCircle, { size: 18 }),
+      route: "/igrs/revenue-assurance/ai-chat",
+    },
+    {
       id: "igrs-overview",
       label: "Overview",
       icon: React.createElement(BarChart3, { size: 18 }),
@@ -429,12 +435,6 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       label: "AI Intelligence",
       icon: React.createElement(Brain, { size: 18 }),
       route: "/igrs/revenue-assurance/ai-intelligence",
-    },
-    {
-      id: "igrs-ai-chat",
-      label: "AI Chat",
-      icon: React.createElement(MessageCircle, { size: 18 }),
-      route: "/igrs/revenue-assurance/ai-chat",
     },
 {
       id: "igrs-admin",

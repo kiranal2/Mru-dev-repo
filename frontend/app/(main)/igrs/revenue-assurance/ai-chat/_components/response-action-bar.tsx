@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  Search,
   UserPlus,
   AlertTriangle,
   Pin,
@@ -13,6 +12,10 @@ import {
   ListTodo,
   MoreHorizontal,
   PinOff,
+  ExternalLink,
+  FilePlus2,
+  Eye,
+  Star,
 } from "lucide-react";
 import { useIGRSRole } from "@/lib/ai-chat-intelligence/role-context";
 import { useIGRSEscalations } from "@/hooks/data";
@@ -31,11 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import type { PromptResponseData } from "@/lib/data/types/igrs";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -547,26 +545,37 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
   const [noteOpen, setNoteOpen] = useState(false);
   const [taskOpen, setTaskOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
+  const [favorite, setFavorite] = useState(false);
+  const [watchlisted, setWatchlisted] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
   const taskDefaultTitle =
     msg.data?.keyInsight || msg.content.slice(0, 60) + (msg.content.length > 60 ? "..." : "");
 
+  const actionButtonClass =
+    "bg-white hover:bg-[#D1ECFF] text-[#000000] px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center gap-2 transition-colors border border-[#D2D2D2]";
+
   const primaryActions = [
     {
-      label: "Drill Down",
-      icon: Search,
+      label: "Expand",
+      icon: ExternalLink,
       onClick: () => router.push("/igrs/revenue-assurance/cases"),
     },
     {
-      label: "Assign",
-      icon: UserPlus,
-      onClick: () => setAssignOpen(true),
+      label: "Create Template",
+      icon: FilePlus2,
+      onClick: () => {
+        toast.success("Template draft prepared from this response");
+      },
     },
     {
-      label: "Escalate",
-      icon: AlertTriangle,
-      onClick: () => setEscalateOpen(true),
+      label: watchlisted ? "In Watchlist" : "Add to Watchlist",
+      icon: Eye,
+      active: watchlisted,
+      onClick: () => {
+        setWatchlisted(!watchlisted);
+        toast.success(watchlisted ? "Removed from watchlist" : "Added to watchlist");
+      },
     },
     {
       label: pinned ? "Unpin" : "Pin",
@@ -577,16 +586,35 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
         toast.success(pinned ? "Unpinned" : "Pinned to workspace");
       },
     },
-  ];
-
-  const secondaryActions = [
     {
-      label: "Export CSV",
+      label: favorite ? "Favorited" : "Favorite",
+      icon: Star,
+      active: favorite,
+      onClick: () => {
+        setFavorite(!favorite);
+        toast.success(favorite ? "Removed from favorites" : "Added to favorites");
+      },
+    },
+    {
+      label: "Download",
       icon: Download,
       onClick: () => {
         exportResponseAsCSV(msg);
         toast.success("CSV exported");
       },
+    },
+  ];
+
+  const secondaryActions = [
+    {
+      label: "Assign",
+      icon: UserPlus,
+      onClick: () => setAssignOpen(true),
+    },
+    {
+      label: "Escalate",
+      icon: AlertTriangle,
+      onClick: () => setEscalateOpen(true),
     },
     {
       label: "Add Note",
@@ -602,57 +630,39 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
 
   return (
     <>
-      <div className="flex items-center gap-0.5 mt-1">
-        {/* Primary actions - always visible */}
-        <div className="flex items-center bg-slate-50 rounded-lg p-0.5 gap-0.5">
+      <div className="flex items-center justify-end mt-1">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           {primaryActions.map((action) => (
-            <Tooltip key={action.label} delayDuration={200}>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={action.onClick}
-                  className={
-                    "w-7 h-7 rounded-md flex items-center justify-center transition-all duration-150 " +
-                    (action.active
-                      ? "bg-violet-100 text-violet-600"
-                      : "text-slate-400 hover:text-violet-600 hover:bg-white hover:shadow-sm")
-                  }
-                >
-                  <action.icon className="w-3.5 h-3.5" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">
-                {action.label}
-              </TooltipContent>
-            </Tooltip>
+            <button
+              key={action.label}
+              onClick={action.onClick}
+              className={
+                actionButtonClass +
+                (action.active ? " bg-[#D1ECFF] border-[#0A3B77] text-[#0A3B77]" : "")
+              }
+            >
+              <action.icon size={18} className="text-[#0A3B77]" />
+              <span>{action.label}</span>
+            </button>
           ))}
-        </div>
-
-        {/* Divider */}
-        <div className="w-px h-4 bg-slate-200 mx-1" />
 
         {/* More actions dropdown */}
         <div className="relative">
-          <Tooltip delayDuration={200}>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => setShowMore(!showMore)}
-                className={
-                  "w-7 h-7 rounded-md flex items-center justify-center transition-all duration-150 " +
-                  (showMore
-                    ? "bg-violet-50 text-violet-600"
-                    : "text-slate-400 hover:text-violet-600 hover:bg-slate-50")
-                }
-              >
-                <MoreHorizontal className="w-3.5 h-3.5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-xs">More actions</TooltipContent>
-          </Tooltip>
+          <button
+            onClick={() => setShowMore(!showMore)}
+            className={
+              actionButtonClass +
+              (showMore ? " bg-[#D1ECFF] border-[#0A3B77] text-[#0A3B77]" : "")
+            }
+            aria-label="More actions"
+          >
+            <MoreHorizontal size={18} className="text-[#0A3B77]" />
+          </button>
 
           {showMore && (
             <>
               <div className="fixed inset-0 z-20" onClick={() => setShowMore(false)} />
-              <div className="absolute top-full left-0 mt-1 z-30 bg-white border border-slate-200 rounded-lg shadow-lg py-1 min-w-[140px]">
+              <div className="absolute top-full right-0 mt-1 z-30 bg-white border border-slate-200 rounded-lg shadow-lg py-1 min-w-[170px]">
                 {secondaryActions.map((action) => (
                   <button
                     key={action.label}
@@ -660,9 +670,9 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
                       action.onClick();
                       setShowMore(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 text-xs text-slate-600 hover:bg-violet-50 hover:text-violet-700 transition-colors flex items-center gap-2"
+                    className="w-full text-left px-3 py-1.5 text-sm text-slate-600 hover:bg-[#D1ECFF] hover:text-[#0A3B77] transition-colors flex items-center gap-2"
                   >
-                    <action.icon className="w-3.5 h-3.5" />
+                    <action.icon className="w-4 h-4" />
                     {action.label}
                   </button>
                 ))}
@@ -670,6 +680,7 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
             </>
           )}
         </div>
+      </div>
       </div>
 
       <AssignDialog open={assignOpen} onOpenChange={setAssignOpen} />

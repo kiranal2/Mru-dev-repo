@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { CircleHelp, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserMenu } from "./user-menu";
@@ -10,6 +11,9 @@ interface HeaderProps {
 }
 
 export default function Header({ loadingState }: HeaderProps) {
+  const pathname = usePathname();
+  const isIGRSModule = pathname?.startsWith("/igrs/");
+
   return (
     <>
       {/* Top gradient accent line */}
@@ -27,8 +31,13 @@ export default function Header({ loadingState }: HeaderProps) {
           background: 'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(248,251,255,1) 100%)',
         }}
       >
-        <div className="flex items-center">
+        <div className="flex items-center gap-3 min-w-0">
           <img src="/meeru-logo.png" alt="Meeru AI Logo" className="h-8 w-auto object-contain" />
+          {isIGRSModule && (
+            <span className="hidden lg:inline text-sm font-semibold text-[#0A3B77] truncate">
+              Revenue Intelligence &amp; Leakage Detection System
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <button

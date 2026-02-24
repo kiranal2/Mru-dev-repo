@@ -6,16 +6,17 @@ import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   BarChart3,
-  Brain,
-  ChevronRight,
   ChevronDown,
+  ChevronRight,
   ChevronUp,
+  Clock,
   Lightbulb,
-  MessageSquarePlus,
+  Plus,
   Sparkles,
-  Trash2,
+  Star,
+  Bot,
 } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import type {
   PromptTemplate,
   PromptCategory,
@@ -238,6 +239,13 @@ class BubbleErrorBoundary extends Component<
   }
 }
 
+function formatMessageTime(timestamp: string): string {
+  return new Date(timestamp).toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 // ── AI Message Bubble ────────────────────────────────────────────────────────
 
 function AIBubble({
@@ -251,121 +259,119 @@ function AIBubble({
   const hasChart = !!msg.data?.inlineChart;
 
   return (
-    <div className="flex justify-start gap-2.5">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
-        <Brain className="w-4 h-4 text-white" />
-      </div>
-      <div className="rounded-2xl px-5 py-4 max-w-[80%] bg-white border border-slate-200 shadow-sm">
-        {/* Narrative text */}
-        <p className="text-sm text-slate-700 leading-relaxed">{msg.content}</p>
+    <div className="flex justify-start animate-in slide-in-from-bottom-4 duration-500">
+      <div className="w-full">
+        <span className="text-xs text-gray-500 ml-2">{formatMessageTime(msg.timestamp)}</span>
+        <ResponseActionBar msg={msg} />
 
-        {/* Inline Table */}
-        {msg.data?.inlineTable && (
-          <div className="mt-3 overflow-x-auto rounded-lg border border-slate-100">
-            <table className="w-full text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50">
-                  {msg.data.inlineTable.headers.map((h, hi) => (
-                    <th
-                      key={hi}
-                      className={cn(
-                        "text-left px-3 py-2 border-b border-slate-200 font-semibold text-[11px] uppercase tracking-wider",
-                        msg.data?.inlineTable?.highlightColumn === hi
-                          ? "bg-violet-50 text-violet-700"
-                          : "text-slate-500"
-                      )}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {msg.data.inlineTable.rows.map((row, ri) => (
-                  <tr key={ri} className="hover:bg-slate-50/50 transition-colors">
-                    {row.map((cell, ci) => (
-                      <td
-                        key={ci}
+        <div className="mt-2 space-y-3">
+          {/* Narrative text */}
+          <p className="text-sm text-[#191919] leading-[22px]">{msg.content}</p>
+
+          {/* Inline Table */}
+          {msg.data?.inlineTable && (
+            <div className="overflow-x-auto rounded-lg border border-slate-100 bg-white">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr className="bg-slate-50">
+                    {msg.data.inlineTable.headers.map((h, hi) => (
+                      <th
+                        key={hi}
                         className={cn(
-                          "px-3 py-2 border-b border-slate-50 text-slate-600",
-                          msg.data?.inlineTable?.highlightColumn === ci && "bg-violet-50/50 font-medium text-violet-700"
+                          "text-left px-3 py-2 border-b border-slate-200 font-semibold text-[11px] uppercase tracking-wider",
+                          msg.data?.inlineTable?.highlightColumn === hi
+                            ? "bg-violet-50 text-violet-700"
+                            : "text-slate-500"
                         )}
                       >
-                        {typeof cell === "number" ? cell.toLocaleString("en-IN") : cell}
-                      </td>
+                        {h}
+                      </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                </thead>
+                <tbody>
+                  {msg.data.inlineTable.rows.map((row, ri) => (
+                    <tr key={ri} className="hover:bg-slate-50/50 transition-colors">
+                      {row.map((cell, ci) => (
+                        <td
+                          key={ci}
+                          className={cn(
+                            "px-3 py-2 border-b border-slate-50 text-slate-600",
+                            msg.data?.inlineTable?.highlightColumn === ci && "bg-violet-50/50 font-medium text-violet-700"
+                          )}
+                        >
+                          {typeof cell === "number" ? cell.toLocaleString("en-IN") : cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-        {/* Chart Toggle Button */}
-        {hasChart && (
-          <div className="mt-3">
-            <button
-              onClick={() => setChartVisible(!chartVisible)}
-              className={cn(
-                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200",
-                chartVisible
-                  ? "bg-violet-100 text-violet-700 hover:bg-violet-150"
-                  : "bg-slate-50 text-slate-500 hover:bg-violet-50 hover:text-violet-600 border border-slate-200"
-              )}
-            >
-              <BarChart3 className="w-3.5 h-3.5" />
-              <span>{chartVisible ? "Hide Chart" : "View Chart"}</span>
-              {chartVisible ? (
-                <ChevronUp className="w-3 h-3" />
-              ) : (
-                <ChevronDown className="w-3 h-3" />
-              )}
-            </button>
+          {/* Chart Toggle Button */}
+          {hasChart && (
+            <div>
+              <button
+                onClick={() => setChartVisible(!chartVisible)}
+                className={cn(
+                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200",
+                  chartVisible
+                    ? "bg-violet-100 text-violet-700 hover:bg-violet-150"
+                    : "bg-white text-slate-600 hover:bg-violet-50 hover:text-violet-600 border border-slate-200"
+                )}
+              >
+                <BarChart3 className="w-3.5 h-3.5" />
+                <span>{chartVisible ? "Hide Chart" : "View Chart"}</span>
+                {chartVisible ? (
+                  <ChevronUp className="w-3 h-3" />
+                ) : (
+                  <ChevronDown className="w-3 h-3" />
+                )}
+              </button>
 
-            {/* Collapsible Chart */}
-            <div
-              className={cn(
-                "overflow-hidden transition-all duration-300 ease-in-out",
-                chartVisible ? "max-h-[300px] opacity-100 mt-2" : "max-h-0 opacity-0"
-              )}
-            >
-              <div className="rounded-lg bg-slate-50/50 border border-slate-100 p-3">
-                <InlineChart chart={msg.data!.inlineChart!} />
+              {/* Collapsible Chart */}
+              <div
+                className={cn(
+                  "overflow-hidden transition-all duration-300 ease-in-out",
+                  chartVisible ? "max-h-[300px] opacity-100 mt-2" : "max-h-0 opacity-0"
+                )}
+              >
+                <div className="rounded-lg bg-slate-50/50 border border-slate-100 p-3">
+                  <InlineChart chart={msg.data!.inlineChart!} />
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Key Insight */}
-        {msg.data?.keyInsight && (
-          <div className="mt-3 rounded-lg bg-gradient-to-r from-violet-50 to-purple-50 border-l-4 border-l-violet-400 p-3">
-            <div className="flex items-start gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-violet-500 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-violet-800 font-medium leading-relaxed">{msg.data.keyInsight}</p>
+          {/* Key Insight */}
+          {msg.data?.keyInsight && (
+            <div className="rounded-lg bg-gradient-to-r from-violet-50 to-purple-50 border-l-4 border-l-violet-400 p-3">
+              <div className="flex items-start gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-violet-500 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-violet-800 font-medium leading-relaxed">{msg.data.keyInsight}</p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Action toolbar — compact, at bottom */}
-        <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
-          <ResponseActionBar msg={msg} />
+          {/* Follow-up prompts */}
+          {msg.data?.followUpPrompts && msg.data.followUpPrompts.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {msg.data.followUpPrompts.map((fp, fi) => (
+                <button
+                  key={fi}
+                  onClick={() => onFollowUp(fp)}
+                  className="group inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#E2E8F0] bg-white text-sm text-[#334155] hover:border-[#6B7EF3] hover:bg-[#F5F8FF] hover:text-[#0A3B77] transition-all duration-200"
+                >
+                  <Lightbulb size={14} className="text-[#94A3B8] group-hover:text-[#6B7EF3] transition-colors" />
+                  <span className="leading-snug">{fp}</span>
+                  <ArrowRight size={12} className="text-[#CBD5E1] group-hover:text-[#6B7EF3] group-hover:translate-x-0.5 transition-all" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-
-        {/* Follow-up prompts */}
-        {msg.data?.followUpPrompts && msg.data.followUpPrompts.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {msg.data.followUpPrompts.map((fp, fi) => (
-              <button
-                key={fi}
-                onClick={() => onFollowUp(fp)}
-                className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-violet-200 bg-white text-violet-600 text-xs font-medium hover:bg-violet-50 hover:border-violet-300 hover:shadow-sm transition-all duration-150"
-              >
-                <ChevronRight className="w-3 h-3 text-violet-400 group-hover:text-violet-600 transition-colors" />
-                {fp}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -426,47 +432,41 @@ const STREAMING_STEPS = [
 
 function StreamingIndicator({ events }: { events: string[] }) {
   return (
-    <div className="flex justify-start gap-2.5 animate-in slide-in-from-bottom-4 duration-500">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
-        <Brain className="w-4 h-4 text-white animate-pulse" />
-      </div>
-      <div className="rounded-2xl px-5 py-4 max-w-[80%] bg-white border border-slate-200 shadow-sm min-w-[340px]">
-        <div className="space-y-2.5">
-          {events.map((event, idx) => {
-            const isLatest = idx === events.length - 1;
-            const isPast = idx < events.length - 1;
-            return (
-              <div
-                key={idx}
-                className={cn(
-                  "flex items-center gap-2.5 text-sm animate-in fade-in slide-in-from-bottom-2 duration-300",
-                  isLatest ? "text-slate-800 font-medium" : "text-slate-400"
-                )}
-              >
-                {/* Step indicator */}
-                {isPast ? (
-                  <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                ) : (
-                  <div className="w-5 h-5 rounded-full border-2 border-violet-400 border-t-transparent animate-spin flex-shrink-0" />
-                )}
-
-                <span className="leading-relaxed">{event}</span>
-
-                {/* Animated dots on latest event */}
-                {isLatest && (
-                  <span className="flex ml-0.5">
-                    <span className="animate-bounce text-violet-400 font-bold" style={{ animationDelay: "0ms" }}>.</span>
-                    <span className="animate-bounce text-violet-400 font-bold" style={{ animationDelay: "150ms" }}>.</span>
-                    <span className="animate-bounce text-violet-400 font-bold" style={{ animationDelay: "300ms" }}>.</span>
-                  </span>
-                )}
-              </div>
-            );
-          })}
+    <div className="flex justify-start animate-in slide-in-from-bottom-4 duration-500">
+      <div className="w-full">
+        <span className="text-xs text-gray-500 ml-2">
+          {new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+        </span>
+        <div className="mt-1 bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 w-full max-w-xl">
+          <div className="space-y-2">
+            {events.map((event, idx) => {
+              const isLatest = idx === events.length - 1;
+              return (
+                <div
+                  key={idx}
+                  className={cn(
+                    "flex items-center gap-2 text-sm",
+                    isLatest ? "text-gray-800 font-medium" : "text-gray-500"
+                  )}
+                >
+                  <span className="leading-relaxed">{event}</span>
+                  {isLatest && (
+                    <span className="flex ml-1">
+                      <span className="animate-bounce" style={{ animationDelay: "0ms" }}>
+                        .
+                      </span>
+                      <span className="animate-bounce" style={{ animationDelay: "150ms" }}>
+                        .
+                      </span>
+                      <span className="animate-bounce" style={{ animationDelay: "300ms" }}>
+                        .
+                      </span>
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
@@ -603,6 +603,12 @@ export default function AIChatPage() {
 
   // Role-aware sample prompts
   const samplePrompts = useMemo(() => getSamplePrompts(session?.role), [session?.role]);
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  }, []);
 
   // Filter prompts by selected category (on top of role filter)
   const filteredPrompts = useMemo(() => {
@@ -829,261 +835,224 @@ export default function AIChatPage() {
       <div className="flex flex-col h-full">
         {messages.length === 0 ? (
           /* ═══ Empty State ═══ */
-          <div
-            className="flex-1 flex flex-col items-center justify-center px-4"
-            style={{ transform: "translateY(-3vh)" }}
-          >
-            {/* Hero */}
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
-                <Brain className="w-8 h-8 text-white" />
+          <div className="h-full overflow-y-auto">
+            <div className="w-full max-w-[980px] mx-auto px-4 pt-10 pb-8">
+              <div className="text-center mb-8">
+                <div className="text-[30px] text-[#0F172A] leading-tight">
+                  {greeting} {session?.name ?? session?.designation ?? "Officer"},
+                </div>
+                <div className="text-[30px] text-[#0F172A] leading-tight">
+                  How can I <span className="text-[#6B7EF3]">help you today?</span>
+                </div>
+                <p className="text-sm text-slate-500 mt-2 max-w-2xl mx-auto">
+                  {session
+                    ? `Ask role-aware questions for ${session.designation} covering revenue, leakages, pending cases, and escalations.`
+                    : "Ask questions about revenue, performance, risk analysis, forecasting, compliance, and SLA metrics."}
+                </p>
               </div>
-              <div className="text-[24px] text-slate-900 leading-tight">IGRS Revenue Intelligence</div>
-              <div className="text-[24px] text-slate-900 leading-tight">
-                What would you like to <span className="text-violet-600">explore?</span>
-              </div>
-              <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">
-                {session
-                  ? `Welcome, ${session.designation}. Ask questions about revenue, performance, risk, and more.`
-                  : "Ask questions about revenue, performance, risk analysis, forecasting, compliance, and SLA metrics."}
-              </p>
-            </div>
 
-            {/* Composer */}
-            <div className="w-full max-w-[720px] mb-4 relative">
-              <div className="relative rounded-[14px] p-[1.5px]">
-                <div className="pointer-events-none absolute inset-0 rounded-[14px] overflow-hidden">
+              <div className="w-full max-w-[821px] mx-auto mb-5 relative">
+                <div className="rounded-[24px] bg-[#F2FDFF] p-2">
                   <div
-                    className="absolute inset-[-70%] opacity-70"
-                    style={{
-                      background:
-                        "conic-gradient(from 0deg, rgba(124,58,237,0.46), rgba(56,189,248,0.3), rgba(16,185,129,0.26), rgba(236,72,153,0.18), rgba(124,58,237,0.46))",
-                      animation: "border-run 8s linear infinite",
-                    }}
-                  />
+                    className="min-h-[184px] border border-[#656565] bg-white rounded-[24px] p-4 relative hover:border-[#6B7EF3] hover:shadow-lg transition-all duration-300 ease-out focus-within:border-[#6B7EF3] focus-within:shadow-lg focus-within:ring-2 focus-within:ring-[#6B7EF3]/20"
+                    style={{ boxShadow: "0 4px 8px 0 rgba(14, 42, 82, 0.06)" }}
+                  >
+                    {showPlaceholder && (
+                      <div className="absolute top-4 left-4 right-4 flex items-center gap-2 pointer-events-none z-10">
+                        <Sparkles size={12} className="text-slate-400" />
+                        <span
+                          key={`sample-${samplePromptIdx}`}
+                          className="text-[13px] text-slate-400 animate-[prompt-fade-slide_0.4s_ease-out]"
+                        >
+                          {samplePrompts[samplePromptIdx % samplePrompts.length]}
+                        </span>
+                      </div>
+                    )}
+
+                    <textarea
+                      ref={textareaRef}
+                      value={composerValue}
+                      onChange={handleTextareaChange}
+                      onFocus={() => setShowPlaceholder(false)}
+                      onBlur={() => {
+                        if (!composerValue.trim()) setShowPlaceholder(true);
+                        setTimeout(() => setShowSuggestions(false), 200);
+                      }}
+                      onKeyDown={handleKeyDown}
+                      className="w-full h-full min-h-[132px] flex-1 resize-none border-none outline-none text-[#0F172A] text-sm transition-all duration-200"
+                      aria-label="Enter your query"
+                    />
+
+                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-[#0A3B77]">
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#D2D2D2] bg-white">
+                          <Clock size={14} />
+                        </span>
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#D2D2D2] bg-white">
+                          <Star size={14} />
+                        </span>
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#D2D2D2] bg-white">
+                          <Lightbulb size={14} />
+                        </span>
+                      </div>
+
+                      <button
+                        onClick={() => handleSend()}
+                        disabled={isTyping || !composerValue.trim()}
+                        className={cn(
+                          "w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-[#D2D2D2] flex items-center justify-center hover:border-[#0A3B77] hover:bg-[#0A3B77] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
+                          (isTyping || !composerValue.trim()) && "opacity-50 cursor-not-allowed"
+                        )}
+                        aria-label="Send prompt"
+                      >
+                        <ArrowRight
+                          size={18}
+                          className="text-white group-hover:text-white transition-colors duration-200"
+                        />
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
-                <div
-                  className="group h-[120px] bg-white rounded-[12px] p-4 relative overflow-hidden hover:shadow-lg transition-all duration-300 ease-out focus-within:shadow-lg focus-within:ring-2 focus-within:ring-violet-500/20"
-                  style={{ boxShadow: "0 4px 8px 0 rgba(14, 42, 82, 0.06)" }}
-                >
-                  {showPlaceholder && (
-                    <div className="absolute top-4 left-4 right-4 flex items-center gap-2 pointer-events-none z-10">
-                      <Sparkles size={12} className="text-slate-400" />
-                      <span
-                        key={`sample-${samplePromptIdx}`}
-                        className="text-[13px] text-slate-400 animate-[prompt-fade-slide_0.4s_ease-out]"
-                      >
-                        {samplePrompts[samplePromptIdx % samplePrompts.length]}
+                {/* Suggestions Dropdown */}
+                {showSuggestions && suggestions.length > 0 && (
+                  <div
+                    ref={suggestionsRef}
+                    className="absolute left-0 right-0 top-[194px] z-30 bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden"
+                  >
+                    <div className="px-3 py-1.5 border-b border-slate-100 bg-slate-50/80">
+                      <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
+                        Suggestions
                       </span>
                     </div>
-                  )}
-
-                  <textarea
-                    ref={textareaRef}
-                    value={composerValue}
-                    onChange={handleTextareaChange}
-                    onFocus={() => setShowPlaceholder(false)}
-                    onBlur={() => {
-                      if (!composerValue.trim()) setShowPlaceholder(true);
-                      setTimeout(() => setShowSuggestions(false), 200);
-                    }}
-                    onKeyDown={handleKeyDown}
-                    className="w-full flex-1 resize-none border-none outline-none text-slate-900 text-sm transition-all duration-200 pt-0"
-                    style={{ height: "calc(100% - 40px)" }}
-                    aria-label="Enter your query"
-                  />
-
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-end">
-                    <button
-                      onClick={() => handleSend()}
-                      className="w-8 h-8 rounded-full border border-slate-200 bg-white flex items-center justify-center hover:border-violet-500 hover:bg-violet-600 hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group"
-                      aria-label="Send prompt"
-                      disabled={isTyping || !composerValue.trim()}
-                    >
-                      <ArrowRight
-                        size={18}
-                        className="text-slate-400 group-hover:text-white transition-colors duration-200"
-                      />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Suggestions Dropdown */}
-              {showSuggestions && suggestions.length > 0 && (
-                <div
-                  ref={suggestionsRef}
-                  className="absolute left-0 right-0 top-[124px] z-30 bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden"
-                >
-                  <div className="px-3 py-1.5 border-b border-slate-100 bg-slate-50/80">
-                    <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
-                      Suggestions
-                    </span>
-                  </div>
-                  <div className="max-h-[280px] overflow-y-auto">
-                    {suggestions.map((item, idx) => {
-                      const cat = categories.find((c) => c.id === item.category);
-                      return (
-                        <button
-                          key={item.id}
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            handleSelectSuggestion(item);
-                          }}
-                          className={cn(
-                            "w-full text-left px-3 py-2 flex items-center gap-2.5 text-sm transition-colors duration-100",
-                            idx === selectedSuggestionIdx
-                              ? "bg-violet-50 text-slate-900"
-                              : "text-slate-600 hover:bg-slate-50"
-                          )}
-                        >
-                          <span className="flex-1 truncate">
-                            {highlightMatch(item.promptText, composerValue)}
-                          </span>
-                          {cat && (
-                            <span
-                              className="text-[10px] flex-shrink-0 px-1.5 py-0.5 rounded text-white"
-                              style={{ backgroundColor: cat.color }}
-                            >
-                              {cat.label}
+                    <div className="max-h-[280px] overflow-y-auto">
+                      {suggestions.map((item, idx) => {
+                        const cat = categories.find((c) => c.id === item.category);
+                        return (
+                          <button
+                            key={item.id}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              handleSelectSuggestion(item);
+                            }}
+                            className={cn(
+                              "w-full text-left px-3 py-2 flex items-center gap-2.5 text-sm transition-colors duration-100",
+                              idx === selectedSuggestionIdx
+                                ? "bg-violet-50 text-slate-900"
+                                : "text-slate-600 hover:bg-slate-50"
+                            )}
+                          >
+                            <span className="flex-1 truncate">
+                              {highlightMatch(item.promptText, composerValue)}
                             </span>
-                          )}
-                        </button>
-                      );
-                    })}
+                            {cat && (
+                              <span
+                                className="text-[10px] flex-shrink-0 px-1.5 py-0.5 rounded text-white"
+                                style={{ backgroundColor: cat.color }}
+                              >
+                                {cat.label}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* Category Chips */}
-            <div className="mb-4">
-              <CategoryChips
-                categories={categories}
-                selected={selectedCategory}
-                onSelect={setSelectedCategory}
-              />
-            </div>
-
-            {/* Suggested Prompts Grid */}
-            <div className="w-full max-w-[720px]">
-              <div className="flex items-center gap-2 mb-3">
-                <Lightbulb size={14} className="text-slate-400" />
-                <span className="text-xs font-medium text-slate-500">Suggested Prompts</span>
+                )}
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {filteredPrompts.slice(0, 8).map((prompt) => {
-                  const cat = categories.find((c) => c.id === prompt.category);
-                  return (
-                    <button
-                      key={prompt.id}
-                      onClick={() => handlePromptClick(prompt)}
-                      className="text-left px-3 py-2.5 rounded-lg border border-slate-200 hover:border-violet-300 hover:bg-violet-50/30 transition-colors flex items-start gap-2 group"
-                    >
-                      {cat && (
-                        <span
-                          className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium text-white flex-shrink-0 mt-0.5"
-                          style={{ backgroundColor: cat.color }}
-                        >
-                          {cat.label}
-                        </span>
-                      )}
-                      <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors flex items-center gap-1.5">
-                        <ChevronRight
-                          size={12}
-                          className="text-slate-300 group-hover:text-violet-500 transition-colors flex-shrink-0"
-                        />
-                        {prompt.promptText}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* ═══ Conversation State ═══ */
-          <div className="flex flex-col h-full">
-            {/* Category Chips (compact) */}
-            <div className="px-4 py-2 border-b border-slate-100 bg-white/80 backdrop-blur">
-              <div className="max-w-[960px] mx-auto flex items-center gap-3">
+
+              <div className="mt-2 mb-6">
                 <CategoryChips
                   categories={categories}
                   selected={selectedCategory}
                   onSelect={setSelectedCategory}
                 />
               </div>
-            </div>
 
-            {/* Suggested Prompts (horizontal scroll) */}
-            <div className="px-4 py-2 border-b border-slate-100 bg-slate-50/50">
-              <div className="max-w-[960px] mx-auto flex gap-2 overflow-x-auto pb-1">
-                {filteredPrompts.slice(0, 6).map((prompt) => (
-                  <button
-                    key={prompt.id}
-                    onClick={() => handlePromptClick(prompt)}
-                    className="flex-shrink-0 text-left px-3 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 hover:bg-violet-50/30 transition-colors max-w-[280px]"
-                  >
-                    <p className="text-xs text-slate-600 truncate">{prompt.promptText}</p>
-                  </button>
-                ))}
+              <div className="w-full max-w-[980px] mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {filteredPrompts.slice(0, 6).map((prompt) => {
+                    const cat = categories.find((c) => c.id === prompt.category);
+                    return (
+                      <button
+                        key={prompt.id}
+                        onClick={() => handlePromptClick(prompt)}
+                        className="text-left p-4 rounded-2xl border border-slate-200 bg-white hover:border-[#6B7EF3] hover:bg-[#F8FAFF] transition-all duration-200 group"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#EEF2FF] text-[#6B7EF3]">
+                            <BarChart3 size={16} />
+                          </span>
+                          <ChevronRight
+                            size={14}
+                            className="text-slate-300 group-hover:text-[#6B7EF3] transition-colors"
+                          />
+                        </div>
+                        <p className="mt-3 text-[15px] text-[#1E293B] leading-6">{prompt.promptText}</p>
+                        <p className="mt-2 text-xs text-slate-400">{cat?.label ?? "Insights"}</p>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+            </div>
+          </div>
+        ) : (
+          /* ═══ Conversation State ═══ */
+          <div className="flex flex-col w-full h-full max-w-[1363px] mx-auto px-4">
+            <div className="flex items-center justify-between my-2">
+              <div className="flex items-center gap-2">
+                <Bot size={20} className="text-[#6B7EF3]" />
+                <span className="text-lg font-semibold text-[#0F172A]">IGRS Finance AI</span>
+              </div>
+              <button
+                onClick={handleNewChat}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#0A3B77] border border-[#D2D2D2] rounded-lg hover:bg-[#E8F4FD] transition-colors"
+              >
+                <Plus size={14} />
+                <span>New Chat</span>
+              </button>
             </div>
 
             {/* Conversation Area */}
-            <div className="flex-1 min-h-0 overflow-y-auto bg-gray-50">
-              <div className="max-w-[960px] mx-auto px-4 py-6 space-y-4">
-                {messages.map((msg) =>
-                  msg.role === "user" ? (
-                    <div key={msg.id} className="flex justify-end">
-                      <div className="rounded-2xl px-4 py-3 max-w-[80%] bg-gray-100 text-slate-800">
-                        <p className="text-sm">{msg.content}</p>
+            <div className="flex-1 overflow-y-auto space-y-6 mb-4 pr-2 pb-4 scrollbar-hide">
+              {messages.map((msg, index) =>
+                msg.role === "user" ? (
+                  <div
+                    key={msg.id}
+                    className="flex justify-end animate-in slide-in-from-bottom-4 duration-500"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <div className="max-w-4xl ml-12">
+                      <div className="flex flex-col items-end space-y-1">
+                        <span className="text-xs text-gray-500 mr-2">
+                          {formatMessageTime(msg.timestamp)}
+                        </span>
+                        <div className="bg-[#D1ECFF] rounded-xl rounded-tr-none px-3 py-4 max-w-md">
+                          <p className="text-sm text-[#191919] leading-relaxed">{msg.content}</p>
+                        </div>
                       </div>
                     </div>
-                  ) : (
-                    <BubbleErrorBoundary key={msg.id}>
-                      <AIBubble msg={msg} onFollowUp={handleSend} />
-                    </BubbleErrorBoundary>
-                  )
-                )}
-                {isTyping && streamingEvents.length > 0 && (
-                  <StreamingIndicator events={streamingEvents} />
-                )}
-                <div ref={conversationEndRef} />
-              </div>
+                  </div>
+                ) : (
+                  <BubbleErrorBoundary key={msg.id}>
+                    <AIBubble msg={msg} onFollowUp={handleSend} />
+                  </BubbleErrorBoundary>
+                )
+              )}
+              {isTyping && streamingEvents.length > 0 && (
+                <StreamingIndicator events={streamingEvents} />
+              )}
+              <div ref={conversationEndRef} />
             </div>
 
             {/* Bottom Composer */}
-            <div className="bg-white border-t border-slate-200 px-4 py-3">
-              <div className="max-w-[960px] mx-auto flex items-center gap-3">
-                <Tooltip delayDuration={150}>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={handleNewChat}
-                      className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center hover:border-violet-500 hover:bg-violet-50 hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95"
-                      aria-label="New Chat"
-                    >
-                      <MessageSquarePlus size={18} className="text-slate-500" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">New Chat</TooltipContent>
-                </Tooltip>
-
-                <Tooltip delayDuration={150}>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={handleNewChat}
-                      className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center hover:border-red-400 hover:bg-red-50 hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95"
-                      aria-label="Clear Chat"
-                    >
-                      <Trash2 size={16} className="text-slate-500" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">Clear Chat</TooltipContent>
-                </Tooltip>
-
-                <div className="flex-1 relative">
+            <div className="flex items-end gap-4 bg-[#F2FDFF] rounded-[24px] p-2 mb-3">
+              <div className="flex-1 relative">
+                <div
+                  className="min-h-[128px] border border-[#656565] bg-white rounded-[24px] p-4 relative hover:border-[#6B7EF3] hover:shadow-lg transition-all duration-300 ease-out focus-within:border-[#6B7EF3] focus-within:shadow-lg focus-within:ring-2 focus-within:ring-[#6B7EF3]/20"
+                  style={{ boxShadow: "0 4px 8px 0 rgba(14, 42, 82, 0.06)" }}
+                >
                   <textarea
                     value={composerValue}
                     onChange={handleTextareaChange}
@@ -1096,59 +1065,67 @@ export default function AIChatPage() {
                     }}
                     onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Ask a follow-up question..."
-                    className="w-full resize-none border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all"
-                    rows={1}
+                    placeholder="Sample prompt: Show zone wise revenue trend for this month"
+                    className="w-full h-full min-h-[90px] flex-1 resize-none border-none outline-none text-[#0F172A] text-sm transition-all duration-200 placeholder:text-[#7C8A9A]"
+                    rows={4}
                     disabled={isTyping}
                   />
 
-                  {/* Suggestions Dropdown (conversation mode) */}
-                  {showSuggestions && suggestions.length > 0 && messages.length > 0 && (
-                    <div className="absolute left-0 right-0 bottom-[44px] z-30 bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden">
-                      <div className="max-h-[240px] overflow-y-auto">
-                        {suggestions.map((item, idx) => {
-                          const cat = categories.find((c) => c.id === item.category);
-                          return (
-                            <button
-                              key={item.id}
-                              onMouseDown={(e) => {
-                                e.preventDefault();
-                                handleSelectSuggestion(item);
-                              }}
-                              className={cn(
-                                "w-full text-left px-3 py-2 flex items-center gap-2.5 text-sm transition-colors duration-100",
-                                idx === selectedSuggestionIdx
-                                  ? "bg-violet-50 text-slate-900"
-                                  : "text-slate-600 hover:bg-slate-50"
-                              )}
-                            >
-                              <span className="flex-1 truncate">
-                                {highlightMatch(item.promptText, composerValue)}
-                              </span>
-                              {cat && (
-                                <span
-                                  className="text-[10px] flex-shrink-0 px-1.5 py-0.5 rounded text-white"
-                                  style={{ backgroundColor: cat.color }}
-                                >
-                                  {cat.label}
-                                </span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-end">
+                    <button
+                      onClick={() => handleSend()}
+                      disabled={isTyping || !composerValue.trim()}
+                      className={cn(
+                        "w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-[#D2D2D2] flex items-center justify-center hover:border-[#0A3B77] hover:bg-[#0A3B77] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
+                        (isTyping || !composerValue.trim()) && "opacity-50 cursor-not-allowed"
+                      )}
+                      aria-label="Send prompt"
+                    >
+                      <ArrowRight
+                        size={18}
+                        className="text-white group-hover:text-white transition-colors duration-200"
+                      />
+                    </button>
+                  </div>
                 </div>
 
-                <button
-                  onClick={() => handleSend()}
-                  disabled={isTyping || !composerValue.trim()}
-                  className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-slate-800 disabled:bg-slate-300 disabled:cursor-not-allowed hover:scale-110 transition-all duration-200 ease-out active:scale-95"
-                  aria-label="Send message"
-                >
-                  <ArrowRight size={20} className="text-white" />
-                </button>
+                {/* Suggestions Dropdown (conversation mode) */}
+                {showSuggestions && suggestions.length > 0 && messages.length > 0 && (
+                  <div className="absolute left-0 right-0 bottom-[132px] z-30 bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden">
+                    <div className="max-h-[240px] overflow-y-auto">
+                      {suggestions.map((item, idx) => {
+                        const cat = categories.find((c) => c.id === item.category);
+                        return (
+                          <button
+                            key={item.id}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              handleSelectSuggestion(item);
+                            }}
+                            className={cn(
+                              "w-full text-left px-3 py-2 flex items-center gap-2.5 text-sm transition-colors duration-100",
+                              idx === selectedSuggestionIdx
+                                ? "bg-violet-50 text-slate-900"
+                                : "text-slate-600 hover:bg-slate-50"
+                            )}
+                          >
+                            <span className="flex-1 truncate">
+                              {highlightMatch(item.promptText, composerValue)}
+                            </span>
+                            {cat && (
+                              <span
+                                className="text-[10px] flex-shrink-0 px-1.5 py-0.5 rounded text-white"
+                                style={{ backgroundColor: cat.color }}
+                              >
+                                {cat.label}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1164,14 +1141,6 @@ export default function AIChatPage() {
             100% {
               opacity: 1;
               transform: translateY(0);
-            }
-          }
-          @keyframes border-run {
-            0% {
-              transform: rotate(0deg);
-            }
-            100% {
-              transform: rotate(360deg);
             }
           }
         `}</style>

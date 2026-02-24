@@ -8,7 +8,7 @@ Meeru AI is an **enterprise financial operations platform** that automates and o
 
 ## Tech Stack
 
-Next.js 13 App Router, TypeScript, Tailwind CSS, Shadcn/UI, Lucide icons. 96 pages (60 hook-based, 28 inline-mock, 8 stubs). No testing framework.
+Next.js 13 App Router, TypeScript, Tailwind CSS, Shadcn/UI, Lucide icons. Current page count: 91 (`find app -name page.tsx | wc -l`). No testing framework.
 
 ## Commands
 
@@ -28,11 +28,12 @@ Always run `npm run build` after significant changes to verify zero TypeScript e
 ```bash
 NEXT_PUBLIC_DATA_SOURCE=json   # "json" (default) or "api" — switches data provider at runtime
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api  # Only needed when DATA_SOURCE=api
+API_BASE_URL=http://localhost:8000  # Used by Next.js server routes (SSE/query/sessions proxies)
 ```
 
 ## Path Aliases
 
-All imports use `@/` prefix mapped to project root:
+Prefer `@/` imports for cross-folder/shared modules. Relative imports are acceptable for local same-feature files.
 ```ts
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -233,7 +234,7 @@ public/data/                           # JSON data files (mock data source)
 ## App Layout Chain
 
 ```
-RootLayout → AuthProvider → QueryClientProvider (5-min stale) → Sonner Toaster
+RootLayout → QueryClientProvider (5-min stale) + Sonner Toaster → AuthProvider
   → (main)/layout.tsx → AppShell + PrivateRoute + ErrorBoundary (dynamic, no SSR) → Page
 ```
 
@@ -304,7 +305,8 @@ Key routes in `app/api/`:
 - `/api/dynamic-sheets` — Spreadsheet CRUD
 - `/api/recons` — Reconciliation
 - `/api/sse` — Server-Sent Events (streaming)
-- `/api/query` — Query execution
+- `/api/commandQuery` — Query submission proxy
+- `/api/query/[queryId]/result` — Query result proxy/polling
 
 ## Important Notes
 
@@ -313,3 +315,28 @@ Key routes in `app/api/`:
 - Chart libraries vary: recharts, Chart.js, inline SVG — match the existing page's approach
 - No testing framework — verify with `npm run build` and manual navigation
 - Deployment: standalone output for Docker, Netlify-aware conditional config
+
+## Documentation Maintenance Policy (Mandatory)
+
+- `CLAUDE.md` must be updated whenever project behavior, structure, routes, APIs, conventions, tooling, environment variables, or architecture changes.
+- This applies to **all** code changes, including changes made by Codex.
+- Update this file in the same change set as the code change (same PR/commit batch), not later.
+- Do **not** rewrite the whole document for routine updates. Use append-only updates in the `## Update Log (Append-Only)` section.
+- Keep existing sections intact unless information is incorrect; in that case, correct the inaccurate line and add an append-only log entry explaining what changed.
+- Each append-only update entry must include:
+  - Date (`YYYY-MM-DD`)
+  - What changed
+  - Affected paths/routes/modules
+  - Any required env/script/command changes
+  - Backward-compatibility or migration notes (if any)
+
+## Update Log (Append-Only)
+
+### 2026-02-24
+- Corrected stale/inaccurate metadata:
+  - Page count updated to 91 with command reference.
+  - Added `API_BASE_URL` to environment variables for Next.js server proxy routes.
+  - Clarified import guidance (`@/` preferred; local relative imports allowed).
+  - Corrected root layout/provider order to match implementation.
+  - Updated API routes list to include `/api/commandQuery` and `/api/query/[queryId]/result`.
+- Added mandatory policy requiring `CLAUDE.md` updates for every project/code change, including Codex-driven edits, with append-only logging.

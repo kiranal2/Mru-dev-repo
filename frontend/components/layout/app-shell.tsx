@@ -97,6 +97,21 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     }
   }, [pathname]);
 
+  // One-time panel open for IGRS login redirect flow.
+  useEffect(() => {
+    if (!pathname?.startsWith("/igrs/")) return;
+    try {
+      const shouldOpenPanel = localStorage.getItem("igrs-open-panel-default");
+      if (shouldOpenPanel === "1") {
+        setSelectedRailItem("igrs");
+        setHoveredRailItem("igrs");
+        localStorage.removeItem("igrs-open-panel-default");
+      }
+    } catch {
+      // no-op
+    }
+  }, [pathname]);
+
   // Handle workspace default route - redirect to workspace-2
   useEffect(() => {
     if (pathname === "/home/workspace") {
