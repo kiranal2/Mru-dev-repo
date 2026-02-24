@@ -1,0 +1,223 @@
+{
+  "metadata": {
+    "lastUpdated": "2025-01-15T10:00:00+05:30",
+    "totalEscalations": 10,
+    "version": "v1.0"
+  },
+  "escalations": [
+    {
+      "id": "ESC-001",
+      "caseId": "IGRS-2024-0001",
+      "createdAt": "2024-12-02T09:30:00+05:30",
+      "createdBy": { "role": "IG", "name": "K. Ramesh Babu, IAS" },
+      "assignedTo": { "role": "SR", "name": "M. Suresh Kumar", "email": "sr.vijayawada@igrs.ap.gov.in" },
+      "slaDeadline": "2025-02-28T23:59:59+05:30",
+      "status": "Open",
+      "priority": "High",
+      "comment": "Stamp duty shortfall of ₹3.2L detected on commercial property registration in Vijayawada. Market value appears significantly understated compared to SRO guideline rates.",
+      "responses": [],
+      "auditLog": [
+        { "ts": "2024-12-02T09:30:00+05:30", "actor": "K. Ramesh Babu, IAS", "action": "CREATED", "detail": "Escalation created based on revenue assurance audit finding." },
+        { "ts": "2024-12-02T09:35:00+05:30", "actor": "System", "action": "ASSIGNED", "detail": "Assigned to SR Vijayawada for investigation." }
+      ]
+    },
+    {
+      "id": "ESC-002",
+      "caseId": "IGRS-2024-0002",
+      "createdAt": "2024-11-18T14:15:00+05:30",
+      "createdBy": { "role": "DIG", "name": "P. Venkata Rao" },
+      "assignedTo": { "role": "DR", "name": "S. Lakshmi Devi", "email": "dr.krishna@igrs.ap.gov.in" },
+      "slaDeadline": "2025-03-10T23:59:59+05:30",
+      "status": "Open",
+      "priority": "Medium",
+      "comment": "Agricultural land registered as residential plot in Krishna district. Classification mismatch may have resulted in lower registration fee collection.",
+      "responses": [],
+      "auditLog": [
+        { "ts": "2024-11-18T14:15:00+05:30", "actor": "P. Venkata Rao", "action": "CREATED", "detail": "Escalation raised after cross-referencing land classification records." },
+        { "ts": "2024-11-18T14:20:00+05:30", "actor": "System", "action": "ASSIGNED", "detail": "Assigned to DR Krishna district." },
+        { "ts": "2024-12-05T11:00:00+05:30", "actor": "P. Venkata Rao", "action": "REMINDER_SENT", "detail": "Reminder sent to DR for pending response." }
+      ]
+    },
+    {
+      "id": "ESC-003",
+      "caseId": "IGRS-2024-0003",
+      "createdAt": "2024-12-10T10:45:00+05:30",
+      "createdBy": { "role": "IG", "name": "K. Ramesh Babu, IAS" },
+      "assignedTo": { "role": "DIG", "name": "P. Venkata Rao", "email": "dig.south@igrs.ap.gov.in" },
+      "slaDeadline": "2025-02-15T23:59:59+05:30",
+      "status": "Open",
+      "priority": "Low",
+      "comment": "Minor discrepancy in transfer duty calculation for a gift deed registration. Difference of ₹8,500 noted against expected computation.",
+      "responses": [],
+      "auditLog": [
+        { "ts": "2024-12-10T10:45:00+05:30", "actor": "K. Ramesh Babu, IAS", "action": "CREATED", "detail": "Escalation created for transfer duty variance on gift deed." }
+      ]
+    },
+    {
+      "id": "ESC-004",
+      "caseId": "IGRS-2024-0004",
+      "createdAt": "2024-10-25T11:00:00+05:30",
+      "createdBy": { "role": "DIG", "name": "P. Venkata Rao" },
+      "assignedTo": { "role": "SR", "name": "M. Suresh Kumar", "email": "sr.vijayawada@igrs.ap.gov.in" },
+      "slaDeadline": "2025-01-10T23:59:59+05:30",
+      "status": "Responded",
+      "priority": "High",
+      "comment": "Repeated pattern of undervaluation in SRO Vijayawada-III. Five consecutive registrations show market value 30-40% below guideline rates.",
+      "responses": [
+        {
+          "respondedAt": "2024-11-20T16:30:00+05:30",
+          "respondedBy": { "role": "SR", "name": "M. Suresh Kumar" },
+          "explanation": "Reviewed all five registrations. Three cases involved distress sales with documented court orders permitting below-market transactions. Remaining two are under further review with local valuation committee.",
+          "evidence": ["court_order_2024_1187.pdf", "valuation_committee_minutes_nov2024.pdf", "sale_deed_comparisons.xlsx"],
+          "status": "Justified"
+        }
+      ],
+      "auditLog": [
+        { "ts": "2024-10-25T11:00:00+05:30", "actor": "P. Venkata Rao", "action": "CREATED", "detail": "Escalation raised for systematic undervaluation pattern." },
+        { "ts": "2024-10-25T11:05:00+05:30", "actor": "System", "action": "ASSIGNED", "detail": "Assigned to SR Vijayawada for explanation." },
+        { "ts": "2024-11-20T16:30:00+05:30", "actor": "M. Suresh Kumar", "action": "RESPONDED", "detail": "Response submitted with supporting evidence for 3 of 5 cases." }
+      ]
+    },
+    {
+      "id": "ESC-005",
+      "caseId": "IGRS-2024-0005",
+      "createdAt": "2024-11-05T09:00:00+05:30",
+      "createdBy": { "role": "IG", "name": "K. Ramesh Babu, IAS" },
+      "assignedTo": { "role": "DR", "name": "S. Lakshmi Devi", "email": "dr.krishna@igrs.ap.gov.in" },
+      "slaDeadline": "2025-01-20T23:59:59+05:30",
+      "status": "Responded",
+      "priority": "Medium",
+      "comment": "Registration fee collected at old slab rates for a transaction executed after revised rates came into effect on 01-Oct-2024. Potential revenue loss of ₹45,000.",
+      "responses": [
+        {
+          "respondedAt": "2024-12-01T10:00:00+05:30",
+          "respondedBy": { "role": "DR", "name": "S. Lakshmi Devi" },
+          "explanation": "The document was presented for registration on 28-Sep-2024 but processing was delayed due to system downtime. The old slab rate was applied based on the presentation date per standing circular 14/2023.",
+          "evidence": ["system_downtime_log_sep2024.pdf", "circular_14_2023.pdf"],
+          "status": "Justified"
+        },
+        {
+          "respondedAt": "2024-12-18T14:00:00+05:30",
+          "respondedBy": { "role": "DR", "name": "S. Lakshmi Devi" },
+          "explanation": "Additional clarification: the presentation receipt timestamp confirms 28-Sep-2024 at 16:42 IST, which is prior to the effective date of revised rates.",
+          "evidence": ["presentation_receipt_IGRS2024_0005.pdf"],
+          "status": "Justified"
+        }
+      ],
+      "auditLog": [
+        { "ts": "2024-11-05T09:00:00+05:30", "actor": "K. Ramesh Babu, IAS", "action": "CREATED", "detail": "Escalation for incorrect fee slab application post rate revision." },
+        { "ts": "2024-12-01T10:00:00+05:30", "actor": "S. Lakshmi Devi", "action": "RESPONDED", "detail": "Initial response provided citing system downtime and standing circular." },
+        { "ts": "2024-12-18T14:00:00+05:30", "actor": "S. Lakshmi Devi", "action": "RESPONDED", "detail": "Follow-up response with presentation receipt evidence." }
+      ]
+    },
+    {
+      "id": "ESC-006",
+      "caseId": "IGRS-2024-0006",
+      "createdAt": "2024-10-15T08:30:00+05:30",
+      "createdBy": { "role": "DIG", "name": "P. Venkata Rao" },
+      "assignedTo": { "role": "SR", "name": "M. Suresh Kumar", "email": "sr.vijayawada@igrs.ap.gov.in" },
+      "slaDeadline": "2024-12-31T23:59:59+05:30",
+      "status": "Accepted",
+      "priority": "High",
+      "comment": "Stamp duty evasion on a ₹1.8Cr property sale. Document registered as a lease agreement instead of sale deed to attract lower duty. Revenue loss estimated at ₹7.2L.",
+      "responses": [
+        {
+          "respondedAt": "2024-11-10T15:00:00+05:30",
+          "respondedBy": { "role": "SR", "name": "M. Suresh Kumar" },
+          "explanation": "Upon investigation, the document was indeed a sale transaction disguised as a lease. Recovery proceedings have been initiated under Section 47-A of the Indian Stamp Act. Demand notice issued to the parties.",
+          "evidence": ["investigation_report_ESC006.pdf", "demand_notice_DN2024_0892.pdf", "property_valuation_report.pdf"],
+          "status": "Recovered"
+        }
+      ],
+      "auditLog": [
+        { "ts": "2024-10-15T08:30:00+05:30", "actor": "P. Venkata Rao", "action": "CREATED", "detail": "Escalation for suspected stamp duty evasion via document misclassification." },
+        { "ts": "2024-10-15T08:35:00+05:30", "actor": "System", "action": "ASSIGNED", "detail": "Assigned to SR Vijayawada for investigation." },
+        { "ts": "2024-11-10T15:00:00+05:30", "actor": "M. Suresh Kumar", "action": "RESPONDED", "detail": "Investigation confirmed evasion. Recovery proceedings initiated." },
+        { "ts": "2024-12-02T09:00:00+05:30", "actor": "P. Venkata Rao", "action": "ACCEPTED", "detail": "Response accepted. Recovery of ₹7.2L confirmed in progress." }
+      ]
+    },
+    {
+      "id": "ESC-007",
+      "caseId": "IGRS-2024-0007",
+      "createdAt": "2024-09-20T13:00:00+05:30",
+      "createdBy": { "role": "IG", "name": "K. Ramesh Babu, IAS" },
+      "assignedTo": { "role": "DR", "name": "S. Lakshmi Devi", "email": "dr.krishna@igrs.ap.gov.in" },
+      "slaDeadline": "2024-12-15T23:59:59+05:30",
+      "status": "Rejected",
+      "priority": "Medium",
+      "comment": "Alleged non-collection of user charges for certified copy issuance at DRO Krishna. Approximately 120 certified copies issued without fee in Q3-2024.",
+      "responses": [
+        {
+          "respondedAt": "2024-10-28T11:30:00+05:30",
+          "respondedBy": { "role": "DR", "name": "S. Lakshmi Devi" },
+          "explanation": "All 120 certified copies were issued to government departments under the inter-departmental fee waiver policy (GO Ms No. 45/2023). Each request has a valid requisition letter from the requesting department.",
+          "evidence": ["go_ms_45_2023.pdf", "requisition_letters_batch_q3.zip"],
+          "status": "Justified"
+        },
+        {
+          "respondedAt": "2024-11-15T09:00:00+05:30",
+          "respondedBy": { "role": "DR", "name": "S. Lakshmi Devi" },
+          "explanation": "Cross-verified with requesting departments. All 120 requisitions confirmed authentic. Fee waiver correctly applied per government order.",
+          "evidence": ["department_confirmation_letters.zip", "fee_waiver_reconciliation.xlsx"],
+          "status": "Justified"
+        }
+      ],
+      "auditLog": [
+        { "ts": "2024-09-20T13:00:00+05:30", "actor": "K. Ramesh Babu, IAS", "action": "CREATED", "detail": "Escalation for suspected non-collection of certified copy fees." },
+        { "ts": "2024-10-28T11:30:00+05:30", "actor": "S. Lakshmi Devi", "action": "RESPONDED", "detail": "Response cites inter-departmental fee waiver policy." },
+        { "ts": "2024-11-15T09:00:00+05:30", "actor": "S. Lakshmi Devi", "action": "RESPONDED", "detail": "Follow-up with cross-verification from requesting departments." },
+        { "ts": "2024-12-01T10:00:00+05:30", "actor": "K. Ramesh Babu, IAS", "action": "REJECTED", "detail": "Escalation closed as rejected. Fee waiver was legitimately applied under GO Ms No. 45/2023." }
+      ]
+    },
+    {
+      "id": "ESC-008",
+      "caseId": "IGRS-2024-0008",
+      "createdAt": "2024-09-05T10:00:00+05:30",
+      "createdBy": { "role": "IG", "name": "K. Ramesh Babu, IAS" },
+      "assignedTo": { "role": "SR", "name": "M. Suresh Kumar", "email": "sr.vijayawada@igrs.ap.gov.in" },
+      "slaDeadline": "2024-11-30T23:59:59+05:30",
+      "status": "Overdue",
+      "priority": "High",
+      "comment": "Large-scale revenue leakage identified in industrial property registrations. Multiple transactions in Auto Nagar area show consistent 25% undervaluation totalling ₹12.5L in potential stamp duty loss.",
+      "responses": [],
+      "auditLog": [
+        { "ts": "2024-09-05T10:00:00+05:30", "actor": "K. Ramesh Babu, IAS", "action": "CREATED", "detail": "Escalation for systematic undervaluation in industrial property registrations." },
+        { "ts": "2024-09-05T10:05:00+05:30", "actor": "System", "action": "ASSIGNED", "detail": "Assigned to SR Vijayawada." },
+        { "ts": "2024-12-01T00:00:00+05:30", "actor": "System", "action": "SLA_BREACHED", "detail": "SLA deadline exceeded. No response received from assigned officer." }
+      ]
+    },
+    {
+      "id": "ESC-009",
+      "caseId": "IGRS-2024-0009",
+      "createdAt": "2024-10-01T16:00:00+05:30",
+      "createdBy": { "role": "DIG", "name": "P. Venkata Rao" },
+      "assignedTo": { "role": "DR", "name": "S. Lakshmi Devi", "email": "dr.krishna@igrs.ap.gov.in" },
+      "slaDeadline": "2024-12-20T23:59:59+05:30",
+      "status": "Overdue",
+      "priority": "Medium",
+      "comment": "Discrepancy in encumbrance certificate fees collected at DRO Machilipatnam sub-office. Fee register shows ₹24,000 shortfall over a 3-month period compared to the number of ECs issued.",
+      "responses": [],
+      "auditLog": [
+        { "ts": "2024-10-01T16:00:00+05:30", "actor": "P. Venkata Rao", "action": "CREATED", "detail": "Escalation for EC fee collection discrepancy." },
+        { "ts": "2024-12-21T00:00:00+05:30", "actor": "System", "action": "SLA_BREACHED", "detail": "SLA deadline exceeded without response." }
+      ]
+    },
+    {
+      "id": "ESC-010",
+      "caseId": "IGRS-2024-0010",
+      "createdAt": "2024-11-12T08:45:00+05:30",
+      "createdBy": { "role": "IG", "name": "K. Ramesh Babu, IAS" },
+      "assignedTo": { "role": "DIG", "name": "P. Venkata Rao", "email": "dig.south@igrs.ap.gov.in" },
+      "slaDeadline": "2025-01-05T23:59:59+05:30",
+      "status": "Overdue",
+      "priority": "Low",
+      "comment": "Delay in depositing collected registration fees into the government treasury account at multiple SROs under South Zone. Average delay of 5-7 working days observed against the mandated next-day deposit rule.",
+      "responses": [],
+      "auditLog": [
+        { "ts": "2024-11-12T08:45:00+05:30", "actor": "K. Ramesh Babu, IAS", "action": "CREATED", "detail": "Escalation for delayed treasury deposits across South Zone SROs." },
+        { "ts": "2024-11-12T08:50:00+05:30", "actor": "System", "action": "ASSIGNED", "detail": "Assigned to DIG South Zone for zone-wide review." },
+        { "ts": "2025-01-06T00:00:00+05:30", "actor": "System", "action": "SLA_BREACHED", "detail": "SLA deadline exceeded. Awaiting DIG response." }
+      ]
+    }
+  ]
+}

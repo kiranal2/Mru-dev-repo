@@ -1,40 +1,95 @@
 // ── Client-side demo authentication for AI Chat Intelligence ────────
 // No Supabase dependency — localStorage only
 
+export type IGRSRole = "IG" | "DIG" | "DR" | "SR";
+
+export interface IGRSJurisdiction {
+  zone?: string;
+  district?: string;
+  srCode?: string;
+  srName?: string;
+}
+
 export interface IGRSSession {
   email: string;
   name: string;
-  role: "ADMIN";
+  role: IGRSRole;
+  designation: string;
+  jurisdiction: IGRSJurisdiction;
   loginAt: string;
 }
 
 const STORAGE_KEY = "igrs_admin_session";
 
-// Hardcoded demo credentials
-const DEMO_CREDENTIALS = {
-  email: "admin@igrs.ap.gov.in",
-  password: "admin123",
-  name: "IGRS Administrator",
-} as const;
+// Demo credentials for each role
+interface DemoUser {
+  email: string;
+  password: string;
+  name: string;
+  role: IGRSRole;
+  designation: string;
+  jurisdiction: IGRSJurisdiction;
+}
+
+const DEMO_USERS: DemoUser[] = [
+  {
+    email: "ig@igrs.ap.gov.in",
+    password: "ig123",
+    name: "K. Ramesh Babu, IAS",
+    role: "IG",
+    designation: "Inspector General",
+    jurisdiction: {},
+  },
+  {
+    email: "dig.south@igrs.ap.gov.in",
+    password: "dig123",
+    name: "P. Venkata Rao",
+    role: "DIG",
+    designation: "DIG South Zone",
+    jurisdiction: { zone: "South" },
+  },
+  {
+    email: "dr.krishna@igrs.ap.gov.in",
+    password: "dr123",
+    name: "S. Lakshmi Devi",
+    role: "DR",
+    designation: "District Registrar, Krishna",
+    jurisdiction: { zone: "South", district: "Krishna" },
+  },
+  {
+    email: "sr.vijayawada@igrs.ap.gov.in",
+    password: "sr123",
+    name: "M. Suresh Kumar",
+    role: "SR",
+    designation: "Sub-Registrar, Vijayawada Central",
+    jurisdiction: { zone: "South", district: "Krishna", srCode: "SR01", srName: "Vijayawada Central" },
+  },
+];
 
 /**
  * Validate credentials and store session in localStorage.
  * Returns `{ ok: true }` on success, `{ ok: false, error }` on failure.
  */
-export function loginAdmin(
+export function loginIGRS(
   email: string,
   password: string
 ): { ok: true } | { ok: false; error: string } {
   const trimmedEmail = email.trim().toLowerCase();
 
-  if (trimmedEmail !== DEMO_CREDENTIALS.email || password !== DEMO_CREDENTIALS.password) {
+  const user = DEMO_USERS.find(
+    (u) => u.email === trimmedEmail && u.password === password
+  );
+
+  if (!user) {
     return { ok: false, error: "Invalid email or password" };
   }
 
   const session: IGRSSession = {
-    email: DEMO_CREDENTIALS.email,
-    name: DEMO_CREDENTIALS.name,
-    role: "ADMIN",
+    email: user.email,
+    name: user.name,
+    role: user.role,
+    designation: user.designation,
+    jurisdiction: user.jurisdiction,
     loginAt: new Date().toISOString(),
   };
 
@@ -46,6 +101,9 @@ export function loginAdmin(
 
   return { ok: true };
 }
+
+/** Backwards-compatible alias */
+export const loginAdmin = loginIGRS;
 
 /** Read the current session (or null if not logged in). */
 export function getSession(): IGRSSession | null {
@@ -65,4 +123,9 @@ export function logoutAdmin(): void {
   } catch {
     // ignore
   }
+}
+
+/** Get all demo users (for the role selector UI). */
+export function getDemoUsers() {
+  return DEMO_USERS.map(({ password, ...rest }) => rest);
 }

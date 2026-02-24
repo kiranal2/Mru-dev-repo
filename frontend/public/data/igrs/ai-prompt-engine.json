@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "lastUpdated": "2024-12-13T14:30:00+05:30",
-    "totalPrompts": 24,
-    "version": "v1.0"
+    "lastUpdated": "2025-01-15T14:30:00+05:30",
+    "totalPrompts": 64,
+    "version": "v2.0"
   },
   "categories": [
     { "id": "revenue", "label": "Revenue", "icon": "IndianRupee", "color": "#DC2626" },
@@ -641,6 +641,863 @@
         },
         "keyInsight": "SR18's maximum delay of 32 days is 2.3x the SLA target. The primary bottleneck is staff shortage \u2014 operating at 60% capacity. Adding 2 temporary staff could reduce avg processing to under 10 days.",
         "followUpPrompts": ["Staff utilization by SRO", "Cost of temporary staffing", "Impact of automation on delays"]
+      }
+    },
+
+    {
+      "id": "role-ig-001",
+      "promptText": "State revenue summary this week",
+      "category": "revenue",
+      "role": "IG",
+      "response": {
+        "narrative": "State-wide revenue collection for the current week (13-19 Jan 2025) totals ₹8.42Cr across all 26 SROs. This represents a 4.2% increase over the same period last year. Krishna and Guntur districts lead at ₹1.3Cr and ₹1.1Cr respectively.",
+        "inlineTable": {
+          "headers": ["Zone", "Revenue", "Documents", "vs Last Week", "vs Target"],
+          "rows": [
+            ["South Zone", "₹3.8Cr", "1,240", "+6.1%", "+₹0.3Cr"],
+            ["North Zone", "₹2.9Cr", "980", "+3.2%", "+₹0.1Cr"],
+            ["Central Zone", "₹1.72Cr", "560", "+2.8%", "-₹0.08Cr"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["South", "North", "Central"],
+          "datasets": [{ "label": "Revenue (₹Cr)", "data": [3.8, 2.9, 1.72], "color": "#7C3AED" }]
+        },
+        "keyInsight": "South Zone contributes 45% of weekly state revenue. Central Zone is 4.4% below target — Kurnool SRO underperformance is the primary drag.",
+        "followUpPrompts": ["Drill into Central Zone shortfall", "Compare all zones YoY", "Top performing SROs this week"]
+      }
+    },
+    {
+      "id": "role-ig-002",
+      "promptText": "Compare all zones leakage rate this month",
+      "category": "risk",
+      "role": "IG",
+      "response": {
+        "narrative": "Zone-wise revenue leakage analysis for January 2025. The state-wide leakage rate stands at 3.8%, down from 4.1% last month. South Zone has the highest absolute leakage but the lowest rate, indicating high volume rather than systemic issues.",
+        "inlineTable": {
+          "headers": ["Zone", "Total Revenue", "Leakage", "Rate", "High-Risk Cases"],
+          "rows": [
+            ["South", "₹14.2Cr", "₹42.6L", "3.0%", "28"],
+            ["North", "₹10.8Cr", "₹43.2L", "4.0%", "34"],
+            ["Central", "₹6.4Cr", "₹32.0L", "5.0%", "22"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["South", "North", "Central"],
+          "datasets": [
+            { "label": "Leakage (₹L)", "data": [42.6, 43.2, 32.0], "color": "#EF4444" },
+            { "label": "Rate %", "data": [3.0, 4.0, 5.0], "color": "#F97316" }
+          ]
+        },
+        "keyInsight": "Central Zone's 5.0% leakage rate is 1.3x the state average. Kurnool and Anantapur SROs account for 68% of Central Zone leakage — primarily from market value underreporting.",
+        "followUpPrompts": ["Central Zone leakage breakdown", "Top leakage cases by amount", "Leakage trend over 6 months"]
+      }
+    },
+    {
+      "id": "role-ig-003",
+      "promptText": "Which SROs granted most exemptions?",
+      "category": "compliance",
+      "role": "IG",
+      "response": {
+        "narrative": "SRO-wise exemption analysis for the current fiscal year. 5 SROs account for 62% of all exemptions claimed. Vijayawada Central leads with 184 exemptions worth ₹8.4Cr in foregone revenue.",
+        "inlineTable": {
+          "headers": ["SRO", "District", "Exemptions", "Value", "Flagged %"],
+          "rows": [
+            ["SR01 Vijayawada Central", "Krishna", "184", "₹8.4Cr", "12.5%"],
+            ["SR03 Guntur", "Guntur", "156", "₹6.2Cr", "15.4%"],
+            ["SR05 Visakhapatnam", "Visakhapatnam", "142", "₹5.8Cr", "8.5%"],
+            ["SR02 Machilipatnam", "Krishna", "128", "₹4.1Cr", "18.8%"],
+            ["SR08 Nellore", "Nellore", "118", "₹3.6Cr", "22.0%"]
+          ],
+          "highlightColumn": 4
+        },
+        "keyInsight": "SR08 Nellore has the highest flagged exemption rate at 22.0% — 1 in 5 exemptions may be ineligible. This warrants an immediate compliance audit.",
+        "followUpPrompts": ["Exemption abuse patterns at SR08", "Repeat exemption claimants", "Exemption vs revenue trend"]
+      }
+    },
+    {
+      "id": "role-ig-004",
+      "promptText": "Show all open escalations pending beyond SLA",
+      "category": "sla",
+      "role": "IG",
+      "response": {
+        "narrative": "There are currently 8 escalations that have breached their SLA deadlines. The oldest unresolved escalation is 18 days past due, assigned to DR Krishna. Total revenue at risk across overdue escalations: ₹2.4Cr.",
+        "inlineTable": {
+          "headers": ["Escalation", "Case", "Assigned To", "Days Overdue", "Priority", "Amount"],
+          "rows": [
+            ["ESC-008", "IGRS-2024-0003", "DR Krishna", "18", "High", "₹48.2L"],
+            ["ESC-009", "IGRS-2024-0007", "SR Vijayawada", "14", "Medium", "₹32.1L"],
+            ["ESC-010", "IGRS-2024-0009", "DR Guntur", "12", "Low", "₹18.4L"],
+            ["ESC-011", "IGRS-2024-0012", "SR Machilipatnam", "9", "High", "₹56.8L"],
+            ["ESC-012", "IGRS-2024-0015", "DR Visakhapatnam", "7", "Medium", "₹24.6L"]
+          ],
+          "highlightColumn": 3
+        },
+        "keyInsight": "DR Krishna has 3 overdue escalations totaling ₹1.1Cr. Immediate follow-up recommended — pattern suggests resource constraints rather than non-compliance.",
+        "followUpPrompts": ["DR Krishna workload analysis", "Escalation resolution rate by role", "SLA compliance trend"]
+      }
+    },
+    {
+      "id": "role-ig-005",
+      "promptText": "Top 20 documents above 1 crore with payment gaps",
+      "category": "risk",
+      "role": "IG",
+      "response": {
+        "narrative": "Analysis of high-value documents (>₹1Cr) with payment gaps in the current quarter. 20 documents identified with a combined payment gap of ₹3.8Cr. Krishna district has 7 of the top 20 cases.",
+        "inlineTable": {
+          "headers": ["Case ID", "District", "Document Value", "Gap", "Signal", "Status"],
+          "rows": [
+            ["IGRS-2024-0001", "Krishna", "₹4.2Cr", "₹28.4L", "RevenueGap", "In Review"],
+            ["IGRS-2024-0004", "Guntur", "₹3.8Cr", "₹24.1L", "MarketValueRisk", "New"],
+            ["IGRS-2024-0008", "Visakhapatnam", "₹2.9Cr", "₹22.6L", "ExemptionRisk", "New"],
+            ["IGRS-2024-0012", "Krishna", "₹2.6Cr", "₹18.9L", "ChallanDelay", "In Review"],
+            ["IGRS-2024-0015", "Chittoor", "₹2.1Cr", "₹16.2L", "RevenueGap", "New"]
+          ],
+          "highlightColumn": 3
+        },
+        "keyInsight": "Top 5 cases alone account for ₹1.1Cr in gaps — 29% of the total. Prioritize IGRS-2024-0001 and IGRS-2024-0004 for immediate review given their combined ₹52.5L exposure.",
+        "followUpPrompts": ["Case details for IGRS-2024-0001", "District-wise high-value gap trend", "Escalate top 5 to zone DIGs"]
+      }
+    },
+    {
+      "id": "role-ig-006",
+      "promptText": "Zone performance comparison",
+      "category": "performance",
+      "role": "IG",
+      "response": {
+        "narrative": "Comparative zone performance for FY 2024-25 (Apr-Jan). South Zone leads on absolute revenue while Central Zone shows strongest growth momentum.",
+        "inlineTable": {
+          "headers": ["Zone", "Revenue", "Target Ach.", "Growth", "Docs", "Avg MV"],
+          "rows": [
+            ["South", "₹52.4Cr", "94.2%", "+16.8%", "14,200", "₹36.9L"],
+            ["North", "₹38.6Cr", "91.8%", "+15.2%", "10,400", "₹37.1L"],
+            ["Central", "₹22.8Cr", "88.4%", "+18.4%", "6,800", "₹33.5L"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["South", "North", "Central"],
+          "datasets": [
+            { "label": "Revenue (₹Cr)", "data": [52.4, 38.6, 22.8], "color": "#3B82F6" },
+            { "label": "Target %", "data": [94.2, 91.8, 88.4], "color": "#22C55E" }
+          ]
+        },
+        "keyInsight": "Central Zone's 18.4% growth is the highest but target achievement at 88.4% lags. The gap is primarily from Anantapur district which is at only 78% achievement despite 20% growth.",
+        "followUpPrompts": ["Anantapur performance deep dive", "Zone-wise SRO ranking", "Revenue target revision impact"]
+      }
+    },
+    {
+      "id": "role-ig-007",
+      "promptText": "Show non-responsive SROs this month",
+      "category": "sla",
+      "role": "IG",
+      "response": {
+        "narrative": "4 SROs have not responded to escalated findings within their SLA window this month. Combined revenue at risk: ₹1.6Cr across 12 pending cases.",
+        "inlineTable": {
+          "headers": ["SRO", "District", "Pending Responses", "Oldest (Days)", "Revenue at Risk"],
+          "rows": [
+            ["SR09 Kurnool", "Kurnool", "4", "22", "₹58.4L"],
+            ["SR08 Kadapa", "Kadapa", "3", "16", "₹42.1L"],
+            ["SR18 Nellore", "Nellore", "3", "14", "₹38.6L"],
+            ["SR14 Anantapur", "Anantapur", "2", "11", "₹21.2L"]
+          ]
+        },
+        "keyInsight": "SR09 Kurnool has the worst response record with 4 pending responses, the oldest being 22 days. This is 2.9x the 7-day SLA. Recommend issuing formal notice.",
+        "followUpPrompts": ["SR09 officer accountability report", "SRO response rate ranking", "Issue formal notices"]
+      }
+    },
+    {
+      "id": "role-ig-008",
+      "promptText": "State-wide exemption abuse patterns",
+      "category": "compliance",
+      "role": "IG",
+      "response": {
+        "narrative": "State-wide exemption abuse analysis reveals 3 distinct patterns across 8 districts. Total estimated leakage from exemption abuse: ₹4.2Cr in FY 2024-25.",
+        "inlineTable": {
+          "headers": ["Pattern", "Cases", "Districts", "Est. Leakage", "Risk Level"],
+          "rows": [
+            ["Repeat party claims", "42", "6", "₹1.8Cr", "High"],
+            ["Category misclassification", "28", "5", "₹1.4Cr", "High"],
+            ["Eligibility threshold manipulation", "18", "3", "₹1.0Cr", "Medium"]
+          ]
+        },
+        "keyInsight": "Repeat party claims are the dominant pattern — 42 cases involving 15 unique parties. 3 parties have claimed exemptions at multiple SROs, suggesting organized evasion.",
+        "followUpPrompts": ["Top repeat exemption claimants", "District-wise abuse breakdown", "Recommended enforcement actions"]
+      }
+    },
+    {
+      "id": "role-ig-009",
+      "promptText": "Monthly revenue growth trend",
+      "category": "forecasting",
+      "role": "IG",
+      "response": {
+        "narrative": "State revenue growth trend for the last 12 months. Revenue has grown consistently with a compound monthly growth rate of 1.4%. The forecast model predicts ₹13.2Cr for February 2025.",
+        "inlineChart": {
+          "type": "line",
+          "labels": ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
+          "datasets": [{ "label": "Revenue (₹Cr)", "data": [9.8, 10.1, 10.4, 10.6, 10.9, 11.2, 11.4, 11.6, 11.8, 12.1, 12.4, 12.8], "color": "#7C3AED" }]
+        },
+        "keyInsight": "The upward trend is sustained with no regression months. MV revision in October 2024 added approximately ₹0.4Cr/month in incremental revenue. Seasonal peak expected in March 2025.",
+        "followUpPrompts": ["Forecast for next quarter", "Revenue attribution by driver", "Impact of upcoming MV revisions"]
+      }
+    },
+    {
+      "id": "role-ig-010",
+      "promptText": "High-value case recovery status",
+      "category": "revenue",
+      "role": "IG",
+      "response": {
+        "narrative": "Recovery status for all high-value cases (gap > ₹10L) in the current fiscal year. 64 cases identified with ₹12.8Cr in total recoverable amount. ₹4.2Cr (33%) has been recovered so far.",
+        "inlineTable": {
+          "headers": ["Status", "Cases", "Amount", "% of Total"],
+          "rows": [
+            ["Recovered", "22", "₹4.2Cr", "33%"],
+            ["In Progress", "18", "₹3.8Cr", "30%"],
+            ["Pending Action", "14", "₹2.6Cr", "20%"],
+            ["Disputed", "10", "₹2.2Cr", "17%"]
+          ]
+        },
+        "inlineChart": {
+          "type": "donut",
+          "labels": ["Recovered", "In Progress", "Pending", "Disputed"],
+          "datasets": [{ "label": "Amount", "data": [4.2, 3.8, 2.6, 2.2], "color": "#22C55E" }]
+        },
+        "keyInsight": "Recovery rate of 33% is below the 45% target. 14 pending-action cases (₹2.6Cr) have had no activity for 15+ days. Accelerating these could push recovery rate to 53%.",
+        "followUpPrompts": ["Pending action cases detail", "Recovery rate by district", "Recovery timeline projection"]
+      }
+    },
+
+    {
+      "id": "role-dig-001",
+      "promptText": "Zone revenue summary this month",
+      "category": "revenue",
+      "role": "DIG",
+      "response": {
+        "narrative": "Your zone's revenue summary for January 2025. Total collection: ₹4.8Cr across 5 districts, representing 38% of state revenue. On track to exceed monthly target by 2.1%.",
+        "inlineTable": {
+          "headers": ["District", "Revenue", "Target Ach.", "MoM Change", "Docs"],
+          "rows": [
+            ["Krishna", "₹1.42Cr", "96.2%", "+4.8%", "380"],
+            ["Guntur", "₹1.18Cr", "94.8%", "+3.2%", "310"],
+            ["Chittoor", "₹0.92Cr", "91.4%", "+2.6%", "248"],
+            ["Prakasam", "₹0.68Cr", "89.2%", "+1.8%", "182"],
+            ["Nellore", "₹0.60Cr", "87.6%", "-0.4%", "164"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Krishna", "Guntur", "Chittoor", "Prakasam", "Nellore"],
+          "datasets": [{ "label": "Revenue (₹Cr)", "data": [1.42, 1.18, 0.92, 0.68, 0.60], "color": "#3B82F6" }]
+        },
+        "keyInsight": "Nellore is the only district showing negative MoM change (-0.4%). Registration volume dropped 8% due to pending PP reviews affecting 12 documents.",
+        "followUpPrompts": ["Nellore performance details", "Zone vs state comparison", "SRO-level breakdown"]
+      }
+    },
+    {
+      "id": "role-dig-002",
+      "promptText": "Top zone cases above 40 lakhs",
+      "category": "risk",
+      "role": "DIG",
+      "response": {
+        "narrative": "High-value cases in your zone with payment gaps exceeding ₹40L. 6 cases identified with combined exposure of ₹3.4Cr.",
+        "inlineTable": {
+          "headers": ["Case ID", "District", "Gap Amount", "Signal", "Days Open", "Status"],
+          "rows": [
+            ["IGRS-2024-0001", "Krishna", "₹68.4L", "RevenueGap", "14", "In Review"],
+            ["IGRS-2024-0004", "Guntur", "₹62.1L", "MarketValueRisk", "11", "New"],
+            ["IGRS-2024-0008", "Krishna", "₹54.8L", "ExemptionRisk", "8", "New"],
+            ["IGRS-2024-0012", "Chittoor", "₹48.2L", "ChallanDelay", "18", "In Review"],
+            ["IGRS-2024-0015", "Prakasam", "₹44.6L", "RevenueGap", "6", "New"]
+          ],
+          "highlightColumn": 2
+        },
+        "keyInsight": "IGRS-2024-0012 in Chittoor is 18 days old and approaching SLA breach. Recommend escalation to DR Chittoor for immediate review.",
+        "followUpPrompts": ["Case detail for IGRS-2024-0001", "Escalate IGRS-2024-0012", "Zone risk trend this quarter"]
+      }
+    },
+    {
+      "id": "role-dig-003",
+      "promptText": "District comparison in my zone",
+      "category": "performance",
+      "role": "DIG",
+      "response": {
+        "narrative": "Comparative performance of all 5 districts in your zone for the current fiscal year. Krishna leads on absolute metrics while Nellore shows highest growth rate.",
+        "inlineTable": {
+          "headers": ["District", "Revenue", "Growth %", "Risk Rate", "SLA Comp.", "Integrity"],
+          "rows": [
+            ["Krishna", "₹18.4Cr", "+17.5%", "2.8%", "94%", "82/100"],
+            ["Guntur", "₹15.2Cr", "+17.2%", "3.2%", "91%", "78/100"],
+            ["Chittoor", "₹9.8Cr", "+16.1%", "3.6%", "88%", "74/100"],
+            ["Prakasam", "₹7.4Cr", "+14.8%", "4.1%", "86%", "72/100"],
+            ["Nellore", "₹6.8Cr", "+18.2%", "4.4%", "82%", "68/100"]
+          ]
+        },
+        "keyInsight": "Nellore has the highest growth (18.2%) but worst integrity score (68/100) and SLA compliance (82%). Growth may be masking compliance gaps that need attention.",
+        "followUpPrompts": ["Nellore integrity deep dive", "Zone SLA trend", "Action plan for Prakasam"]
+      }
+    },
+    {
+      "id": "role-dig-004",
+      "promptText": "SRO performance in my zone",
+      "category": "performance",
+      "role": "DIG",
+      "response": {
+        "narrative": "SRO-level performance ranking across your zone. 9 SROs ranked by composite score combining revenue, compliance, and integrity metrics.",
+        "inlineTable": {
+          "headers": ["Rank", "SRO", "District", "Revenue", "Integrity", "Score"],
+          "rows": [
+            ["1", "SR01 Vijayawada Central", "Krishna", "₹4.8Cr", "86", "92"],
+            ["2", "SR03 Guntur City", "Guntur", "₹4.2Cr", "82", "88"],
+            ["3", "SR02 Machilipatnam", "Krishna", "₹3.6Cr", "78", "84"],
+            ["4", "SR08 Nellore Town", "Nellore", "₹2.4Cr", "72", "76"],
+            ["5", "SR09 Chittoor", "Chittoor", "₹2.1Cr", "68", "72"]
+          ]
+        },
+        "keyInsight": "SR01 Vijayawada Central outperforms all other SROs with the highest integrity score (86) and revenue (₹4.8Cr). Bottom 2 SROs need targeted improvement plans.",
+        "followUpPrompts": ["SR08 improvement plan", "Compare top vs bottom SROs", "Zone SRO trend over 6 months"]
+      }
+    },
+    {
+      "id": "role-dig-005",
+      "promptText": "Escalation status in my zone",
+      "category": "sla",
+      "role": "DIG",
+      "response": {
+        "narrative": "Current escalation status across your zone. 14 active escalations: 6 Open, 4 Responded (awaiting review), 4 Overdue. Average response time: 5.2 days vs 7-day SLA.",
+        "inlineTable": {
+          "headers": ["District", "Open", "Responded", "Overdue", "Avg Response"],
+          "rows": [
+            ["Krishna", "2", "2", "1", "4.8 days"],
+            ["Guntur", "1", "1", "1", "5.4 days"],
+            ["Chittoor", "1", "0", "1", "6.2 days"],
+            ["Prakasam", "1", "1", "0", "4.2 days"],
+            ["Nellore", "1", "0", "1", "7.8 days"]
+          ]
+        },
+        "keyInsight": "Nellore's average response time of 7.8 days exceeds the SLA. 1 overdue escalation (ESC-009) is 14 days past deadline. Recommend direct follow-up with SR Nellore.",
+        "followUpPrompts": ["View Nellore overdue escalations", "Zone escalation trend", "Compare zone vs state SLA"]
+      }
+    },
+    {
+      "id": "role-dig-006",
+      "promptText": "Exemption patterns in my zone",
+      "category": "compliance",
+      "role": "DIG",
+      "response": {
+        "narrative": "Exemption usage patterns across your zone for FY 2024-25. Total exemptions: 628 worth ₹28.1Cr. Flagged exemptions: 14.2% (89 cases), estimated leakage: ₹2.1Cr.",
+        "inlineTable": {
+          "headers": ["District", "Exemptions", "Flagged", "Flag Rate", "Est. Leakage"],
+          "rows": [
+            ["Krishna", "184", "23", "12.5%", "₹68.4L"],
+            ["Guntur", "156", "24", "15.4%", "₹52.1L"],
+            ["Chittoor", "112", "18", "16.1%", "₹38.6L"],
+            ["Nellore", "98", "16", "16.3%", "₹32.4L"],
+            ["Prakasam", "78", "8", "10.3%", "₹18.2L"]
+          ],
+          "highlightColumn": 3
+        },
+        "keyInsight": "Nellore and Chittoor have the highest flag rates (16%+). 5 repeat claimants span multiple SROs within the zone, suggesting coordinated exemption abuse.",
+        "followUpPrompts": ["Repeat claimant details", "Exemption audit recommendations", "Zone vs state exemption rates"]
+      }
+    },
+    {
+      "id": "role-dig-007",
+      "promptText": "SLA breaches in my zone this month",
+      "category": "sla",
+      "role": "DIG",
+      "response": {
+        "narrative": "SLA breach analysis for your zone in January 2025. 18 cases breached their SLA targets. Overall zone SLA compliance: 88.4% vs state average of 91.2%.",
+        "inlineTable": {
+          "headers": ["District", "Total Cases", "Breached", "Breach Rate", "Avg Delay"],
+          "rows": [
+            ["Krishna", "42", "4", "9.5%", "3.2 days"],
+            ["Guntur", "38", "4", "10.5%", "4.1 days"],
+            ["Chittoor", "28", "4", "14.3%", "5.8 days"],
+            ["Nellore", "22", "4", "18.2%", "6.4 days"],
+            ["Prakasam", "18", "2", "11.1%", "3.8 days"]
+          ]
+        },
+        "keyInsight": "Nellore's 18.2% breach rate is 2x the zone average. Primary cause is staff vacancy — operating at 65% capacity. Recommend temporary staff redeployment from Prakasam.",
+        "followUpPrompts": ["Nellore staffing analysis", "SLA breach trend by district", "Impact of staff redeployment"]
+      }
+    },
+    {
+      "id": "role-dig-008",
+      "promptText": "High-risk documents in my zone",
+      "category": "risk",
+      "role": "DIG",
+      "response": {
+        "narrative": "High-risk document analysis for your zone. 84 documents flagged as high risk in January 2025 with combined exposure of ₹6.2Cr. Krishna accounts for 35% of high-risk cases.",
+        "inlineTable": {
+          "headers": ["District", "High Risk", "Amount at Risk", "Top Signal", "Trend"],
+          "rows": [
+            ["Krishna", "29", "₹2.18Cr", "RevenueGap", "Stable"],
+            ["Guntur", "22", "₹1.54Cr", "MarketValueRisk", "Increasing"],
+            ["Chittoor", "14", "₹1.02Cr", "ExemptionRisk", "Stable"],
+            ["Nellore", "11", "₹0.86Cr", "ChallanDelay", "Increasing"],
+            ["Prakasam", "8", "₹0.60Cr", "DataIntegrity", "Decreasing"]
+          ]
+        },
+        "keyInsight": "Guntur and Nellore show increasing risk trends. Guntur's market value underreporting is concentrated in 3 SROs along the highway corridor — potential organized activity.",
+        "followUpPrompts": ["Guntur MV underreporting detail", "Zone risk heatmap", "Compare with last quarter"]
+      }
+    },
+    {
+      "id": "role-dig-009",
+      "promptText": "Zone revenue vs target",
+      "category": "revenue",
+      "role": "DIG",
+      "response": {
+        "narrative": "Revenue vs target tracking for your zone in FY 2024-25. Year-to-date collection: ₹52.4Cr against target of ₹55.6Cr (94.2% achievement). Projected full-year: ₹62.8Cr vs target of ₹66.7Cr.",
+        "inlineChart": {
+          "type": "line",
+          "labels": ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
+          "datasets": [
+            { "label": "Actual (₹Cr)", "data": [4.6, 4.8, 5.0, 5.1, 5.2, 5.3, 5.6, 5.8, 5.9, 5.1], "color": "#3B82F6" },
+            { "label": "Target (₹Cr)", "data": [4.8, 5.0, 5.2, 5.3, 5.4, 5.5, 5.6, 5.8, 5.9, 5.6], "color": "#EF4444" }
+          ]
+        },
+        "keyInsight": "January shortfall of ₹0.5Cr is seasonal. To close the ₹3.2Cr YTD gap by March, monthly collection needs to increase to ₹5.8Cr (+14% over current run rate).",
+        "followUpPrompts": ["Revenue improvement levers", "District-wise target gap", "Forecast for Feb-Mar"]
+      }
+    },
+    {
+      "id": "role-dig-010",
+      "promptText": "Non-responsive DRs in my zone",
+      "category": "sla",
+      "role": "DIG",
+      "response": {
+        "narrative": "DR response compliance in your zone. 2 of 5 DRs have pending responses beyond SLA. Combined impact: ₹1.2Cr in unresolved escalations.",
+        "inlineTable": {
+          "headers": ["DR", "District", "Pending", "Oldest (Days)", "Amount at Risk"],
+          "rows": [
+            ["DR S. Lakshmi Devi", "Krishna", "3", "12", "₹68.4L"],
+            ["DR P. Nagaraju", "Nellore", "2", "16", "₹52.8L"],
+            ["DR V. Rambabu", "Guntur", "0", "-", "₹0"],
+            ["DR K. Srinivas", "Chittoor", "0", "-", "₹0"],
+            ["DR M. Padma", "Prakasam", "0", "-", "₹0"]
+          ]
+        },
+        "keyInsight": "DR Nellore (P. Nagaraju) has the oldest pending response at 16 days — 2.3x the SLA. Given Nellore's broader SLA issues, recommend an in-person review meeting.",
+        "followUpPrompts": ["Schedule DR Nellore review", "DR response rate trend", "Escalate to IG"]
+      }
+    },
+
+    {
+      "id": "role-dr-001",
+      "promptText": "District revenue summary this month",
+      "category": "revenue",
+      "role": "DR",
+      "response": {
+        "narrative": "Your district's revenue for January 2025: ₹1.42Cr across 3 SROs, representing 96.2% target achievement. Krishna continues to lead the South Zone in revenue collection.",
+        "inlineTable": {
+          "headers": ["SRO", "Revenue", "Documents", "MoM Change", "vs Target"],
+          "rows": [
+            ["SR01 Vijayawada Central", "₹0.62Cr", "168", "+5.2%", "+₹0.04Cr"],
+            ["SR02 Machilipatnam", "₹0.44Cr", "114", "+3.8%", "+₹0.02Cr"],
+            ["SR03 Vijayawada Rural", "₹0.36Cr", "98", "+2.4%", "-₹0.01Cr"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["SR01", "SR02", "SR03"],
+          "datasets": [{ "label": "Revenue (₹Cr)", "data": [0.62, 0.44, 0.36], "color": "#3B82F6" }]
+        },
+        "keyInsight": "SR03 Vijayawada Rural is slightly below target (-₹0.01Cr). Low document volume in agricultural land transactions is the primary driver. Expected to recover in Feb.",
+        "followUpPrompts": ["SR03 performance detail", "District vs zone comparison", "Revenue trend last 6 months"]
+      }
+    },
+    {
+      "id": "role-dr-002",
+      "promptText": "Top district cases above 20 lakhs",
+      "category": "risk",
+      "role": "DR",
+      "response": {
+        "narrative": "High-value risk cases in your district with gaps exceeding ₹20L. 8 cases identified with combined exposure of ₹2.4Cr.",
+        "inlineTable": {
+          "headers": ["Case ID", "SRO", "Gap", "Signal", "Days Open", "Assigned To"],
+          "rows": [
+            ["IGRS-2024-0001", "SR01", "₹68.4L", "RevenueGap", "14", "Analyst Team"],
+            ["IGRS-2024-0008", "SR01", "₹42.1L", "ExemptionRisk", "8", "SR Suresh"],
+            ["IGRS-2024-0012", "SR02", "₹38.6L", "ChallanDelay", "18", "Pending"],
+            ["IGRS-2024-0018", "SR02", "₹28.4L", "MarketValueRisk", "6", "Pending"],
+            ["IGRS-2024-0022", "SR03", "₹22.8L", "RevenueGap", "4", "Pending"]
+          ],
+          "highlightColumn": 2
+        },
+        "keyInsight": "IGRS-2024-0012 at SR02 is 18 days old with no assignment. This should be assigned and reviewed immediately — nearing SLA breach threshold.",
+        "followUpPrompts": ["Assign IGRS-2024-0012", "District risk trend", "SRO-wise case distribution"]
+      }
+    },
+    {
+      "id": "role-dr-003",
+      "promptText": "SRO performance in my district",
+      "category": "performance",
+      "role": "DR",
+      "response": {
+        "narrative": "SRO performance comparison for your district. SR01 Vijayawada Central leads across all metrics while SR03 shows improvement opportunities.",
+        "inlineTable": {
+          "headers": ["SRO", "Revenue", "Cases", "SLA %", "Integrity", "Trend"],
+          "rows": [
+            ["SR01 Vijayawada Central", "₹4.8Cr", "142", "96%", "86/100", "Improving"],
+            ["SR02 Machilipatnam", "₹3.6Cr", "118", "92%", "78/100", "Stable"],
+            ["SR03 Vijayawada Rural", "₹2.8Cr", "94", "88%", "72/100", "Stable"]
+          ]
+        },
+        "keyInsight": "SR03 has the lowest integrity score at 72/100. Cash handling and data quality components need improvement. Schedule a review meeting with SR officer.",
+        "followUpPrompts": ["SR03 integrity breakdown", "SRO officer accountability", "District vs zone SRO ranking"]
+      }
+    },
+    {
+      "id": "role-dr-004",
+      "promptText": "Pending escalations in my district",
+      "category": "sla",
+      "role": "DR",
+      "response": {
+        "narrative": "Your district has 5 active escalations. 2 are assigned to you for review, 3 are assigned to SROs under your jurisdiction.",
+        "inlineTable": {
+          "headers": ["Escalation", "Case", "Assigned To", "Deadline", "Priority", "Status"],
+          "rows": [
+            ["ESC-001", "IGRS-2024-0001", "You (DR)", "22 Jan", "High", "Open"],
+            ["ESC-004", "IGRS-2024-0004", "You (DR)", "28 Jan", "Medium", "Open"],
+            ["ESC-008", "IGRS-2024-0008", "SR01", "18 Jan", "High", "Overdue"],
+            ["ESC-009", "IGRS-2024-0009", "SR02", "25 Jan", "Medium", "Open"],
+            ["ESC-010", "IGRS-2024-0010", "SR03", "20 Jan", "Low", "Overdue"]
+          ]
+        },
+        "keyInsight": "ESC-008 at SR01 is overdue by 4 days. You need to follow up with SR Suresh Kumar. Your own 2 pending reviews (ESC-001, ESC-004) should be completed this week.",
+        "followUpPrompts": ["Review ESC-001 details", "Send reminder to SR01", "My escalation history"]
+      }
+    },
+    {
+      "id": "role-dr-005",
+      "promptText": "Exemption claims in my district",
+      "category": "compliance",
+      "role": "DR",
+      "response": {
+        "narrative": "Exemption claims analysis for your district. 184 exemptions worth ₹8.4Cr in FY 2024-25. 23 claims (12.5%) have been flagged for review.",
+        "inlineTable": {
+          "headers": ["SRO", "Claims", "Value", "Flagged", "Flag Rate"],
+          "rows": [
+            ["SR01 Vijayawada Central", "82", "₹4.2Cr", "8", "9.8%"],
+            ["SR02 Machilipatnam", "58", "₹2.4Cr", "11", "19.0%"],
+            ["SR03 Vijayawada Rural", "44", "₹1.8Cr", "4", "9.1%"]
+          ]
+        },
+        "keyInsight": "SR02 Machilipatnam has nearly double the flag rate of other SROs (19.0%). 6 of 11 flagged cases involve the same party using different PAN numbers — potential identity fraud.",
+        "followUpPrompts": ["SR02 flagged exemptions detail", "Party identity verification", "District exemption trend"]
+      }
+    },
+    {
+      "id": "role-dr-006",
+      "promptText": "Payment gap analysis for my district",
+      "category": "risk",
+      "role": "DR",
+      "response": {
+        "narrative": "Payment gap analysis for your district. Total identified gaps: ₹1.84Cr across 42 cases. Recovery rate: 38% (₹0.70Cr recovered). Revenue signal accounts for 52% of gaps.",
+        "inlineTable": {
+          "headers": ["Signal Type", "Cases", "Gap Amount", "Recovered", "Recovery Rate"],
+          "rows": [
+            ["Revenue Gap", "18", "₹96.2L", "₹42.1L", "44%"],
+            ["Market Value Risk", "10", "₹42.8L", "₹14.2L", "33%"],
+            ["Challan Delay", "8", "₹28.4L", "₹8.6L", "30%"],
+            ["Exemption Risk", "6", "₹16.8L", "₹5.2L", "31%"]
+          ]
+        },
+        "keyInsight": "Revenue Gap cases have the best recovery rate at 44%. Focus recovery efforts on the 10 Market Value Risk cases — higher potential per case (₹4.28L avg).",
+        "followUpPrompts": ["Top recovery priority cases", "Recovery trend this quarter", "Compare with zone average"]
+      }
+    },
+    {
+      "id": "role-dr-007",
+      "promptText": "SLA compliance in my district",
+      "category": "sla",
+      "role": "DR",
+      "response": {
+        "narrative": "SLA compliance report for your district. Overall compliance: 94% (state target: 90%). 4 cases breached SLA in January 2025, all at SR02 and SR03.",
+        "inlineTable": {
+          "headers": ["SRO", "Total Cases", "Within SLA", "Breached", "Compliance"],
+          "rows": [
+            ["SR01 Vijayawada Central", "48", "48", "0", "100%"],
+            ["SR02 Machilipatnam", "34", "31", "3", "91.2%"],
+            ["SR03 Vijayawada Rural", "24", "23", "1", "95.8%"]
+          ]
+        },
+        "keyInsight": "SR01 maintains perfect 100% SLA compliance. SR02's 3 breaches all involved market value verification delays — suggest fast-tracking MV verification at this office.",
+        "followUpPrompts": ["SR02 breach case details", "SLA trend last 6 months", "Process improvement for MV verification"]
+      }
+    },
+    {
+      "id": "role-dr-008",
+      "promptText": "High-risk registrations this week",
+      "category": "risk",
+      "role": "DR",
+      "response": {
+        "narrative": "High-risk registrations in your district this week. 6 new documents flagged with combined risk exposure of ₹1.2Cr. SR01 and SR02 have 3 each.",
+        "inlineTable": {
+          "headers": ["Doc Key", "SRO", "Value", "Risk Score", "Signals", "Status"],
+          "rows": [
+            ["SR01-2025-0142", "SR01", "₹38.4L", "82", "Revenue, MV", "New"],
+            ["SR02-2025-0098", "SR02", "₹32.1L", "78", "Exemption", "New"],
+            ["SR01-2025-0148", "SR01", "₹28.6L", "76", "Revenue", "New"],
+            ["SR02-2025-0101", "SR02", "₹24.8L", "74", "Challan", "New"],
+            ["SR01-2025-0155", "SR01", "₹22.4L", "72", "MV Risk", "New"]
+          ]
+        },
+        "keyInsight": "SR01-2025-0142 has the highest risk score (82) with dual signals — both revenue gap and MV underreporting. Prioritize this for same-day review.",
+        "followUpPrompts": ["Review SR01-2025-0142", "Weekly risk trend", "Auto-assign high-risk cases"]
+      }
+    },
+    {
+      "id": "role-dr-009",
+      "promptText": "District revenue vs target",
+      "category": "revenue",
+      "role": "DR",
+      "response": {
+        "narrative": "Your district's revenue vs target for FY 2024-25. YTD: ₹18.4Cr against ₹19.1Cr target (96.3% achievement). You need ₹3.8Cr in Feb-Mar to meet full-year target.",
+        "inlineChart": {
+          "type": "line",
+          "labels": ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
+          "datasets": [
+            { "label": "Actual (₹Cr)", "data": [1.62, 1.68, 1.72, 1.78, 1.82, 1.86, 1.92, 1.98, 2.02, 1.42], "color": "#3B82F6" },
+            { "label": "Target (₹Cr)", "data": [1.70, 1.75, 1.80, 1.85, 1.90, 1.92, 1.95, 2.00, 2.05, 1.98], "color": "#EF4444" }
+          ]
+        },
+        "keyInsight": "January collection (₹1.42Cr) is below trend due to holiday period. Historical data shows Feb-Mar collections typically surge 20-25% above average. On track for full-year target.",
+        "followUpPrompts": ["Feb-Mar forecast", "Revenue improvement actions", "SRO-wise target gaps"]
+      }
+    },
+    {
+      "id": "role-dr-010",
+      "promptText": "Officer accountability in my district",
+      "category": "compliance",
+      "role": "DR",
+      "response": {
+        "narrative": "Officer accountability summary for your district. 8 officers across 3 SROs. Average accountability score: 76/100. 1 officer flagged for high cash variance.",
+        "inlineTable": {
+          "headers": ["Officer", "SRO", "Score", "Cash Variance", "SLA Breaches", "Status"],
+          "rows": [
+            ["M. Suresh Kumar", "SR01", "84", "₹0.2L", "0", "Good"],
+            ["R. Venkatesh", "SR01", "82", "₹0.4L", "0", "Good"],
+            ["P. Rajesh", "SR02", "76", "₹1.2L", "1", "Watch"],
+            ["K. Anitha", "SR02", "72", "₹2.8L", "2", "Flagged"],
+            ["S. Rambabu", "SR03", "68", "₹1.6L", "1", "Watch"]
+          ],
+          "highlightColumn": 3
+        },
+        "keyInsight": "K. Anitha at SR02 has the highest cash variance (₹2.8L) and 2 SLA breaches. Combined with high flagged exemption rate at SR02, this warrants closer supervision.",
+        "followUpPrompts": ["K. Anitha detailed audit", "SR02 compliance review", "Officer performance trend"]
+      }
+    },
+
+    {
+      "id": "role-sr-001",
+      "promptText": "My daily summary",
+      "category": "revenue",
+      "role": "SR",
+      "response": {
+        "narrative": "Daily summary for your SRO (Vijayawada Central) — 19 Jan 2025. 12 documents registered, ₹4.8L collected, 2 high-risk flags raised, 0 SLA breaches. Cash reconciliation status: Matched.",
+        "inlineTable": {
+          "headers": ["Metric", "Today", "Yesterday", "Week Avg"],
+          "rows": [
+            ["Documents", "12", "14", "11.4"],
+            ["Revenue", "₹4.8L", "₹5.2L", "₹4.6L"],
+            ["High Risk Flags", "2", "1", "1.6"],
+            ["Avg Processing Time", "2.4 hrs", "2.8 hrs", "2.6 hrs"],
+            ["Cash Collected", "₹3.2L", "₹3.8L", "₹3.4L"]
+          ]
+        },
+        "keyInsight": "Processing time improved to 2.4 hrs (vs 2.6 avg). Both high-risk flags are for revenue gap signals on documents >₹20L — review before end of day.",
+        "followUpPrompts": ["Show today's high-risk docs", "Cash reconciliation status", "My weekly performance"]
+      }
+    },
+    {
+      "id": "role-sr-002",
+      "promptText": "Pending cases at my SRO",
+      "category": "sla",
+      "role": "SR",
+      "response": {
+        "narrative": "Pending case summary for Vijayawada Central (SR01). 8 cases pending action: 3 new (unassigned), 3 in review, 2 awaiting external verification.",
+        "inlineTable": {
+          "headers": ["Case ID", "Type", "Days Pending", "Priority", "Action Needed"],
+          "rows": [
+            ["IGRS-2024-0142", "Revenue Gap", "2", "High", "Review & assign"],
+            ["IGRS-2024-0148", "MV Risk", "1", "High", "MV verification"],
+            ["IGRS-2024-0155", "Revenue Gap", "1", "Medium", "Assign analyst"],
+            ["IGRS-2024-0138", "Exemption", "5", "Medium", "Eligibility check"],
+            ["IGRS-2024-0128", "Challan", "8", "Low", "Treasury confirmation"]
+          ]
+        },
+        "keyInsight": "IGRS-2024-0128 is 8 days pending — approaching SLA threshold. Treasury confirmation has been requested but not received. Follow up with treasury today.",
+        "followUpPrompts": ["Follow up on IGRS-2024-0128", "My SRO SLA status", "Auto-assign new cases"]
+      }
+    },
+    {
+      "id": "role-sr-003",
+      "promptText": "Today's registrations above 10 lakhs",
+      "category": "risk",
+      "role": "SR",
+      "response": {
+        "narrative": "4 registrations above ₹10L processed today at your SRO. 2 flagged for review based on automated risk scoring.",
+        "inlineTable": {
+          "headers": ["Doc Key", "Type", "Value", "Risk Score", "Flags", "Status"],
+          "rows": [
+            ["SR01-2025-0162", "Sale Deed", "₹28.4L", "76", "Revenue Gap", "Flagged"],
+            ["SR01-2025-0164", "Gift Deed", "₹18.6L", "72", "MV Deviation", "Flagged"],
+            ["SR01-2025-0163", "Sale Deed", "₹14.2L", "42", "None", "Clear"],
+            ["SR01-2025-0165", "Mortgage", "₹12.8L", "38", "None", "Clear"]
+          ]
+        },
+        "keyInsight": "SR01-2025-0162 has a ₹28.4L sale deed with revenue gap signal — stamp duty appears under-calculated. Verify the document classification and applicable slab before releasing.",
+        "followUpPrompts": ["Review SR01-2025-0162", "Today's fee collection status", "High-value trend this week"]
+      }
+    },
+    {
+      "id": "role-sr-004",
+      "promptText": "Escalations requiring my response",
+      "category": "sla",
+      "role": "SR",
+      "response": {
+        "narrative": "You have 3 escalations requiring your response. 1 is overdue (ESC-008), 2 are within SLA. Total revenue at risk: ₹82.4L.",
+        "inlineTable": {
+          "headers": ["Escalation", "Case", "Escalated By", "Deadline", "Priority", "Status"],
+          "rows": [
+            ["ESC-008", "IGRS-2024-0003", "DIG Rao", "15 Jan", "High", "Overdue"],
+            ["ESC-009", "IGRS-2024-0007", "DR Lakshmi", "25 Jan", "Medium", "Open"],
+            ["ESC-011", "IGRS-2024-0012", "DR Lakshmi", "28 Jan", "Medium", "Open"]
+          ]
+        },
+        "keyInsight": "ESC-008 is 4 days overdue — immediate response required. This is from DIG Rao regarding stamp duty shortfall of ₹48.2L. Prepare explanation with evidence documents.",
+        "followUpPrompts": ["Draft response for ESC-008", "View case IGRS-2024-0003", "My response history"]
+      }
+    },
+    {
+      "id": "role-sr-005",
+      "promptText": "Cash reconciliation status",
+      "category": "compliance",
+      "role": "SR",
+      "response": {
+        "narrative": "Cash reconciliation for Vijayawada Central (SR01) — last 7 days. 6 of 7 days matched. 1 day (16 Jan) shows ₹0.8L discrepancy pending treasury confirmation.",
+        "inlineTable": {
+          "headers": ["Date", "Collected", "Deposited", "Variance", "Status"],
+          "rows": [
+            ["19 Jan", "₹3.2L", "₹3.2L", "₹0", "Matched"],
+            ["18 Jan", "₹3.8L", "₹3.8L", "₹0", "Matched"],
+            ["17 Jan", "₹4.1L", "₹4.1L", "₹0", "Matched"],
+            ["16 Jan", "₹3.6L", "₹2.8L", "₹0.8L", "Pending"],
+            ["15 Jan", "₹3.4L", "₹3.4L", "₹0", "Matched"]
+          ],
+          "highlightColumn": 3
+        },
+        "keyInsight": "The ₹0.8L discrepancy on 16 Jan likely relates to a late deposit — the amount appeared in treasury on 17 Jan afternoon. Submit reconciliation note to close this.",
+        "followUpPrompts": ["Submit reconciliation note for 16 Jan", "Monthly cash summary", "Compare with SRO average"]
+      }
+    },
+    {
+      "id": "role-sr-006",
+      "promptText": "Stamp inventory status",
+      "category": "compliance",
+      "role": "SR",
+      "response": {
+        "narrative": "Stamp inventory snapshot for Vijayawada Central (SR01). Current stock balanced across all denominations. 2 denominations running low — reorder recommended.",
+        "inlineTable": {
+          "headers": ["Denomination", "Opening", "Received", "Sold", "Closing", "Status"],
+          "rows": [
+            ["₹100", "240", "100", "182", "158", "Adequate"],
+            ["₹500", "180", "50", "142", "88", "Low"],
+            ["₹1,000", "120", "0", "86", "34", "Critical"],
+            ["₹5,000", "60", "20", "28", "52", "Adequate"],
+            ["₹10,000", "30", "10", "18", "22", "Adequate"]
+          ],
+          "highlightColumn": 5
+        },
+        "keyInsight": "₹1,000 denomination stock at 34 units — will last approximately 3 days at current usage. Place reorder today to avoid stockout.",
+        "followUpPrompts": ["Place reorder for ₹1,000", "Monthly usage trend", "Inventory variance report"]
+      }
+    },
+    {
+      "id": "role-sr-007",
+      "promptText": "Exemptions I processed this month",
+      "category": "compliance",
+      "role": "SR",
+      "response": {
+        "narrative": "Exemptions processed at your SRO in January 2025. Total: 18 exemptions worth ₹1.2Cr. 2 flagged by the system for eligibility review.",
+        "inlineTable": {
+          "headers": ["Category", "Count", "Value", "Flagged", "Avg Value"],
+          "rows": [
+            ["Government Transfer", "8", "₹62.4L", "0", "₹7.8L"],
+            ["Family Partition", "4", "₹28.6L", "1", "₹7.2L"],
+            ["Trust/Charitable", "3", "₹18.2L", "1", "₹6.1L"],
+            ["Agricultural Land", "2", "₹8.4L", "0", "₹4.2L"],
+            ["Court Order", "1", "₹2.4L", "0", "₹2.4L"]
+          ]
+        },
+        "keyInsight": "The flagged Family Partition case involves a party that claimed exemption at SR02 last month for a similar property. Cross-verify PAN details before processing.",
+        "followUpPrompts": ["View flagged exemption details", "Exemption trend comparison", "My exemption approval rate"]
+      }
+    },
+    {
+      "id": "role-sr-008",
+      "promptText": "Payment gap cases at my SRO",
+      "category": "risk",
+      "role": "SR",
+      "response": {
+        "narrative": "Payment gap cases at Vijayawada Central. 6 active cases with combined gap of ₹48.2L. 4 cases are in review, 2 are new and unassigned.",
+        "inlineTable": {
+          "headers": ["Case ID", "Gap Amount", "Signal", "Days Open", "Status"],
+          "rows": [
+            ["IGRS-2024-0001", "₹18.4L", "Revenue Gap", "14", "In Review"],
+            ["IGRS-2024-0142", "₹12.6L", "Revenue Gap", "2", "New"],
+            ["IGRS-2024-0138", "₹6.8L", "Exemption", "5", "In Review"],
+            ["IGRS-2024-0148", "₹4.8L", "MV Risk", "1", "New"],
+            ["IGRS-2024-0128", "₹3.2L", "Challan", "8", "In Review"]
+          ]
+        },
+        "keyInsight": "IGRS-2024-0001 has been in review for 14 days — review status with the assigned analyst. IGRS-2024-0142 is a new ₹12.6L gap that should be assigned immediately.",
+        "followUpPrompts": ["Assign IGRS-2024-0142", "Case detail for IGRS-2024-0001", "My SRO recovery status"]
+      }
+    },
+    {
+      "id": "role-sr-009",
+      "promptText": "My performance vs district average",
+      "category": "performance",
+      "role": "SR",
+      "response": {
+        "narrative": "Performance comparison of your SRO (Vijayawada Central) vs district average for January 2025. You outperform on 4 of 6 key metrics.",
+        "inlineTable": {
+          "headers": ["Metric", "Your SRO", "District Avg", "Rank", "Status"],
+          "rows": [
+            ["Revenue", "₹0.62Cr", "₹0.47Cr", "1/3", "Above"],
+            ["SLA Compliance", "96%", "92%", "1/3", "Above"],
+            ["Processing Time", "2.4 hrs", "2.8 hrs", "1/3", "Above"],
+            ["Risk Rate", "3.2%", "3.0%", "2/3", "Slightly Above"],
+            ["Cash Accuracy", "99.2%", "98.8%", "1/3", "Above"],
+            ["Integrity Score", "86", "79", "1/3", "Above"]
+          ]
+        },
+        "keyInsight": "Your SRO leads the district on 5 of 6 metrics. Risk rate (3.2%) is slightly above district average (3.0%) — driven by 2 high-value cases this month.",
+        "followUpPrompts": ["How to reduce risk rate", "My 6-month performance trend", "Compare with zone top SROs"]
+      }
+    },
+    {
+      "id": "role-sr-010",
+      "promptText": "Overdue responses at my SRO",
+      "category": "sla",
+      "role": "SR",
+      "response": {
+        "narrative": "You have 1 overdue response and 2 approaching deadline at Vijayawada Central. The overdue response (ESC-008) is from DIG regarding stamp duty shortfall.",
+        "inlineTable": {
+          "headers": ["Escalation", "From", "Subject", "Deadline", "Days Left", "Priority"],
+          "rows": [
+            ["ESC-008", "DIG P. Venkata Rao", "Stamp duty shortfall", "15 Jan", "-4 days", "High"],
+            ["ESC-009", "DR S. Lakshmi Devi", "MV deviation query", "25 Jan", "6 days", "Medium"],
+            ["ESC-011", "DR S. Lakshmi Devi", "Challan delay", "28 Jan", "9 days", "Medium"]
+          ]
+        },
+        "keyInsight": "ESC-008 is 4 days overdue. Prepare: (1) Stamp duty calculation worksheet, (2) Document classification proof, (3) Any applicable exemption evidence. Submit today to avoid further escalation.",
+        "followUpPrompts": ["Draft response for ESC-008", "View ESC-008 case details", "My response track record"]
       }
     }
   ]

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -12,6 +12,8 @@ import {
   MessageSquare,
   ListTodo,
 } from "lucide-react";
+import { useIGRSRole } from "@/lib/ai-chat-intelligence/role-context";
+import { useIGRSEscalations } from "@/hooks/data";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -54,11 +56,30 @@ const TEAM_MEMBERS = [
   { id: "rajesh", name: "Rajesh Varma", role: "District Inspector" },
 ];
 
-const ESCALATION_TARGETS = [
-  "District Registrar",
-  "Joint Inspector General",
-  "Additional Inspector General",
-  "Inspector General of Registration & Stamps",
+const ESCALATION_TARGETS_BY_ROLE: Record<string, { id: string; label: string; name: string; email: string }[]> = {
+  IG: [
+    { id: "dig-south", label: "DIG South Zone", name: "P. Venkata Rao", email: "dig.south@igrs.ap.gov.in" },
+    { id: "dig-north", label: "DIG North Zone", name: "R. Kumar Reddy", email: "dig.north@igrs.ap.gov.in" },
+    { id: "dig-central", label: "DIG Central Zone", name: "A. Srinivas", email: "dig.central@igrs.ap.gov.in" },
+  ],
+  DIG: [
+    { id: "dr-krishna", label: "DR Krishna", name: "S. Lakshmi Devi", email: "dr.krishna@igrs.ap.gov.in" },
+    { id: "dr-guntur", label: "DR Guntur", name: "V. Rambabu", email: "dr.guntur@igrs.ap.gov.in" },
+    { id: "dr-chittoor", label: "DR Chittoor", name: "K. Srinivas", email: "dr.chittoor@igrs.ap.gov.in" },
+  ],
+  DR: [
+    { id: "sr-vijayawada", label: "SR Vijayawada Central", name: "M. Suresh Kumar", email: "sr.vijayawada@igrs.ap.gov.in" },
+    { id: "sr-machilipatnam", label: "SR Machilipatnam", name: "P. Rajesh", email: "sr.machilipatnam@igrs.ap.gov.in" },
+  ],
+  SR: [
+    { id: "dr-krishna", label: "DR Krishna", name: "S. Lakshmi Devi", email: "dr.krishna@igrs.ap.gov.in" },
+  ],
+};
+
+const SLA_OPTIONS = [
+  { value: "3", label: "3 days" },
+  { value: "7", label: "7 days" },
+  { value: "15", label: "15 days" },
 ];
 
 // ── CSV Export Helper ────────────────────────────────────────────────────────
@@ -187,14 +208,60 @@ function EscalateDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { session } = useIGRSRole();
+  const { addEscalation } = useIGRSEscalations();
+  const router = useRouter();
+
   const [target, setTarget] = useState("");
   const [reason, setReason] = useState("");
+  const [slaDays, setSlaDays] = useState("7");
+  const [priority, setPriority] = useState("Medium");
+
+  const targets = useMemo(() => {
+    if (!session) return [];
+    return ESCALATION_TARGETS_BY_ROLE[session.role] ?? [];
+  }, [session]);
 
   function handleSubmit() {
-    if (!target) return;
-    toast.success(`Escalated to ${target}`);
+    if (!target || !session) return;
+    const targetObj = targets.find((t) => t.id === target);
+    if (!targetObj) return;
+
+    const deadline = new Date();
+    deadline.setDate(deadline.getDate() + parseInt(slaDays, 10));
+
+    const newId = `ESC-${String(Date.now()).slice(-6)}`;
+    addEscalation({
+      id: newId,
+      caseId: `AI-CHAT-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      createdBy: { role: session.role, name: session.name },
+      assignedTo: { role: targetObj.label, name: targetObj.name, email: targetObj.email },
+      slaDeadline: deadline.toISOString(),
+      status: "Open",
+      priority: priority as "High" | "Medium" | "Low",
+      comment: reason || "Escalated from AI Chat finding",
+      responses: [],
+      auditLog: [
+        {
+          ts: new Date().toISOString(),
+          actor: session.name,
+          action: "Created",
+          detail: `Escalation created and assigned to ${targetObj.name}`,
+        },
+      ],
+    });
+
+    toast.success(`Escalated to ${targetObj.name}`, {
+      action: {
+        label: "View in Escalations",
+        onClick: () => router.push("/igrs/revenue-assurance/escalations"),
+      },
+    });
     setTarget("");
     setReason("");
+    setSlaDays("7");
+    setPriority("Medium");
     onOpenChange(false);
   }
 
@@ -214,13 +281,41 @@ function EscalateDialog({
                 <SelectValue placeholder="Select recipient" />
               </SelectTrigger>
               <SelectContent>
-                {ESCALATION_TARGETS.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {t}
+                {targets.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>
+                    {t.label} — {t.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm font-medium text-slate-700">SLA Deadline</label>
+              <Select value={slaDays} onValueChange={setSlaDays}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {SLA_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700">Priority</label>
+              <Select value={priority} onValueChange={setPriority}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Medium">Medium</SelectItem>
+                  <SelectItem value="Low">Low</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div>
             <label className="text-sm font-medium text-slate-700">Reason</label>

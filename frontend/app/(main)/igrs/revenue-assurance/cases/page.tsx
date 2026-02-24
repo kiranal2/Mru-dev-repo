@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { useIGRSCases, useIGRSCaseMutation } from "@/hooks/data";
+import { useJurisdictionFilteredCases } from "@/hooks/data/use-jurisdiction-filtered-cases";
+import { useIGRSCaseMutation } from "@/hooks/data";
+import { JurisdictionBadge } from "@/components/igrs/jurisdiction-badge";
 import type {
   IGRSCase,
   IGRSCaseFilters,
@@ -1158,7 +1160,7 @@ export default function IGRSCasesPage() {
     loading,
     error,
     refetch,
-  } = useIGRSCases(filters);
+  } = useJurisdictionFilteredCases(filters);
 
   const visibleRows = useMemo(() => {
     let list = [...rows];
@@ -1484,6 +1486,10 @@ export default function IGRSCasesPage() {
   return (
     <div className="p-4 md:p-5 space-y-4">
       <div className="space-y-1">
+        <div className="flex items-center justify-between mb-2">
+          <div />
+          <JurisdictionBadge />
+        </div>
         <div className="flex flex-wrap items-center gap-1.5">
           <div className="relative min-w-[260px] flex-1 max-w-[420px]">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />

@@ -22,6 +22,8 @@ export { useIGRSWeblandVerification } from "./use-igrs-webland-verification";
 export { useIGRSGovernance } from "./use-igrs-governance";
 export { useAIIntelligence } from "./use-igrs-ai-intelligence";
 export { useAIChat } from "./use-igrs-ai-chat";
+export { useIGRSEscalations } from "./use-igrs-escalations";
+export { useJurisdictionFilteredCases } from "./use-jurisdiction-filtered-cases";
 
 // Enterprise Revenue Assurance
 export { useRevenueCases, useRevenueCase, useRevenueCaseMutation } from "./use-revenue-cases";

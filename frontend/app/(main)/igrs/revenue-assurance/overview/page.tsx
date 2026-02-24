@@ -8,6 +8,8 @@ import {
   useIGRSRules,
   useIGRSTrends,
 } from "@/hooks/data";
+import { useIGRSRole } from "@/lib/ai-chat-intelligence/role-context";
+import { JurisdictionBadge } from "@/components/igrs/jurisdiction-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -132,8 +134,14 @@ export default function IGRSOverviewPage() {
     useIGRSTrends();
   const { data: rules, loading: rulesLoading, error: rulesError, refetch: refetchRules } =
     useIGRSRules();
-  const { data: cases, loading: casesLoading, error: casesError, refetch: refetchCases } =
+  const { data: allCases, loading: casesLoading, error: casesError, refetch: refetchCases } =
     useIGRSCases();
+  const { isInJurisdiction } = useIGRSRole();
+
+  // Filter cases by jurisdiction
+  const cases = useMemo(() => {
+    return allCases.filter((c) => isInJurisdiction(c.office.district, c.office.srCode));
+  }, [allCases, isInJurisdiction]);
 
   const loading = dashLoading || trendsLoading || rulesLoading || casesLoading;
   const error = dashError || trendsError || rulesError || casesError;
@@ -451,6 +459,7 @@ export default function IGRSOverviewPage() {
     <div className="p-4 md:p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-xs">
+          <JurisdictionBadge />
           <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
             <ShieldCheck className="w-3 h-3 mr-1" /> Sync: {dashboard.syncStatus}
           </Badge>

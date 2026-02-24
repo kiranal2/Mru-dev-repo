@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { loginAdmin } from "@/lib/ai-chat-intelligence/auth";
+import { loginIGRS, getDemoUsers, type IGRSRole } from "@/lib/ai-chat-intelligence/auth";
 
 // ── Color tokens ────────────────────────────────────────────────────
 const C = {
@@ -75,16 +75,7 @@ function FeatureCard({
 
 // ── SVG Icons (inline, no dependency) ───────────────────────────────
 const IconBrain = (
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 2a4 4 0 0 1 4 4v1a3 3 0 0 1 2 5.2V14a4 4 0 0 1-3 3.87V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2.13A4 4 0 0 1 6 14v-1.8A3 3 0 0 1 8 7V6a4 4 0 0 1 4-4z" />
     <path d="M10 10h4" />
     <path d="M12 10v4" />
@@ -92,16 +83,7 @@ const IconBrain = (
 );
 
 const IconMonitor = (
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="2" y="3" width="20" height="14" rx="2" />
     <line x1="8" y1="21" x2="16" y2="21" />
     <line x1="12" y1="17" x2="12" y2="21" />
@@ -109,16 +91,7 @@ const IconMonitor = (
 );
 
 const IconChart = (
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
     <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
     <path d="M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
@@ -126,16 +99,7 @@ const IconChart = (
 );
 
 const IconGlobe = (
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10" />
     <line x1="2" y1="12" x2="22" y2="12" />
     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
@@ -143,36 +107,68 @@ const IconGlobe = (
 );
 
 const IconLock = (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="11" width="18" height="11" rx="2" />
     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
 );
 
 const IconMail = (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="2" y="4" width="20" height="16" rx="2" />
     <path d="M22 4L12 13 2 4" />
   </svg>
 );
+
+// ── Role card icon SVGs ──────────────────────────────────────────────
+const RoleIcons: Record<IGRSRole, React.ReactNode> = {
+  IG: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  ),
+  DIG: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  ),
+  DR: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  ),
+  SR: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  ),
+};
+
+// ── Demo users data ──────────────────────────────────────────────────
+const DEMO_USERS = getDemoUsers();
+
+const ROLE_META: Record<IGRSRole, { label: string; passwordHint: string }> = {
+  IG: { label: "Inspector General", passwordHint: "ig123" },
+  DIG: { label: "DIG Zone", passwordHint: "dig123" },
+  DR: { label: "District Registrar", passwordHint: "dr123" },
+  SR: { label: "Sub-Registrar", passwordHint: "sr123" },
+};
+
+// ── Scope label helper ──────────────────────────────────────────────
+function getScopeLabel(user: (typeof DEMO_USERS)[number]): string {
+  switch (user.role) {
+    case "IG": return "State of AP";
+    case "DIG": return `${user.jurisdiction.zone} Zone · 5 districts`;
+    case "DR": return `${user.jurisdiction.district} District`;
+    case "SR": return `${user.jurisdiction.srCode} · ${user.jurisdiction.srName}`;
+    default: return "";
+  }
+}
 
 // ── Page Component ──────────────────────────────────────────────────
 
@@ -189,7 +185,7 @@ const LOGIN_STAGES: { key: LoginStage; label: string; sub: string; duration: num
   {
     key: "verifying",
     label: "Verifying Access",
-    sub: "Checking admin permissions & role assignment...",
+    sub: "Verifying role permissions & jurisdiction scope...",
     duration: 1200,
   },
   {
@@ -203,11 +199,20 @@ const LOGIN_STAGES: { key: LoginStage; label: string; sub: string; duration: num
 
 export default function AIChatIntelligenceLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@igrs.ap.gov.in");
+  const [selectedRole, setSelectedRole] = useState<IGRSRole | null>(null);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loginStage, setLoginStage] = useState<LoginStage>("idle");
+
+  const handleRoleSelect = (role: IGRSRole) => {
+    const user = DEMO_USERS.find((u) => u.role === role);
+    setSelectedRole(role);
+    setEmail(user?.email ?? "");
+    setPassword("");
+    setError("");
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -217,7 +222,7 @@ export default function AIChatIntelligenceLoginPage() {
     // Brief pause before validating
     await new Promise((r) => setTimeout(r, 400));
 
-    const result = loginAdmin(email, password);
+    const result = loginIGRS(email, password);
 
     if (!result.ok) {
       setError(result.error);
@@ -245,7 +250,6 @@ export default function AIChatIntelligenceLoginPage() {
       {/* ─── Navy Header ────────────────────────────────────────── */}
       <header style={{ background: C.navy }} className="text-white">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          {/* Left: Emblem + Title */}
           <div className="flex items-center gap-4">
             <APEmblem size={52} />
             <div>
@@ -257,18 +261,10 @@ export default function AIChatIntelligenceLoginPage() {
               </p>
             </div>
           </div>
-
-          {/* Right: Quick links */}
           <div className="hidden md:flex items-center gap-6 text-xs">
-            <a href="#" className="opacity-70 hover:opacity-100 transition-opacity">
-              Help
-            </a>
-            <a href="#" className="opacity-70 hover:opacity-100 transition-opacity">
-              Contact
-            </a>
-            <a href="#" className="opacity-70 hover:opacity-100 transition-opacity">
-              FAQ
-            </a>
+            <a href="#" className="opacity-70 hover:opacity-100 transition-opacity">Help</a>
+            <a href="#" className="opacity-70 hover:opacity-100 transition-opacity">Contact</a>
+            <a href="#" className="opacity-70 hover:opacity-100 transition-opacity">FAQ</a>
             <span className="opacity-40">|</span>
             <span className="opacity-60 text-[10px]">v2.0.0</span>
           </div>
@@ -360,7 +356,7 @@ export default function AIChatIntelligenceLoginPage() {
 
             {/* Right Column — Login Card */}
             <div className="flex justify-center lg:justify-end lg:pt-4">
-              <div className="w-full max-w-sm">
+              <div className="w-full max-w-md">
                 {/* Login Card */}
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
                   {/* Card Header */}
@@ -378,15 +374,15 @@ export default function AIChatIntelligenceLoginPage() {
                         {IconLock}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-sm">Administrator Login</h3>
-                        <p className="text-[10px] opacity-70">Revenue Intelligence Portal</p>
+                        <h3 className="font-semibold text-sm">Revenue Intelligence Portal</h3>
+                        <p className="text-[10px] opacity-70">Select your role to sign in</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Card Body */}
                   <div className="relative">
-                    {/* Login Form */}
+                    {/* Login Form with Role Selector */}
                     <form
                       onSubmit={handleLogin}
                       className={`p-6 space-y-4 transition-all duration-300 ${
@@ -395,6 +391,78 @@ export default function AIChatIntelligenceLoginPage() {
                           : ""
                       }`}
                     >
+                      {/* ── Role Selector Grid ─────────────────── */}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-2">
+                          Select Your Role
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {DEMO_USERS.map((user) => {
+                            const isSelected = selectedRole === user.role;
+                            return (
+                              <button
+                                key={user.role}
+                                type="button"
+                                onClick={() => handleRoleSelect(user.role)}
+                                className={`relative text-left p-3 rounded-lg border-2 transition-all duration-200 ${
+                                  isSelected
+                                    ? "border-amber-400 bg-amber-50 shadow-sm"
+                                    : "border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100"
+                                }`}
+                              >
+                                {/* Role badge */}
+                                <div className="flex items-center gap-2 mb-1.5">
+                                  <div
+                                    className={`w-8 h-8 rounded-md flex items-center justify-center ${
+                                      isSelected ? "text-amber-700" : "text-gray-500"
+                                    }`}
+                                    style={
+                                      isSelected
+                                        ? { background: `${C.gold}25` }
+                                        : { background: "#f1f5f9" }
+                                    }
+                                  >
+                                    {RoleIcons[user.role]}
+                                  </div>
+                                  <span
+                                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                                      isSelected
+                                        ? "bg-amber-200 text-amber-800"
+                                        : "bg-gray-200 text-gray-600"
+                                    }`}
+                                  >
+                                    {user.role}
+                                  </span>
+                                </div>
+                                {/* Officer info */}
+                                <p className="text-xs font-semibold text-gray-800 leading-tight">
+                                  {user.name}
+                                </p>
+                                <p className="text-[10px] text-gray-500 mt-0.5">
+                                  {user.designation}
+                                </p>
+                                <p className="text-[10px] text-gray-400 mt-0.5">
+                                  {getScopeLabel(user)}
+                                </p>
+                                {/* Selection indicator */}
+                                {isSelected && (
+                                  <div className="absolute top-2 right-2">
+                                    <div
+                                      className="w-4 h-4 rounded-full flex items-center justify-center"
+                                      style={{ background: C.gold }}
+                                    >
+                                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 6L9 17l-5-5" />
+                                      </svg>
+                                    </div>
+                                  </div>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
                       {/* Email */}
                       <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1.5">
@@ -414,7 +482,7 @@ export default function AIChatIntelligenceLoginPage() {
                                 "--tw-ring-color": C.navy,
                               } as React.CSSProperties
                             }
-                            placeholder="admin@igrs.ap.gov.in"
+                            placeholder={selectedRole ? "Pre-filled from role selection" : "Select a role above"}
                             required
                           />
                         </div>
@@ -439,7 +507,7 @@ export default function AIChatIntelligenceLoginPage() {
                                 "--tw-ring-color": C.navy,
                               } as React.CSSProperties
                             }
-                            placeholder="Enter password"
+                            placeholder={selectedRole ? `Enter password` : "Select a role first"}
                             required
                           />
                         </div>
@@ -455,7 +523,7 @@ export default function AIChatIntelligenceLoginPage() {
                       {/* Submit */}
                       <button
                         type="submit"
-                        disabled={isLoading}
+                        disabled={isLoading || !selectedRole}
                         className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                         style={{
                           background: `linear-gradient(135deg, ${C.gold}, ${C.goldLight})`,
@@ -477,16 +545,28 @@ export default function AIChatIntelligenceLoginPage() {
                             Signing in...
                           </>
                         ) : (
-                          "Sign In"
+                          <>
+                            Sign In
+                            {selectedRole && (
+                              <span className="text-xs opacity-70">as {ROLE_META[selectedRole].label}</span>
+                            )}
+                          </>
                         )}
                       </button>
 
                       {/* Demo hint */}
                       <div className="text-center pt-1">
                         <p className="text-[10px] text-gray-400">
-                          Demo credentials:{" "}
-                          <span className="font-mono text-gray-500">admin@igrs.ap.gov.in</span> /{" "}
-                          <span className="font-mono text-gray-500">admin123</span>
+                          {selectedRole ? (
+                            <>
+                              Demo: password is{" "}
+                              <span className="font-mono text-gray-500 font-semibold">
+                                {ROLE_META[selectedRole].passwordHint}
+                              </span>
+                            </>
+                          ) : (
+                            "Select a role above to see demo credentials"
+                          )}
                         </p>
                       </div>
                     </form>
@@ -503,62 +583,26 @@ export default function AIChatIntelligenceLoginPage() {
                           {/* Center icon changes per stage */}
                           <div className="absolute inset-0 flex items-center justify-center">
                             {loginStage === "authenticating" && (
-                              <svg
-                                width="22"
-                                height="22"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke={C.navy}
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
+                              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.navy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <rect x="3" y="11" width="18" height="11" rx="2" />
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                               </svg>
                             )}
                             {loginStage === "verifying" && (
-                              <svg
-                                width="22"
-                                height="22"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke={C.navy}
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
+                              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.navy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                                 <path d="M9 12l2 2 4-4" />
                               </svg>
                             )}
                             {loginStage === "loading" && (
-                              <svg
-                                width="22"
-                                height="22"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke={C.navy}
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
+                              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.navy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <rect x="2" y="3" width="20" height="14" rx="2" />
                                 <line x1="8" y1="21" x2="16" y2="21" />
                                 <line x1="12" y1="17" x2="12" y2="21" />
                               </svg>
                             )}
                             {loginStage === "ready" && (
-                              <svg
-                                width="22"
-                                height="22"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="#16a34a"
-                                strokeWidth="2.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
+                              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M20 6L9 17l-5-5" />
                               </svg>
                             )}
@@ -652,14 +696,7 @@ export default function AIChatIntelligenceLoginPage() {
 
                 {/* Security note below card */}
                 <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-gray-400">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
                   Secured by Government of Andhra Pradesh IT Infrastructure

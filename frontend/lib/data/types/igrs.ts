@@ -1672,6 +1672,7 @@ export interface PromptTemplate {
   id: string;
   promptText: string;
   category: PromptCategory;
+  role?: "IG" | "DIG" | "DR" | "SR";
   response: PromptResponseData;
 }
 
@@ -1811,4 +1812,33 @@ export interface RepeatExemptionParty {
   lastSeen: string;
   riskFlag: "High" | "Medium" | "Low";
   remarks: string;
+}
+
+// ---------------------------------------------------------------------------
+// Escalation Workflow Types
+// ---------------------------------------------------------------------------
+
+export type EscalationStatus = "Open" | "Responded" | "Accepted" | "Rejected" | "Overdue";
+export type EscalationPriority = "High" | "Medium" | "Low";
+
+export interface EscalationResponse {
+  respondedAt: string;
+  respondedBy: { role: string; name: string };
+  explanation: string;
+  evidence: string[];
+  status: "Recovered" | "Justified" | "Rejected";
+}
+
+export interface EscalationRecord {
+  id: string;
+  caseId: string;
+  createdAt: string;
+  createdBy: { role: string; name: string };
+  assignedTo: { role: string; name: string; email: string };
+  slaDeadline: string;
+  status: EscalationStatus;
+  priority: EscalationPriority;
+  comment: string;
+  responses: EscalationResponse[];
+  auditLog: { ts: string; actor: string; action: string; detail: string }[];
 }

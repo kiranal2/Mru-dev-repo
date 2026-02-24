@@ -19,6 +19,7 @@ import type {
   InlineChartData,
   PromptCategoryDefinition,
 } from "@/lib/data/types/igrs";
+import { useIGRSRole } from "@/lib/ai-chat-intelligence/role-context";
 import { ResponseActionBar } from "./_components/response-action-bar";
 import type { ConversationMessage } from "./_components/response-action-bar";
 
@@ -429,7 +430,42 @@ function highlightMatch(text: string, query: string): React.ReactNode {
 
 // ── Dynamic Sample Prompt Rotation ───────────────────────────────────────────
 
-const SAMPLE_PROMPTS = [
+const SAMPLE_PROMPTS_BY_ROLE: Record<string, string[]> = {
+  IG: [
+    "State revenue summary this week",
+    "Compare all zones leakage rate this month",
+    "Which SROs granted most exemptions?",
+    "Show all open escalations pending beyond SLA",
+    "Zone performance comparison",
+    "Monthly revenue growth trend",
+  ],
+  DIG: [
+    "Zone revenue summary this month",
+    "Top zone cases above 40 lakhs",
+    "District comparison in my zone",
+    "Escalation status in my zone",
+    "SLA breaches in my zone this month",
+    "High-risk documents in my zone",
+  ],
+  DR: [
+    "District revenue summary this month",
+    "Top district cases above 20 lakhs",
+    "SRO performance in my district",
+    "Pending escalations in my district",
+    "Payment gap analysis for my district",
+    "SLA compliance in my district",
+  ],
+  SR: [
+    "My daily summary",
+    "Pending cases at my SRO",
+    "Today's registrations above 10 lakhs",
+    "Escalations requiring my response",
+    "Cash reconciliation status",
+    "My performance vs district average",
+  ],
+};
+
+const DEFAULT_SAMPLE_PROMPTS = [
   "Show monthly revenue growth for last quarter",
   "Which districts are performing best?",
   "Show high risk documents this month",
@@ -438,12 +474,18 @@ const SAMPLE_PROMPTS = [
   "SLA breach rate by district",
 ];
 
+function getSamplePrompts(role?: string): string[] {
+  if (role && SAMPLE_PROMPTS_BY_ROLE[role]) return SAMPLE_PROMPTS_BY_ROLE[role];
+  return DEFAULT_SAMPLE_PROMPTS;
+}
+
 // ═════════════════════════════════════════════════════════════════════════════
 // Main Page Component
 // ═════════════════════════════════════════════════════════════════════════════
 
 export default function AIChatPage() {
   const { promptData, isLoading: dataLoading, error: dataError } = useAIChat();
+  const { session } = useIGRSRole();
 
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [composerValue, setComposerValue] = useState("");
@@ -460,22 +502,31 @@ export default function AIChatPage() {
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   const categories = promptData?.categories ?? [];
-  const prompts = promptData?.prompts ?? [];
+  const allPrompts = promptData?.prompts ?? [];
 
-  // Filter prompts by selected category
+  // Filter prompts by role — show generic + role-specific prompts
+  const roleFilteredPrompts = useMemo(() => {
+    if (!session) return allPrompts;
+    return allPrompts.filter((p) => !p.role || p.role === session.role);
+  }, [allPrompts, session]);
+
+  // Role-aware sample prompts
+  const samplePrompts = useMemo(() => getSamplePrompts(session?.role), [session?.role]);
+
+  // Filter prompts by selected category (on top of role filter)
   const filteredPrompts = useMemo(() => {
-    if (selectedCategory === "all") return prompts;
-    return prompts.filter((p) => p.category === selectedCategory);
-  }, [prompts, selectedCategory]);
+    if (selectedCategory === "all") return roleFilteredPrompts;
+    return roleFilteredPrompts.filter((p) => p.category === selectedCategory);
+  }, [roleFilteredPrompts, selectedCategory]);
 
   // Rotate sample prompts in empty state
   useEffect(() => {
     if (messages.length > 0) return;
     const interval = setInterval(() => {
-      setSamplePromptIdx((prev) => (prev + 1) % SAMPLE_PROMPTS.length);
+      setSamplePromptIdx((prev) => (prev + 1) % samplePrompts.length);
     }, 3600);
     return () => clearInterval(interval);
-  }, [messages.length]);
+  }, [messages.length, samplePrompts.length]);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -503,7 +554,7 @@ export default function AIChatPage() {
 
     // Simulate AI thinking delay, then respond
     setTimeout(() => {
-      const match = findBestMatch(msg, prompts);
+      const match = findBestMatch(msg, roleFilteredPrompts);
 
       let aiMsg: ConversationMessage;
       if (match) {
@@ -542,7 +593,7 @@ export default function AIChatPage() {
     setComposerValue(val);
     setShowPlaceholder(!val);
 
-    const filtered = filterSuggestions(val, prompts);
+    const filtered = filterSuggestions(val, roleFilteredPrompts);
     setSuggestions(filtered);
     setShowSuggestions(filtered.length > 0 && val.length >= 2);
     setSelectedSuggestionIdx(-1);
@@ -654,7 +705,9 @@ export default function AIChatPage() {
                 What would you like to <span className="text-violet-600">explore?</span>
               </div>
               <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">
-                Ask questions about revenue, performance, risk analysis, forecasting, compliance, and SLA metrics.
+                {session
+                  ? `Welcome, ${session.designation}. Ask questions about revenue, performance, risk, and more.`
+                  : "Ask questions about revenue, performance, risk analysis, forecasting, compliance, and SLA metrics."}
               </p>
             </div>
 
@@ -683,7 +736,7 @@ export default function AIChatPage() {
                         key={`sample-${samplePromptIdx}`}
                         className="text-[13px] text-slate-400 animate-[prompt-fade-slide_0.4s_ease-out]"
                       >
-                        {SAMPLE_PROMPTS[samplePromptIdx]}
+                        {samplePrompts[samplePromptIdx % samplePrompts.length]}
                       </span>
                     </div>
                   )}
@@ -894,7 +947,7 @@ export default function AIChatPage() {
                     onChange={handleTextareaChange}
                     onFocus={() => {
                       if (composerValue.length >= 2) {
-                        const filtered = filterSuggestions(composerValue, prompts);
+                        const filtered = filterSuggestions(composerValue, roleFilteredPrompts);
                         setSuggestions(filtered);
                         setShowSuggestions(filtered.length > 0);
                       }

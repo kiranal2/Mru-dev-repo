@@ -1,0 +1,46 @@
+{
+  "zones": {
+    "South": {
+      "districts": ["Krishna", "Guntur", "Chittoor", "Prakasam", "Nellore"],
+      "sros": ["SR01", "SR02", "SR03", "SR08", "SR09"]
+    },
+    "North": {
+      "districts": ["Visakhapatnam", "East Godavari", "West Godavari"],
+      "sros": ["SR05", "SR06", "SR07"]
+    },
+    "Central": {
+      "districts": ["Kurnool", "Anantapur"],
+      "sros": ["SR04", "SR10"]
+    }
+  },
+  "demoUsers": [
+    {
+      "role": "IG",
+      "email": "ig@igrs.ap.gov.in",
+      "name": "K. Ramesh Babu, IAS",
+      "designation": "Inspector General",
+      "scope": "State of Andhra Pradesh"
+    },
+    {
+      "role": "DIG",
+      "email": "dig.south@igrs.ap.gov.in",
+      "name": "P. Venkata Rao",
+      "designation": "DIG South Zone",
+      "scope": "Krishna, Guntur, Chittoor, Prakasam, Nellore"
+    },
+    {
+      "role": "DR",
+      "email": "dr.krishna@igrs.ap.gov.in",
+      "name": "S. Lakshmi Devi",
+      "designation": "District Registrar, Krishna",
+      "scope": "Vijayawada Central (SR01)"
+    },
+    {
+      "role": "SR",
+      "email": "sr.vijayawada@igrs.ap.gov.in",
+      "name": "M. Suresh Kumar",
+      "designation": "Sub-Registrar, Vijayawada Central",
+      "scope": "SR01 – Vijayawada Central"
+    }
+  ]
+}
