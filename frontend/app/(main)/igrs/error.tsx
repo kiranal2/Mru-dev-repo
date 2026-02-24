@@ -12,7 +12,7 @@ export default function IGRSError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error);
+    console.error(error ?? "Unknown IGRS error");
   }, [error]);
 
   return (
@@ -20,7 +20,7 @@ export default function IGRSError({
       <AlertCircle className="h-12 w-12 text-red-500" />
       <h2 className="text-xl font-semibold text-gray-900">Something went wrong</h2>
       <p className="text-sm text-gray-500 max-w-md text-center">
-        {error.message || "An unexpected error occurred in the IGRS module."}
+        {error?.message || "An unexpected error occurred in the IGRS module."}
       </p>
       <Button onClick={reset} variant="outline">
         Try again

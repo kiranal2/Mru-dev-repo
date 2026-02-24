@@ -650,22 +650,23 @@
       "category": "revenue",
       "role": "IG",
       "response": {
-        "narrative": "State-wide revenue collection for the current week (13-19 Jan 2025) totals ₹8.42Cr across all 26 SROs. This represents a 4.2% increase over the same period last year. Krishna and Guntur districts lead at ₹1.3Cr and ₹1.1Cr respectively.",
+        "narrative": "State-wide revenue assurance snapshot as of January 2025. Across 10 SROs and 25 active cases, the system has identified a total revenue gap of ₹40.85L against ₹1.52Cr payable (₹1.11Cr collected). South Zone leads in volume with 13 cases while Central Zone shows the highest gap concentration per case.",
         "inlineTable": {
-          "headers": ["Zone", "Revenue", "Documents", "vs Last Week", "vs Target"],
+          "headers": ["Zone", "SROs", "Cases", "Revenue Gap", "Avg Gap/Case"],
           "rows": [
-            ["South Zone", "₹3.8Cr", "1,240", "+6.1%", "+₹0.3Cr"],
-            ["North Zone", "₹2.9Cr", "980", "+3.2%", "+₹0.1Cr"],
-            ["Central Zone", "₹1.72Cr", "560", "+2.8%", "-₹0.08Cr"]
+            ["South Zone", "5", "13", "₹17.35L", "₹1.33L"],
+            ["North Zone", "3", "8", "₹14.16L", "₹1.77L"],
+            ["Central Zone", "2", "4", "₹9.34L", "₹2.34L"],
+            ["State Total", "10", "25", "₹40.85L", "₹1.63L"]
           ]
         },
         "inlineChart": {
           "type": "bar",
           "labels": ["South", "North", "Central"],
-          "datasets": [{ "label": "Revenue (₹Cr)", "data": [3.8, 2.9, 1.72], "color": "#7C3AED" }]
+          "datasets": [{ "label": "Gap (₹L)", "data": [17.35, 14.16, 9.34], "color": "#DC2626" }]
         },
-        "keyInsight": "South Zone contributes 45% of weekly state revenue. Central Zone is 4.4% below target — Kurnool SRO underperformance is the primary drag.",
-        "followUpPrompts": ["Drill into Central Zone shortfall", "Compare all zones YoY", "Top performing SROs this week"]
+        "keyInsight": "Central Zone has the highest gap-per-case at ₹2.34L — 1.4x the state average of ₹1.63L. SR10 Anantapur Main alone contributes ₹8.30L (89% of Central's gap) with the lowest officer accountability score of 48/100.",
+        "followUpPrompts": ["Drill into SR10 Anantapur", "Central Zone deep dive", "Top SROs by gap amount"]
       }
     },
     {
@@ -674,25 +675,25 @@
       "category": "risk",
       "role": "IG",
       "response": {
-        "narrative": "Zone-wise revenue leakage analysis for January 2025. The state-wide leakage rate stands at 3.8%, down from 4.1% last month. South Zone has the highest absolute leakage but the lowest rate, indicating high volume rather than systemic issues.",
+        "narrative": "Zone-wise leakage comparison for the current period. State-wide gap stands at ₹40.85L across 25 cases. Central Zone, despite having only 4 cases, shows the highest gap intensity — driven by SR10 Anantapur (₹8.30L, risk score 80) and SR04 Kurnool (₹1.04L).",
         "inlineTable": {
-          "headers": ["Zone", "Total Revenue", "Leakage", "Rate", "High-Risk Cases"],
+          "headers": ["Zone", "Cases", "Gap (₹L)", "Avg Gap/Case", "High-Risk SROs", "Top SRO"],
           "rows": [
-            ["South", "₹14.2Cr", "₹42.6L", "3.0%", "28"],
-            ["North", "₹10.8Cr", "₹43.2L", "4.0%", "34"],
-            ["Central", "₹6.4Cr", "₹32.0L", "5.0%", "22"]
+            ["South", "13", "₹17.35L", "₹1.33L", "3 of 5", "SR03 Tirupati (₹5.12L)"],
+            ["North", "8", "₹14.16L", "₹1.77L", "2 of 3", "SR06 Rajahmundry (₹6.10L)"],
+            ["Central", "4", "₹9.34L", "₹2.34L", "1 of 2", "SR10 Anantapur (₹8.30L)"]
           ]
         },
         "inlineChart": {
           "type": "bar",
           "labels": ["South", "North", "Central"],
           "datasets": [
-            { "label": "Leakage (₹L)", "data": [42.6, 43.2, 32.0], "color": "#EF4444" },
-            { "label": "Rate %", "data": [3.0, 4.0, 5.0], "color": "#F97316" }
+            { "label": "Gap (₹L)", "data": [17.35, 14.16, 9.34], "color": "#EF4444" },
+            { "label": "Avg Gap/Case (₹L)", "data": [1.33, 1.77, 2.34], "color": "#F97316" }
           ]
         },
-        "keyInsight": "Central Zone's 5.0% leakage rate is 1.3x the state average. Kurnool and Anantapur SROs account for 68% of Central Zone leakage — primarily from market value underreporting.",
-        "followUpPrompts": ["Central Zone leakage breakdown", "Top leakage cases by amount", "Leakage trend over 6 months"]
+        "keyInsight": "Central Zone's ₹2.34L average gap per case is 1.8x the South Zone average (₹1.33L). SR10 Anantapur accounts for 89% of Central's gap — primarily large-value sale deed discrepancies with market value deviations exceeding 20%.",
+        "followUpPrompts": ["SR10 Anantapur case details", "Top leakage cases by amount", "Leakage trend over 6 months"]
       }
     },
     {
@@ -701,20 +702,20 @@
       "category": "compliance",
       "role": "IG",
       "response": {
-        "narrative": "SRO-wise exemption analysis for the current fiscal year. 5 SROs account for 62% of all exemptions claimed. Vijayawada Central leads with 184 exemptions worth ₹8.4Cr in foregone revenue.",
+        "narrative": "SRO-wise exemption abuse analysis based on flagged exemptions. SR10 Anantapur tops with a 21.4% abuse rate (18 of 84 exemptions flagged), followed by SR06 East Godavari at 19.4%. Total estimated leakage from exemption abuse across all SROs: ₹54.75L.",
         "inlineTable": {
-          "headers": ["SRO", "District", "Exemptions", "Value", "Flagged %"],
+          "headers": ["SRO", "District", "Total Exemptions", "Flagged", "Abuse Rate", "Est. Leakage"],
           "rows": [
-            ["SR01 Vijayawada Central", "Krishna", "184", "₹8.4Cr", "12.5%"],
-            ["SR03 Guntur", "Guntur", "156", "₹6.2Cr", "15.4%"],
-            ["SR05 Visakhapatnam", "Visakhapatnam", "142", "₹5.8Cr", "8.5%"],
-            ["SR02 Machilipatnam", "Krishna", "128", "₹4.1Cr", "18.8%"],
-            ["SR08 Nellore", "Nellore", "118", "₹3.6Cr", "22.0%"]
+            ["SR10 Anantapur Main", "Anantapur", "84", "18", "21.4%", "₹14.50L"],
+            ["SR06 Rajahmundry Central", "East Godavari", "72", "14", "19.4%", "₹11.80L"],
+            ["SR02 Guntur Main", "Guntur", "95", "12", "12.6%", "₹9.20L"],
+            ["SR03 Tirupati Urban", "Chittoor", "68", "8", "11.8%", "₹6.80L"],
+            ["SR05 Visakhapatnam Port", "Visakhapatnam", "110", "9", "8.2%", "₹5.40L"]
           ],
           "highlightColumn": 4
         },
-        "keyInsight": "SR08 Nellore has the highest flagged exemption rate at 22.0% — 1 in 5 exemptions may be ineligible. This warrants an immediate compliance audit.",
-        "followUpPrompts": ["Exemption abuse patterns at SR08", "Repeat exemption claimants", "Exemption vs revenue trend"]
+        "keyInsight": "SR10 Anantapur and SR06 East Godavari together account for 32 of 70 flagged exemptions (45.7%). The top abuse category at SR10 is 'Government Party Misuse' — private entities misclassified as government bodies to claim stamp duty exemptions.",
+        "followUpPrompts": ["Repeat exemption claimants at SR10", "Government Party Misuse pattern details", "Exemption abuse trend by quarter"]
       }
     },
     {
@@ -723,20 +724,18 @@
       "category": "sla",
       "role": "IG",
       "response": {
-        "narrative": "There are currently 8 escalations that have breached their SLA deadlines. The oldest unresolved escalation is 18 days past due, assigned to DR Krishna. Total revenue at risk across overdue escalations: ₹2.4Cr.",
+        "narrative": "3 escalations have breached their SLA deadlines with no response from assigned officers. The most critical is ESC-008 — a ₹12.5L industrial property undervaluation case pending 46+ days with SR Vijayawada. Total revenue at risk across overdue escalations: ₹12.74L.",
         "inlineTable": {
-          "headers": ["Escalation", "Case", "Assigned To", "Days Overdue", "Priority", "Amount"],
+          "headers": ["Escalation", "Case", "Assigned To", "Days Overdue", "Priority", "Amount at Risk"],
           "rows": [
-            ["ESC-008", "IGRS-2024-0003", "DR Krishna", "18", "High", "₹48.2L"],
-            ["ESC-009", "IGRS-2024-0007", "SR Vijayawada", "14", "Medium", "₹32.1L"],
-            ["ESC-010", "IGRS-2024-0009", "DR Guntur", "12", "Low", "₹18.4L"],
-            ["ESC-011", "IGRS-2024-0012", "SR Machilipatnam", "9", "High", "₹56.8L"],
-            ["ESC-012", "IGRS-2024-0015", "DR Visakhapatnam", "7", "Medium", "₹24.6L"]
+            ["ESC-008", "IGRS-2024-0008", "SR Vijayawada (M. Suresh Kumar)", "46+", "High", "₹12.50L"],
+            ["ESC-009", "IGRS-2024-0009", "DR Krishna (S. Lakshmi Devi)", "26+", "Medium", "₹0.24L"],
+            ["ESC-010", "IGRS-2024-0010", "DIG South (P. Venkata Rao)", "10+", "Low", "Treasury delay"]
           ],
           "highlightColumn": 3
         },
-        "keyInsight": "DR Krishna has 3 overdue escalations totaling ₹1.1Cr. Immediate follow-up recommended — pattern suggests resource constraints rather than non-compliance.",
-        "followUpPrompts": ["DR Krishna workload analysis", "Escalation resolution rate by role", "SLA compliance trend"]
+        "keyInsight": "ESC-008 is the most critical — ₹12.5L potential stamp duty loss from systematic 25% undervaluation of industrial properties in Auto Nagar, Vijayawada. No response received for 46 days despite High priority. The same officer (M. Suresh Kumar) also has ESC-001 (Open) and ESC-006 (recovery in progress).",
+        "followUpPrompts": ["ESC-008 case details and timeline", "Officer M. Suresh Kumar workload", "Issue formal notice to SR Vijayawada"]
       }
     },
     {
@@ -745,20 +744,25 @@
       "category": "risk",
       "role": "IG",
       "response": {
-        "narrative": "Analysis of high-value documents (>₹1Cr) with payment gaps in the current quarter. 20 documents identified with a combined payment gap of ₹3.8Cr. Krishna district has 7 of the top 20 cases.",
+        "narrative": "Top cases ranked by payment gap amount. The 5 largest gaps account for ₹21.15L — 51.8% of the total ₹40.85L state-wide gap. SR10 Anantapur appears twice in the top 5, confirming it as the highest-risk SRO.",
         "inlineTable": {
-          "headers": ["Case ID", "District", "Document Value", "Gap", "Signal", "Status"],
+          "headers": ["Case ID", "SRO / District", "Gap", "Risk", "Signal", "Status"],
           "rows": [
-            ["IGRS-2024-0001", "Krishna", "₹4.2Cr", "₹28.4L", "RevenueGap", "In Review"],
-            ["IGRS-2024-0004", "Guntur", "₹3.8Cr", "₹24.1L", "MarketValueRisk", "New"],
-            ["IGRS-2024-0008", "Visakhapatnam", "₹2.9Cr", "₹22.6L", "ExemptionRisk", "New"],
-            ["IGRS-2024-0012", "Krishna", "₹2.6Cr", "₹18.9L", "ChallanDelay", "In Review"],
-            ["IGRS-2024-0015", "Chittoor", "₹2.1Cr", "₹16.2L", "RevenueGap", "New"]
+            ["IGRS-2024-0003", "SR03 Tirupati / Chittoor", "₹5.00L", "High", "RevenueGap, MarketValueRisk", "Confirmed"],
+            ["IGRS-2024-0010", "SR10 Anantapur / Anantapur", "₹4.80L", "High", "RevenueGap, MarketValueRisk, ExemptionRisk", "New"],
+            ["IGRS-2024-0012", "SR02 Guntur / Guntur", "₹4.10L", "High", "MarketValueRisk, ExemptionRisk", "Confirmed"],
+            ["IGRS-2024-0005", "SR05 Vizag / Visakhapatnam", "₹3.75L", "High", "RevenueGap, MarketValueRisk", "New"],
+            ["IGRS-2024-0020", "SR10 Anantapur / Anantapur", "₹3.50L", "High", "RevenueGap, ExemptionRisk", "New"]
           ],
-          "highlightColumn": 3
+          "highlightColumn": 2
         },
-        "keyInsight": "Top 5 cases alone account for ₹1.1Cr in gaps — 29% of the total. Prioritize IGRS-2024-0001 and IGRS-2024-0004 for immediate review given their combined ₹52.5L exposure.",
-        "followUpPrompts": ["Case details for IGRS-2024-0001", "District-wise high-value gap trend", "Escalate top 5 to zone DIGs"]
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["0003", "0010", "0012", "0005", "0020"],
+          "datasets": [{ "label": "Gap (₹L)", "data": [5.0, 4.8, 4.1, 3.75, 3.5], "color": "#DC2626" }]
+        },
+        "keyInsight": "IGRS-2024-0003 (Tirupati, ₹5.00L) is already Confirmed status — recovery proceedings should be initiated. IGRS-2024-0010 and IGRS-2024-0020 are both from SR10 Anantapur, which has an officer accountability score of just 48/100.",
+        "followUpPrompts": ["Case details for IGRS-2024-0003", "Escalate New cases to zone DIGs", "SR10 Anantapur officer review"]
       }
     },
     {
@@ -767,25 +771,25 @@
       "category": "performance",
       "role": "IG",
       "response": {
-        "narrative": "Comparative zone performance for FY 2024-25 (Apr-Jan). South Zone leads on absolute revenue while Central Zone shows strongest growth momentum.",
+        "narrative": "Comprehensive zone performance comparison based on SRO risk scores, case volumes, and gap concentration. North Zone shows the highest average risk score across its SROs, while Central Zone has the worst gap-to-case ratio.",
         "inlineTable": {
-          "headers": ["Zone", "Revenue", "Target Ach.", "Growth", "Docs", "Avg MV"],
+          "headers": ["Zone", "SROs", "Cases", "Total Gap", "Avg Risk Score", "Highest Risk SRO", "Worst Accountability"],
           "rows": [
-            ["South", "₹52.4Cr", "94.2%", "+16.8%", "14,200", "₹36.9L"],
-            ["North", "₹38.6Cr", "91.8%", "+15.2%", "10,400", "₹37.1L"],
-            ["Central", "₹22.8Cr", "88.4%", "+18.4%", "6,800", "₹33.5L"]
+            ["South", "5", "13", "₹17.35L", "66.4", "SR03 Tirupati (82)", "SR02 Guntur (58)"],
+            ["North", "3", "8", "₹14.16L", "67.7", "SR06 Rajahmundry (76)", "SR06 Rajahmundry (55)"],
+            ["Central", "2", "4", "₹9.34L", "64.0", "SR10 Anantapur (80)", "SR10 Anantapur (48)"]
           ]
         },
         "inlineChart": {
           "type": "bar",
           "labels": ["South", "North", "Central"],
           "datasets": [
-            { "label": "Revenue (₹Cr)", "data": [52.4, 38.6, 22.8], "color": "#3B82F6" },
-            { "label": "Target %", "data": [94.2, 91.8, 88.4], "color": "#22C55E" }
+            { "label": "Total Gap (₹L)", "data": [17.35, 14.16, 9.34], "color": "#3B82F6" },
+            { "label": "Avg Risk Score", "data": [66.4, 67.7, 64.0], "color": "#F97316" }
           ]
         },
-        "keyInsight": "Central Zone's 18.4% growth is the highest but target achievement at 88.4% lags. The gap is primarily from Anantapur district which is at only 78% achievement despite 20% growth.",
-        "followUpPrompts": ["Anantapur performance deep dive", "Zone-wise SRO ranking", "Revenue target revision impact"]
+        "keyInsight": "SR10 Anantapur has the worst officer accountability score at 48/100 combined with a risk score of 80 — the most concerning SRO in the state. SR09 Nellore City is the best performer (risk 40, accountability 88, gap just ₹0.50L).",
+        "followUpPrompts": ["SR10 Anantapur detailed audit", "Officer accountability ranking", "SRO risk vs accountability correlation"]
       }
     },
     {
@@ -794,18 +798,17 @@
       "category": "sla",
       "role": "IG",
       "response": {
-        "narrative": "4 SROs have not responded to escalated findings within their SLA window this month. Combined revenue at risk: ₹1.6Cr across 12 pending cases.",
+        "narrative": "3 escalations are currently overdue with no adequate response from assigned officers. Total amount at risk across overdue escalations: ₹12.74L. ESC-008 (SR Vijayawada) is the most critical — 46+ days overdue with ₹12.5L at stake, involving stamp duty evasion on IGRS-2024-0008.",
         "inlineTable": {
-          "headers": ["SRO", "District", "Pending Responses", "Oldest (Days)", "Revenue at Risk"],
+          "headers": ["Escalation", "Assigned To", "Case Ref", "Days Overdue", "Amount at Risk", "Issue Type"],
           "rows": [
-            ["SR09 Kurnool", "Kurnool", "4", "22", "₹58.4L"],
-            ["SR08 Kadapa", "Kadapa", "3", "16", "₹42.1L"],
-            ["SR18 Nellore", "Nellore", "3", "14", "₹38.6L"],
-            ["SR14 Anantapur", "Anantapur", "2", "11", "₹21.2L"]
+            ["ESC-008", "M. Suresh Kumar, SR Vijayawada", "IGRS-2024-0008", "46+", "₹12.50L", "Stamp Duty Evasion"],
+            ["ESC-009", "S. Lakshmi Devi, DR Krishna", "IGRS-2024-0009", "26+", "₹0.24L", "Challan Delay"],
+            ["ESC-010", "P. Venkata Rao, DIG South", "IGRS-2024-0010", "10+", "—", "Market Value Risk"]
           ]
         },
-        "keyInsight": "SR09 Kurnool has the worst response record with 4 pending responses, the oldest being 22 days. This is 2.9x the 7-day SLA. Recommend issuing formal notice.",
-        "followUpPrompts": ["SR09 officer accountability report", "SRO response rate ranking", "Issue formal notices"]
+        "keyInsight": "ESC-008 is the most alarming — 46+ days with no resolution on a ₹12.5L stamp duty evasion case. SR Vijayawada's officer M. Suresh Kumar has not responded despite multiple follow-ups. Recommend issuing formal show-cause notice and escalating to DIG North Zone.",
+        "followUpPrompts": ["ESC-008 full case history", "Issue show-cause to SR Vijayawada", "All escalation response times this quarter"]
       }
     },
     {
@@ -814,17 +817,24 @@
       "category": "compliance",
       "role": "IG",
       "response": {
-        "narrative": "State-wide exemption abuse analysis reveals 3 distinct patterns across 8 districts. Total estimated leakage from exemption abuse: ₹4.2Cr in FY 2024-25.",
+        "narrative": "State-wide exemption abuse analysis identifies 7 repeat offenders who have filed multiple exemption claims. Total exemption amount at risk: ₹1.25Cr. The top 3 offenders — M/s Ravi Infrastructure (5 claims, ₹42.5L), Srinivasa Reddy (4 claims, ₹18.5L), and AP Housing Corporation (3 claims, ₹87.5L) — collectively account for 71% of the total exemption risk amount. SR10 Anantapur has the highest abuse rate at 21.4%, followed by SR06 Rajahmundry at 19.4%.",
         "inlineTable": {
-          "headers": ["Pattern", "Cases", "Districts", "Est. Leakage", "Risk Level"],
+          "headers": ["Party Name", "Claims Filed", "Exemption Amount", "SROs Used", "Flag Status"],
           "rows": [
-            ["Repeat party claims", "42", "6", "₹1.8Cr", "High"],
-            ["Category misclassification", "28", "5", "₹1.4Cr", "High"],
-            ["Eligibility threshold manipulation", "18", "3", "₹1.0Cr", "Medium"]
+            ["M/s Ravi Infrastructure", "5", "₹42.50L", "SR02, SR10", "High Risk"],
+            ["Srinivasa Reddy", "4", "₹18.50L", "SR03, SR06", "High Risk"],
+            ["AP Housing Corporation", "3", "₹87.50L", "SR01, SR05", "High Risk"],
+            ["Venkata Lakshmi Trust", "3", "₹21.00L", "SR06", "Medium Risk"],
+            ["Nagesh Babu", "3", "₹9.50L", "SR09", "Medium Risk"]
           ]
         },
-        "keyInsight": "Repeat party claims are the dominant pattern — 42 cases involving 15 unique parties. 3 parties have claimed exemptions at multiple SROs, suggesting organized evasion.",
-        "followUpPrompts": ["Top repeat exemption claimants", "District-wise abuse breakdown", "Recommended enforcement actions"]
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["SR10", "SR06", "SR02", "SR03", "SR05"],
+          "datasets": [{ "label": "Exemption Abuse Rate (%)", "data": [21.4, 19.4, 12.6, 11.8, 8.2], "color": "#DC2626" }]
+        },
+        "keyInsight": "M/s Ravi Infrastructure has filed 5 exemption claims across 2 SROs (SR02 Guntur and SR10 Anantapur), totalling ₹42.5L — a classic cross-jurisdictional evasion pattern. AP Housing Corporation's 3 claims amount to ₹87.5L, the highest single-party exemption exposure. Recommend freezing all pending exemptions for these 3 parties and initiating inter-SRO audit.",
+        "followUpPrompts": ["M/s Ravi Infrastructure full exemption history", "Cross-SRO exemption audit report", "Freeze pending exemptions for top offenders"]
       }
     },
     {
@@ -833,14 +843,28 @@
       "category": "forecasting",
       "role": "IG",
       "response": {
-        "narrative": "State revenue growth trend for the last 12 months. Revenue has grown consistently with a compound monthly growth rate of 1.4%. The forecast model predicts ₹13.2Cr for February 2025.",
+        "narrative": "Monthly revenue leakage trend from July to December 2024. Cases detected have grown from 16 in July to 28 in December (+75%). The total revenue gap has nearly doubled from ₹2.50L to ₹4.85L. October saw the sharpest spike (25 cases, ₹4.20L gap) coinciding with festive-season property registration surge.",
         "inlineChart": {
           "type": "line",
-          "labels": ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
-          "datasets": [{ "label": "Revenue (₹Cr)", "data": [9.8, 10.1, 10.4, 10.6, 10.9, 11.2, 11.4, 11.6, 11.8, 12.1, 12.4, 12.8], "color": "#7C3AED" }]
+          "labels": ["Jul 2024", "Aug 2024", "Sep 2024", "Oct 2024", "Nov 2024", "Dec 2024"],
+          "datasets": [
+            { "label": "Cases Detected", "data": [16, 22, 19, 25, 21, 28], "color": "#3B82F6" },
+            { "label": "Gap (₹L)", "data": [2.5, 3.8, 3.1, 4.2, 3.55, 4.85], "color": "#DC2626" }
+          ]
         },
-        "keyInsight": "The upward trend is sustained with no regression months. MV revision in October 2024 added approximately ₹0.4Cr/month in incremental revenue. Seasonal peak expected in March 2025.",
-        "followUpPrompts": ["Forecast for next quarter", "Revenue attribution by driver", "Impact of upcoming MV revisions"]
+        "inlineTable": {
+          "headers": ["Month", "Cases", "Gap (₹L)", "MoM Change (Cases)", "MoM Change (Gap)"],
+          "rows": [
+            ["Jul 2024", "16", "₹2.50L", "—", "—"],
+            ["Aug 2024", "22", "₹3.80L", "+37.5%", "+52.0%"],
+            ["Sep 2024", "19", "₹3.10L", "-13.6%", "-18.4%"],
+            ["Oct 2024", "25", "₹4.20L", "+31.6%", "+35.5%"],
+            ["Nov 2024", "21", "₹3.55L", "-16.0%", "-15.5%"],
+            ["Dec 2024", "28", "₹4.85L", "+33.3%", "+36.6%"]
+          ]
+        },
+        "keyInsight": "December 2024 marks the highest detection month with 28 cases and ₹4.85L gap — both all-time highs. The upward trend suggests either increasing leakage activity or improving detection capability. September dip correlates with fewer registrations during Pitru Paksha period. Recommend increasing SRO audit frequency during high-volume months (Oct-Dec, Feb-Mar).",
+        "followUpPrompts": ["Forecast for Q1 2025", "Which SROs drove the December spike?", "Detection rate vs registration volume correlation"]
       }
     },
     {
@@ -849,23 +873,29 @@
       "category": "revenue",
       "role": "IG",
       "response": {
-        "narrative": "Recovery status for all high-value cases (gap > ₹10L) in the current fiscal year. 64 cases identified with ₹12.8Cr in total recoverable amount. ₹4.2Cr (33%) has been recovered so far.",
+        "narrative": "Recovery tracking across all 10 escalated cases. ₹7.20L has been successfully recovered (ESC-006, stamp duty evasion in Guntur). 3 escalations were justified with ₹3.44L in combined amounts cleared (ESC-004, ESC-005, ESC-007). 3 escalations are overdue totalling ₹12.74L at risk (ESC-008, ESC-009, ESC-010). 3 escalations are still open and under review (ESC-001, ESC-002, ESC-003).",
         "inlineTable": {
-          "headers": ["Status", "Cases", "Amount", "% of Total"],
+          "headers": ["Escalation", "Case Ref", "Status", "Amount", "Outcome"],
           "rows": [
-            ["Recovered", "22", "₹4.2Cr", "33%"],
-            ["In Progress", "18", "₹3.8Cr", "30%"],
-            ["Pending Action", "14", "₹2.6Cr", "20%"],
-            ["Disputed", "10", "₹2.2Cr", "17%"]
+            ["ESC-006", "IGRS-2024-0006", "Accepted", "₹7.20L", "Recovered — stamp duty evasion confirmed"],
+            ["ESC-004", "IGRS-2024-0004", "Responded", "₹1.80L", "Justified — document re-verified"],
+            ["ESC-005", "IGRS-2024-0005", "Responded", "₹0.84L", "Justified — valuation corrected"],
+            ["ESC-007", "IGRS-2024-0007", "Responded", "₹0.80L", "Justified — exemption valid"],
+            ["ESC-008", "IGRS-2024-0008", "Overdue", "₹12.50L", "No response — 46+ days pending"],
+            ["ESC-009", "IGRS-2024-0009", "Overdue", "₹0.24L", "No response — 26+ days pending"],
+            ["ESC-010", "IGRS-2024-0010", "Overdue", "—", "No response — 10+ days pending"],
+            ["ESC-001", "IGRS-2024-0001", "Open", "₹3.20L", "Under review"],
+            ["ESC-002", "IGRS-2024-0002", "Open", "₹4.80L", "Under review"],
+            ["ESC-003", "IGRS-2024-0003", "Open", "₹2.40L", "Under review"]
           ]
         },
         "inlineChart": {
           "type": "donut",
-          "labels": ["Recovered", "In Progress", "Pending", "Disputed"],
-          "datasets": [{ "label": "Amount", "data": [4.2, 3.8, 2.6, 2.2], "color": "#22C55E" }]
+          "labels": ["Recovered", "Justified", "Overdue", "Open"],
+          "datasets": [{ "label": "Amount (₹L)", "data": [7.2, 3.44, 12.74, 10.4], "color": "#22C55E" }]
         },
-        "keyInsight": "Recovery rate of 33% is below the 45% target. 14 pending-action cases (₹2.6Cr) have had no activity for 15+ days. Accelerating these could push recovery rate to 53%.",
-        "followUpPrompts": ["Pending action cases detail", "Recovery rate by district", "Recovery timeline projection"]
+        "keyInsight": "Only ₹7.20L recovered out of ₹33.78L total escalated amount (21.3% recovery rate). The ₹12.74L in overdue escalations — particularly ESC-008 at ₹12.50L — represents the largest recovery opportunity. If ESC-008 is resolved, recovery rate jumps to 58.3%. Recommend prioritizing ESC-008 with formal enforcement action.",
+        "followUpPrompts": ["ESC-008 enforcement action plan", "Recovery rate trend by quarter", "Compare recovery rates across zones"]
       }
     },
 

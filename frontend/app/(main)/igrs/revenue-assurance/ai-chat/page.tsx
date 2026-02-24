@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useMemo, useRef, useState, useEffect, Component, type ErrorInfo, type ReactNode } from "react";
 import { useAIChat } from "@/hooks/data/use-igrs-ai-chat";
 import { cn } from "@/lib/utils";
 import {
@@ -186,6 +186,58 @@ function InlineChart({ chart }: { chart: InlineChartData }) {
   return null;
 }
 
+// ── Bubble Error Boundary ────────────────────────────────────────────────────
+
+class BubbleErrorBoundary extends Component<
+  { children: ReactNode },
+  { error: unknown | null }
+> {
+  state: { error: unknown | null } = { error: null };
+  static getDerivedStateFromError(error: unknown) {
+    return { error };
+  }
+  componentDidCatch(error: unknown, info: ErrorInfo) {
+    console.error("[AIBubble Error]", error, info.componentStack);
+  }
+  render() {
+    if (this.state.error != null) {
+      const message =
+        this.state.error instanceof Error
+          ? this.state.error.message
+          : typeof this.state.error === "string"
+            ? this.state.error
+            : "Unknown rendering error";
+      const stack = this.state.error instanceof Error ? this.state.error.stack : null;
+      return (
+        <div className="flex justify-start gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-1">
+            <span className="text-red-500 text-xs font-bold">!</span>
+          </div>
+          <div className="rounded-2xl px-5 py-4 max-w-[80%] bg-red-50 border border-red-200">
+            <p className="text-sm text-red-700 font-medium">Error rendering response</p>
+            <p className="text-xs text-red-600 mt-1 font-mono">{message}</p>
+            {stack && (
+              <details className="mt-2">
+                <summary className="text-xs text-red-500 cursor-pointer">Stack trace</summary>
+                <pre className="text-[10px] text-red-400 mt-1 whitespace-pre-wrap max-h-40 overflow-auto">
+                  {stack}
+                </pre>
+              </details>
+            )}
+            <button
+              onClick={() => this.setState({ error: null })}
+              className="mt-2 text-xs text-red-600 underline"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 // ── AI Message Bubble ────────────────────────────────────────────────────────
 
 function AIBubble({
@@ -362,64 +414,59 @@ function CategoryChips({
   );
 }
 
-// ── Typing Indicator ─────────────────────────────────────────────────────────
+// ── Streaming Events ────────────────────────────────────────────────────────
 
-function TypingIndicator() {
+const STREAMING_STEPS = [
+  { message: "Understanding your query...", icon: "search" },
+  { message: "Querying revenue databases...", icon: "database" },
+  { message: "Analyzing zone-wise data...", icon: "chart" },
+  { message: "Computing comparisons & trends...", icon: "compute" },
+  { message: "Generating insights...", icon: "sparkle" },
+];
+
+function StreamingIndicator({ events }: { events: string[] }) {
   return (
-    <div className="flex justify-start gap-2">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-1">
+    <div className="flex justify-start gap-2.5 animate-in slide-in-from-bottom-4 duration-500">
+      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
         <Brain className="w-4 h-4 text-white animate-pulse" />
       </div>
-      <div className="rounded-2xl px-4 py-4 max-w-[80%] bg-white border border-slate-200 space-y-3 min-w-[320px]">
-        {/* Thinking label */}
-        <div className="flex items-center gap-2 mb-1">
-          <div className="flex items-center gap-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: "0ms" }} />
-            <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: "150ms" }} />
-            <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: "300ms" }} />
-          </div>
-          <span className="text-xs text-violet-500 font-medium animate-pulse">Analyzing...</span>
-        </div>
+      <div className="rounded-2xl px-5 py-4 max-w-[80%] bg-white border border-slate-200 shadow-sm min-w-[340px]">
+        <div className="space-y-2.5">
+          {events.map((event, idx) => {
+            const isLatest = idx === events.length - 1;
+            const isPast = idx < events.length - 1;
+            return (
+              <div
+                key={idx}
+                className={cn(
+                  "flex items-center gap-2.5 text-sm animate-in fade-in slide-in-from-bottom-2 duration-300",
+                  isLatest ? "text-slate-800 font-medium" : "text-slate-400"
+                )}
+              >
+                {/* Step indicator */}
+                {isPast ? (
+                  <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                ) : (
+                  <div className="w-5 h-5 rounded-full border-2 border-violet-400 border-t-transparent animate-spin flex-shrink-0" />
+                )}
 
-        {/* Narrative text lines shimmer */}
-        <div className="space-y-2">
-          <div className="h-3.5 w-full rounded bg-slate-100 response-shimmer" />
-          <div className="h-3.5 w-[90%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: "100ms" }} />
-          <div className="h-3.5 w-[75%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: "200ms" }} />
-        </div>
+                <span className="leading-relaxed">{event}</span>
 
-        {/* Table shimmer */}
-        <div className="rounded-lg border border-slate-100 overflow-hidden">
-          <div className="flex gap-1 p-2 bg-slate-50">
-            <div className="h-3 w-[25%] rounded bg-slate-200 response-shimmer" style={{ animationDelay: "150ms" }} />
-            <div className="h-3 w-[25%] rounded bg-slate-200 response-shimmer" style={{ animationDelay: "200ms" }} />
-            <div className="h-3 w-[25%] rounded bg-slate-200 response-shimmer" style={{ animationDelay: "250ms" }} />
-            <div className="h-3 w-[25%] rounded bg-slate-200 response-shimmer" style={{ animationDelay: "300ms" }} />
-          </div>
-          {Array.from({ length: 3 }).map((_, row) => (
-            <div key={row} className="flex gap-1 p-2 border-t border-slate-50">
-              <div className="h-2.5 w-[25%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: `${300 + row * 80}ms` }} />
-              <div className="h-2.5 w-[25%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: `${350 + row * 80}ms` }} />
-              <div className="h-2.5 w-[25%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: `${400 + row * 80}ms` }} />
-              <div className="h-2.5 w-[25%] rounded bg-slate-100 response-shimmer" style={{ animationDelay: `${450 + row * 80}ms` }} />
-            </div>
-          ))}
-        </div>
-
-        {/* Key insight shimmer */}
-        <div className="rounded-lg border-l-4 border-l-violet-200 bg-violet-50/50 p-3 flex items-start gap-2">
-          <div className="w-3.5 h-3.5 rounded bg-violet-200 response-shimmer flex-shrink-0 mt-0.5" />
-          <div className="flex-1 space-y-1.5">
-            <div className="h-3 w-[85%] rounded bg-violet-100 response-shimmer" style={{ animationDelay: "500ms" }} />
-            <div className="h-3 w-[60%] rounded bg-violet-100 response-shimmer" style={{ animationDelay: "600ms" }} />
-          </div>
-        </div>
-
-        {/* Follow-up chips shimmer */}
-        <div className="flex gap-2 pt-1">
-          <div className="h-7 w-32 rounded-full bg-violet-50 response-shimmer" style={{ animationDelay: "650ms" }} />
-          <div className="h-7 w-40 rounded-full bg-violet-50 response-shimmer" style={{ animationDelay: "750ms" }} />
-          <div className="h-7 w-28 rounded-full bg-violet-50 response-shimmer" style={{ animationDelay: "850ms" }} />
+                {/* Animated dots on latest event */}
+                {isLatest && (
+                  <span className="flex ml-0.5">
+                    <span className="animate-bounce text-violet-400 font-bold" style={{ animationDelay: "0ms" }}>.</span>
+                    <span className="animate-bounce text-violet-400 font-bold" style={{ animationDelay: "150ms" }}>.</span>
+                    <span className="animate-bounce text-violet-400 font-bold" style={{ animationDelay: "300ms" }}>.</span>
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -533,6 +580,7 @@ export default function AIChatPage() {
   const [composerValue, setComposerValue] = useState("");
   const [showPlaceholder, setShowPlaceholder] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
+  const [streamingEvents, setStreamingEvents] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<PromptCategory | "all">("all");
   const [samplePromptIdx, setSamplePromptIdx] = useState(0);
   const [suggestions, setSuggestions] = useState<PromptTemplate[]>([]);
@@ -542,9 +590,10 @@ export default function AIChatPage() {
   const conversationEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const streamingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const categories = promptData?.categories ?? [];
-  const allPrompts = promptData?.prompts ?? [];
+  const categories = useMemo(() => promptData?.categories ?? [], [promptData?.categories]);
+  const allPrompts = useMemo(() => promptData?.prompts ?? [], [promptData?.prompts]);
 
   // Filter prompts by role — show generic + role-specific prompts
   const roleFilteredPrompts = useMemo(() => {
@@ -570,10 +619,56 @@ export default function AIChatPage() {
     return () => clearInterval(interval);
   }, [messages.length, samplePrompts.length]);
 
-  // Auto-scroll to bottom on new messages
+  // Auto-scroll to bottom on new messages or streaming events
   useEffect(() => {
     conversationEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+  }, [messages, isTyping, streamingEvents]);
+
+  useEffect(() => {
+    return () => {
+      if (streamingIntervalRef.current) {
+        clearInterval(streamingIntervalRef.current);
+        streamingIntervalRef.current = null;
+      }
+    };
+  }, []);
+
+  function simulateStreaming(onComplete: () => void) {
+    // Clear any previous streaming interval
+    if (streamingIntervalRef.current) {
+      clearInterval(streamingIntervalRef.current);
+      streamingIntervalRef.current = null;
+    }
+
+    const steps = STREAMING_STEPS
+      .map((step) => step?.message)
+      .filter((message): message is string => typeof message === "string" && message.length > 0);
+    if (steps.length === 0) {
+      onComplete();
+      return;
+    }
+    let stepIndex = 0;
+
+    setStreamingEvents([steps[0]]);
+    stepIndex = 1;
+
+    const interval = setInterval(() => {
+      if (stepIndex < steps.length) {
+        const nextStep = steps[stepIndex];
+        if (nextStep) {
+          setStreamingEvents((prev) => [...prev, nextStep]);
+        }
+        stepIndex++;
+      } else {
+        clearInterval(interval);
+        streamingIntervalRef.current = null;
+        setStreamingEvents([]);
+        onComplete();
+      }
+    }, 350);
+
+    streamingIntervalRef.current = interval;
+  }
 
   function handleSend(text?: string) {
     const msg = text || composerValue.trim();
@@ -594,16 +689,15 @@ export default function AIChatPage() {
     setSuggestions([]);
     setSelectedSuggestionIdx(-1);
 
-    // Simulate AI thinking delay, then respond
-    setTimeout(() => {
+    simulateStreaming(() => {
       const match = findBestMatch(msg, roleFilteredPrompts);
 
       let aiMsg: ConversationMessage;
-      if (match) {
+      if (match?.response) {
         aiMsg = {
           id: `msg-${Date.now()}-ai`,
           role: "ai",
-          content: match.response.narrative,
+          content: match.response.narrative ?? "Response data unavailable.",
           data: match.response,
           timestamp: new Date().toISOString(),
         };
@@ -619,7 +713,7 @@ export default function AIChatPage() {
 
       setMessages((prev) => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 1200);
+    });
   }
 
   function handleSelectSuggestion(prompt: PromptTemplate) {
@@ -652,17 +746,18 @@ export default function AIChatPage() {
     setMessages((prev) => [...prev, userMsg]);
     setIsTyping(true);
 
-    setTimeout(() => {
+    simulateStreaming(() => {
+      const response = prompt?.response;
       const aiMsg: ConversationMessage = {
         id: `msg-${Date.now()}-ai`,
         role: "ai",
-        content: prompt.response.narrative,
-        data: prompt.response,
+        content: response?.narrative ?? "Response data unavailable.",
+        data: response,
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 1500);
+    });
   }
 
   function handleNewChat() {
@@ -670,6 +765,7 @@ export default function AIChatPage() {
     setComposerValue("");
     setShowPlaceholder(true);
     setIsTyping(false);
+    setStreamingEvents([]);
     setSelectedCategory("all");
     setShowSuggestions(false);
     setSuggestions([]);
@@ -946,10 +1042,14 @@ export default function AIChatPage() {
                       </div>
                     </div>
                   ) : (
-                    <AIBubble key={msg.id} msg={msg} onFollowUp={handleSend} />
+                    <BubbleErrorBoundary key={msg.id}>
+                      <AIBubble msg={msg} onFollowUp={handleSend} />
+                    </BubbleErrorBoundary>
                   )
                 )}
-                {isTyping && <TypingIndicator />}
+                {isTyping && streamingEvents.length > 0 && (
+                  <StreamingIndicator events={streamingEvents} />
+                )}
                 <div ref={conversationEndRef} />
               </div>
             </div>
@@ -1073,22 +1173,6 @@ export default function AIChatPage() {
             100% {
               transform: rotate(360deg);
             }
-          }
-          @keyframes response-shimmer-sweep {
-            0%   { background-position: -300px 0; }
-            100% { background-position: 300px 0;  }
-          }
-          .response-shimmer {
-            background-image: linear-gradient(
-              90deg,
-              transparent 0%,
-              rgba(124,58,237,0.07) 40%,
-              rgba(124,58,237,0.12) 50%,
-              rgba(124,58,237,0.07) 60%,
-              transparent 100%
-            );
-            background-size: 300px 100%;
-            animation: response-shimmer-sweep 1.4s ease-in-out infinite;
           }
         `}</style>
       </div>
