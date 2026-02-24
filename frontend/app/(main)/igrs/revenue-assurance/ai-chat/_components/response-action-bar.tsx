@@ -50,6 +50,9 @@ export interface ConversationMessage {
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
+type EscalationTarget = { id: string; label: string; name: string; email: string };
+type EscalationRole = "IG" | "DIG" | "DR" | "SR";
+
 const TEAM_MEMBERS = [
   { id: "venkat", name: "Venkata Rao", role: "IGRS Analyst" },
   { id: "lakshmi", name: "Lakshmi Reddy", role: "Tax Manager" },
@@ -58,7 +61,7 @@ const TEAM_MEMBERS = [
   { id: "rajesh", name: "Rajesh Varma", role: "District Inspector" },
 ];
 
-const ESCALATION_TARGETS_BY_ROLE: Record<string, { id: string; label: string; name: string; email: string }[]> = {
+const ESCALATION_TARGETS_BY_ROLE: Record<EscalationRole, EscalationTarget[]> = {
   IG: [
     { id: "dig-south", label: "DIG South Zone", name: "P. Venkata Rao", email: "dig.south@igrs.ap.gov.in" },
     { id: "dig-north", label: "DIG North Zone", name: "R. Kumar Reddy", email: "dig.north@igrs.ap.gov.in" },
@@ -77,6 +80,30 @@ const ESCALATION_TARGETS_BY_ROLE: Record<string, { id: string; label: string; na
     { id: "dr-krishna", label: "DR Krishna", name: "S. Lakshmi Devi", email: "dr.krishna@igrs.ap.gov.in" },
   ],
 };
+
+const ALL_ESCALATION_TARGETS: EscalationTarget[] = Array.from(
+  new Map(
+    Object.values(ESCALATION_TARGETS_BY_ROLE)
+      .flat()
+      .map((target) => [target.id, target] as const)
+  ).values()
+);
+
+function normalizeEscalationRole(role?: string): EscalationRole | null {
+  if (!role) return null;
+  const normalized = role.toUpperCase();
+  if (normalized === "IG" || normalized === "DIG" || normalized === "DR" || normalized === "SR") {
+    return normalized;
+  }
+  return null;
+}
+
+function inferTargetRole(targetId: string): EscalationRole {
+  if (targetId.startsWith("dig-")) return "DIG";
+  if (targetId.startsWith("dr-")) return "DR";
+  if (targetId.startsWith("sr-")) return "SR";
+  return "IG";
+}
 
 const SLA_OPTIONS = [
   { value: "3", label: "3 days" },
@@ -219,13 +246,19 @@ function EscalateDialog({
   const [slaDays, setSlaDays] = useState("7");
   const [priority, setPriority] = useState("Medium");
 
+  const roleKey = useMemo(() => normalizeEscalationRole(session?.role), [session?.role]);
+
   const targets = useMemo(() => {
-    if (!session) return [];
-    return ESCALATION_TARGETS_BY_ROLE[session.role] ?? [];
-  }, [session]);
+    if (roleKey) return ESCALATION_TARGETS_BY_ROLE[roleKey];
+    return ALL_ESCALATION_TARGETS;
+  }, [roleKey]);
 
   function handleSubmit() {
-    if (!target || !session) return;
+    if (!target) return;
+    if (!session) {
+      toast.error("Role session not found. Please sign in again from the IGRS login page.");
+      return;
+    }
     const targetObj = targets.find((t) => t.id === target);
     if (!targetObj) return;
 
@@ -238,7 +271,7 @@ function EscalateDialog({
       caseId: `AI-CHAT-${Date.now()}`,
       createdAt: new Date().toISOString(),
       createdBy: { role: session.role, name: session.name },
-      assignedTo: { role: targetObj.label, name: targetObj.name, email: targetObj.email },
+      assignedTo: { role: inferTargetRole(targetObj.id), name: targetObj.name, email: targetObj.email },
       slaDeadline: deadline.toISOString(),
       status: "Open",
       priority: priority as "High" | "Medium" | "Low",
@@ -290,6 +323,11 @@ function EscalateDialog({
                 ))}
               </SelectContent>
             </Select>
+            <p className="text-[11px] text-slate-500 mt-1">
+              {roleKey
+                ? `Routing by ${roleKey} escalation hierarchy`
+                : "No role session detected. Showing all configured recipients."}
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
