@@ -812,7 +812,7 @@ export const IGRS_SIGNAL_CONFIG: Record<IGRSLeakageSignal, SignalDisplayConfig> 
   },
   ExemptionRisk: {
     signal: "ExemptionRisk",
-    label: "Exemption Risk",
+    label: "Exemption Abuse",
     color: "text-purple-700",
     bgColor: "bg-purple-50",
     description: "Suspicious or ineligible exemption claims",
@@ -840,7 +840,7 @@ export const IGRS_SIGNAL_CONFIG: Record<IGRSLeakageSignal, SignalDisplayConfig> 
   },
   CashReconciliation: {
     signal: "CashReconciliation",
-    label: "Cash Reconciliation",
+    label: "Cash Recon",
     color: "text-emerald-700",
     bgColor: "bg-emerald-50",
     description: "Cash collection vs treasury deposit mismatch",

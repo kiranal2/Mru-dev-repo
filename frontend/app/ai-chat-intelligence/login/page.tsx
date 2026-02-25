@@ -236,9 +236,9 @@ export default function AIChatIntelligenceLoginPage() {
       await new Promise((r) => setTimeout(r, stage.duration));
     }
 
-    // Open IGRS panel by default after login and keep IGRS selected in rail.
+    // Keep IGRS selected in rail, but keep the side panel closed by default.
     try {
-      localStorage.setItem("igrs-open-panel-default", "1");
+      localStorage.removeItem("igrs-open-panel-default");
       localStorage.setItem("meeru-selected-rail", "igrs");
     } catch {
       // no-op
@@ -442,10 +442,7 @@ export default function AIChatIntelligenceLoginPage() {
                                     {user.role}
                                   </span>
                                 </div>
-                                {/* Officer info */}
-                                <p className="text-xs font-semibold text-gray-800 leading-tight">
-                                  {user.name}
-                                </p>
+                                {/* Role info */}
                                 <p className="text-[10px] text-gray-500 mt-0.5">
                                   {user.designation}
                                 </p>

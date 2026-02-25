@@ -166,20 +166,44 @@ export function AndhraPradeshChoroplethMap({
     const collection = geoData as GeoCollection;
     const projection = d3.geoMercator().fitSize([MAP_WIDTH, MAP_HEIGHT], collection);
     const pathGen = d3.geoPath().projection(projection);
-    const seen = new Set<string>();
-    const entries: { id: string; name: string; pathD: string }[] = [];
+    const entries: { id: string; name: string; pathD: string; centroid: [number, number] }[] = [];
     geoData.features.forEach((f, i) => {
       const name = getDistrictName((f as GeoFeature).properties);
       const displayName = name || `District ${i + 1}`;
       const pathD = pathGen(f as GeoFeature);
-      if (pathD) {
+      const centroid = pathGen.centroid(f as GeoFeature);
+      if (pathD && centroid && isFinite(centroid[0]) && isFinite(centroid[1])) {
         const id = `${displayName}-${i}`;
-        entries.push({ id, name: displayName, pathD });
-        seen.add(displayName);
+        entries.push({ id, name: displayName, pathD, centroid });
       }
     });
     return entries;
   }, [geoData]);
+
+  // Compute a single centroid per district (average if multi-polygon)
+  const districtCentroids = useMemo(() => {
+    const acc: Record<string, { sx: number; sy: number; n: number }> = {};
+    for (const { name, centroid } of pathEntries) {
+      if (!acc[name]) acc[name] = { sx: 0, sy: 0, n: 0 };
+      acc[name].sx += centroid[0];
+      acc[name].sy += centroid[1];
+      acc[name].n += 1;
+    }
+    const result: Record<string, [number, number]> = {};
+    for (const [name, { sx, sy, n }] of Object.entries(acc)) {
+      result[name] = [sx / n, sy / n];
+    }
+    return result;
+  }, [pathEntries]);
+
+  // Top 3 worst districts by avgDrr (lowest DRR = worst)
+  const top3Worst = useMemo(() => {
+    const withDrr = Object.keys(districtCentroids)
+      .map((name) => ({ name, data: districtMap.current.get(name) }))
+      .filter((d): d is { name: string; data: DistrictMapData } => d.data?.avgDrr != null);
+    withDrr.sort((a, b) => (a.data.avgDrr ?? 1) - (b.data.avgDrr ?? 1));
+    return new Set(withDrr.slice(0, 3).map((d) => d.name));
+  }, [districtCentroids, districtData]);
 
   const districtToColor = useMemo(() => {
     const names = Array.from(new Set(pathEntries.map((e) => e.name)));
@@ -296,6 +320,7 @@ export function AndhraPradeshChoroplethMap({
             </filter>
           </defs>
           <g ref={zoomGroupRef}>
+            {/* District polygons */}
             {pathEntries.map(({ id, name, pathD }) => {
               const data = districtMap.current.get(name);
               const isActive = activeGeoNames.has(name);
@@ -323,6 +348,59 @@ export function AndhraPradeshChoroplethMap({
                 />
               );
             })}
+
+            {/* District name labels */}
+            {Object.entries(districtCentroids).map(([name, [cx, cy]]) => {
+              const isTop3 = top3Worst.has(name);
+              const labelY = isTop3 ? cy - 8 : cy;
+              return (
+                <text
+                  key={`label-${name}`}
+                  x={cx}
+                  y={labelY}
+                  textAnchor="middle"
+                  fontSize="7.5"
+                  fontWeight="600"
+                  fill="#334155"
+                  style={{ pointerEvents: "none", userSelect: "none" }}
+                >
+                  {resolveToDataName(name)}
+                </text>
+              );
+            })}
+
+            {/* Top 3 worst district badges */}
+            {Object.entries(districtCentroids)
+              .filter(([name]) => top3Worst.has(name))
+              .map(([name, [cx, cy]], i) => {
+                const data = districtMap.current.get(name);
+                const drr = data?.avgDrr;
+                const badgeY = cy + 2;
+                return (
+                  <g key={`badge-${name}`} style={{ pointerEvents: "none" }}>
+                    <rect
+                      x={cx - 28}
+                      y={badgeY}
+                      width={56}
+                      height={15}
+                      rx={4}
+                      fill="#dc2626"
+                      opacity={0.9}
+                    />
+                    <text
+                      x={cx}
+                      y={badgeY + 10.5}
+                      textAnchor="middle"
+                      fontSize="7"
+                      fontWeight="700"
+                      fill="white"
+                      style={{ userSelect: "none" }}
+                    >
+                      #{i + 1} DRR {drr != null ? drr.toFixed(2) : "—"}
+                    </text>
+                  </g>
+                );
+              })}
           </g>
         </svg>
         <div className="absolute bottom-3 right-3 flex flex-col gap-1 rounded-md border border-slate-200 bg-white/95 p-1 shadow-sm">

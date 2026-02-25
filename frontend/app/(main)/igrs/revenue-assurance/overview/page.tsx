@@ -52,15 +52,15 @@ import {
 type CurrencyMode = "auto" | "rupees" | "lakhs" | "crores";
 
 const SIGNAL_LABELS: Record<IGRSLeakageSignal, string> = {
-  RevenueGap: "Revenue",
-  ChallanDelay: "Challan",
-  ExemptionRisk: "Exemption",
-  MarketValueRisk: "Market",
-  ProhibitedLand: "Prohibited",
-  DataIntegrity: "Data",
+  RevenueGap: "Revenue Gap",
+  ChallanDelay: "Challan Delay",
+  ExemptionRisk: "Exemption Abuse",
+  MarketValueRisk: "Market Value",
+  ProhibitedLand: "Prohibited Land",
+  DataIntegrity: "Data Integrity",
   CashReconciliation: "Cash Recon",
-  StampInventory: "Stamp Inv",
-  ClassificationFraud: "Classif.",
+  StampInventory: "Stamp Inventory",
+  ClassificationFraud: "Classification Fraud",
 };
 
 const SIGNAL_COLORS: Record<IGRSLeakageSignal, string> = {

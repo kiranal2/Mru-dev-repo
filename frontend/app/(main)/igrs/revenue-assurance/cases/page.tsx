@@ -78,13 +78,13 @@ const STATUS_NORMALIZATION: Record<string, (typeof STATUS_OPTIONS)[number]> = {
 const SIGNAL_OPTIONS: Array<{ label: string; value: IGRSLeakageSignal }> = [
   { label: "Revenue Gap", value: "RevenueGap" },
   { label: "Challan Delay", value: "ChallanDelay" },
-  { label: "Exemption Risk", value: "ExemptionRisk" },
+  { label: "Exemption Abuse", value: "ExemptionRisk" },
   { label: "Market Value", value: "MarketValueRisk" },
   { label: "Prohibited Land", value: "ProhibitedLand" },
   { label: "Data Integrity", value: "DataIntegrity" },
   { label: "Cash Recon", value: "CashReconciliation" },
   { label: "Stamp Inventory", value: "StampInventory" },
-  { label: "Classification", value: "ClassificationFraud" },
+  { label: "Classification Fraud", value: "ClassificationFraud" },
 ];
 
 const SIGNAL_BADGES: Record<IGRSLeakageSignal, string> = {
@@ -144,13 +144,13 @@ const SIGNAL_CHIP_STYLES: Record<
 const SIGNAL_LABELS: Record<IGRSLeakageSignal, string> = {
   RevenueGap: "Revenue Gap",
   ChallanDelay: "Challan Delay",
-  ExemptionRisk: "Exemption Risk",
+  ExemptionRisk: "Exemption Abuse",
   MarketValueRisk: "Market Value",
   ProhibitedLand: "Prohibited Land",
   DataIntegrity: "Data Integrity",
   CashReconciliation: "Cash Recon",
   StampInventory: "Stamp Inventory",
-  ClassificationFraud: "Classification",
+  ClassificationFraud: "Classification Fraud",
 };
 
 const RISK_BADGES: Record<string, string> = {

@@ -389,15 +389,16 @@ function CategoryChips({
   selected: PromptCategory | "all";
   onSelect: (cat: PromptCategory | "all") => void;
 }) {
+  const selectedChipClass = "bg-[#6B7EF3] text-white";
+  const defaultChipClass = "bg-slate-100 text-slate-600 hover:bg-slate-200";
+
   return (
     <div className="flex flex-wrap gap-2 justify-center">
       <button
         onClick={() => onSelect("all")}
         className={cn(
           "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
-          selected === "all"
-            ? "bg-violet-600 text-white"
-            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          selected === "all" ? selectedChipClass : defaultChipClass
         )}
       >
         All
@@ -408,11 +409,8 @@ function CategoryChips({
           onClick={() => onSelect(cat.id)}
           className={cn(
             "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
-            selected === cat.id ? "text-white" : "text-slate-600 hover:bg-slate-200"
+            selected === cat.id ? selectedChipClass : defaultChipClass
           )}
-          style={{
-            backgroundColor: selected === cat.id ? cat.color : undefined,
-          }}
         >
           {cat.label}
         </button>
@@ -908,7 +906,7 @@ export default function AIChatPage() {
             <div className="w-full max-w-[980px] mx-auto px-4 pt-10 pb-8">
               <div className="text-center mb-8">
                 <div className="text-[30px] text-[#0F172A] leading-tight">
-                  {greeting} {session?.name ?? session?.designation ?? "Officer"},
+                  {greeting} {session?.designation ? `${session.designation} Sir` : "Officer Sir"},
                 </div>
                 <div className="text-[30px] text-[#0F172A] leading-tight">
                   How can I <span className="text-[#6B7EF3]">help you today?</span>

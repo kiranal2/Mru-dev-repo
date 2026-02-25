@@ -35,7 +35,7 @@ const DEMO_USERS: DemoUser[] = [
   {
     email: "ig@igrs.ap.gov.in",
     password: "ig123",
-    name: "K. Ramesh Babu, IAS",
+    name: "IG Officer",
     role: "IG",
     designation: "Inspector General",
     jurisdiction: {},
@@ -43,7 +43,7 @@ const DEMO_USERS: DemoUser[] = [
   {
     email: "dig.south@igrs.ap.gov.in",
     password: "dig123",
-    name: "P. Venkata Rao",
+    name: "DIG Officer",
     role: "DIG",
     designation: "DIG South Zone",
     jurisdiction: { zone: "South" },
@@ -51,7 +51,7 @@ const DEMO_USERS: DemoUser[] = [
   {
     email: "dr.krishna@igrs.ap.gov.in",
     password: "dr123",
-    name: "S. Lakshmi Devi",
+    name: "DR Officer",
     role: "DR",
     designation: "District Registrar, Krishna",
     jurisdiction: { zone: "South", district: "Krishna" },
@@ -59,7 +59,7 @@ const DEMO_USERS: DemoUser[] = [
   {
     email: "sr.vijayawada@igrs.ap.gov.in",
     password: "sr123",
-    name: "M. Suresh Kumar",
+    name: "SR Officer",
     role: "SR",
     designation: "Sub-Registrar, Vijayawada Central",
     jurisdiction: { zone: "South", district: "Krishna", srCode: "SR01", srName: "Vijayawada Central" },

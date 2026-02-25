@@ -128,15 +128,15 @@ Action-oriented tools for deep operational work. Unlike Reports, Workbenches are
 Dedicated module for stamp duty revenue assurance across Indian sub-registrar offices. All amounts in INR. **NOT part of Meeru AI enterprise scope.**
 
 #### 9 Leakage Signal Types
-1. **RevenueGap** — Mismatch between expected stamp duty and actual payment
-2. **ChallanDelay** — Abnormal delay (>10 days) between presentation and registration
-3. **ExemptionRisk** — Suspicious or ineligible exemption claims
-4. **MarketValueRisk** — Declared value deviates from market rate card
-5. **ProhibitedLand** — Transaction involves prohibited zones
-6. **DataIntegrity** — Missing/inconsistent registration data fields
-7. **CashReconciliation** — Cash collection GL vs treasury mismatch
-8. **StampInventory** — Physical stamp paper inventory discrepancy
-9. **ClassificationFraud** — Wrong property classification (Webland/Form cross-verification) to reduce stamp duty
+1. **Revenue Gap** (`RevenueGap`) — Mismatch between expected stamp duty and actual payment
+2. **Challan Delay** (`ChallanDelay`) — Abnormal delay (>10 days) between presentation and registration
+3. **Exemption Abuse** (`ExemptionRisk`) — Suspicious or ineligible exemption claims
+4. **Market Value** (`MarketValueRisk`) — Declared value deviates from market rate card
+5. **Prohibited Land** (`ProhibitedLand`) — Transaction involves prohibited zones
+6. **Data Integrity** (`DataIntegrity`) — Missing/inconsistent registration data fields
+7. **Cash Recon** (`CashReconciliation`) — Cash collection GL vs treasury mismatch
+8. **Stamp Inventory** (`StampInventory`) — Physical stamp paper inventory discrepancy
+9. **Classification Fraud** (`ClassificationFraud`) — Wrong property classification (Webland/Form cross-verification) to reduce stamp duty
 
 | Page | What It Does |
 |------|-------------|
@@ -362,3 +362,10 @@ Key routes in `app/api/`:
   - **Cases page** (`cases/page.tsx`): Added to `SIGNAL_OPTIONS`, `SIGNAL_BADGES`, `SIGNAL_CHIP_STYLES`, `SIGNAL_LABELS`. New "Classification" drawer tab with 5 sections (Mismatch Summary, Form Cross-Verification table, Conversion History timeline, Duty Impact Analysis with rate comparison bars, Triggered Rules).
   - IGRS leakage signal count updated from 8 to 9 in CLAUDE.md.
   - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.
+
+### 2026-02-25 (c)
+- **IGRS Signal Labels — Full Names**: Replaced abbreviated signal labels with complete display names across all IGRS pages.
+  - Display name mapping: RevenueGap→"Revenue Gap", ChallanDelay→"Challan Delay", ExemptionRisk→"Exemption Abuse", MarketValueRisk→"Market Value", ProhibitedLand→"Prohibited Land", DataIntegrity→"Data Integrity", CashReconciliation→"Cash Recon", StampInventory→"Stamp Inventory", ClassificationFraud→"Classification Fraud".
+  - Updated `SIGNAL_LABELS` in `overview/page.tsx` and `cases/page.tsx`, `SIGNAL_OPTIONS` in `cases/page.tsx`, `IGRS_SIGNAL_CONFIG` labels in `lib/data/types/igrs.ts`, threshold card label in `overview/page.tsx`.
+  - Updated CLAUDE.md signal list to show both display names and code identifiers.
+  - No env/script/command changes. Build verified with zero TypeScript errors.
