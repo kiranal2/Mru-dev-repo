@@ -19,6 +19,18 @@ export const Menu: MenuItem[] = [
     permission: "dynamic_sheets",
   },
   {
+    path: "home/autonomy-studio",
+    permission: "autonomy_studio",
+  },
+  {
+    path: "home/narratives",
+    permission: "narratives",
+  },
+  {
+    path: "home/process-to-automation",
+    permission: "process_to_automation",
+  },
+  {
     path: "home/workspace",
     permission: "workspace",
     tabsList: [
@@ -45,8 +57,17 @@ export const Menu: MenuItem[] = [
     ],
   },
   {
-    path: "automation/autonomy-studio",
-    permission: "autonomy_studio",
+    path: "automation",
+    permission: "automation",
+    tabsList: [
+      { path: "automation/autonomy-studio", permission: "autonomy_studio" },
+      { path: "automation/data-templates", permission: "data_templates" },
+      { path: "automation/all-runs", permission: "all_runs" },
+      { path: "automation/reconciliation", permission: "reconciliation" },
+      { path: "automation/worklist", permission: "worklist" },
+      { path: "automation/workflow", permission: "workflow" },
+      { path: "automation/taskflow", permission: "taskflow" },
+    ],
   },
   {
     path: "workbench/order-to-cash",
@@ -54,6 +75,50 @@ export const Menu: MenuItem[] = [
     tabsList: [
       {
         path: "workbench/order-to-cash/cash-application",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/reports",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/admin",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/exceptions",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/matching-studio",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/remittances/list",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/remittances/email-inbox",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/payment-batches",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/history",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/bank-reconciliation",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/pending-to-post",
+        permission: "cash_application",
+      },
+      {
+        path: "workbench/order-to-cash/cash-application/payments",
         permission: "cash_application",
       },
       {
@@ -167,6 +232,7 @@ export const Menu: MenuItem[] = [
       { path: "igrs/revenue-assurance/admin", permission: "igrs_admin" },
       { path: "igrs/revenue-assurance/governance", permission: "igrs_governance" },
       { path: "igrs/revenue-assurance/ai-intelligence", permission: "igrs_ai_intelligence" },
+      { path: "igrs/revenue-assurance/escalations", permission: "igrs_escalations" },
     ],
   },
   {
@@ -234,5 +300,15 @@ export const Menu: MenuItem[] = [
   {
     path: "financial-tasks",
     permission: "financial_tasks",
+  },
+  {
+    path: "admin",
+    permission: "admin",
+    tabsList: [
+      { path: "admin/users", permission: "admin_users" },
+      { path: "admin/integrations", permission: "admin_integrations" },
+      { path: "admin/audit-log", permission: "admin_audit_log" },
+      { path: "admin/settings", permission: "admin_settings" },
+    ],
   },
 ];

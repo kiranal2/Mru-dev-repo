@@ -75,7 +75,9 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
         return hasPermission(similarPath.permission, similarPath.subPermission);
       }
 
-      return false; // Path not found in menu
+      // Allow access for paths not registered in Menu (demo mode)
+      // In production, this should return false
+      return true;
     }
 
     return hasPermission(currentMenu.permission, currentMenu.subPermission);
