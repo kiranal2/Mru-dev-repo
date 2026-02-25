@@ -1694,7 +1694,7 @@ export interface SROIntegrityIndexData {
 
 // --- Natural Language Prompt Engine ---
 
-export type PromptCategory = "revenue" | "performance" | "risk" | "forecasting" | "compliance" | "sla";
+export type PromptCategory = "revenue" | "performance" | "risk" | "forecasting" | "compliance" | "sla" | "cases";
 
 export interface PromptCategoryDefinition {
   id: PromptCategory;

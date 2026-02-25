@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/table";
 import { formatINR } from "@/lib/data/utils/format-currency";
 import { AndhraPradeshChoroplethMap } from "@/components/revenue-leakage/AndhraPradeshChoroplethMap";
-import type { DistrictMapData } from "@/components/revenue-leakage/AndhraPradeshChoroplethMap";
+import type { DistrictMapData, DistrictAreaItem, MVHierarchyItem, MVRevisionEntry } from "@/components/revenue-leakage/AndhraPradeshChoroplethMap";
 import {
   AlertTriangle,
   MapPin,
@@ -117,9 +117,11 @@ const TABS: { key: TabKey; label: string }[] = [
 function DashboardTab({
   hotspots,
   trends,
+  growthData,
 }: {
   hotspots: MVHotspot[];
   trends: { month: string; cases: number; gapInr: number; highRisk: number }[];
+  growthData?: MVGrowthAttribution | null;
 }) {
   const [severityFilter, setSeverityFilter] = useState("all");
   const [districtFilter, setDistrictFilter] = useState("all");
@@ -165,6 +167,17 @@ function DashboardTab({
     return { totalCases, totalGap, totalHighRisk, avgGap };
   }, [trends]);
 
+  // Build a lookup from growth attribution data: district name → mvContributionPercent
+  const mvContribLookup = useMemo(() => {
+    const map: Record<string, number> = {};
+    if (growthData?.districtAttribution) {
+      for (const da of growthData.districtAttribution) {
+        map[da.districtName] = da.mvContributionPercent;
+      }
+    }
+    return map;
+  }, [growthData]);
+
   const districtDataList = useMemo<DistrictMapData[]>(() => {
     type DistrictAgg = { drrs: number[]; hotspots: number; sros: string[]; txns: number; loss: number };
     const grouped: Record<string, DistrictAgg> = {};
@@ -186,13 +199,61 @@ function DashboardTab({
       sroCount: g.sros.length,
       transactionCount: g.txns,
       estimatedLoss: g.loss,
+      mvChangePercent: mvContribLookup[name],
     }));
-  }, [hotspots]);
+  }, [hotspots, mvContribLookup]);
 
   const criticalDistrictCount = useMemo(
     () => districtDataList.filter((d) => (d.avgDrr ?? 1) < 0.85).length,
     [districtDataList]
   );
+
+  // Build per-district area details for the drill-down panel
+  const areaDetailsByDistrict = useMemo<Record<string, DistrictAreaItem[]>>(() => {
+    const grouped: Record<string, DistrictAreaItem[]> = {};
+    for (const h of hotspots) {
+      if (!grouped[h.district]) grouped[h.district] = [];
+      grouped[h.district].push({
+        sroCode: h.sroCode,
+        sroName: h.sroName,
+        locationLabel: h.locationLabel,
+        locationType: h.locationType,
+        drr: h.drr,
+        severity: h.severity,
+        transactionCount: h.transactionCount,
+        estimatedLoss: h.estimatedLoss,
+        status: h.status,
+      });
+    }
+    return grouped;
+  }, [hotspots]);
+
+  // MV revision info keyed by district name
+  const mvRevisionInfoMap = useMemo<Record<string, MVRevisionEntry>>(() => {
+    const map: Record<string, MVRevisionEntry> = {};
+    if (growthData?.mvRevisionTimeline) {
+      for (const r of growthData.mvRevisionTimeline) {
+        map[r.district] = {
+          avgMVIncrease: r.avgMVIncrease,
+          date: r.date,
+          revenueImpact: r.revenueImpact,
+          documentImpact: r.documentImpact,
+        };
+      }
+    }
+    return map;
+  }, [growthData]);
+
+  // MV hierarchy keyed by district name (for SRO → Mandal → Village drill-down)
+  const mvHierarchyMap = useMemo<Record<string, MVHierarchyItem>>(() => {
+    const map: Record<string, MVHierarchyItem> = {};
+    if (growthData?.hierarchyData?.districts) {
+      for (const d of growthData.hierarchyData.districts) {
+        map[d.name] = d;
+      }
+    }
+    return map;
+  }, [growthData]);
 
   const handleMapDistrictClick = (districtName: string) => {
     if (selectedMapDistrict === districtName) {
@@ -341,27 +402,11 @@ function DashboardTab({
               formatShort={(v) => formatINR(v, true)}
               onDistrictClick={handleMapDistrictClick}
               activeDistrict={selectedMapDistrict}
+              areaDetails={areaDetailsByDistrict}
+              mvHierarchy={mvHierarchyMap}
+              mvRevisionInfo={mvRevisionInfoMap}
             />
 
-            {/* Legend */}
-            <div className="flex items-center justify-center gap-4 mt-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm bg-red-100 border border-red-400" />
-                DRR &lt; 0.70
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm bg-orange-100 border border-orange-400" />
-                0.70 – 0.85
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm bg-amber-100 border border-amber-400" />
-                0.85 – 1.00
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm bg-green-100 border border-green-400" />
-                &gt; 1.00
-              </span>
-            </div>
           </CardContent>
         </Card>
       )}
@@ -1429,7 +1474,7 @@ export default function MVTrendsPage() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === "dashboard" && <DashboardTab hotspots={hotspots} trends={trends} />}
+      {activeTab === "dashboard" && <DashboardTab hotspots={hotspots} trends={trends} growthData={growth.data} />}
       {activeTab === "growth" && <GrowthAttributionTab data={growth.data} loading={growth.loading} />}
       {activeTab === "comparison" && <RevisionComparisonTab data={comparison.data} loading={comparison.loading} />}
       {activeTab === "anomalies" && <AnomaliesTab data={anomalies.data} loading={anomalies.loading} />}

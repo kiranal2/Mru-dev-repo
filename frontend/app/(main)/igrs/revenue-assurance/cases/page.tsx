@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useJurisdictionFilteredCases } from "@/hooks/data/use-jurisdiction-filtered-cases";
@@ -164,6 +164,8 @@ const STATUS_BADGES: Record<string, string> = {
   "In Review": "bg-amber-100 text-amber-700 border-amber-200",
   Resolved: "bg-emerald-100 text-emerald-700 border-emerald-200",
 };
+
+const INITIAL_CASES_LOADING_MS = 1200;
 
 function normalizeAuditStatus(status: string): (typeof STATUS_OPTIONS)[number] {
   return STATUS_NORMALIZATION[status] ?? (status as (typeof STATUS_OPTIONS)[number]);
@@ -1248,6 +1250,9 @@ function CaseDrawer({
 
 export default function IGRSCasesPage() {
   const searchParams = useSearchParams();
+  const initialLoadStartedAtRef = useRef(Date.now());
+  const firstLoadSettledRef = useRef(false);
+  const [showInitialLoading, setShowInitialLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [registrationRange, setRegistrationRange] = useState("all");
@@ -1263,6 +1268,7 @@ export default function IGRSCasesPage() {
   const [propertyTypeFilter, setPropertyTypeFilter] = useState<"all" | "urban" | "rural">("all");
   const [landNatureFilter, setLandNatureFilter] = useState("all");
   const [ownerFilter, setOwnerFilter] = useState("all");
+  const [caseIdFilters, setCaseIdFilters] = useState<string[]>([]);
   const [minGapFilter, setMinGapFilter] = useState<number | null>(null);
   const [minImpactFilter, setMinImpactFilter] = useState<number | null>(null);
   const [minConfidenceFilter, setMinConfidenceFilter] = useState<number | null>(null);
@@ -1288,6 +1294,7 @@ export default function IGRSCasesPage() {
     const from = searchParams.get("from");
     const to = searchParams.get("to");
     const sla = searchParams.get("sla");
+    const caseIds = searchParams.get("caseIds") ?? searchParams.get("caseId");
 
     if (zone) setZoneFilter(zone);
     if (district) setDistrictFilter(district);
@@ -1321,6 +1328,19 @@ export default function IGRSCasesPage() {
     if (from) setDateFromFilter(from);
     if (to) setDateToFilter(to);
     if (sla === "breached" || sla === "within") setSlaStatusFilter(sla);
+    if (caseIds) {
+      const next = Array.from(
+        new Set(
+          caseIds
+            .split(",")
+            .map((v) => v.trim().toUpperCase())
+            .filter(Boolean)
+        )
+      );
+      setCaseIdFilters(next);
+    } else {
+      setCaseIdFilters([]);
+    }
     setPage(1);
   }, [searchParams]);
 
@@ -1340,7 +1360,7 @@ export default function IGRSCasesPage() {
     dateTo: dateToFilter ?? undefined,
     ...sortConfig,
     page,
-    pageSize,
+    pageSize: caseIdFilters.length ? Math.max(pageSize, 200) : pageSize,
   };
 
   const {
@@ -1351,6 +1371,17 @@ export default function IGRSCasesPage() {
     error,
     refetch,
   } = useJurisdictionFilteredCases(filters);
+
+  useEffect(() => {
+    if (firstLoadSettledRef.current || loading) return;
+    const elapsed = Date.now() - initialLoadStartedAtRef.current;
+    const remaining = Math.max(INITIAL_CASES_LOADING_MS - elapsed, 0);
+    const timer = setTimeout(() => {
+      firstLoadSettledRef.current = true;
+      setShowInitialLoading(false);
+    }, remaining);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   const visibleRows = useMemo(() => {
     let list = [...rows];
@@ -1365,6 +1396,11 @@ export default function IGRSCasesPage() {
 
     if (ownerFilter !== "all") {
       list = list.filter((c) => (c.assignedTo ?? "UNASSIGNED") === ownerFilter);
+    }
+
+    if (caseIdFilters.length) {
+      const allowed = new Set(caseIdFilters.map((v) => v.toUpperCase()));
+      list = list.filter((c) => allowed.has(c.caseId.toUpperCase()) || allowed.has(c.id.toUpperCase()));
     }
 
     if (propertyTypeFilter !== "all") {
@@ -1441,6 +1477,7 @@ export default function IGRSCasesPage() {
     docTypeFilter,
     zoneFilter,
     ownerFilter,
+    caseIdFilters,
     propertyTypeFilter,
     landNatureFilter,
     registrationRange,
@@ -1502,6 +1539,7 @@ export default function IGRSCasesPage() {
     if (propertyTypeFilter !== "all") count += 1;
     if (landNatureFilter !== "all") count += 1;
     if (ownerFilter !== "all") count += 1;
+    if (caseIdFilters.length) count += 1;
     if (minGapFilter != null) count += 1;
     if (minImpactFilter != null) count += 1;
     if (minConfidenceFilter != null) count += 1;
@@ -1523,6 +1561,7 @@ export default function IGRSCasesPage() {
     propertyTypeFilter,
     landNatureFilter,
     ownerFilter,
+    caseIdFilters,
     minGapFilter,
     minImpactFilter,
     minConfidenceFilter,
@@ -1549,6 +1588,7 @@ export default function IGRSCasesPage() {
     setPropertyTypeFilter("all");
     setLandNatureFilter("all");
     setOwnerFilter("all");
+    setCaseIdFilters([]);
     setMinGapFilter(null);
     setMinImpactFilter(null);
     setMinConfidenceFilter(null);
@@ -1650,9 +1690,16 @@ export default function IGRSCasesPage() {
     toast.success(`Case escalated to ${target}`);
   };
 
-  if (loading) {
+  const showInitialLoader = showInitialLoading && rows.length === 0;
+  const showRefreshingOverlay = loading && !showInitialLoader;
+
+  if (showInitialLoader) {
     return (
       <div className="p-6 space-y-4">
+        <div className="flex items-center gap-3 text-slate-600">
+          <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-medium">Loading cases...</span>
+        </div>
         <div className="h-10 bg-slate-200 rounded animate-pulse" />
         <div className="h-16 bg-slate-200 rounded animate-pulse" />
         <div className="h-96 bg-slate-200 rounded animate-pulse" />
@@ -1675,6 +1722,14 @@ export default function IGRSCasesPage() {
 
   return (
     <div className="p-4 md:p-5 space-y-4">
+      {showRefreshingOverlay && (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
+          <div className="flex items-center gap-2 text-blue-700">
+            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs font-medium">Refreshing cases data...</span>
+          </div>
+        </div>
+      )}
       <div className="space-y-1">
         <div className="flex items-center justify-between mb-2">
           <div>
@@ -2017,7 +2072,10 @@ export default function IGRSCasesPage() {
         <Button variant="ghost" size="sm" className="h-7 text-[11px] ml-auto px-2 text-slate-600" onClick={clearFilters}>Reset Filters</Button>
       </div>
 
-      <Card>
+      <Card className="relative overflow-hidden">
+        {showRefreshingOverlay && (
+          <div className="absolute inset-0 bg-white/55 backdrop-blur-[1px] z-10 pointer-events-none" />
+        )}
         <CardContent className="p-0 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[1650px] text-sm">

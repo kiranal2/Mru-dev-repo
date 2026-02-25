@@ -1,7 +1,7 @@
 {
   "metadata": {
     "lastUpdated": "2025-01-15T14:30:00+05:30",
-    "totalPrompts": 64,
+    "totalPrompts": 74,
     "version": "v2.0"
   },
   "categories": [
@@ -10,7 +10,8 @@
     { "id": "risk", "label": "Risk", "icon": "AlertTriangle", "color": "#F97316" },
     { "id": "forecasting", "label": "Forecasting", "icon": "TrendingUp", "color": "#7C3AED" },
     { "id": "compliance", "label": "Compliance", "icon": "ShieldCheck", "color": "#22C55E" },
-    { "id": "sla", "label": "SLA", "icon": "Clock", "color": "#0891B2" }
+    { "id": "sla", "label": "SLA", "icon": "Clock", "color": "#0891B2" },
+    { "id": "cases", "label": "Cases", "icon": "FolderSearch", "color": "#8B5CF6" }
   ],
   "prompts": [
     {
@@ -1528,6 +1529,289 @@
         },
         "keyInsight": "ESC-008 is 4 days overdue. Prepare: (1) Stamp duty calculation worksheet, (2) Document classification proof, (3) Any applicable exemption evidence. Submit today to avoid further escalation.",
         "followUpPrompts": ["Draft response for ESC-008", "View ESC-008 case details", "My response track record"]
+      }
+    },
+    {
+      "id": "cases-001",
+      "promptText": "Show all high risk cases this month",
+      "category": "cases",
+      "response": {
+        "narrative": "There are 14 high-risk cases flagged this month across the state. These cases collectively represent a revenue gap of ₹46.47L and require immediate attention. Anantapur district leads with 3 high-risk cases totaling ₹10.50L in gaps.",
+        "inlineTable": {
+          "headers": ["Case ID", "District", "SRO", "Gap (₹)", "Risk Score", "Signal", "Status"],
+          "rows": [
+            ["IGRS-2024-0003", "Chittoor", "Tirupati Urban", "₹5.00L", "91", "Prohibited Land, Market Value", "Confirmed"],
+            ["IGRS-2024-0010", "Anantapur", "Anantapur Main", "₹4.80L", "88", "Market Value, Exemption Abuse", "New"],
+            ["IGRS-2024-0005", "Visakhapatnam", "Vizag Port", "₹3.75L", "87", "Exemption Abuse, Revenue Gap", "New"],
+            ["IGRS-2024-0046", "Chittoor", "Chittoor SRO", "₹3.20L", "86", "Classification Fraud", "New"],
+            ["IGRS-2024-0020", "Anantapur", "Anantapur Main", "₹3.50L", "84", "Market Value, Exemption Abuse", "New"],
+            ["IGRS-2024-0007", "West Godavari", "Eluru Town", "₹3.20L", "82", "Market Value, Revenue Gap", "In Review"],
+            ["IGRS-2024-0012", "Guntur", "Guntur Main", "₹4.10L", "80", "Revenue Gap, Market Value", "Confirmed"],
+            ["IGRS-2024-0001", "Krishna", "Vijayawada Central", "₹2.45L", "85", "Revenue Gap, Market Value", "New"]
+          ],
+          "highlightColumn": 3
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["0003", "0010", "0005", "0046", "0020", "0007", "0012", "0001"],
+          "datasets": [{ "label": "Gap (₹L)", "data": [5.0, 4.8, 3.75, 3.2, 3.5, 3.2, 4.1, 2.45], "color": "#DC2626" }]
+        },
+        "keyInsight": "5 out of 8 top cases are still in 'New' status with no reviewer assigned. IGRS-2024-0003 (Chittoor, ₹5.00L) is confirmed but pending recovery. Anantapur has 2 cases from the same SRO — possible systemic undervaluation pattern.",
+        "followUpPrompts": ["Show cases pending review", "Anantapur SRO officer accountability", "Escalate unassigned cases"]
+      }
+    },
+    {
+      "id": "cases-002",
+      "promptText": "Cases with revenue gap above 2 lakhs",
+      "category": "cases",
+      "response": {
+        "narrative": "12 cases have a revenue gap exceeding ₹2.00L, with a combined gap of ₹44.60L. The largest gap is in IGRS-2024-0003 (Chittoor) at ₹5.00L involving prohibited land transactions.",
+        "inlineTable": {
+          "headers": ["Case ID", "District", "Gap Amount", "Signal Type", "Risk", "Status"],
+          "rows": [
+            ["IGRS-2024-0003", "Chittoor", "₹5.00L", "Prohibited Land, Market Value", "High", "Confirmed"],
+            ["IGRS-2024-0010", "Anantapur", "₹4.80L", "Market Value, Exemption Abuse", "High", "New"],
+            ["IGRS-2024-0047", "Guntur", "₹4.50L", "Classification Fraud, Exemption", "Medium", "New"],
+            ["IGRS-2024-0036", "East Godavari", "₹4.25L", "Cash Reconciliation", "High", "In Review"],
+            ["IGRS-2024-0012", "Guntur", "₹4.10L", "Revenue Gap, Market Value", "High", "Confirmed"],
+            ["IGRS-2024-0040", "Chittoor", "₹4.05L", "Cash Reconciliation", "High", "In Review"],
+            ["IGRS-2024-0005", "Visakhapatnam", "₹3.75L", "Exemption Abuse, Revenue Gap", "High", "New"],
+            ["IGRS-2024-0020", "Anantapur", "₹3.50L", "Market Value, Exemption Abuse", "High", "New"],
+            ["IGRS-2024-0007", "West Godavari", "₹3.20L", "Market Value, Revenue Gap", "High", "In Review"],
+            ["IGRS-2024-0046", "Chittoor", "₹3.20L", "Classification Fraud", "High", "New"]
+          ],
+          "highlightColumn": 2
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["0003", "0010", "0047", "0036", "0012", "0040", "0005", "0020", "0007", "0046"],
+          "datasets": [{ "label": "Gap (₹L)", "data": [5.0, 4.8, 4.5, 4.25, 4.1, 4.05, 3.75, 3.5, 3.2, 3.2], "color": "#DC2626" }]
+        },
+        "keyInsight": "Chittoor district accounts for 3 of the top 10 cases (₹12.25L combined). Cash Reconciliation signals are emerging as a major contributor with 2 cases in the top 10. 5 cases are still in 'New' status — immediate triage recommended.",
+        "followUpPrompts": ["Show Chittoor district deep dive", "Cases above 5 lakhs", "Signal-wise breakdown of large gaps"]
+      }
+    },
+    {
+      "id": "cases-003",
+      "promptText": "Show new cases pending review",
+      "category": "cases",
+      "response": {
+        "narrative": "There are 18 cases in 'New' status across the state that haven't been picked up for review yet. The oldest unreviewed case is 9 days old. Combined gap at risk: ₹28.34L.",
+        "inlineTable": {
+          "headers": ["Case ID", "District", "SRO", "Gap (₹)", "Days Open", "Signal", "Risk"],
+          "rows": [
+            ["IGRS-2024-0001", "Krishna", "Vijayawada Central", "₹2.45L", "9", "Revenue Gap, Market Value", "High"],
+            ["IGRS-2024-0005", "Visakhapatnam", "Vizag Port", "₹3.75L", "8", "Exemption Abuse", "High"],
+            ["IGRS-2024-0006", "East Godavari", "Rajahmundry Central", "₹0.45L", "7", "Revenue Gap, Challan Delay", "Medium"],
+            ["IGRS-2024-0010", "Anantapur", "Anantapur Main", "₹4.80L", "6", "Market Value, Exemption Abuse", "High"],
+            ["IGRS-2024-0016", "East Godavari", "Rajahmundry Central", "₹2.90L", "5", "Prohibited Land", "High"],
+            ["IGRS-2024-0020", "Anantapur", "Anantapur Main", "₹3.50L", "4", "Market Value, Exemption Abuse", "High"],
+            ["IGRS-2024-0044", "Visakhapatnam", "Visakhapatnam SRO", "₹1.80L", "3", "Classification Fraud", "High"],
+            ["IGRS-2024-0046", "Chittoor", "Chittoor SRO", "₹3.20L", "2", "Classification Fraud", "High"],
+            ["IGRS-2024-0047", "Guntur", "Guntur SRO", "₹4.50L", "2", "Classification Fraud, Exemption", "Medium"]
+          ],
+          "highlightColumn": 4
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["0001", "0005", "0006", "0010", "0016", "0020", "0044", "0046", "0047"],
+          "datasets": [
+            { "label": "Gap (₹L)", "data": [2.45, 3.75, 0.45, 4.80, 2.90, 3.50, 1.80, 3.20, 4.50], "color": "#F97316" },
+            { "label": "Days Open", "data": [9, 8, 7, 6, 5, 4, 3, 2, 2], "color": "#94A3B8" }
+          ]
+        },
+        "keyInsight": "IGRS-2024-0001 and IGRS-2024-0005 are the oldest unreviewed cases at 8-9 days — approaching SLA breach threshold of 10 days. 6 out of 9 are high-risk. Anantapur has 2 unassigned cases from the same SRO.",
+        "followUpPrompts": ["Assign cases to nearest DR", "Show SLA breach risk cases", "Auto-assign based on jurisdiction"]
+      }
+    },
+    {
+      "id": "cases-004",
+      "promptText": "Market value deviation cases in Krishna district",
+      "category": "cases",
+      "response": {
+        "narrative": "3 cases in Krishna district have been flagged for market value deviations. The declared property values are significantly lower than the government rate card, indicating potential undervaluation to reduce stamp duty.",
+        "inlineTable": {
+          "headers": ["Case ID", "SRO", "Declared Value", "Rate Card Value", "Deviation %", "Gap (₹)", "Status"],
+          "rows": [
+            ["IGRS-2024-0001", "Vijayawada Central", "₹85.00L", "₹109.50L", "22.4%", "₹2.45L", "New"],
+            ["IGRS-2024-0007", "Eluru Town", "₹62.00L", "₹94.00L", "34.0%", "₹3.20L", "In Review"],
+            ["IGRS-2024-0011", "Vijayawada Central", "₹38.00L", "₹43.50L", "12.6%", "₹0.55L", "In Review"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["IGRS-0001", "IGRS-0007", "IGRS-0011"],
+          "datasets": [
+            { "label": "Declared (₹L)", "data": [85, 62, 38], "color": "#94A3B8" },
+            { "label": "Rate Card (₹L)", "data": [109.5, 94, 43.5], "color": "#DC2626" }
+          ]
+        },
+        "keyInsight": "IGRS-2024-0007 has the highest deviation at 34% — this is well above the 15% threshold for auto-flagging. Both Vijayawada Central cases involve the same surveyor zone, suggesting a possible collusion pattern that warrants officer-level inquiry.",
+        "followUpPrompts": ["Show property details for IGRS-2024-0007", "Compare with Guntur MV deviations", "Vijayawada Central officer accountability"]
+      }
+    },
+    {
+      "id": "cases-005",
+      "promptText": "Cash reconciliation discrepancy cases",
+      "category": "cases",
+      "response": {
+        "narrative": "11 cases flagged for cash reconciliation discrepancies across 7 districts. Total unreconciled variance: ₹14.30L. These cases involve mismatches between SRO collection registers and treasury deposit records.",
+        "inlineTable": {
+          "headers": ["Case ID", "District", "SRO", "Variance (₹)", "Type", "Days Unmatched", "Status"],
+          "rows": [
+            ["IGRS-2024-0036", "East Godavari", "East Godavari SRO", "₹4.25L", "Deposit Shortfall", "14", "In Review"],
+            ["IGRS-2024-0040", "Chittoor", "Chittoor SRO", "₹4.05L", "Deposit Shortfall", "12", "In Review"],
+            ["IGRS-2024-0038", "Anantapur", "Anantapur SRO", "₹3.20L", "Challan Reuse", "11", "In Review"],
+            ["IGRS-2024-0026", "Krishna", "Vijayawada Central", "₹0.42L", "MIS Mismatch", "9", "New"],
+            ["IGRS-2024-0035", "Anantapur", "Anantapur SRO", "₹1.75L", "Deposit Shortfall", "8", "New"],
+            ["IGRS-2024-0027", "Guntur", "Guntur Main", "₹0.67L", "Failed Challan", "7", "In Review"],
+            ["IGRS-2024-0041", "Visakhapatnam", "Visakhapatnam SRO", "₹1.25L", "MIS Mismatch", "5", "New"],
+            ["IGRS-2024-0028", "Chittoor", "Tirupati Urban", "₹0.18L", "MIS Mismatch", "4", "New"]
+          ],
+          "highlightColumn": 3
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["0036", "0040", "0038", "0026", "0035", "0027", "0041", "0028"],
+          "datasets": [{ "label": "Variance (₹L)", "data": [4.25, 4.05, 3.20, 0.42, 1.75, 0.67, 1.25, 0.18], "color": "#059669" }]
+        },
+        "keyInsight": "IGRS-2024-0038 (Anantapur) involves suspected challan reuse — this is a critical fraud indicator requiring immediate investigation. 3 cases have been unmatched for over 10 days. Anantapur appears twice, suggesting systemic issues at that SRO.",
+        "followUpPrompts": ["Detail on challan reuse case 0038", "Treasury deposit verification status", "Anantapur SRO cash audit trail"]
+      }
+    },
+    {
+      "id": "cases-006",
+      "promptText": "Classification fraud cases with duty impact",
+      "category": "cases",
+      "response": {
+        "narrative": "4 classification fraud cases detected where property type was misclassified to reduce applicable stamp duty. Total duty impact: ₹10.45L. These cases involve mismatches between Webland records and registration Form-I declarations.",
+        "inlineTable": {
+          "headers": ["Case ID", "District", "Declared Class", "Actual Class", "Duty Diff (₹)", "Confidence", "Status"],
+          "rows": [
+            ["IGRS-2024-0047", "Guntur", "Agricultural", "Commercial", "₹4.50L", "89%", "New"],
+            ["IGRS-2024-0046", "Chittoor", "Residential", "Commercial", "₹3.20L", "92%", "New"],
+            ["IGRS-2024-0044", "Visakhapatnam", "Agricultural", "Residential", "₹1.80L", "85%", "New"],
+            ["IGRS-2024-0045", "Guntur", "Residential", "Mixed Use", "₹0.95L", "78%", "In Review"]
+          ],
+          "highlightColumn": 4
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["IGRS-0047", "IGRS-0046", "IGRS-0044", "IGRS-0045"],
+          "datasets": [{ "label": "Duty Impact (₹L)", "data": [4.5, 3.2, 1.8, 0.95], "color": "#F97316" }]
+        },
+        "keyInsight": "IGRS-2024-0046 has the highest confidence at 92% — Webland clearly shows commercial zoning but the deed was registered as residential. Guntur accounts for 2 out of 4 cases (₹5.45L), suggesting a pattern at Guntur SRO that needs officer-level scrutiny.",
+        "followUpPrompts": ["Webland cross-verification details", "Guntur SRO classification patterns", "Historical fraud rate by district"]
+      }
+    },
+    {
+      "id": "cases-007",
+      "promptText": "Exemption abuse cases across districts",
+      "category": "cases",
+      "response": {
+        "narrative": "7 cases flagged for suspicious or ineligible exemption claims across 4 districts. Total revenue at risk from exemption abuse: ₹18.68L. Many involve government-to-private transfer exemptions being claimed on commercial transactions.",
+        "inlineTable": {
+          "headers": ["Case ID", "District", "Exemption Type", "Claimed (₹)", "Gap (₹)", "Risk", "Status"],
+          "rows": [
+            ["IGRS-2024-0010", "Anantapur", "Govt Transfer Exemption", "₹8.50L", "₹4.80L", "High", "New"],
+            ["IGRS-2024-0005", "Visakhapatnam", "Trust Exemption", "₹6.20L", "₹3.75L", "High", "New"],
+            ["IGRS-2024-0020", "Anantapur", "Govt Transfer Exemption", "₹5.80L", "₹3.50L", "High", "New"],
+            ["IGRS-2024-0034", "Guntur", "Agricultural Exemption", "₹4.60L", "₹2.85L", "High", "Confirmed"],
+            ["IGRS-2024-0025", "Guntur", "Trust Exemption", "₹2.10L", "₹1.10L", "Medium", "In Review"],
+            ["IGRS-2024-0033", "Guntur", "Agricultural Exemption", "₹3.20L", "₹1.85L", "High", "Confirmed"],
+            ["IGRS-2024-0014", "Visakhapatnam", "Partial Exemption", "₹1.40L", "₹0.78L", "Medium", "New"]
+          ],
+          "highlightColumn": 4
+        },
+        "inlineChart": {
+          "type": "donut",
+          "labels": ["Govt Transfer", "Trust", "Agricultural", "Partial"],
+          "datasets": [{ "label": "Gap by Type (₹L)", "data": [8.30, 4.85, 4.70, 0.78], "color": "#8B5CF6" }]
+        },
+        "keyInsight": "Government Transfer Exemptions account for 44% of total exemption abuse (₹8.30L) — primarily from Anantapur where both cases cite the same exemption clause. Agricultural exemptions in Guntur are also suspicious since Webland shows commercial zoning for those parcels.",
+        "followUpPrompts": ["Anantapur exemption pattern analysis", "Verify exemption eligibility documents", "Exemption approval audit trail"]
+      }
+    },
+    {
+      "id": "cases-008",
+      "promptText": "Challan delay cases exceeding 10 days",
+      "category": "cases",
+      "response": {
+        "narrative": "5 cases have abnormal delays between document presentation and final registration, exceeding the 10-day threshold. Average delay: 18 days. These delays may indicate processing irregularities or deliberate holds for document manipulation.",
+        "inlineTable": {
+          "headers": ["Case ID", "District", "Presentation Date", "Registration Date", "Delay (Days)", "Gap (₹)", "Status"],
+          "rows": [
+            ["IGRS-2024-0002", "Guntur", "30-Nov-2024", "02-Dec-2024", "12", "₹0.87L", "In Review"],
+            ["IGRS-2024-0023", "East Godavari", "18-Nov-2024", "08-Dec-2024", "20", "₹2.75L", "Confirmed"],
+            ["IGRS-2024-0006", "East Godavari", "25-Nov-2024", "10-Dec-2024", "15", "₹0.45L", "New"],
+            ["IGRS-2024-0015", "Kurnool", "22-Nov-2024", "05-Dec-2024", "13", "₹0.92L", "In Review"],
+            ["IGRS-2024-0011", "Krishna", "20-Nov-2024", "04-Dec-2024", "14", "₹0.55L", "In Review"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["IGRS-0023", "IGRS-0006", "IGRS-0011", "IGRS-0015", "IGRS-0002"],
+          "datasets": [{ "label": "Delay (Days)", "data": [20, 15, 14, 13, 12], "color": "#D97706" }]
+        },
+        "keyInsight": "IGRS-2024-0023 (East Godavari) has a 20-day delay — double the threshold. East Godavari appears twice in this list. Combined with IGRS-2024-0006, this SRO has a pattern of processing delays that warrants a compliance audit.",
+        "followUpPrompts": ["East Godavari delay pattern analysis", "Compare with state average processing time", "Show challan movement trail for IGRS-2024-0023"]
+      }
+    },
+    {
+      "id": "cases-009",
+      "promptText": "Stamp inventory discrepancy cases",
+      "category": "cases",
+      "response": {
+        "narrative": "3 cases involving physical stamp paper inventory discrepancies detected across 3 districts. Total discrepancy value: ₹3.78L. These mismatches between issued stamp papers and physical inventory counts suggest either mismanagement or potential misappropriation.",
+        "inlineTable": {
+          "headers": ["Case ID", "District", "SRO", "Book Stock", "Physical Count", "Variance", "Gap (₹)", "Status"],
+          "rows": [
+            ["IGRS-2024-0031", "Anantapur", "Anantapur Main", "1,240", "1,195", "-45 papers", "₹2.50L", "New"],
+            ["IGRS-2024-0029", "East Godavari", "Rajahmundry Central", "860", "838", "-22 papers", "₹1.20L", "In Review"],
+            ["IGRS-2024-0030", "Nellore", "Nellore City", "520", "516", "-4 papers", "₹0.08L", "New"]
+          ]
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["Anantapur", "East Godavari", "Nellore"],
+          "datasets": [
+            { "label": "Book Stock", "data": [1240, 860, 520], "color": "#3B82F6" },
+            { "label": "Physical Count", "data": [1195, 838, 516], "color": "#DC2626" }
+          ]
+        },
+        "keyInsight": "IGRS-2024-0031 (Anantapur) has the largest variance — 45 missing stamp papers worth ₹2.50L. This SRO also appears in cash reconciliation cases, indicating broader operational control failures. Physical audit should be prioritized.",
+        "followUpPrompts": ["Anantapur SRO full audit summary", "Stamp serial number tracking", "Compare with quarterly inventory norms"]
+      }
+    },
+    {
+      "id": "cases-010",
+      "promptText": "Top 10 cases by revenue gap amount",
+      "category": "cases",
+      "response": {
+        "narrative": "The 10 highest revenue gap cases across all signal types, ranked by gap amount. Combined gap: ₹41.85L, representing 68% of total state-wide gap. These cases span 6 districts and 7 different signal categories.",
+        "inlineTable": {
+          "headers": ["Rank", "Case ID", "District", "Gap (₹)", "Primary Signal", "Risk", "Status"],
+          "rows": [
+            ["1", "IGRS-2024-0003", "Chittoor", "₹5.00L", "Prohibited Land", "High", "Confirmed"],
+            ["2", "IGRS-2024-0010", "Anantapur", "₹4.80L", "Market Value", "High", "New"],
+            ["3", "IGRS-2024-0047", "Guntur", "₹4.50L", "Classification Fraud", "Medium", "New"],
+            ["4", "IGRS-2024-0036", "East Godavari", "₹4.25L", "Cash Reconciliation", "High", "In Review"],
+            ["5", "IGRS-2024-0012", "Guntur", "₹4.10L", "Revenue Gap", "High", "Confirmed"],
+            ["6", "IGRS-2024-0040", "Chittoor", "₹4.05L", "Cash Reconciliation", "High", "In Review"],
+            ["7", "IGRS-2024-0005", "Visakhapatnam", "₹3.75L", "Exemption Abuse", "High", "New"],
+            ["8", "IGRS-2024-0020", "Anantapur", "₹3.50L", "Market Value", "High", "New"],
+            ["9", "IGRS-2024-0046", "Chittoor", "₹3.20L", "Classification Fraud", "High", "New"],
+            ["10", "IGRS-2024-0007", "West Godavari", "₹3.20L", "Market Value", "High", "In Review"]
+          ],
+          "highlightColumn": 3
+        },
+        "inlineChart": {
+          "type": "bar",
+          "labels": ["0003", "0010", "0047", "0036", "0012", "0040", "0005", "0020", "0046", "0007"],
+          "datasets": [{ "label": "Gap (₹L)", "data": [5.0, 4.8, 4.5, 4.25, 4.1, 4.05, 3.75, 3.5, 3.2, 3.2], "color": "#DC2626" }]
+        },
+        "keyInsight": "Chittoor appears 3 times in the top 10 (₹12.25L combined) making it the highest-risk district by volume. 4 out of 10 cases are still 'New' with no reviewer. Only 2 are 'Confirmed' — recovery action pending on ₹9.10L.",
+        "followUpPrompts": ["Initiate recovery for confirmed cases", "Assign new cases to reviewers", "District-wise gap trend this quarter"]
       }
     }
   ]

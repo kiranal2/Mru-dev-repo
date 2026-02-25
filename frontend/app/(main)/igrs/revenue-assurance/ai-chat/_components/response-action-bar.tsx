@@ -6,15 +6,11 @@ import { toast } from "sonner";
 import {
   UserPlus,
   AlertTriangle,
-  Pin,
   Download,
   MessageSquare,
   ListTodo,
   MoreHorizontal,
-  PinOff,
   ExternalLink,
-  FilePlus2,
-  Eye,
   Star,
 } from "lucide-react";
 import { useIGRSRole } from "@/lib/ai-chat-intelligence/role-context";
@@ -44,6 +40,44 @@ export interface ConversationMessage {
   content: string;
   data?: PromptResponseData;
   timestamp: string;
+}
+
+const CASE_ID_REGEX = /IGRS-\d{4}-\d+/gi;
+
+function extractCaseIdsFromMessage(msg: ConversationMessage): string[] {
+  const headers = msg.data?.inlineTable?.headers ?? [];
+  const rows = msg.data?.inlineTable?.rows ?? [];
+  if (!rows.length) return [];
+
+  const candidateIndexes = headers
+    .map((header, idx) =>
+      String(header).toLowerCase().includes("case") ? idx : -1
+    )
+    .filter((idx) => idx >= 0);
+
+  const fallbackIndexes = [0, 1];
+  const indexesToCheck =
+    candidateIndexes.length > 0 ? candidateIndexes : fallbackIndexes;
+
+  const ids = new Set<string>();
+  for (const row of rows) {
+    for (const idx of indexesToCheck) {
+      const cell = String(row[idx] ?? "");
+      const matches = cell.match(CASE_ID_REGEX);
+      if (!matches) continue;
+      for (const match of matches) {
+        ids.add(match.toUpperCase());
+      }
+    }
+  }
+
+  return Array.from(ids);
+}
+
+function getCasesRoute(msg: ConversationMessage): string {
+  const caseIds = extractCaseIdsFromMessage(msg);
+  if (caseIds.length === 0) return "/igrs/revenue-assurance/cases";
+  return `/igrs/revenue-assurance/cases?caseIds=${encodeURIComponent(caseIds.join(","))}`;
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -544,9 +578,7 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [taskOpen, setTaskOpen] = useState(false);
-  const [pinned, setPinned] = useState(false);
   const [favorite, setFavorite] = useState(false);
-  const [watchlisted, setWatchlisted] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
   const taskDefaultTitle =
@@ -557,34 +589,9 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
 
   const primaryActions = [
     {
-      label: "Expand",
+      label: "View Cases",
       icon: ExternalLink,
-      onClick: () => router.push("/igrs/revenue-assurance/cases"),
-    },
-    {
-      label: "Create Template",
-      icon: FilePlus2,
-      onClick: () => {
-        toast.success("Template draft prepared from this response");
-      },
-    },
-    {
-      label: watchlisted ? "In Watchlist" : "Add to Watchlist",
-      icon: Eye,
-      active: watchlisted,
-      onClick: () => {
-        setWatchlisted(!watchlisted);
-        toast.success(watchlisted ? "Removed from watchlist" : "Added to watchlist");
-      },
-    },
-    {
-      label: pinned ? "Unpin" : "Pin",
-      icon: pinned ? PinOff : Pin,
-      active: pinned,
-      onClick: () => {
-        setPinned(!pinned);
-        toast.success(pinned ? "Unpinned" : "Pinned to workspace");
-      },
+      onClick: () => router.push(getCasesRoute(msg)),
     },
     {
       label: favorite ? "Favorited" : "Favorite",

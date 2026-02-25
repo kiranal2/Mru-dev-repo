@@ -520,46 +520,50 @@ function highlightMatch(text: string, query: string): React.ReactNode {
 
 const SAMPLE_PROMPTS_BY_ROLE: Record<string, string[]> = {
   IG: [
-    "State revenue summary this week",
+    "Show all high risk cases this month",
+    "Top 10 cases by revenue gap amount",
+    "Cases with revenue gap above 2 lakhs",
+    "Show new cases pending review",
+    "Exemption abuse cases across districts",
+    "Classification fraud cases with duty impact",
     "Compare all zones leakage rate this month",
-    "Which SROs granted most exemptions?",
-    "Show all open escalations pending beyond SLA",
-    "Zone performance comparison",
-    "Monthly revenue growth trend",
+    "Cash reconciliation discrepancy cases",
   ],
   DIG: [
-    "Zone revenue summary this month",
+    "Show all high risk cases this month",
+    "Cases with revenue gap above 2 lakhs",
+    "Cash reconciliation discrepancy cases",
     "Top zone cases above 40 lakhs",
     "District comparison in my zone",
-    "Escalation status in my zone",
     "SLA breaches in my zone this month",
-    "High-risk documents in my zone",
   ],
   DR: [
-    "District revenue summary this month",
+    "Show new cases pending review",
+    "Market value deviation cases in Krishna district",
     "Top district cases above 20 lakhs",
-    "SRO performance in my district",
-    "Pending escalations in my district",
+    "Challan delay cases exceeding 10 days",
     "Payment gap analysis for my district",
-    "SLA compliance in my district",
+    "Stamp inventory discrepancy cases",
   ],
   SR: [
-    "My daily summary",
+    "Show new cases pending review",
+    "Cash reconciliation discrepancy cases",
     "Pending cases at my SRO",
     "Today's registrations above 10 lakhs",
-    "Escalations requiring my response",
-    "Cash reconciliation status",
+    "Stamp inventory discrepancy cases",
     "My performance vs district average",
   ],
 };
 
 const DEFAULT_SAMPLE_PROMPTS = [
+  "Show all high risk cases this month",
+  "Cases with revenue gap above 2 lakhs",
+  "Top 10 cases by revenue gap amount",
+  "Show new cases pending review",
+  "Cash reconciliation discrepancy cases",
+  "Classification fraud cases with duty impact",
   "Show monthly revenue growth for last quarter",
   "Which districts are performing best?",
-  "Show high risk documents this month",
-  "Revenue vs target comparison",
-  "Top 5 revenue-generating SROs",
-  "SLA breach rate by district",
 ];
 
 type FavoritePrompt = {
@@ -569,19 +573,31 @@ type FavoritePrompt = {
 };
 
 const IGRS_FAVORITE_PROMPTS: FavoritePrompt[] = [
-  { id: "ifav-1", text: "Show monthly revenue growth for last quarter", category: "Revenue" },
-  { id: "ifav-2", text: "Which districts are performing best?", category: "Performance" },
-  { id: "ifav-3", text: "Show high risk documents this month", category: "Risk" },
-  { id: "ifav-4", text: "SLA breach rate by district", category: "SLA" },
+  { id: "ifav-1", text: "Show all high risk cases this month", category: "Cases" },
+  { id: "ifav-2", text: "Top 10 cases by revenue gap amount", category: "Cases" },
+  { id: "ifav-3", text: "Show new cases pending review", category: "Cases" },
+  { id: "ifav-4", text: "Cases with revenue gap above 2 lakhs", category: "Cases" },
+  { id: "ifav-5", text: "Show monthly revenue growth for last quarter", category: "Revenue" },
+  { id: "ifav-6", text: "Which districts are performing best?", category: "Performance" },
 ];
 
 const IGRS_SUGGESTION_PROMPTS: FavoritePrompt[] = [
-  { id: "isug-1", text: "Revenue vs target comparison", category: "Revenue" },
-  { id: "isug-2", text: "Top 5 revenue-generating SROs", category: "Performance" },
-  { id: "isug-3", text: "Show zone wise revenue trend for this month", category: "Revenue" },
-  { id: "isug-4", text: "Compare all zones leakage rate this month", category: "Leakage" },
-  { id: "isug-5", text: "Which SROs granted most exemptions?", category: "Exemptions" },
-  { id: "isug-6", text: "Show all open escalations pending beyond SLA", category: "SLA" },
+  { id: "isug-1", text: "Show all high risk cases this month", category: "Cases" },
+  { id: "isug-2", text: "Cases with revenue gap above 2 lakhs", category: "Cases" },
+  { id: "isug-3", text: "Show new cases pending review", category: "Cases" },
+  { id: "isug-4", text: "Top 10 cases by revenue gap amount", category: "Cases" },
+  { id: "isug-5", text: "Cash reconciliation discrepancy cases", category: "Cases" },
+  { id: "isug-6", text: "Classification fraud cases with duty impact", category: "Cases" },
+  { id: "isug-7", text: "Exemption abuse cases across districts", category: "Cases" },
+  { id: "isug-8", text: "Challan delay cases exceeding 10 days", category: "Cases" },
+  { id: "isug-9", text: "Stamp inventory discrepancy cases", category: "Cases" },
+  { id: "isug-10", text: "Market value deviation cases in Krishna district", category: "Cases" },
+  { id: "isug-11", text: "Revenue vs target comparison", category: "Revenue" },
+  { id: "isug-12", text: "Top 5 revenue-generating SROs", category: "Performance" },
+  { id: "isug-13", text: "Show zone wise revenue trend for this month", category: "Revenue" },
+  { id: "isug-14", text: "Compare all zones leakage rate this month", category: "Leakage" },
+  { id: "isug-15", text: "Which SROs granted most exemptions?", category: "Exemptions" },
+  { id: "isug-16", text: "Show all open escalations pending beyond SLA", category: "SLA" },
 ];
 
 function getSamplePrompts(role?: string): string[] {
@@ -1109,7 +1125,8 @@ export default function AIChatPage() {
             </div>
 
             {/* Conversation Area */}
-            <div className="flex-1 overflow-y-auto space-y-6 mb-4 pr-2 pb-4 scrollbar-hide">
+            <div className="flex-1 overflow-y-auto mb-4 pr-2 pb-4 scrollbar-hide">
+            <div className="space-y-6 min-h-full flex flex-col justify-end">
               {messages.map((msg, index) =>
                 msg.role === "user" ? (
                   <div
@@ -1138,6 +1155,7 @@ export default function AIChatPage() {
                 <StreamingIndicator events={streamingEvents} />
               )}
               <div ref={conversationEndRef} />
+            </div>
             </div>
 
             {/* Bottom Composer */}

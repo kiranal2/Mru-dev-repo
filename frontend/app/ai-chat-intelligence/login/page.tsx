@@ -210,7 +210,7 @@ export default function AIChatIntelligenceLoginPage() {
     const user = DEMO_USERS.find((u) => u.role === role);
     setSelectedRole(role);
     setEmail(user?.email ?? "");
-    setPassword("");
+    setPassword(ROLE_META[role].passwordHint);
     setError("");
   };
 
@@ -559,20 +559,40 @@ export default function AIChatIntelligenceLoginPage() {
                         )}
                       </button>
 
-                      {/* Demo hint */}
-                      <div className="text-center pt-1">
-                        <p className="text-[10px] text-gray-400">
-                          {selectedRole ? (
-                            <>
-                              Demo: password is{" "}
-                              <span className="font-mono text-gray-500 font-semibold">
-                                {ROLE_META[selectedRole].passwordHint}
-                              </span>
-                            </>
-                          ) : (
-                            "Select a role above to see demo credentials"
-                          )}
+                      {/* Demo credentials table */}
+                      <div className="rounded-lg border border-amber-200 bg-amber-50/60 p-3">
+                        <p className="text-[11px] font-semibold text-amber-800 mb-2 flex items-center gap-1.5">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="16" x2="12" y2="12" />
+                            <line x1="12" y1="8" x2="12.01" y2="8" />
+                          </svg>
+                          Demo Credentials
                         </p>
+                        <table className="w-full text-[10px]">
+                          <thead>
+                            <tr className="text-amber-700 font-semibold">
+                              <td className="pb-1">Role</td>
+                              <td className="pb-1">Email</td>
+                              <td className="pb-1">Password</td>
+                            </tr>
+                          </thead>
+                          <tbody className="text-amber-900/80 font-mono">
+                            {DEMO_USERS.map((user) => (
+                              <tr
+                                key={user.role}
+                                className={`cursor-pointer hover:bg-amber-100/60 transition-colors ${
+                                  selectedRole === user.role ? "bg-amber-100/80 font-semibold" : ""
+                                }`}
+                                onClick={() => handleRoleSelect(user.role)}
+                              >
+                                <td className="py-0.5 pr-2 font-sans font-semibold">{user.role}</td>
+                                <td className="py-0.5 pr-2 truncate max-w-[160px]">{user.email}</td>
+                                <td className="py-0.5">{ROLE_META[user.role].passwordHint}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </form>
 
