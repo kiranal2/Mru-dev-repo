@@ -28,8 +28,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatINR } from "@/lib/data/utils/format-currency";
-import { APDistrictMap } from "@/components/revenue-leakage/ap-district-map";
-import type { DistrictData } from "@/components/revenue-leakage/ap-district-map";
+import { AndhraPradeshChoroplethMap } from "@/components/revenue-leakage/AndhraPradeshChoroplethMap";
+import type { DistrictMapData } from "@/components/revenue-leakage/AndhraPradeshChoroplethMap";
 import {
   AlertTriangle,
   MapPin,
@@ -165,7 +165,7 @@ function DashboardTab({
     return { totalCases, totalGap, totalHighRisk, avgGap };
   }, [trends]);
 
-  const districtDataList = useMemo<DistrictData[]>(() => {
+  const districtDataList = useMemo<DistrictMapData[]>(() => {
     type DistrictAgg = { drrs: number[]; hotspots: number; sros: string[]; txns: number; loss: number };
     const grouped: Record<string, DistrictAgg> = {};
     for (const h of hotspots) {
@@ -190,7 +190,7 @@ function DashboardTab({
   }, [hotspots]);
 
   const criticalDistrictCount = useMemo(
-    () => districtDataList.filter((d) => d.avgDrr < 0.85).length,
+    () => districtDataList.filter((d) => (d.avgDrr ?? 1) < 0.85).length,
     [districtDataList]
   );
 
@@ -202,6 +202,12 @@ function DashboardTab({
       setSelectedMapDistrict(districtName);
       setDistrictFilter(districtName);
     }
+  };
+
+  // Bidirectional: dropdown → map highlight
+  const handleDistrictDropdownChange = (value: string) => {
+    setDistrictFilter(value);
+    setSelectedMapDistrict(value === "all" ? null : value);
   };
 
   return (
@@ -330,13 +336,12 @@ function DashboardTab({
             </div>
 
             {/* Map */}
-            <div className="relative border rounded-lg bg-white p-4">
-              <APDistrictMap
-                districts={districtDataList}
-                onDistrictClick={handleMapDistrictClick}
-                formatShort={(v) => formatINR(v, true)}
-              />
-            </div>
+            <AndhraPradeshChoroplethMap
+              districtData={districtDataList}
+              formatShort={(v) => formatINR(v, true)}
+              onDistrictClick={handleMapDistrictClick}
+              activeDistrict={selectedMapDistrict}
+            />
 
             {/* Legend */}
             <div className="flex items-center justify-center gap-4 mt-3 text-xs text-muted-foreground">
@@ -381,7 +386,7 @@ function DashboardTab({
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={districtFilter} onValueChange={setDistrictFilter}>
+              <Select value={districtFilter} onValueChange={handleDistrictDropdownChange}>
                 <SelectTrigger className="w-[160px] h-8 text-xs">
                   <SelectValue placeholder="District" />
                 </SelectTrigger>

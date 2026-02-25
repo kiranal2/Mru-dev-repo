@@ -1,0 +1,213 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Srikakulam", "district_code": "AP01" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [83.9, 18.5],
+            [84.4, 18.5],
+            [84.4, 19.1],
+            [83.9, 19.1],
+            [83.9, 18.5]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Vizianagaram", "district_code": "AP02" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [83.2, 18.0],
+            [83.9, 18.0],
+            [83.9, 18.5],
+            [83.2, 18.5],
+            [83.2, 18.0]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Visakhapatnam", "district_code": "AP03" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [82.9, 17.4],
+            [83.2, 17.4],
+            [83.2, 18.0],
+            [82.9, 18.0],
+            [82.9, 17.4]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "East Godavari", "district_code": "AP04" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [81.8, 16.8],
+            [82.9, 16.8],
+            [82.9, 17.4],
+            [81.8, 17.4],
+            [81.8, 16.8]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "West Godavari", "district_code": "AP05" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [80.9, 16.4],
+            [81.8, 16.4],
+            [81.8, 17.0],
+            [80.9, 17.0],
+            [80.9, 16.4]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Krishna", "district_code": "AP06" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [80.4, 15.9],
+            [81.2, 15.9],
+            [81.2, 16.5],
+            [80.4, 16.5],
+            [80.4, 15.9]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Guntur", "district_code": "AP07" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [79.8, 15.5],
+            [80.4, 15.5],
+            [80.4, 16.2],
+            [79.8, 16.2],
+            [79.8, 15.5]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Prakasam", "district_code": "AP08" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [79.2, 14.8],
+            [79.8, 14.8],
+            [79.8, 15.8],
+            [79.2, 15.8],
+            [79.2, 14.8]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Nellore", "district_code": "AP09" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [79.2, 13.8],
+            [79.9, 13.8],
+            [79.9, 14.8],
+            [79.2, 14.8],
+            [79.2, 13.8]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Kurnool", "district_code": "AP10" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.8, 15.2],
+            [78.2, 15.2],
+            [78.2, 16.2],
+            [76.8, 16.2],
+            [76.8, 15.2]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Anantapur", "district_code": "AP11" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.8, 14.2],
+            [78.0, 14.2],
+            [78.0, 15.2],
+            [76.8, 15.2],
+            [76.8, 14.2]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "YSR Kadapa", "district_code": "AP12" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.0, 13.8],
+            [79.0, 13.8],
+            [79.0, 15.0],
+            [78.0, 15.0],
+            [78.0, 13.8]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Chittoor", "district_code": "AP13" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.5, 12.6],
+            [79.7, 12.6],
+            [79.7, 14.0],
+            [78.5, 14.0],
+            [78.5, 12.6]
+          ]
+        ]
+      }
+    }
+  ]
+}
