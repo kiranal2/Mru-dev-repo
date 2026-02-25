@@ -25,7 +25,7 @@ export default function MainContent({
       className
     )}
     style={{
-      background: 'linear-gradient(180deg, #FAFBFD 0%, #F5F7FA 100%)',
+      background: '#F8FAFC',
     }}
     >
       {/* Content Area */}

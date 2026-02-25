@@ -88,7 +88,7 @@ function Callback() {
             <div className="text-gray-600 mb-4">{error}</div>
             <button 
               onClick={() => router.push('/login')}
-              className="px-4 py-2 bg-[#0A3B77] text-white rounded hover:bg-[#0A3B77]/90"
+              className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
             >
               Back to Login
             </button>

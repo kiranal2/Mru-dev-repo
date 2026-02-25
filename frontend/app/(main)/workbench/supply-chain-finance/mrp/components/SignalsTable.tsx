@@ -35,7 +35,7 @@ export function SignalsTable({
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[1400px] text-sm">
-        <thead className="bg-slate-900 text-slate-100 text-xs uppercase tracking-wide">
+        <thead className="bg-slate-50 border-b-2 border-slate-200 text-slate-500 text-xs uppercase tracking-wide">
           <tr>
             <th className="py-2 px-3 text-left w-[36px]">
               <input

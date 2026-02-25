@@ -11,15 +11,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-[#0A3B77] text-white hover:bg-[#0A3B77]/90 hover:shadow-elevation-2 shadow-elevation-1',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-elevation-2 shadow-elevation-1',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-elevation-2 shadow-elevation-1',
         outline:
-          'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-[#0A3B77]/20',
+          'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-slate-300',
         secondary:
-          'bg-white text-[#0A3B77] border border-[#0A3B77]/20 hover:bg-[#0A3B77]/5 hover:border-[#0A3B77]/30',
+          'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
+        danger: 'bg-red-600 text-white hover:bg-red-700 hover:shadow-elevation-2 shadow-elevation-1',
       },
       size: {
         default: 'h-10 px-4 py-2',
@@ -36,7 +37,7 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'danger';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   asChild?: boolean;
 }

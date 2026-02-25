@@ -638,10 +638,10 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
               onClick={action.onClick}
               className={
                 actionButtonClass +
-                (action.active ? " bg-[#D1ECFF] border-[#0A3B77] text-[#0A3B77]" : "")
+                (action.active ? " bg-[#D1ECFF] border-slate-200 text-slate-900" : "")
               }
             >
-              <action.icon size={18} className="text-[#0A3B77]" />
+              <action.icon size={18} className="text-slate-900" />
               <span>{action.label}</span>
             </button>
           ))}
@@ -652,11 +652,11 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
             onClick={() => setShowMore(!showMore)}
             className={
               actionButtonClass +
-              (showMore ? " bg-[#D1ECFF] border-[#0A3B77] text-[#0A3B77]" : "")
+              (showMore ? " bg-[#D1ECFF] border-slate-200 text-slate-900" : "")
             }
             aria-label="More actions"
           >
-            <MoreHorizontal size={18} className="text-[#0A3B77]" />
+            <MoreHorizontal size={18} className="text-slate-900" />
           </button>
 
           {showMore && (
@@ -670,7 +670,7 @@ export function ResponseActionBar({ msg }: { msg: ConversationMessage }) {
                       action.onClick();
                       setShowMore(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 text-sm text-slate-600 hover:bg-[#D1ECFF] hover:text-[#0A3B77] transition-colors flex items-center gap-2"
+                    className="w-full text-left px-3 py-1.5 text-sm text-slate-600 hover:bg-[#D1ECFF] hover:text-slate-900 transition-colors flex items-center gap-2"
                   >
                     <action.icon className="w-4 h-4" />
                     {action.label}

@@ -364,7 +364,7 @@ export default function RegistrationPatternsPage() {
                     onClick={() => setPrimaryDim(dim)}
                     className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold border transition-all ${
                       isActive
-                        ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                        ? "bg-primary text-white border-primary shadow-sm"
                         : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
@@ -479,7 +479,7 @@ export default function RegistrationPatternsPage() {
               <div className="border border-slate-200 rounded-lg bg-white shadow-sm overflow-hidden">
                 <div className="overflow-auto">
                   <table className="w-full text-sm">
-                    <thead className="text-xs uppercase text-slate-200 bg-slate-800">
+                    <thead className="text-xs uppercase text-slate-600 bg-slate-50">
                       <tr>
                         <th className="px-3 py-2.5 text-left whitespace-nowrap font-semibold">
                           {dimensionMeta[primaryDim].label}

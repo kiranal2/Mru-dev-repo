@@ -287,7 +287,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-white font-[Inter,system-ui,sans-serif]">
+      <div className="min-h-screen bg-slate-50 font-[Inter,system-ui,sans-serif]">
         <Header loadingState={hasInitiallyLoaded ? "loaded" : loadingState} />
 
         <div className="flex min-h-[calc(100vh-57px)]">

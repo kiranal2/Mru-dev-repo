@@ -14,7 +14,7 @@ const PageForbidden: React.FC = () => {
         </p>
         <button
           onClick={() => window.history.back()}
-          className="bg-[#0A3B77] text-white px-4 py-2 rounded-lg hover:bg-[#0A3B77]/90 transition-colors"
+          className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
         >
           Go Back
         </button>

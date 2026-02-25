@@ -362,7 +362,7 @@ function AIBubble({
                 <button
                   key={fi}
                   onClick={() => onFollowUp(fp)}
-                  className="group inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#E2E8F0] bg-white text-sm text-[#334155] hover:border-[#6B7EF3] hover:bg-[#F5F8FF] hover:text-[#0A3B77] transition-all duration-200"
+                  className="group inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#E2E8F0] bg-white text-sm text-[#334155] hover:border-[#6B7EF3] hover:bg-[#F5F8FF] hover:text-slate-900 transition-all duration-200"
                 >
                   <Lightbulb size={14} className="text-[#94A3B8] group-hover:text-[#6B7EF3] transition-colors" />
                   <span className="leading-snug">{fp}</span>
@@ -884,7 +884,7 @@ export default function AIChatPage() {
                     />
 
                     <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-[#0A3B77]">
+                      <div className="flex items-center gap-2 text-slate-900">
                         <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#D2D2D2] bg-white">
                           <Clock size={14} />
                         </span>
@@ -900,7 +900,7 @@ export default function AIChatPage() {
                         onClick={() => handleSend()}
                         disabled={isTyping || !composerValue.trim()}
                         className={cn(
-                          "w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-[#D2D2D2] flex items-center justify-center hover:border-[#0A3B77] hover:bg-[#0A3B77] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
+                          "w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-[#D2D2D2] flex items-center justify-center hover:border-slate-200 hover:bg-primary hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
                           (isTyping || !composerValue.trim()) && "opacity-50 cursor-not-allowed"
                         )}
                         aria-label="Send prompt"
@@ -1007,7 +1007,7 @@ export default function AIChatPage() {
               </div>
               <button
                 onClick={handleNewChat}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#0A3B77] border border-[#D2D2D2] rounded-lg hover:bg-[#E8F4FD] transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-900 border border-[#D2D2D2] rounded-lg hover:bg-[#E8F4FD] transition-colors"
               >
                 <Plus size={14} />
                 <span>New Chat</span>
@@ -1076,7 +1076,7 @@ export default function AIChatPage() {
                       onClick={() => handleSend()}
                       disabled={isTyping || !composerValue.trim()}
                       className={cn(
-                        "w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-[#D2D2D2] flex items-center justify-center hover:border-[#0A3B77] hover:bg-[#0A3B77] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
+                        "w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-[#D2D2D2] flex items-center justify-center hover:border-slate-200 hover:bg-primary hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
                         (isTyping || !composerValue.trim()) && "opacity-50 cursor-not-allowed"
                       )}
                       aria-label="Send prompt"

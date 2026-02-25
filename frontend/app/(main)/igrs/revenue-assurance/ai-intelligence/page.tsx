@@ -1659,7 +1659,7 @@ function PromptEngineTab({ data }: { data: PromptEngineData }) {
           onClick={() => setSelectedCategory("all")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
             selectedCategory === "all"
-              ? "bg-slate-800 text-white"
+              ? "bg-primary text-white"
               : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
           }`}
         >

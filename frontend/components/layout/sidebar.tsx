@@ -50,15 +50,12 @@ export default function Sidebar({
 
   return (
     <aside className={cn(
-        "flex flex-col pt-4 relative border-r border-[#0A3B77]/10",
-        isCollapsed ? "w-[72px]" : "w-[72px]",
+        "flex flex-col pt-4 relative border-r border-slate-200 bg-white",
+        isCollapsed ? "w-16" : "w-16",
         loadingState === 'loading'
           ? "transition-all duration-300 ease-out opacity-0 -translate-x-4"
           : "transition-none opacity-100 translate-x-0"
       )}
-      style={{
-        background: 'linear-gradient(180deg, #EDF5FF 0%, #E0EDFC 40%, #D4E5F8 100%)',
-      }}
     >
         <nav className="flex flex-col gap-1" role="navigation" aria-label="Main navigation">
           <Tooltip delayDuration={150}>
@@ -181,7 +178,7 @@ export default function Sidebar({
           <Tooltip delayDuration={150}>
             <TooltipTrigger asChild>
               <button
-                className="text-[#0A3B77]/80 hover:text-[#0A3B77] hover:bg-white/50 transition-all duration-200 p-2 rounded-lg relative group"
+                className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200 p-2 rounded-lg relative group"
                 style={{ outline: 'none', border: 'none' }}
                 aria-label="User profile"
                 onClick={(e) => {
@@ -198,13 +195,13 @@ export default function Sidebar({
                       backdropFilter: 'blur(12px)',
                     }}
                   >
-                    <div className="px-4 py-2.5 border-b border-[#0A3B77]/5">
-                      <p className="text-sm font-semibold text-[#0A3B77]">{user?.name || 'User'}</p>
-                      <p className="text-xs text-[#0A3B77]/60 mt-0.5">{user?.email}</p>
+                    <div className="px-4 py-2.5 border-b border-slate-200">
+                      <p className="text-sm font-semibold text-slate-900">{user?.name || 'User'}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{user?.email}</p>
                     </div>
                     <div className="py-1">
                       <button
-                        className="w-full px-4 py-2 text-left text-sm text-[#0A3B77]/80 hover:text-[#0A3B77] hover:bg-[#0A3B77]/5 flex items-center transition-all duration-150 rounded-md mx-1"
+                        className="w-full px-4 py-2 text-left text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 flex items-center transition-all duration-150 rounded-md mx-1"
                         style={{ outline: 'none', border: 'none', width: 'calc(100% - 8px)' }}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -260,8 +257,8 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
         "flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg relative group",
         "transition-all duration-200 ease-out",
         isSelected
-          ? "text-[#0A3B77] bg-white/80 shadow-elevation-1"
-          : "text-[#0A3B77]/80 hover:text-[#0A3B77] hover:bg-white/50"
+          ? "text-primary bg-blue-50"
+          : "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
       )}
       style={{ outline: 'none', border: 'none' }}
       aria-label={label}
@@ -270,12 +267,11 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
       {/* Active indicator bar */}
       <span
         className={cn(
-          "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full transition-all duration-300",
+          "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full transition-all duration-300 bg-primary",
           isSelected
             ? "h-[60%] opacity-100"
             : "h-0 opacity-0 group-hover:h-[40%] group-hover:opacity-60"
         )}
-        style={{ background: 'var(--gradient-primary)' }}
       />
       <span className={cn(
         "transition-transform duration-200",
@@ -286,7 +282,7 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
       {!isCollapsed && (
         <span className={cn(
           "text-[11px] font-medium transition-opacity duration-200",
-          isSelected ? "opacity-100" : "opacity-80 group-hover:opacity-100"
+          isSelected ? "opacity-100" : "opacity-90 group-hover:opacity-100"
         )}>
           {label}
         </span>

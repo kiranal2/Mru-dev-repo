@@ -1742,7 +1742,7 @@ export default function GovernanceDashboardsPage() {
             onClick={() => setActiveTab(tab.key)}
             className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
               activeTab === tab.key
-                ? "bg-slate-900 text-white"
+                ? "bg-primary text-white"
                 : "text-slate-600 hover:bg-slate-100"
             }`}
           >

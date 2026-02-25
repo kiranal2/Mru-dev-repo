@@ -340,3 +340,14 @@ Key routes in `app/api/`:
   - Corrected root layout/provider order to match implementation.
   - Updated API routes list to include `/api/commandQuery` and `/api/query/[queryId]/result`.
 - Added mandatory policy requiring `CLAUDE.md` updates for every project/code change, including Codex-driven edits, with append-only logging.
+
+### 2026-02-25
+- **Enterprise Design System Overhaul** — migrated from `#0A3B77` brand navy to `#1E40AF` blue (`--primary: 217 91% 40%`).
+  - **Phase 1 (Tokens)**: Updated `globals.css` HSL variables (`--primary`, `--ring`, `--border`, `--input`), gradient definitions, scrollbar colors, animation rgba values, tooltip styling. Added semantic color tokens (`--color-danger-*`, `--color-warning-*`, `--color-info-*`, `--color-success-*`). Updated `tailwind.config.ts` glow/border-glow keyframes.
+  - **Phase 2 (UI Components)**: Updated 11 Shadcn components — `button.tsx` (added `danger` variant, replaced hardcoded colors with `bg-primary`), `badge.tsx`, `card.tsx`, `table.tsx`, `input.tsx`, `select.tsx`, `dialog.tsx`, `sheet.tsx`, `dropdown-menu.tsx`, `checkbox.tsx` (h-[18px], border-slate-300), `textarea.tsx` (rounded-lg, focus ring).
+  - **Phase 3 (Layout Shell)**: Dark sidebar (`bg-slate-900`), white nav panel (`bg-white`, `w-60`), clean header (`bg-white border-slate-200`), `bg-slate-50` main content. Updated `sidebar.tsx`, `navigation-panel.tsx`, `header.tsx`, `main-content.tsx`, `breadcrumb.tsx`, `app-shell.tsx`.
+  - **Phase 4 (Toast + Polish)**: Toast restyled to white with colored left border per type. Updated `providers.tsx`, `live-pin-modal.tsx`, `aging-summary-cards.tsx`, `prompt-composer.tsx`.
+  - **Phase 5 (Page Fixes)**: Eliminated all ~98 `#0A3B77` references across ~30 files. Converted selected tab/chip states from `bg-slate-900` to `bg-primary`. Converted 3 dark table headers to light `bg-slate-50` style.
+  - **Button variant type** now includes `'danger'` in addition to existing variants.
+  - **Sidebar width** changed from `w-[72px]` to `w-16` (64px). Nav panel from `w-[280px]` to `w-60` (240px).
+  - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.

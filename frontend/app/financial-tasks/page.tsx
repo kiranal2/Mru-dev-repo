@@ -316,21 +316,21 @@ const FinancialTasks: React.FC<FinancialTasksProps> = ({ params }) => {
             <button
               onClick={() => clientRef.current?.sendPrompt("Analyze Apple's AP aging report")}
               disabled={!isConnected || isLoading}
-              className="px-6 py-3 bg-[#0A3B77] text-white rounded-lg hover:bg-[#0A3B77]/90 transition-colors duration-200 disabled:opacity-50"
+              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors duration-200 disabled:opacity-50"
             >
               AP Analysis Example
             </button>
             <button
               onClick={() => clientRef.current?.sendPrompt("Get Microsoft's AR aging details")}
               disabled={!isConnected || isLoading}
-              className="px-6 py-3 bg-[#0A3B77] text-white rounded-lg hover:bg-[#0A3B77]/90 transition-colors duration-200 disabled:opacity-50"
+              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors duration-200 disabled:opacity-50"
             >
               AR Analysis Example
             </button>
             <button
               onClick={() => clientRef.current?.sendPrompt("Run comprehensive financial analysis")}
               disabled={!isConnected || isLoading}
-              className="px-6 py-3 bg-[#0A3B77] text-white rounded-lg hover:bg-[#0A3B77]/90 transition-colors duration-200 disabled:opacity-50"
+              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors duration-200 disabled:opacity-50"
             >
               Combined Analysis
             </button>

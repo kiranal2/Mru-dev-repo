@@ -672,7 +672,7 @@ export default function RevenueAIChatPage() {
                     <button
                       onClick={handleSendClick}
                       disabled={isLoading || !composerValue.trim()}
-                      className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-slate-800 disabled:bg-slate-300 disabled:cursor-not-allowed hover:scale-110 transition-all duration-200 ease-out active:scale-95"
+                      className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 disabled:bg-slate-300 disabled:cursor-not-allowed hover:scale-110 transition-all duration-200 ease-out active:scale-95"
                       aria-label="Send message"
                     >
                       <ArrowRight size={20} className="text-white" />

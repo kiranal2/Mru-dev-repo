@@ -51,7 +51,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 const CATEGORY_CHIP_STYLES: Record<string, { active: string; idle: string }> = {
   All: {
-    active: "bg-slate-800 text-white border-slate-900",
+    active: "bg-primary text-white border-primary",
     idle: "bg-white text-slate-600 border-slate-200 hover:bg-slate-50",
   },
   Pricing: {
@@ -246,7 +246,7 @@ export default function RevenueAssuranceRulesPage() {
       {/* Rules Table */}
       <div className="overflow-x-auto border border-slate-200 rounded-lg bg-white shadow-sm">
         <table className="w-full text-sm" style={{ minWidth: 1000 }}>
-          <thead className="text-xs uppercase text-slate-200 bg-slate-800">
+          <thead className="text-xs uppercase text-slate-600 bg-slate-50">
             <tr>
               <th className="px-3 py-2.5 text-left whitespace-nowrap font-semibold" style={{ minWidth: 90 }}>
                 Rule ID

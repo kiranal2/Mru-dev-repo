@@ -1769,7 +1769,7 @@ export default function IGRSCasesPage() {
             <Button variant="outline" className="h-9" onClick={clearFilters}>
               Reset All
             </Button>
-            <Button className="h-9 bg-slate-900 hover:bg-slate-800" onClick={() => setShowMoreFilters(false)}>
+            <Button className="h-9 bg-blue-600 hover:bg-blue-700" onClick={() => setShowMoreFilters(false)}>
               Apply
             </Button>
           </div>
@@ -1826,7 +1826,7 @@ export default function IGRSCasesPage() {
         <CardContent className="p-0 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[1650px] text-sm">
-              <thead className="bg-slate-900 text-slate-100 text-xs uppercase tracking-wide">
+              <thead className="bg-slate-50 border-b-2 border-slate-200 text-slate-500 text-xs uppercase tracking-wide">
                 <tr>
                   <th className="py-2 px-3 w-[36px] text-left">
                     <input
@@ -1952,7 +1952,7 @@ export default function IGRSCasesPage() {
       />
 
       {mutating && (
-        <div className="fixed bottom-4 right-4 bg-slate-900 text-white text-xs px-3 py-2 rounded shadow">
+        <div className="fixed bottom-4 right-4 bg-slate-700 text-white text-xs px-3 py-2 rounded shadow">
           Updating case...
         </div>
       )}

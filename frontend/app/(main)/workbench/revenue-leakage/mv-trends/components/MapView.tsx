@@ -108,7 +108,7 @@ export function MapView({
             setSelectedDistrict(null);
             setSelectedSro(null);
           }}
-          className={`px-3 py-1 rounded-full text-xs font-semibold border ${mapView === "state" && !selectedDistrict && !selectedSro ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 border-slate-200"}`}
+          className={`px-3 py-1 rounded-full text-xs font-semibold border ${mapView === "state" && !selectedDistrict && !selectedSro ? "bg-primary text-white border-primary" : "bg-white text-slate-600 border-slate-200"}`}
         >
           State View
         </button>
@@ -117,7 +117,7 @@ export function MapView({
             setMapView("district");
             setSelectedSro(null);
           }}
-          className={`px-3 py-1 rounded-full text-xs font-semibold border ${mapView === "district" ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 border-slate-200"}`}
+          className={`px-3 py-1 rounded-full text-xs font-semibold border ${mapView === "district" ? "bg-primary text-white border-primary" : "bg-white text-slate-600 border-slate-200"}`}
         >
           District View
         </button>

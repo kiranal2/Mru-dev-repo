@@ -1461,7 +1461,7 @@ export default function FluxAnalysisPage() {
         <Breadcrumb activeRoute="reports/analysis/flux-analysis" className="mb-1.5" />
         <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-slate-800 p-1.5">
+            <div className="rounded-lg bg-primary p-1.5">
               <BarChart3 className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -1484,7 +1484,7 @@ export default function FluxAnalysisPage() {
             </Button>
             <Button
               size="sm"
-              className="bg-slate-800 text-white hover:bg-slate-700"
+              className="bg-primary text-white hover:bg-primary/90"
               onClick={handleOpenWatchDialog}
             >
               <Plus className="mr-1.5 h-4 w-4" /> Create Watch
@@ -1675,17 +1675,17 @@ export default function FluxAnalysisPage() {
                         <div className="min-w-[920px]">
                           <Table>
                             <TableHeader>
-                              <TableRow className="bg-slate-900">
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Acct</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Name</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Base</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Actual</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">&Delta;</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">&Delta;%</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Driver</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Owner</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Evidence</TableHead>
-                                <TableHead className="min-w-[118px] text-xs font-medium text-slate-100 uppercase tracking-wide">Status</TableHead>
+                              <TableRow className="bg-slate-50 border-b-2 border-slate-200">
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Acct</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Name</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Base</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Actual</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">&Delta;</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">&Delta;%</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Driver</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Owner</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Evidence</TableHead>
+                                <TableHead className="min-w-[118px] text-xs font-medium text-slate-500 uppercase tracking-wide">Status</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>{renderTableRows(pagedRows)}</TableBody>
@@ -1704,17 +1704,17 @@ export default function FluxAnalysisPage() {
                         <div className="min-w-[920px]">
                           <Table>
                             <TableHeader>
-                              <TableRow className="bg-slate-900">
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Acct</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Name</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Base</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Actual</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">&Delta;</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">&Delta;%</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Driver</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Owner</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Evidence</TableHead>
-                                <TableHead className="min-w-[118px] text-xs font-medium text-slate-100 uppercase tracking-wide">Status</TableHead>
+                              <TableRow className="bg-slate-50 border-b-2 border-slate-200">
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Acct</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Name</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Base</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Actual</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">&Delta;</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">&Delta;%</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Driver</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Owner</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Evidence</TableHead>
+                                <TableHead className="min-w-[118px] text-xs font-medium text-slate-500 uppercase tracking-wide">Status</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>{renderTableRows(pagedRows)}</TableBody>
@@ -1729,12 +1729,12 @@ export default function FluxAnalysisPage() {
                           <div className="min-w-[700px]">
                             <Table>
                               <TableHeader>
-                                <TableRow className="bg-slate-900">
-                                  <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Account</TableHead>
-                                  <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Opening</TableHead>
-                                  <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Activity</TableHead>
-                                  <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Closing</TableHead>
-                                  <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Notes</TableHead>
+                                <TableRow className="bg-slate-50 border-b-2 border-slate-200">
+                                  <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Account</TableHead>
+                                  <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Opening</TableHead>
+                                  <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Activity</TableHead>
+                                  <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Closing</TableHead>
+                                  <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Notes</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
@@ -1771,10 +1771,10 @@ export default function FluxAnalysisPage() {
                         <div className="min-w-[500px]">
                           <Table>
                             <TableHeader>
-                              <TableRow className="bg-slate-900">
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Component</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Impact</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Narrative</TableHead>
+                              <TableRow className="bg-slate-50 border-b-2 border-slate-200">
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Component</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Impact</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Narrative</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -1812,12 +1812,12 @@ export default function FluxAnalysisPage() {
                   <div className="min-w-[620px]">
                     <Table>
                       <TableHeader>
-                        <TableRow className="bg-slate-900">
-                          <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Driver</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Impact ($)</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Impact (%)</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Confidence</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Trend</TableHead>
+                        <TableRow className="bg-slate-50 border-b-2 border-slate-200">
+                          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Driver</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Impact ($)</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Impact (%)</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Confidence</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">Trend</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1996,7 +1996,7 @@ export default function FluxAnalysisPage() {
                     />
                     <Button
                       size="icon"
-                      className="h-10 w-10 shrink-0 bg-slate-800 hover:bg-slate-700"
+                      className="h-10 w-10 shrink-0 bg-primary hover:bg-primary/90"
                       onClick={() => handleAsk()}
                       disabled={aiIsThinking || !aiPrompt.trim()}
                     >
@@ -2468,7 +2468,7 @@ export default function FluxAnalysisPage() {
                 Cancel
               </Button>
               <Button
-                className="h-9 bg-slate-800 px-5 text-sm text-white hover:bg-slate-700"
+                className="h-9 bg-primary px-5 text-sm text-white hover:bg-primary/90"
                 onClick={handleCreateWatch}
               >
                 <Bell className="mr-2 h-4 w-4" />

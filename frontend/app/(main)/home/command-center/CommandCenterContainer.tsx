@@ -85,7 +85,7 @@ export default function CommandCenterContainer({ initialSessionId }: CommandCent
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-[#0A3B77]" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-primary" />
           <p className="text-sm text-gray-500">Loading session...</p>
         </div>
       </div>

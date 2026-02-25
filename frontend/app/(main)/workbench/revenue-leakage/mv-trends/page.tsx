@@ -100,7 +100,7 @@ export default function MVTrendsPage() {
                 onClick={() => setActiveView(view.id)}
                 className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
                   activeView === view.id
-                    ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                    ? "bg-primary text-white border-primary shadow-sm"
                     : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                 }`}
               >

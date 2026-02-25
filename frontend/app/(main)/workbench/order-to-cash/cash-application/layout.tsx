@@ -250,7 +250,7 @@ export default function CashApplicationLayout({ children }: { children: React.Re
                     onClick={() => router.push(item.path)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
                       active
-                        ? "bg-slate-900 text-white"
+                        ? "bg-slate-100 text-slate-900 border border-slate-200"
                         : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     }`}
                   >
@@ -266,7 +266,7 @@ export default function CashApplicationLayout({ children }: { children: React.Re
                   <button
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
                       activeOverflowItem
-                        ? "bg-slate-900 text-white"
+                        ? "bg-slate-100 text-slate-900 border border-slate-200"
                         : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     }`}
                   >

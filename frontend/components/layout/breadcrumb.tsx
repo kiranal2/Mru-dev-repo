@@ -119,12 +119,12 @@ export default function Breadcrumb({ activeRoute, className }: BreadcrumbProps) 
       {breadcrumbs.map((breadcrumb, index) => (
         <React.Fragment key={index}>
           {index > 0 && (
-            <ChevronRight size={14} className="text-[#030712] flex-shrink-0" aria-hidden="true" />
+            <ChevronRight size={14} className="text-slate-300 flex-shrink-0" aria-hidden="true" />
           )}
           <span
             className={cn(
-              "transition-colors duration-200 text-[#0A3B77]",
-              index === breadcrumbs.length - 1 ? "font-medium" : "hover:opacity-80"
+              "transition-colors duration-200 text-[13px]",
+              index === breadcrumbs.length - 1 ? "text-slate-900 font-medium" : "text-slate-500 hover:opacity-80"
             )}
           >
             {breadcrumb}

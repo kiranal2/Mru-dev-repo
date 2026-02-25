@@ -119,8 +119,8 @@ export default function PromptComposer({
                     className={cn(
                       "inline-flex items-center gap-1 h-6 px-2 border rounded-full text-xs font-medium transition-all duration-150 ease-out",
                       openDropdownId === chip.id
-                        ? "bg-[#0A3B77] text-white border-[#0A3B77]"
-                        : "bg-white text-[#0A3B77] border-[#0A3B77] hover:bg-[#0A3B77] hover:text-white"
+                        ? "bg-primary text-white border-primary"
+                        : "bg-white text-primary border-primary hover:bg-primary hover:text-white"
                     )}
                     aria-label={`Toggle ${chip.text} options`}
                   >
@@ -215,7 +215,7 @@ export default function PromptComposer({
               onClick={onSendClick}
               disabled={!composerValue.trim() || !isConnected || isLoading}
               className={cn(
-                "w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-[#D2D2D2] flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#0A3B77] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
+                "w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-[#D2D2D2] flex items-center justify-center hover:border-[#6B7EF3] hover:bg-primary hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
                 (!composerValue.trim() || !isConnected || isLoading) && "opacity-50 cursor-not-allowed"
               )}
               aria-label="Send prompt"

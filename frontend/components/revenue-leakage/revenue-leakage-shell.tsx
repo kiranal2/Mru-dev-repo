@@ -75,7 +75,7 @@ export function RevenueLeakageShell({
                   className={cn(
                     "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-slate-900 text-white"
+                      ? "bg-primary text-white"
                       : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                   )}
                 >

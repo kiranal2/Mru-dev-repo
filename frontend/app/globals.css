@@ -20,14 +20,39 @@
   --shadow-elevation-4: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.03);
 
   /* ── Brand gradient palette ── */
-  --gradient-primary: linear-gradient(135deg, #0A3B77 0%, #1E6BC6 50%, #3B8FE8 100%);
-  --gradient-primary-subtle: linear-gradient(135deg, #E8F1FC 0%, #D4E6F9 50%, #C0DAF6 100%);
+  --gradient-primary: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #60A5FA 100%);
+  --gradient-primary-subtle: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%);
   --gradient-accent: linear-gradient(135deg, #6366F1 0%, #818CF8 50%, #A5B4FC 100%);
   --gradient-success: linear-gradient(135deg, #059669 0%, #10B981 50%, #34D399 100%);
   --gradient-warning: linear-gradient(135deg, #D97706 0%, #F59E0B 50%, #FBBF24 100%);
   --gradient-danger: linear-gradient(135deg, #DC2626 0%, #EF4444 50%, #F87171 100%);
-  --gradient-sidebar: linear-gradient(180deg, #0A3B77 0%, #0E4D8F 40%, #1260A8 100%);
+  --gradient-sidebar: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
   --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%);
+
+  /* ── Semantic color tokens ── */
+  --color-danger-50: #FEF2F2;
+  --color-danger-100: #FEE2E2;
+  --color-danger-500: #EF4444;
+  --color-danger-600: #DC2626;
+  --color-danger-700: #B91C1C;
+
+  --color-warning-50: #FFFBEB;
+  --color-warning-100: #FEF3C7;
+  --color-warning-500: #F59E0B;
+  --color-warning-600: #D97706;
+  --color-warning-700: #B45309;
+
+  --color-info-50: #EFF6FF;
+  --color-info-100: #DBEAFE;
+  --color-info-500: #3B82F6;
+  --color-info-600: #2563EB;
+  --color-info-700: #1D4ED8;
+
+  --color-success-50: #F0FDF4;
+  --color-success-100: #DCFCE7;
+  --color-success-500: #22C55E;
+  --color-success-600: #16A34A;
+  --color-success-700: #15803D;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,8 +71,8 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 217 91% 40%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
@@ -56,9 +81,9 @@
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 40%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -105,11 +130,11 @@
 
 /* Custom tooltip styles */
 [data-radix-tooltip-content] {
-  background: rgba(17, 24, 39, 0.92) !important;
+  background: #0F172A !important;
   color: #ffffff !important;
   font-size: 12px !important;
   font-weight: 500 !important;
-  padding: 6px 8px !important;
+  padding: 8px 12px !important;
   border-radius: 6px !important;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14) !important;
   border: none !important;
@@ -139,12 +164,12 @@
 }
 
 .drawer-content::-webkit-scrollbar-thumb {
-  background: rgba(107, 126, 243, 0.3);
+  background: #CBD5E1;
   border-radius: 2px;
 }
 
 .drawer-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(107, 126, 243, 0.5);
+  background: #94A3B8;
 }
 
 /* Shimmer animation for loading skeletons */
@@ -231,8 +256,8 @@
 }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 4px rgba(10, 59, 119, 0.15); }
-  50% { box-shadow: 0 0 16px rgba(10, 59, 119, 0.25); }
+  0%, 100% { box-shadow: 0 0 4px rgba(30, 64, 175, 0.15); }
+  50% { box-shadow: 0 0 16px rgba(30, 64, 175, 0.25); }
 }
 
 @keyframes card-hover-lift {
@@ -266,8 +291,8 @@
 }
 
 @keyframes border-glow {
-  0%, 100% { border-color: rgba(10, 59, 119, 0.1); }
-  50% { border-color: rgba(10, 59, 119, 0.25); }
+  0%, 100% { border-color: rgba(30, 64, 175, 0.1); }
+  50% { border-color: rgba(30, 64, 175, 0.25); }
 }
 
 @keyframes progress-bar {
@@ -353,7 +378,7 @@
   transition: background-color 0.15s ease, transform 0.15s ease;
 }
 .table-row-hover:hover {
-  background-color: rgba(10, 59, 119, 0.03);
+  background-color: #F1F5F9;
 }
 
 /* ── Stagger children utility ── */
@@ -395,7 +420,7 @@
 /* ── Smooth scrollbar (global) ── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(10, 59, 119, 0.15) transparent;
+  scrollbar-color: #CBD5E1 transparent;
 }
 *::-webkit-scrollbar {
   width: 6px;
@@ -405,9 +430,9 @@
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background: rgba(10, 59, 119, 0.15);
+  background: #CBD5E1;
   border-radius: 3px;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: rgba(10, 59, 119, 0.3);
+  background: #94A3B8;
 }

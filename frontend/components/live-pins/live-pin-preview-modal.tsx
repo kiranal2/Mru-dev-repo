@@ -83,7 +83,7 @@ export function LivePinPreviewModal({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 [&>button]:hidden -mt-16">
         {/* Header */}
-        <DialogHeader className="bg-[#0A3B77] text-white p-4 rounded-t-lg">
+        <DialogHeader className="bg-primary text-white p-4 rounded-t-lg">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-lg font-semibold">Live Pins</DialogTitle>
             <Button
@@ -223,7 +223,7 @@ export function LivePinPreviewModal({
             </Button>
             <Button
               onClick={handleSave}
-              className="bg-[#0A3B77] hover:bg-[#0A3B77]/90 text-white text-xs px-3 py-1 h-8"
+              className="bg-primary hover:bg-primary/90 text-white text-xs px-3 py-1 h-8"
               disabled={saving}
             >
               {saving ? (

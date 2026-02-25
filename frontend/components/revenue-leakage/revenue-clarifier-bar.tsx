@@ -256,7 +256,7 @@ export function RevenueClarifierBar({
           size="sm"
           onClick={handleRun}
           disabled={!canRun || busy}
-          className="h-9 px-4 bg-slate-900 hover:bg-slate-800"
+          className="h-9 px-4 bg-primary hover:bg-primary/90"
         >
           {busy ? (
             <Loader2 className="h-4 w-4 animate-spin" />
