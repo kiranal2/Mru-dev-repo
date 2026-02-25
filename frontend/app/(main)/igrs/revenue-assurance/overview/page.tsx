@@ -60,6 +60,7 @@ const SIGNAL_LABELS: Record<IGRSLeakageSignal, string> = {
   DataIntegrity: "Data",
   CashReconciliation: "Cash Recon",
   StampInventory: "Stamp Inv",
+  ClassificationFraud: "Classif.",
 };
 
 const SIGNAL_COLORS: Record<IGRSLeakageSignal, string> = {
@@ -71,6 +72,7 @@ const SIGNAL_COLORS: Record<IGRSLeakageSignal, string> = {
   DataIntegrity: "#64748b",
   CashReconciliation: "#10b981",
   StampInventory: "#14b8a6",
+  ClassificationFraud: "#f97316",
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -189,7 +191,8 @@ export default function IGRSOverviewPage() {
     const dataIntegrityFlags = cases.filter((c: IGRSCase) => c.leakageSignals.includes("DataIntegrity")).length;
     const exemptionAbuseFlags = dashboard?.exemptionAbuseFlags ?? 0;
     const cashReconAlerts = dashboard?.cashReconAlerts ?? 0;
-    return { prohibitedHits, gapOverThreshold, delayOverThreshold, dataIntegrityFlags, exemptionAbuseFlags, cashReconAlerts };
+    const classificationFraudCases = cases.filter((c: IGRSCase) => c.leakageSignals.includes("ClassificationFraud")).length;
+    return { prohibitedHits, gapOverThreshold, delayOverThreshold, dataIntegrityFlags, exemptionAbuseFlags, cashReconAlerts, classificationFraudCases };
   }, [cases, dashboard]);
 
   const leakageBarData = useMemo(() => {
@@ -510,7 +513,7 @@ export default function IGRSOverviewPage() {
       >
         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${detailsOpen ? "rotate-0" : "-rotate-90"}`} />
         <span className="font-medium">Detailed Metrics</span>
-        <span className="text-slate-400">({10} indicators)</span>
+        <span className="text-slate-400">({11} indicators)</span>
       </button>
 
       {detailsOpen && (
@@ -560,6 +563,13 @@ export default function IGRSOverviewPage() {
           >
             <p className="text-[11px] text-emerald-600">Cash Recon Alerts</p>
             <p className="text-sm font-semibold text-emerald-700">{thresholdStats.cashReconAlerts}</p>
+          </div>
+          <div
+            className="flex items-center justify-between rounded-lg border border-orange-200 bg-orange-50/50 px-3 py-2 cursor-pointer hover:bg-orange-50 transition-colors"
+            onClick={() => router.push("/igrs/revenue-assurance/cases?signal=ClassificationFraud")}
+          >
+            <p className="text-[11px] text-orange-600">Classification Fraud</p>
+            <p className="text-sm font-semibold text-orange-700">{thresholdStats.classificationFraudCases}</p>
           </div>
         </div>
       )}

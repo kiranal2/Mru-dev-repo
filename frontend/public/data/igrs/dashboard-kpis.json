@@ -13,7 +13,8 @@
     { "signal": "DataIntegrity", "high": 1, "medium": 3, "low": 2 },
     { "signal": "CashReconciliation", "high": 6, "medium": 6, "low": 0 },
     { "signal": "StampInventory", "high": 2, "medium": 1, "low": 1 },
-    { "signal": "ProhibitedLand", "high": 1, "medium": 1, "low": 0 }
+    { "signal": "ProhibitedLand", "high": 1, "medium": 1, "low": 0 },
+    { "signal": "ClassificationFraud", "high": 2, "medium": 2, "low": 0 }
   ],
   "topOfficesByGap": [
     { "srCode": "SR10", "srName": "Anantapur SRO", "gapInr": 830000, "cases": 2 },

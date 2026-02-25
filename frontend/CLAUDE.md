@@ -127,7 +127,7 @@ Action-oriented tools for deep operational work. Unlike Reports, Workbenches are
 ### Rail 5: IGRS (Indian Government Revenue Assurance)
 Dedicated module for stamp duty revenue assurance across Indian sub-registrar offices. All amounts in INR. **NOT part of Meeru AI enterprise scope.**
 
-#### 8 Leakage Signal Types
+#### 9 Leakage Signal Types
 1. **RevenueGap** — Mismatch between expected stamp duty and actual payment
 2. **ChallanDelay** — Abnormal delay (>10 days) between presentation and registration
 3. **ExemptionRisk** — Suspicious or ineligible exemption claims
@@ -136,6 +136,7 @@ Dedicated module for stamp duty revenue assurance across Indian sub-registrar of
 6. **DataIntegrity** — Missing/inconsistent registration data fields
 7. **CashReconciliation** — Cash collection GL vs treasury mismatch
 8. **StampInventory** — Physical stamp paper inventory discrepancy
+9. **ClassificationFraud** — Wrong property classification (Webland/Form cross-verification) to reduce stamp duty
 
 | Page | What It Does |
 |------|-------------|
@@ -350,4 +351,14 @@ Key routes in `app/api/`:
   - **Phase 5 (Page Fixes)**: Eliminated all ~98 `#0A3B77` references across ~30 files. Converted selected tab/chip states from `bg-slate-900` to `bg-primary`. Converted 3 dark table headers to light `bg-slate-50` style.
   - **Button variant type** now includes `'danger'` in addition to existing variants.
   - **Sidebar width** changed from `w-[72px]` to `w-16` (64px). Nav panel from `w-[280px]` to `w-60` (240px).
+  - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.
+
+### 2026-02-25 (b)
+- **ClassificationFraud — 9th IGRS Signal Type** added across 8 files:
+  - **Types** (`lib/data/types/igrs.ts`): Added `"ClassificationFraud"` to `IGRSLeakageSignal` union, `"Classification"` to `IGRSRuleCategory` union, `classificationFraudEvidence?` to `IGRSCase`, `ClassificationFraud` entry to `IGRS_SIGNAL_CONFIG`, and 4 new interfaces (`ClassificationCrossVerificationRow`, `ClassificationHistoryEntry`, `ClassificationDutyImpact`, `ClassificationFraudEvidenceExtended`).
+  - **Mock data**: 5 rules (`R-CF-001` to `R-CF-005`) in `rules.json`, 6 signals in `signals.json`, 4 cases (`IGRS-2024-0044` to `IGRS-2024-0047`) in `cases.json`, `ClassificationFraud` entry in `dashboard-kpis.json` `leakageBySignal`.
+  - **Overview page** (`overview/page.tsx`): Added to `SIGNAL_LABELS`, `SIGNAL_COLORS`, `thresholdStats`, new clickable "Classification Fraud" card (orange theme).
+  - **Admin rules tab** (`admin/_components/rules-tab.tsx`): Added `"Classification"` to `CATEGORY_OPTIONS` and category color map.
+  - **Cases page** (`cases/page.tsx`): Added to `SIGNAL_OPTIONS`, `SIGNAL_BADGES`, `SIGNAL_CHIP_STYLES`, `SIGNAL_LABELS`. New "Classification" drawer tab with 5 sections (Mismatch Summary, Form Cross-Verification table, Conversion History timeline, Duty Impact Analysis with rate comparison bars, Triggered Rules).
+  - IGRS leakage signal count updated from 8 to 9 in CLAUDE.md.
   - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.

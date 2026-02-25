@@ -5866,5 +5866,493 @@
         "detail": "Auto-detected by rule R-CR-008: MIS remittance mismatch at SR06 — ₹55K variance, 1-day late submission"
       }
     ]
+  },
+  {
+    "id": "IGRS-2024-0044",
+    "caseId": "IGRS-2024-0044",
+    "documentKey": {
+      "srCode": "105",
+      "bookNo": "1",
+      "doctNo": "4521",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-08T09:00:00Z",
+    "updatedAt": "2025-01-10T11:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 82,
+    "confidence": 88,
+    "status": "New",
+    "assignedTo": "SK",
+    "leakageSignals": ["ClassificationFraud", "RevenueGap"],
+    "impactAmountInr": 180000,
+    "payableTotalInr": 700000,
+    "paidTotalInr": 520000,
+    "gapInr": 180000,
+    "office": {
+      "srCode": "SR05",
+      "srName": "Visakhapatnam SRO",
+      "district": "Visakhapatnam",
+      "zone": "North"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2025-01-05",
+      "eDate": "2025-01-06",
+      "rDate": "2025-01-08"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "Commercial",
+      "extent": "2400 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      { "code": "P001", "name": "Ravi Kumar Reddy", "panNo": "BKJPR3456K" },
+      { "code": "P002", "name": "Srinivas Rao M", "panNo": "CDJPS7890L" }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 420000,
+      "tdPayable": 120000,
+      "rfPayable": 80000,
+      "dsdPayable": 50000,
+      "otherFee": 30000,
+      "finalTaxableValue": 6000000
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CF-001",
+          "ruleName": "Webland Classification Mismatch",
+          "category": "Classification",
+          "severity": "High",
+          "impactInr": 180000,
+          "explanation": "Webland shows 'Commercial' but Form 2 registers as 'Residential' — stamp duty differential of ₹1.8L",
+          "confidence": 88
+        },
+        {
+          "ruleId": "R-CF-002",
+          "ruleName": "Commercial-to-Residential Downgrade",
+          "category": "Classification",
+          "severity": "High",
+          "impactInr": 180000,
+          "explanation": "Commercial property registered as Residential — duty rate 5% applied instead of correct 7%",
+          "confidence": 85
+        }
+      ],
+      "receiptCount": 2,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 3,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "classificationFraudEvidence": {
+      "declaredClassification": "Residential",
+      "actualClassification": "Commercial",
+      "weblandClassification": "Commercial",
+      "form1Classification": "Commercial",
+      "form2Classification": "Residential",
+      "classificationRiskScore": 82,
+      "estimatedDutyLoss": 180000,
+      "crossVerification": [
+        { "field": "Land Classification", "form1Value": "Commercial", "form2Value": "Residential", "weblandValue": "Commercial", "mismatch": true },
+        { "field": "Zone Type", "form1Value": "Commercial Zone", "form2Value": "Residential Zone", "weblandValue": "Commercial Zone", "mismatch": true },
+        { "field": "Survey Number", "form1Value": "245/A", "form2Value": "245/A", "weblandValue": "245/A", "mismatch": false },
+        { "field": "Extent", "form1Value": "2400 sq.ft", "form2Value": "2400 sq.ft", "weblandValue": "2400 sq.ft", "mismatch": false },
+        { "field": "Municipal Ward", "form1Value": "Ward 12", "form2Value": "Ward 12", "weblandValue": "Ward 12", "mismatch": false }
+      ],
+      "conversionHistory": [
+        { "date": "2025-01-06", "fromClassification": "Commercial", "toClassification": "Residential", "documentId": "DOC-2025-04521", "registeredBy": "SRO Visakhapatnam", "suspicious": true }
+      ],
+      "dutyImpact": {
+        "declaredDutyRate": 5,
+        "correctDutyRate": 7,
+        "declaredValue": 6000000,
+        "correctValue": 6000000,
+        "dutyPaid": 300000,
+        "dutyOwed": 420000,
+        "dutyGap": 120000
+      }
+    },
+    "notes": [],
+    "activityLog": [
+      {
+        "id": "log-44a",
+        "ts": "2025-01-08T09:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rules R-CF-001 and R-CF-002: Webland shows Commercial but Form 2 registered as Residential — ₹1.8L gap"
+      }
+    ]
+  },
+  {
+    "id": "IGRS-2024-0045",
+    "caseId": "IGRS-2024-0045",
+    "documentKey": {
+      "srCode": "102",
+      "bookNo": "1",
+      "doctNo": "4633",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-09T10:30:00Z",
+    "updatedAt": "2025-01-11T09:00:00Z",
+    "riskLevel": "Medium",
+    "riskScore": 65,
+    "confidence": 76,
+    "status": "In Review",
+    "assignedTo": "DR",
+    "leakageSignals": ["ClassificationFraud"],
+    "impactAmountInr": 95000,
+    "payableTotalInr": 450000,
+    "paidTotalInr": 355000,
+    "gapInr": 95000,
+    "office": {
+      "srCode": "SR02",
+      "srName": "Guntur SRO",
+      "district": "Guntur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2024-12-20",
+      "eDate": "2024-12-22",
+      "rDate": "2025-01-09"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "Mixed-Use",
+      "extent": "1800 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      { "code": "P001", "name": "Lakshmi Devi P", "panNo": "ADPPL6789M" }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 270000,
+      "tdPayable": 80000,
+      "rfPayable": 50000,
+      "dsdPayable": 30000,
+      "otherFee": 20000,
+      "finalTaxableValue": 4500000
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CF-003",
+          "ruleName": "Form 1/Form 2 Classification Discrepancy",
+          "category": "Classification",
+          "severity": "Medium",
+          "impactInr": 95000,
+          "explanation": "Form 1 filed as 'Commercial' on Dec 20, but Form 2 registered as 'Mixed-Use' on Jan 9 — classification changed without conversion order",
+          "confidence": 76
+        }
+      ],
+      "receiptCount": 1,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 5,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "classificationFraudEvidence": {
+      "declaredClassification": "Mixed-Use",
+      "actualClassification": "Commercial",
+      "weblandClassification": "Commercial",
+      "form1Classification": "Commercial",
+      "form2Classification": "Mixed-Use",
+      "classificationRiskScore": 65,
+      "estimatedDutyLoss": 95000,
+      "crossVerification": [
+        { "field": "Land Classification", "form1Value": "Commercial", "form2Value": "Mixed-Use", "weblandValue": "Commercial", "mismatch": true },
+        { "field": "Zone Type", "form1Value": "Commercial Zone", "form2Value": "Mixed Zone", "weblandValue": "Commercial Zone", "mismatch": true },
+        { "field": "Survey Number", "form1Value": "312/C", "form2Value": "312/C", "weblandValue": "312/C", "mismatch": false },
+        { "field": "Extent", "form1Value": "1800 sq.ft", "form2Value": "1800 sq.ft", "weblandValue": "1800 sq.ft", "mismatch": false }
+      ],
+      "conversionHistory": [
+        { "date": "2024-12-20", "fromClassification": "Commercial", "toClassification": "Commercial", "documentId": "DOC-2024-FORM1-4633", "registeredBy": "Applicant", "suspicious": false },
+        { "date": "2025-01-09", "fromClassification": "Commercial", "toClassification": "Mixed-Use", "documentId": "DOC-2025-04633", "registeredBy": "SRO Guntur", "suspicious": true }
+      ],
+      "dutyImpact": {
+        "declaredDutyRate": 5.5,
+        "correctDutyRate": 7,
+        "declaredValue": 4500000,
+        "correctValue": 4500000,
+        "dutyPaid": 247500,
+        "dutyOwed": 315000,
+        "dutyGap": 67500
+      }
+    },
+    "notes": [],
+    "activityLog": [
+      {
+        "id": "log-45a",
+        "ts": "2025-01-09T10:30:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CF-003: Form 1/Form 2 classification discrepancy — Commercial changed to Mixed-Use without conversion order"
+      }
+    ]
+  },
+  {
+    "id": "IGRS-2024-0046",
+    "caseId": "IGRS-2024-0046",
+    "documentKey": {
+      "srCode": "103",
+      "bookNo": "1",
+      "doctNo": "4712",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-10T08:00:00Z",
+    "updatedAt": "2025-01-12T14:00:00Z",
+    "riskLevel": "High",
+    "riskScore": 90,
+    "confidence": 91,
+    "status": "New",
+    "assignedTo": null,
+    "leakageSignals": ["ClassificationFraud", "RevenueGap"],
+    "impactAmountInr": 320000,
+    "payableTotalInr": 950000,
+    "paidTotalInr": 630000,
+    "gapInr": 320000,
+    "office": {
+      "srCode": "SR03",
+      "srName": "Chittoor SRO",
+      "district": "Chittoor",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2025-01-07",
+      "eDate": "2025-01-08",
+      "rDate": "2025-01-10"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "Commercial",
+      "extent": "3200 sq.ft",
+      "unit": "sq.ft"
+    },
+    "partiesSummary": [
+      { "code": "P001", "name": "Nagaraju K", "panNo": "KLJMN4567P" },
+      { "code": "P002", "name": "Venkateswarlu B", "panNo": "QRSTV8901W" }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 570000,
+      "tdPayable": 160000,
+      "rfPayable": 120000,
+      "dsdPayable": 60000,
+      "otherFee": 40000,
+      "finalTaxableValue": 8500000
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CF-004",
+          "ruleName": "Repeated Reclassification by Same Party",
+          "category": "Classification",
+          "severity": "High",
+          "impactInr": 320000,
+          "explanation": "PAN KLJMN4567P involved in 4 transactions with classification changes — all from Commercial/Industrial to Residential/Agricultural",
+          "confidence": 91
+        },
+        {
+          "ruleId": "R-CF-001",
+          "ruleName": "Webland Classification Mismatch",
+          "category": "Classification",
+          "severity": "High",
+          "impactInr": 320000,
+          "explanation": "Webland shows 'Commercial' but registered as 'Residential' — systematic pattern across multiple SROs",
+          "confidence": 89
+        }
+      ],
+      "receiptCount": 2,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 0
+    },
+    "sla": {
+      "ageingDays": 2,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "classificationFraudEvidence": {
+      "declaredClassification": "Residential",
+      "actualClassification": "Commercial",
+      "weblandClassification": "Commercial",
+      "form1Classification": "Commercial",
+      "form2Classification": "Residential",
+      "classificationRiskScore": 90,
+      "estimatedDutyLoss": 320000,
+      "crossVerification": [
+        { "field": "Land Classification", "form1Value": "Commercial", "form2Value": "Residential", "weblandValue": "Commercial", "mismatch": true },
+        { "field": "Zone Type", "form1Value": "Industrial Zone", "form2Value": "Residential Zone", "weblandValue": "Industrial Zone", "mismatch": true },
+        { "field": "Survey Number", "form1Value": "187/B", "form2Value": "187/B", "weblandValue": "187/B", "mismatch": false },
+        { "field": "Owner Name", "form1Value": "Nagaraju K", "form2Value": "Nagaraju K", "weblandValue": "Nagaraju K", "mismatch": false },
+        { "field": "Municipal Ward", "form1Value": "Ward 8", "form2Value": "Ward 8", "weblandValue": "Ward 8", "mismatch": false }
+      ],
+      "conversionHistory": [
+        { "date": "2024-06-15", "fromClassification": "Commercial", "toClassification": "Residential", "documentId": "DOC-2024-02134", "registeredBy": "SRO Tirupati", "suspicious": true },
+        { "date": "2024-08-22", "fromClassification": "Industrial", "toClassification": "Agricultural", "documentId": "DOC-2024-03567", "registeredBy": "SRO Chittoor", "suspicious": true },
+        { "date": "2024-11-10", "fromClassification": "Commercial", "toClassification": "Residential", "documentId": "DOC-2024-04089", "registeredBy": "SRO Tirupati", "suspicious": true },
+        { "date": "2025-01-10", "fromClassification": "Commercial", "toClassification": "Residential", "documentId": "DOC-2025-04712", "registeredBy": "SRO Chittoor", "suspicious": true }
+      ],
+      "dutyImpact": {
+        "declaredDutyRate": 5,
+        "correctDutyRate": 7.5,
+        "declaredValue": 8500000,
+        "correctValue": 8500000,
+        "dutyPaid": 425000,
+        "dutyOwed": 637500,
+        "dutyGap": 212500
+      }
+    },
+    "notes": [],
+    "activityLog": [
+      {
+        "id": "log-46a",
+        "ts": "2025-01-10T08:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rules R-CF-004 and R-CF-001: Repeated reclassification by PAN KLJMN4567P — 4 suspicious classification changes across 2 SROs, total gap ₹3.2L"
+      }
+    ]
+  },
+  {
+    "id": "IGRS-2024-0047",
+    "caseId": "IGRS-2024-0047",
+    "documentKey": {
+      "srCode": "102",
+      "bookNo": "1",
+      "doctNo": "4801",
+      "regYear": "2025"
+    },
+    "createdAt": "2025-01-11T11:00:00Z",
+    "updatedAt": "2025-01-13T10:00:00Z",
+    "riskLevel": "Medium",
+    "riskScore": 68,
+    "confidence": 74,
+    "status": "New",
+    "assignedTo": "DR",
+    "leakageSignals": ["ClassificationFraud", "ExemptionRisk"],
+    "impactAmountInr": 450000,
+    "payableTotalInr": 550000,
+    "paidTotalInr": 100000,
+    "gapInr": 450000,
+    "office": {
+      "srCode": "SR02",
+      "srName": "Guntur SRO",
+      "district": "Guntur",
+      "zone": "South"
+    },
+    "docType": {
+      "tranMajCode": "01",
+      "tranMinCode": "01",
+      "tranDesc": "Sale Deed",
+      "abDesc": "Conveyance"
+    },
+    "dates": {
+      "pDate": "2025-01-08",
+      "eDate": "2025-01-09",
+      "rDate": "2025-01-11"
+    },
+    "propertySummary": {
+      "isUrban": true,
+      "landNature": "Agricultural",
+      "extent": "2.5 acres",
+      "unit": "acres"
+    },
+    "partiesSummary": [
+      { "code": "P001", "name": "Rambabu G", "panNo": "EFGHJ2345N" }
+    ],
+    "payableBreakdown": {
+      "sdPayable": 330000,
+      "tdPayable": 100000,
+      "rfPayable": 70000,
+      "dsdPayable": 30000,
+      "otherFee": 20000,
+      "finalTaxableValue": 5500000
+    },
+    "evidence": {
+      "triggeredRules": [
+        {
+          "ruleId": "R-CF-005",
+          "ruleName": "Agricultural Land in Urban Zone",
+          "category": "Classification",
+          "severity": "Medium",
+          "impactInr": 450000,
+          "explanation": "Survey 128/B within Mangalagiri Municipal limits declared as 'Agricultural' — property in UDA zone, agricultural exemption of ₹4.5L likely invalid",
+          "confidence": 74
+        }
+      ],
+      "receiptCount": 1,
+      "prohibitedMatchCount": 0,
+      "mvDeviationPct": 0,
+      "exemptionCount": 1
+    },
+    "sla": {
+      "ageingDays": 4,
+      "ageingBucket": "0-7d",
+      "slaBreached": false
+    },
+    "classificationFraudEvidence": {
+      "declaredClassification": "Agricultural",
+      "actualClassification": "Residential",
+      "weblandClassification": "Residential",
+      "form1Classification": "Agricultural",
+      "form2Classification": "Agricultural",
+      "classificationRiskScore": 68,
+      "estimatedDutyLoss": 450000,
+      "crossVerification": [
+        { "field": "Land Classification", "form1Value": "Agricultural", "form2Value": "Agricultural", "weblandValue": "Residential", "mismatch": true },
+        { "field": "Zone Type", "form1Value": "Agricultural Zone", "form2Value": "Agricultural Zone", "weblandValue": "UDA Residential Zone", "mismatch": true },
+        { "field": "Survey Number", "form1Value": "128/B", "form2Value": "128/B", "weblandValue": "128/B", "mismatch": false },
+        { "field": "Municipal Limits", "form1Value": "Outside", "form2Value": "Outside", "weblandValue": "Inside Mangalagiri MC", "mismatch": true },
+        { "field": "Pattadar Passbook", "form1Value": "Presented", "form2Value": "Presented", "weblandValue": "Not Agricultural", "mismatch": true }
+      ],
+      "conversionHistory": [
+        { "date": "2022-04-01", "fromClassification": "Agricultural", "toClassification": "Residential", "documentId": "GO-2022-MC-MGLR-001", "registeredBy": "Municipal Corporation", "suspicious": false },
+        { "date": "2025-01-11", "fromClassification": "Agricultural", "toClassification": "Agricultural", "documentId": "DOC-2025-04801", "registeredBy": "SRO Guntur", "suspicious": true }
+      ],
+      "dutyImpact": {
+        "declaredDutyRate": 2,
+        "correctDutyRate": 6,
+        "declaredValue": 5500000,
+        "correctValue": 5500000,
+        "dutyPaid": 110000,
+        "dutyOwed": 330000,
+        "dutyGap": 220000
+      }
+    },
+    "notes": [],
+    "activityLog": [
+      {
+        "id": "log-47a",
+        "ts": "2025-01-11T11:00:00Z",
+        "actor": "System",
+        "action": "Case created",
+        "detail": "Auto-detected by rule R-CF-005: Agricultural classification within Mangalagiri Municipal limits — ₹4.5L exemption likely invalid"
+      }
+    ]
   }
 ]

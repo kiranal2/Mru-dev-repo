@@ -13,6 +13,7 @@ import type {
   IGRSLeakageSignal,
   CashReconciliationEvidenceExtended,
   StampInventoryEvidenceExtended,
+  ClassificationFraudEvidenceExtended,
 } from "@/lib/data/types";
 import { formatINR } from "@/lib/data/utils/format-currency";
 import { Button } from "@/components/ui/button";
@@ -83,6 +84,7 @@ const SIGNAL_OPTIONS: Array<{ label: string; value: IGRSLeakageSignal }> = [
   { label: "Data Integrity", value: "DataIntegrity" },
   { label: "Cash Recon", value: "CashReconciliation" },
   { label: "Stamp Inventory", value: "StampInventory" },
+  { label: "Classification", value: "ClassificationFraud" },
 ];
 
 const SIGNAL_BADGES: Record<IGRSLeakageSignal, string> = {
@@ -94,6 +96,7 @@ const SIGNAL_BADGES: Record<IGRSLeakageSignal, string> = {
   DataIntegrity: "bg-slate-100 text-slate-700 border-slate-200",
   CashReconciliation: "bg-emerald-50 text-emerald-700 border-emerald-200",
   StampInventory: "bg-teal-50 text-teal-700 border-teal-200",
+  ClassificationFraud: "bg-orange-50 text-orange-700 border-orange-200",
 };
 
 const SIGNAL_CHIP_STYLES: Record<
@@ -132,6 +135,10 @@ const SIGNAL_CHIP_STYLES: Record<
     active: "bg-teal-100 text-teal-700 border-teal-300",
     inactive: "bg-teal-50 text-teal-700 border-teal-200",
   },
+  ClassificationFraud: {
+    active: "bg-orange-100 text-orange-700 border-orange-300",
+    inactive: "bg-orange-50 text-orange-700 border-orange-200",
+  },
 };
 
 const SIGNAL_LABELS: Record<IGRSLeakageSignal, string> = {
@@ -143,6 +150,7 @@ const SIGNAL_LABELS: Record<IGRSLeakageSignal, string> = {
   DataIntegrity: "Data Integrity",
   CashReconciliation: "Cash Recon",
   StampInventory: "Stamp Inventory",
+  ClassificationFraud: "Classification",
 };
 
 const RISK_BADGES: Record<string, string> = {
@@ -382,6 +390,9 @@ function CaseDrawer({
                   )}
                   {caseItem.leakageSignals.includes("StampInventory") && (
                     <TabsTrigger value="stamp-intel" className="text-xs">Stamp Intel</TabsTrigger>
+                  )}
+                  {caseItem.leakageSignals.includes("ClassificationFraud") && (
+                    <TabsTrigger value="classification" className="text-xs">Classification</TabsTrigger>
                   )}
                 </TabsList>
               </div>
@@ -982,6 +993,185 @@ function CaseDrawer({
                     <div className="space-y-2">
                       {caseItem.evidence.triggeredRules.filter(r => r.ruleId.startsWith("R-SI")).map(r => (
                         <div key={r.ruleId} className="border-l-2 border-teal-300 pl-3 py-1">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold">{r.ruleName}</p>
+                            <Badge variant={r.severity === "High" ? "destructive" : "secondary"} className="text-[10px]">{r.severity}</Badge>
+                          </div>
+                          <p className="text-sm text-slate-600 mt-0.5">{r.explanation}</p>
+                          {r.impactInr > 0 && <p className="text-xs text-red-600 mt-0.5">Impact: {formatINR(r.impactInr)}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </TabsContent>
+              )}
+
+              {caseItem.leakageSignals.includes("ClassificationFraud") && (
+                <TabsContent value="classification" className="px-6 py-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold">Classification Fraud Evidence</h4>
+                    <Badge variant="destructive" className="text-xs bg-orange-100 text-orange-700 border-orange-200">
+                      {caseItem.evidence.triggeredRules.filter(r => r.ruleId.startsWith("R-CF")).length} rule{caseItem.evidence.triggeredRules.filter(r => r.ruleId.startsWith("R-CF")).length !== 1 ? "s" : ""} triggered
+                    </Badge>
+                  </div>
+
+                  {/* Section 1: Mismatch Summary */}
+                  <Card className="p-4">
+                    <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Classification Mismatch Summary</h5>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-orange-50 rounded p-3">
+                        <p className="text-xs text-orange-600">Declared</p>
+                        <p className="text-lg font-bold text-orange-800">{caseItem.classificationFraudEvidence?.declaredClassification ?? "—"}</p>
+                      </div>
+                      <div className="bg-blue-50 rounded p-3">
+                        <p className="text-xs text-blue-600">Actual (Webland)</p>
+                        <p className="text-lg font-bold text-blue-800">{caseItem.classificationFraudEvidence?.weblandClassification ?? "—"}</p>
+                      </div>
+                      <div className="bg-red-50 rounded p-3">
+                        <p className="text-xs text-red-600">Risk Score</p>
+                        <p className="text-xl font-bold text-red-700">{caseItem.classificationFraudEvidence?.classificationRiskScore ?? 0}/100</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3 mt-3">
+                      <div className="bg-slate-50 rounded p-3">
+                        <p className="text-xs text-slate-500">Form 1</p>
+                        <p className="text-sm font-medium">{caseItem.classificationFraudEvidence?.form1Classification ?? "—"}</p>
+                      </div>
+                      <div className="bg-slate-50 rounded p-3">
+                        <p className="text-xs text-slate-500">Form 2</p>
+                        <p className="text-sm font-medium">{caseItem.classificationFraudEvidence?.form2Classification ?? "—"}</p>
+                      </div>
+                      <div className="bg-slate-50 rounded p-3">
+                        <p className="text-xs text-slate-500">Webland</p>
+                        <p className="text-sm font-medium">{caseItem.classificationFraudEvidence?.weblandClassification ?? "—"}</p>
+                      </div>
+                    </div>
+                    {caseItem.classificationFraudEvidence && (
+                      <div className="mt-3 bg-red-50 border border-red-200 rounded p-3">
+                        <p className="text-xs text-red-600">Estimated Duty Loss</p>
+                        <p className="text-xl font-bold text-red-700">{formatINR(caseItem.classificationFraudEvidence.estimatedDutyLoss)}</p>
+                      </div>
+                    )}
+                  </Card>
+
+                  {/* Section 2: Form Cross-Verification */}
+                  {caseItem.classificationFraudEvidence?.crossVerification && (
+                    <Card className="p-4">
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Form Cross-Verification</h5>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 px-3 py-2 rounded text-xs font-bold text-slate-500 bg-slate-50">
+                          <span className="w-32">Field</span>
+                          <span className="flex-1">Form 1</span>
+                          <span className="flex-1">Form 2</span>
+                          <span className="flex-1">Webland</span>
+                          <span className="w-20 text-center">Status</span>
+                        </div>
+                        {caseItem.classificationFraudEvidence.crossVerification.map((row, i) => (
+                          <div key={i} className={`flex items-center gap-2 px-3 py-2 rounded text-sm ${row.mismatch ? "bg-red-50 border border-red-200" : "bg-slate-50"}`}>
+                            <span className="w-32 text-xs text-slate-500">{row.field}</span>
+                            <span className="flex-1 font-mono text-xs">{row.form1Value}</span>
+                            <span className={`flex-1 font-mono text-xs ${row.mismatch ? "text-red-700 font-bold" : ""}`}>{row.form2Value}</span>
+                            <span className={`flex-1 font-mono text-xs ${row.mismatch ? "text-red-700 font-bold" : ""}`}>{row.weblandValue}</span>
+                            <span className="w-20 text-center">
+                              {row.mismatch ? <span className="text-red-500 text-[10px] font-bold">MISMATCH</span> : <span className="text-emerald-500 text-[10px] font-bold">OK</span>}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Section 3: Conversion History */}
+                  {caseItem.classificationFraudEvidence?.conversionHistory && caseItem.classificationFraudEvidence.conversionHistory.length > 0 && (
+                    <Card className="p-4">
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Conversion History</h5>
+                      <div className="space-y-0">
+                        {caseItem.classificationFraudEvidence.conversionHistory.map((entry, i) => (
+                          <div key={i} className="flex items-start gap-3 relative">
+                            <div className="flex flex-col items-center">
+                              <div className={`w-3 h-3 rounded-full border-2 ${entry.suspicious ? "bg-red-500 border-red-600" : "bg-emerald-400 border-emerald-500"}`} />
+                              {i < caseItem.classificationFraudEvidence!.conversionHistory.length - 1 && (
+                                <div className="w-0.5 h-10 bg-slate-200" />
+                              )}
+                            </div>
+                            <div className="pb-4 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold">{entry.fromClassification}</span>
+                                <span className="text-xs text-slate-400">→</span>
+                                <span className={`text-sm font-semibold ${entry.suspicious ? "text-red-700" : ""}`}>{entry.toClassification}</span>
+                                {entry.suspicious && <Badge variant="destructive" className="text-[10px]">Suspicious</Badge>}
+                              </div>
+                              <p className="text-xs text-slate-600 mt-0.5">By: {entry.registeredBy} | Doc: <span className="font-mono">{entry.documentId}</span></p>
+                              <p className="text-[10px] text-slate-400 mt-0.5">{new Date(entry.date).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Section 4: Duty Impact Analysis */}
+                  {caseItem.classificationFraudEvidence?.dutyImpact && (() => {
+                    const di = caseItem.classificationFraudEvidence.dutyImpact;
+                    const maxRate = Math.max(di.declaredDutyRate, di.correctDutyRate);
+                    return (
+                      <Card className="p-4">
+                        <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Duty Impact Analysis</h5>
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          <div className="bg-amber-50 rounded p-3">
+                            <p className="text-xs text-amber-600">Declared Duty Rate</p>
+                            <p className="text-xl font-bold text-amber-800">{di.declaredDutyRate}%</p>
+                          </div>
+                          <div className="bg-blue-50 rounded p-3">
+                            <p className="text-xs text-blue-600">Correct Duty Rate</p>
+                            <p className="text-xl font-bold text-blue-800">{di.correctDutyRate}%</p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3 mb-4">
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-500">Duty Paid</p>
+                            <p className="text-lg font-bold">{formatINR(di.dutyPaid)}</p>
+                          </div>
+                          <div className="bg-slate-50 rounded p-3">
+                            <p className="text-xs text-slate-500">Duty Owed</p>
+                            <p className="text-lg font-bold">{formatINR(di.dutyOwed)}</p>
+                          </div>
+                          <div className="bg-red-50 rounded p-3 border border-red-200">
+                            <p className="text-xs text-red-600">Duty Gap</p>
+                            <p className="text-lg font-bold text-red-700">{formatINR(di.dutyGap)}</p>
+                          </div>
+                        </div>
+                        {/* Visual rate comparison bars */}
+                        <div className="space-y-2">
+                          <div>
+                            <div className="flex justify-between text-xs mb-1">
+                              <span className="text-amber-600">Declared Rate</span>
+                              <span className="font-medium">{di.declaredDutyRate}%</span>
+                            </div>
+                            <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full rounded-full bg-amber-400" style={{ width: `${maxRate > 0 ? (di.declaredDutyRate / maxRate) * 100 : 0}%` }} />
+                            </div>
+                          </div>
+                          <div>
+                            <div className="flex justify-between text-xs mb-1">
+                              <span className="text-blue-600">Correct Rate</span>
+                              <span className="font-medium">{di.correctDutyRate}%</span>
+                            </div>
+                            <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full rounded-full bg-blue-500" style={{ width: `${maxRate > 0 ? (di.correctDutyRate / maxRate) * 100 : 0}%` }} />
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })()}
+
+                  {/* Section 5: Triggered Rules */}
+                  <Card className="p-4">
+                    <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Triggered Rules</h5>
+                    <div className="space-y-2">
+                      {caseItem.evidence.triggeredRules.filter(r => r.ruleId.startsWith("R-CF")).map(r => (
+                        <div key={r.ruleId} className="border-l-2 border-orange-300 pl-3 py-1">
                           <div className="flex items-center gap-2">
                             <p className="text-sm font-semibold">{r.ruleName}</p>
                             <Badge variant={r.severity === "High" ? "destructive" : "secondary"} className="text-[10px]">{r.severity}</Badge>

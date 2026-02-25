@@ -38,6 +38,7 @@ const CATEGORY_OPTIONS = [
   "Operational",
   "Systemic",
   "StampIntelligence",
+  "Classification",
 ];
 
 function severityVariant(severity: string): "default" | "secondary" | "destructive" | "outline" {
@@ -58,6 +59,7 @@ function categoryColor(category: string): string {
     Operational: "bg-cyan-100 text-cyan-800 border-cyan-200",
     Systemic: "bg-red-100 text-red-800 border-red-200",
     StampIntelligence: "bg-amber-100 text-amber-800 border-amber-200",
+    Classification: "bg-orange-100 text-orange-800 border-orange-200",
   };
   return colors[category] ?? "bg-gray-100 text-gray-800 border-gray-200";
 }

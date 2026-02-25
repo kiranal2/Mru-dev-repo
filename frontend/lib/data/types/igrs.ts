@@ -42,7 +42,8 @@ export type IGRSLeakageSignal =
   | "ProhibitedLand"
   | "DataIntegrity"
   | "CashReconciliation"
-  | "StampInventory";
+  | "StampInventory"
+  | "ClassificationFraud";
 
 /** Rule categories that group detection logic into functional domains. */
 export type IGRSRuleCategory =
@@ -52,7 +53,8 @@ export type IGRSRuleCategory =
   | "Compliance"
   | "Operational"
   | "Systemic"
-  | "StampIntelligence";
+  | "StampIntelligence"
+  | "Classification";
 
 /** Market-value hotspot severity classification. */
 export type MVSeverity = "Critical" | "High" | "Medium" | "Watch" | "Normal";
@@ -312,6 +314,8 @@ export interface IGRSCase {
   cashReconciliationEvidence?: CashReconciliationEvidenceExtended;
   /** Extended Stamp Inventory evidence (present only for StampInventory signal cases). */
   stampInventoryEvidence?: StampInventoryEvidenceExtended;
+  /** Extended Classification Fraud evidence (present only for ClassificationFraud signal cases). */
+  classificationFraudEvidence?: ClassificationFraudEvidenceExtended;
 
   // --- SLA & Workflow Metadata ---
   /** SLA tracking (optional -- may be absent for newly ingested cases). */
@@ -847,6 +851,13 @@ export const IGRS_SIGNAL_CONFIG: Record<IGRSLeakageSignal, SignalDisplayConfig> 
     color: "text-teal-700",
     bgColor: "bg-teal-50",
     description: "Physical stamp paper inventory discrepancy",
+  },
+  ClassificationFraud: {
+    signal: "ClassificationFraud",
+    label: "Classification Fraud",
+    color: "text-orange-700",
+    bgColor: "bg-orange-50",
+    description: "Wrong property classification to reduce stamp duty",
   },
 };
 
@@ -1416,6 +1427,54 @@ export interface StampInventoryEvidenceExtended {
     vendor: { type: string; percent: number }[];
     jurisdictionAvg: { type: string; percent: number }[];
   };
+}
+
+// ---------------------------------------------------------------------------
+// Classification Fraud Evidence (extended drawer)
+// ---------------------------------------------------------------------------
+
+/** A single row comparing a field across Form 1, Form 2, and Webland records. */
+export interface ClassificationCrossVerificationRow {
+  field: string;
+  form1Value: string;
+  form2Value: string;
+  weblandValue: string;
+  mismatch: boolean;
+}
+
+/** A historical reclassification entry for the property/party. */
+export interface ClassificationHistoryEntry {
+  date: string;
+  fromClassification: string;
+  toClassification: string;
+  documentId: string;
+  registeredBy: string;
+  suspicious: boolean;
+}
+
+/** Duty rate and value impact analysis for classification fraud. */
+export interface ClassificationDutyImpact {
+  declaredDutyRate: number;
+  correctDutyRate: number;
+  declaredValue: number;
+  correctValue: number;
+  dutyPaid: number;
+  dutyOwed: number;
+  dutyGap: number;
+}
+
+/** Extended Classification Fraud evidence for enriched case drawer. */
+export interface ClassificationFraudEvidenceExtended {
+  declaredClassification: string;
+  actualClassification: string;
+  weblandClassification: string;
+  form1Classification: string;
+  form2Classification: string;
+  classificationRiskScore: number;
+  estimatedDutyLoss: number;
+  crossVerification: ClassificationCrossVerificationRow[];
+  conversionHistory: ClassificationHistoryEntry[];
+  dutyImpact: ClassificationDutyImpact;
 }
 
 // ---------------------------------------------------------------------------

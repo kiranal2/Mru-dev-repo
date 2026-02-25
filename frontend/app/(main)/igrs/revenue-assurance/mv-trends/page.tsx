@@ -28,9 +28,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatINR } from "@/lib/data/utils/format-currency";
+import { APDistrictMap } from "@/components/revenue-leakage/ap-district-map";
+import type { DistrictData } from "@/components/revenue-leakage/ap-district-map";
 import {
   AlertTriangle,
   MapPin,
+  Map,
   TrendingDown,
   TrendingUp,
   Activity,
@@ -120,6 +123,7 @@ function DashboardTab({
 }) {
   const [severityFilter, setSeverityFilter] = useState("all");
   const [districtFilter, setDistrictFilter] = useState("all");
+  const [selectedMapDistrict, setSelectedMapDistrict] = useState<string | null>(null);
 
   const districts = useMemo(
     () => Array.from(new Set(hotspots.map((h) => h.district))).sort(),
@@ -160,6 +164,45 @@ function DashboardTab({
     const avgGap = totalGap / trends.length;
     return { totalCases, totalGap, totalHighRisk, avgGap };
   }, [trends]);
+
+  const districtDataList = useMemo<DistrictData[]>(() => {
+    type DistrictAgg = { drrs: number[]; hotspots: number; sros: string[]; txns: number; loss: number };
+    const grouped: Record<string, DistrictAgg> = {};
+    for (const h of hotspots) {
+      if (!grouped[h.district]) {
+        grouped[h.district] = { drrs: [], hotspots: 0, sros: [], txns: 0, loss: 0 };
+      }
+      const g = grouped[h.district];
+      g.drrs.push(h.drr);
+      g.hotspots++;
+      if (!g.sros.includes(h.sroCode)) g.sros.push(h.sroCode);
+      g.txns += h.transactionCount;
+      g.loss += h.estimatedLoss;
+    }
+    return Object.entries(grouped).map(([name, g]) => ({
+      name,
+      avgDrr: g.drrs.reduce((s, d) => s + d, 0) / g.drrs.length,
+      hotspotCount: g.hotspots,
+      sroCount: g.sros.length,
+      transactionCount: g.txns,
+      estimatedLoss: g.loss,
+    }));
+  }, [hotspots]);
+
+  const criticalDistrictCount = useMemo(
+    () => districtDataList.filter((d) => d.avgDrr < 0.85).length,
+    [districtDataList]
+  );
+
+  const handleMapDistrictClick = (districtName: string) => {
+    if (selectedMapDistrict === districtName) {
+      setSelectedMapDistrict(null);
+      setDistrictFilter("all");
+    } else {
+      setSelectedMapDistrict(districtName);
+      setDistrictFilter(districtName);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -241,6 +284,82 @@ function DashboardTab({
           </div>
         </CardContent>
       </Card>
+
+      {/* District Hotspot Map */}
+      {districtDataList.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Map className="w-4 h-4" />
+              District Hotspot Map
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Click a district to filter the table below
+              {selectedMapDistrict && (
+                <span className="ml-2 text-primary font-medium">
+                  — Showing: {selectedMapDistrict}
+                  <button
+                    className="ml-1 underline hover:no-underline"
+                    onClick={() => { setSelectedMapDistrict(null); setDistrictFilter("all"); }}
+                  >
+                    (clear)
+                  </button>
+                </span>
+              )}
+            </p>
+          </CardHeader>
+          <CardContent>
+            {/* Summary KPIs */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="rounded-lg border bg-slate-50 p-3 text-center">
+                <p className="text-xs text-muted-foreground">Total Hotspots</p>
+                <p className="text-xl font-bold">{hotspots.length}</p>
+              </div>
+              <div className="rounded-lg border border-orange-200 bg-orange-50/50 p-3 text-center">
+                <p className="text-xs text-muted-foreground">Critical Districts</p>
+                <p className="text-xl font-bold text-orange-700">
+                  {criticalDistrictCount} <span className="text-sm font-normal text-muted-foreground">of {districtDataList.length}</span>
+                </p>
+              </div>
+              <div className="rounded-lg border border-red-200 bg-red-50/50 p-3 text-center">
+                <p className="text-xs text-muted-foreground">Total Est. Loss</p>
+                <p className="text-xl font-bold text-red-700">
+                  {formatINR(hotspots.reduce((s, h) => s + h.estimatedLoss, 0), true)}
+                </p>
+              </div>
+            </div>
+
+            {/* Map */}
+            <div className="relative border rounded-lg bg-white p-4">
+              <APDistrictMap
+                districts={districtDataList}
+                onDistrictClick={handleMapDistrictClick}
+                formatShort={(v) => formatINR(v, true)}
+              />
+            </div>
+
+            {/* Legend */}
+            <div className="flex items-center justify-center gap-4 mt-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block w-3 h-3 rounded-sm bg-red-100 border border-red-400" />
+                DRR &lt; 0.70
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block w-3 h-3 rounded-sm bg-orange-100 border border-orange-400" />
+                0.70 – 0.85
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block w-3 h-3 rounded-sm bg-amber-100 border border-amber-400" />
+                0.85 – 1.00
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block w-3 h-3 rounded-sm bg-green-100 border border-green-400" />
+                &gt; 1.00
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Hotspots Table */}
       <Card>
