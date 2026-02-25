@@ -587,11 +587,18 @@ export default function IGRSOverviewPage() {
             </div>
             <p className="text-xs text-slate-500">Case counts by risk level per signal</p>
           </CardHeader>
-          <CardContent className="pt-3 h-[300px]">
+          <CardContent className="pt-3 h-[340px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={leakageBarData}>
+              <BarChart data={leakageBarData} margin={{ bottom: 60 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="signal" tick={{ fontSize: 11 }} />
+                <XAxis
+                  dataKey="signal"
+                  interval={0}
+                  tick={{ fontSize: 10 }}
+                  angle={-35}
+                  textAnchor="end"
+                  height={70}
+                />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                 <Tooltip />
                 <Bar dataKey="low" stackId="a" fill="#22c55e" />
@@ -628,20 +635,20 @@ export default function IGRSOverviewPage() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-0.5">
                 {impactShare.map((row) => (
-                  <div key={row.signal} className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: SIGNAL_COLORS[row.signal] }} />
-                      <span className="text-slate-600">{row.label}</span>
+                  <div key={row.signal} className="flex items-center justify-between text-xs py-[3px]">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: SIGNAL_COLORS[row.signal] }} />
+                      <span className="text-slate-600 truncate text-[11px]">{row.label}</span>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold">{row.pct.toFixed(0)}%</p>
-                      <p className="text-slate-500">{formatByMode(row.amount, currencyMode)}</p>
+                    <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+                      <span className="font-semibold text-[11px]">{row.pct.toFixed(0)}%</span>
+                      <span className="text-slate-400 text-[10px]">{formatByMode(row.amount, currencyMode)}</span>
                     </div>
                   </div>
                 ))}
-                <p className="text-[11px] text-slate-500 pt-1">Total signals: {sumSignals}</p>
+                <p className="text-[10px] text-slate-400 pt-1">{impactShare.length} signal types &middot; {sumSignals} total cases</p>
               </div>
             </div>
           </CardContent>

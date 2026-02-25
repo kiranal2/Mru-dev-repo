@@ -59,13 +59,23 @@ function InlineChart({ chart }: { chart: InlineChartData }) {
 
   if (chart.type === "bar") {
     const maxVal = Math.max(...chart.datasets.flatMap((d) => d.data), 1);
-    const barGroupW = 540 / Math.max(chart.labels.length, 1);
-    const barW = (barGroupW * 0.6) / Math.max(chart.datasets.length, 1);
+    const n = Math.max(chart.labels.length, 1);
+    const needsRotation = n >= 6 || chart.labels.some((l) => l.length > 10);
+    const svgH = needsRotation ? 290 : 240;
+    const chartAreaW = 530;
+    const leftPad = 40;
+    const barGroupW = chartAreaW / n;
+    const totalBarsW = barGroupW * 0.65;
+    const barW = totalBarsW / Math.max(chart.datasets.length, 1);
     const multiDs = chart.datasets.length > 1;
+
+    // Center of a bar group
+    const groupCenterX = (li: number) => leftPad + li * barGroupW + totalBarsW / 2;
+
     return (
       <div className="flex justify-center">
-        <svg viewBox="0 0 580 240" className="w-full max-w-2xl mt-2">
-          {/* Y-axis scale labels */}
+        <svg viewBox={`0 0 580 ${svgH}`} className="w-full max-w-2xl mt-2">
+          {/* Y-axis scale labels + grid */}
           {[0, 1, 2, 3, 4].map((i) => {
             const val = maxVal - (i / 4) * maxVal;
             return (
@@ -82,9 +92,10 @@ function InlineChart({ chart }: { chart: InlineChartData }) {
 
           {chart.labels.map((label, li) => {
             const isHovered = hoverIdx === li;
+            const cx = groupCenterX(li);
             return (
               <g
-                key={label}
+                key={`${label}-${li}`}
                 onMouseEnter={() => setHoverIdx(li)}
                 onMouseLeave={() => setHoverIdx(null)}
                 className="cursor-pointer"
@@ -92,26 +103,26 @@ function InlineChart({ chart }: { chart: InlineChartData }) {
                 {/* Hover highlight column */}
                 {isHovered && (
                   <rect
-                    x={40 + li * barGroupW - 4}
+                    x={leftPad + li * barGroupW - 4}
                     y={25}
-                    width={barGroupW * 0.6 + 8}
+                    width={totalBarsW + 8}
                     height={190}
                     fill="#6366f1"
                     opacity={0.06}
                     rx={4}
                   />
                 )}
-                {/* Invisible hit area for hover */}
+                {/* Invisible hit area */}
                 <rect
-                  x={40 + li * barGroupW - 4}
+                  x={leftPad + li * barGroupW - 2}
                   y={25}
                   width={barGroupW}
-                  height={210}
+                  height={svgH - 25}
                   fill="transparent"
                 />
                 {chart.datasets.map((ds, di) => {
                   const h = (ds.data[li] / maxVal) * 170;
-                  const x = 40 + li * barGroupW + di * barW;
+                  const x = leftPad + li * barGroupW + di * barW;
                   return (
                     <g key={di}>
                       <rect
@@ -124,7 +135,6 @@ function InlineChart({ chart }: { chart: InlineChartData }) {
                         opacity={hoverIdx !== null && !isHovered ? 0.4 : 1}
                         style={{ transition: "opacity 0.15s" }}
                       />
-                      {/* Value label on hover */}
                       {isHovered && (
                         <text
                           x={x + (barW - 2) / 2}
@@ -139,16 +149,31 @@ function InlineChart({ chart }: { chart: InlineChartData }) {
                     </g>
                   );
                 })}
-                <text
-                  x={40 + li * barGroupW + (barGroupW * 0.3) / 2}
-                  y={228}
-                  textAnchor="middle"
-                  className="text-[9px]"
-                  fill={isHovered ? "#1e293b" : "#64748b"}
-                  fontWeight={isHovered ? 600 : 400}
-                >
-                  {label}
-                </text>
+                {/* X-axis label — rotated when many labels */}
+                {needsRotation ? (
+                  <text
+                    x={0}
+                    y={0}
+                    transform={`translate(${cx}, 220) rotate(-35)`}
+                    textAnchor="end"
+                    className="text-[8px]"
+                    fill={isHovered ? "#1e293b" : "#64748b"}
+                    fontWeight={isHovered ? 600 : 400}
+                  >
+                    {label}
+                  </text>
+                ) : (
+                  <text
+                    x={cx}
+                    y={228}
+                    textAnchor="middle"
+                    className="text-[9px]"
+                    fill={isHovered ? "#1e293b" : "#64748b"}
+                    fontWeight={isHovered ? 600 : 400}
+                  >
+                    {label}
+                  </text>
+                )}
               </g>
             );
           })}
@@ -167,10 +192,7 @@ function InlineChart({ chart }: { chart: InlineChartData }) {
           {hoverIdx !== null && (
             <g>
               {(() => {
-                const tipX = Math.min(
-                  Math.max(40 + hoverIdx * barGroupW + (barGroupW * 0.3) / 2, 70),
-                  multiDs ? 470 : 510
-                );
+                const tipX = Math.min(Math.max(groupCenterX(hoverIdx), 70), multiDs ? 470 : 510);
                 const tipW = multiDs ? 110 : 80;
                 const tipH = 16 + chart.datasets.length * 16;
                 return (
@@ -184,7 +206,6 @@ function InlineChart({ chart }: { chart: InlineChartData }) {
                       fill="#1e293b"
                       opacity={0.92}
                     />
-                    {/* Arrow */}
                     <polygon
                       points={`${tipX - 4},${20 + tipH} ${tipX + 4},${20 + tipH} ${tipX},${20 + tipH + 5}`}
                       fill="#1e293b"
