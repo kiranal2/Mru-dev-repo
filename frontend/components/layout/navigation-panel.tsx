@@ -39,7 +39,7 @@ export default function NavigationPanel({
   return (
     <aside
       className={cn(
-        "fixed left-16 top-[57px] bottom-0 flex flex-col transition-all duration-300 ease-out z-30 border-r border-slate-200 bg-white",
+        "fixed left-20 top-[57px] bottom-0 flex flex-col transition-all duration-300 ease-out z-30 border-r border-slate-200 bg-white",
         (hoveredRailItem || isPanelHovered)
           ? "w-60 opacity-100"
           : "w-0 opacity-0 overflow-hidden"

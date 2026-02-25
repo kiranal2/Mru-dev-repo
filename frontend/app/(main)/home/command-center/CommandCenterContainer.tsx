@@ -58,6 +58,9 @@ export default function CommandCenterContainer({ initialSessionId }: CommandCent
     handleCancelQuery,
     loadSessions,
 
+    // Handlers - populate composer
+    handlePopulateComposer,
+
     // Handlers - modals
     handleOpenLivePinModal,
     handleCloseLivePinModal,
@@ -119,6 +122,7 @@ export default function CommandCenterContainer({ initialSessionId }: CommandCent
         onOpenLivePinModal={handleOpenLivePinModal}
         onOpenCreateWatchModal={handleOpenCreateWatchModal}
         onOpenCreateTemplateModal={handleOpenCreateTemplateModal}
+        onPopulateComposer={handlePopulateComposer}
         messagesEndRef={messagesEndRef}
         // Session management props
         onNewChat={handleNewChat}

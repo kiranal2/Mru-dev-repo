@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useEffect, Component, type ErrorInfo, type ReactNode } from "react";
+import { useMemo, useRef, useState, useEffect, useCallback, Component, type ErrorInfo, type ReactNode } from "react";
 import { useAIChat } from "@/hooks/data/use-igrs-ai-chat";
 import { cn } from "@/lib/utils";
 import {
@@ -15,8 +15,9 @@ import {
   Sparkles,
   Star,
   Bot,
+  X,
 } from "lucide-react";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type {
   PromptTemplate,
   PromptCategory,
@@ -563,6 +564,28 @@ const DEFAULT_SAMPLE_PROMPTS = [
   "SLA breach rate by district",
 ];
 
+type FavoritePrompt = {
+  id: string;
+  text: string;
+  category: string;
+};
+
+const IGRS_FAVORITE_PROMPTS: FavoritePrompt[] = [
+  { id: "ifav-1", text: "Show monthly revenue growth for last quarter", category: "Revenue" },
+  { id: "ifav-2", text: "Which districts are performing best?", category: "Performance" },
+  { id: "ifav-3", text: "Show high risk documents this month", category: "Risk" },
+  { id: "ifav-4", text: "SLA breach rate by district", category: "SLA" },
+];
+
+const IGRS_SUGGESTION_PROMPTS: FavoritePrompt[] = [
+  { id: "isug-1", text: "Revenue vs target comparison", category: "Revenue" },
+  { id: "isug-2", text: "Top 5 revenue-generating SROs", category: "Performance" },
+  { id: "isug-3", text: "Show zone wise revenue trend for this month", category: "Revenue" },
+  { id: "isug-4", text: "Compare all zones leakage rate this month", category: "Leakage" },
+  { id: "isug-5", text: "Which SROs granted most exemptions?", category: "Exemptions" },
+  { id: "isug-6", text: "Show all open escalations pending beyond SLA", category: "SLA" },
+];
+
 function getSamplePrompts(role?: string): string[] {
   if (role && SAMPLE_PROMPTS_BY_ROLE[role]) return SAMPLE_PROMPTS_BY_ROLE[role];
   return DEFAULT_SAMPLE_PROMPTS;
@@ -587,10 +610,56 @@ export default function AIChatPage() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIdx, setSelectedSuggestionIdx] = useState(-1);
 
+  const [activePanel, setActivePanel] = useState<"favorites" | "suggestions" | null>(null);
+  const [sessionFavorites, setSessionFavorites] = useState<FavoritePrompt[]>([]);
+
   const conversationEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const streamingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Panel helpers
+  const togglePanel = useCallback((panel: "favorites" | "suggestions") => {
+    setActivePanel((prev) => (prev === panel ? null : panel));
+  }, []);
+
+  const closePanel = useCallback(() => {
+    setActivePanel(null);
+  }, []);
+
+  // Close panel on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closePanel();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [closePanel]);
+
+  const allFavorites = useMemo(
+    () => [...IGRS_FAVORITE_PROMPTS, ...sessionFavorites],
+    [sessionFavorites]
+  );
+
+  const handleSaveFavorite = useCallback(() => {
+    if (!composerValue.trim()) return;
+    const newFav: FavoritePrompt = {
+      id: `ifav-user-${Date.now()}`,
+      text: composerValue.trim(),
+      category: "My Prompts",
+    };
+    setSessionFavorites((prev) => [...prev, newFav]);
+  }, [composerValue]);
+
+  const handlePopulate = useCallback(
+    (text: string) => {
+      setComposerValue(text);
+      setShowPlaceholder(false);
+      closePanel();
+      textareaRef.current?.focus();
+    },
+    [closePanel]
+  );
 
   const categories = useMemo(() => promptData?.categories ?? [], [promptData?.categories]);
   const allPrompts = useMemo(() => promptData?.prompts ?? [], [promptData?.prompts]);
@@ -885,15 +954,42 @@ export default function AIChatPage() {
 
                     <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-slate-900">
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#D2D2D2] bg-white">
-                          <Clock size={14} />
-                        </span>
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#D2D2D2] bg-white">
-                          <Star size={14} />
-                        </span>
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#D2D2D2] bg-white">
-                          <Lightbulb size={14} />
-                        </span>
+                        <Tooltip delayDuration={150}>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              onClick={() => togglePanel("favorites")}
+                              className={cn(
+                                "inline-flex h-8 w-8 items-center justify-center rounded-full border bg-white transition-colors hover:bg-slate-50 hover:border-slate-300",
+                                activePanel === "favorites"
+                                  ? "border-primary bg-primary/5 text-primary"
+                                  : "border-[#D2D2D2] text-slate-900"
+                              )}
+                              aria-label="Favorites"
+                            >
+                              <Star size={14} />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" align="center" sideOffset={8}>Favorites</TooltipContent>
+                        </Tooltip>
+                        <Tooltip delayDuration={150}>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              onClick={() => togglePanel("suggestions")}
+                              className={cn(
+                                "inline-flex h-8 w-8 items-center justify-center rounded-full border bg-white transition-colors hover:bg-slate-50 hover:border-slate-300",
+                                activePanel === "suggestions"
+                                  ? "border-primary bg-primary/5 text-primary"
+                                  : "border-[#D2D2D2] text-slate-900"
+                              )}
+                              aria-label="Suggestions"
+                            >
+                              <Lightbulb size={14} />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" align="center" sideOffset={8}>Suggestions</TooltipContent>
+                        </Tooltip>
                       </div>
 
                       <button
@@ -1071,7 +1167,35 @@ export default function AIChatPage() {
                     disabled={isTyping}
                   />
 
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-end">
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => togglePanel("favorites")}
+                        className={cn(
+                          "w-8 h-8 rounded-full border bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#EEF8FF] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95",
+                          activePanel === "favorites"
+                            ? "border-primary text-primary bg-primary/5"
+                            : "border-[#E5E7EB] text-[#7C8A9A]"
+                        )}
+                        aria-label="Favorites"
+                      >
+                        <Star size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => togglePanel("suggestions")}
+                        className={cn(
+                          "w-8 h-8 rounded-full border bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#EEF8FF] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95",
+                          activePanel === "suggestions"
+                            ? "border-primary text-primary bg-primary/5"
+                            : "border-[#E5E7EB] text-[#7C8A9A]"
+                        )}
+                        aria-label="Suggestions"
+                      >
+                        <Lightbulb size={14} />
+                      </button>
+                    </div>
                     <button
                       onClick={() => handleSend()}
                       disabled={isTyping || !composerValue.trim()}
@@ -1130,6 +1254,135 @@ export default function AIChatPage() {
             </div>
           </div>
         )}
+
+        {/* Right-side Drawer – Favorites / Suggestions */}
+        {activePanel && (
+          <button
+            type="button"
+            aria-label="Close panel"
+            className="fixed inset-0 z-30"
+            onClick={closePanel}
+          />
+        )}
+        <div
+          className={cn(
+            "fixed top-0 right-0 bottom-0 w-[400px] max-w-[85vw] bg-white border-l border-[#E5E7EB] shadow-xl flex flex-col z-40 transition-transform duration-300 ease-out",
+            activePanel ? "translate-x-0" : "translate-x-full"
+          )}
+          aria-hidden={!activePanel}
+        >
+          {/* Drawer header */}
+          <div className="border-b border-[#E5E7EB] px-4 py-3 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              {activePanel === "favorites" && <Star className="w-5 h-5 text-amber-500" />}
+              {activePanel === "suggestions" && <Lightbulb className="w-5 h-5 text-amber-500" />}
+              <h2 className="text-lg font-semibold text-[#191919]">
+                {activePanel === "favorites" && "Favorites"}
+                {activePanel === "suggestions" && "Suggestions"}
+              </h2>
+            </div>
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={closePanel}
+              className="p-1.5 rounded-md hover:bg-[#F1F5F9] text-[#64748B]"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* ── Favorites content ── */}
+          {activePanel === "favorites" && (
+            <>
+              <p className="text-sm text-[#64748B] p-4 shrink-0">
+                {allFavorites.length} saved prompt{allFavorites.length !== 1 ? "s" : ""}
+              </p>
+              <div className="flex-1 overflow-y-auto px-4 pb-4">
+                {allFavorites.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <Star className="w-12 h-12 text-[#CBD5E1] mb-3" />
+                    <p className="text-sm text-[#64748B]">No favorites yet</p>
+                    <p className="text-xs text-[#94A3B8] mt-1">Save prompts you use often</p>
+                  </div>
+                ) : (
+                  <ul className="space-y-2">
+                    {allFavorites.map((fav) => (
+                      <li
+                        key={fav.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handlePopulate(fav.text)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handlePopulate(fav.text);
+                          }
+                        }}
+                        className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-left transition-colors hover:border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-start gap-3"
+                      >
+                        <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-[#EEF2FF] flex items-center justify-center">
+                          <BarChart3 size={14} className="text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-slate-700 leading-snug">{fav.text}</p>
+                          <span className="text-[11px] text-[#94A3B8] mt-0.5 inline-block">{fav.category}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              {composerValue.trim() && (
+                <div className="border-t border-[#E5E7EB] px-4 py-3 shrink-0">
+                  <button
+                    type="button"
+                    onClick={handleSaveFavorite}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-amber-200 bg-amber-50 text-sm font-medium text-amber-700 hover:bg-amber-100 transition-colors"
+                  >
+                    <Star size={14} />
+                    Save current prompt as favorite
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ── Suggestions content ── */}
+          {activePanel === "suggestions" && (
+            <>
+              <p className="text-sm text-[#64748B] p-4 shrink-0">
+                {IGRS_SUGGESTION_PROMPTS.length} suggested prompt{IGRS_SUGGESTION_PROMPTS.length !== 1 ? "s" : ""}
+              </p>
+              <div className="flex-1 overflow-y-auto px-4 pb-4">
+                <ul className="space-y-2">
+                  {IGRS_SUGGESTION_PROMPTS.map((sug) => (
+                    <li
+                      key={sug.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => handlePopulate(sug.text)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handlePopulate(sug.text);
+                        }
+                      }}
+                      className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-left transition-colors hover:border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-start gap-3"
+                    >
+                      <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-[#EEF2FF] flex items-center justify-center">
+                        <BarChart3 size={14} className="text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-slate-700 leading-snug">{sug.text}</p>
+                        <span className="text-[11px] text-[#94A3B8] mt-0.5 inline-block">{sug.category}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          )}
+        </div>
 
         {/* CSS Animations */}
         <style jsx global>{`

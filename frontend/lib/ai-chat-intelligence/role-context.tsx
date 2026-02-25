@@ -51,7 +51,8 @@ export function IGRSRoleProvider({ children }: { children: ReactNode }) {
   };
 
   const isInJurisdiction = (district?: string, srCode?: string): boolean => {
-    if (!session) return false;
+    // No session → show all data (unrestricted view)
+    if (!session) return true;
 
     switch (session.role) {
       case "IG":

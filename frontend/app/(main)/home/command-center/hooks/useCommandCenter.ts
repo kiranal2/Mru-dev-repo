@@ -202,6 +202,9 @@ export interface UseCommandCenterReturn {
   handleSaveAndDownload: (name: string, description: string) => void;
   handleCloseTemplateCreatedModal: () => void;
 
+  // Populate composer without sending
+  handlePopulateComposer: (text: string) => void;
+
   // Setters exposed for render-level usage
   setOpenDropdownId: (id: string | null) => void;
   setShowFinancialResults: (show: boolean) => void;
@@ -988,6 +991,11 @@ export function useCommandCenter({
     setDownloadedFileName("");
   }, []);
 
+  const handlePopulateComposer = useCallback((text: string) => {
+    setComposerValue(text);
+    setShowPlaceholder(false);
+  }, []);
+
   // ==================== Return ====================
 
   return {
@@ -1041,6 +1049,8 @@ export function useCommandCenter({
     handleCloseCreateTemplateModal,
     handleSaveAndDownload,
     handleCloseTemplateCreatedModal,
+
+    handlePopulateComposer,
 
     setOpenDropdownId,
     setShowFinancialResults,

@@ -1487,7 +1487,12 @@ export default function IGRSCasesPage() {
     <div className="p-4 md:p-5 space-y-4">
       <div className="space-y-1">
         <div className="flex items-center justify-between mb-2">
-          <div />
+          <div>
+            <h1 className="text-2xl font-semibold">Cases</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Leakage cases — filter, review, and resolve flagged documents
+            </p>
+          </div>
           <JurisdictionBadge />
         </div>
         <div className="flex flex-wrap items-center gap-1.5">

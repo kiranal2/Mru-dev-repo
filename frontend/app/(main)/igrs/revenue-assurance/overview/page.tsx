@@ -39,6 +39,7 @@ import {
 } from "recharts";
 import {
   Activity,
+  ChevronDown,
   CircleDot,
   Clock3,
   Database,
@@ -127,6 +128,7 @@ function sparklinePoints(values: number[], width = 70, height = 22): string {
 export default function IGRSOverviewPage() {
   const router = useRouter();
   const [currencyMode, setCurrencyMode] = useState<CurrencyMode>("auto");
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const { data: dashboard, loading: dashLoading, error: dashError, refetch: refetchDashboard } =
     useIGRSDashboard();
@@ -179,17 +181,14 @@ export default function IGRSOverviewPage() {
     };
   }, [cases]);
 
+
   const thresholdStats = useMemo(() => {
     const prohibitedHits = cases.filter((c: IGRSCase) => c.leakageSignals.includes("ProhibitedLand")).length;
-    const gapThreshold = 50000;
-    const gapOverThreshold = cases.filter((c: IGRSCase) => c.gapInr >= gapThreshold).length;
-    const delayThreshold = 10;
-    const delayOverThreshold = cases.filter((c: IGRSCase) => daysBetween(c.dates.pDate, c.dates.rDate) > delayThreshold)
-      .length;
+    const gapOverThreshold = cases.filter((c: IGRSCase) => c.gapInr >= 50000).length;
+    const delayOverThreshold = cases.filter((c: IGRSCase) => daysBetween(c.dates.pDate, c.dates.rDate) > 10).length;
     const dataIntegrityFlags = cases.filter((c: IGRSCase) => c.leakageSignals.includes("DataIntegrity")).length;
     const exemptionAbuseFlags = dashboard?.exemptionAbuseFlags ?? 0;
     const cashReconAlerts = dashboard?.cashReconAlerts ?? 0;
-
     return { prohibitedHits, gapOverThreshold, delayOverThreshold, dataIntegrityFlags, exemptionAbuseFlags, cashReconAlerts };
   }, [cases, dashboard]);
 
@@ -403,13 +402,6 @@ export default function IGRSOverviewPage() {
       spark: kpiSparklines.payable,
     },
     {
-      title: "Total Paid",
-      value: formatByMode(dashboard.totalPaid, currencyMode),
-      delta: deltas?.paid ?? null,
-      border: "border-emerald-200",
-      spark: kpiSparklines.paid,
-    },
-    {
       title: "Total Gap",
       value: formatByMode(dashboard.totalGap, currencyMode),
       delta: deltas?.gap ?? null,
@@ -424,27 +416,6 @@ export default function IGRSOverviewPage() {
       spark: kpiSparklines.highRisk,
     },
     {
-      title: "Avg Challan Delay",
-      value: `${dashboard.avgChallanDelayDays} days`,
-      delta: null,
-      border: "border-orange-200",
-      spark: kpiSparklines.avgDelay,
-    },
-    {
-      title: "Awaiting Review",
-      value: String(dashboard.casesAwaitingReview),
-      delta: deltas?.awaiting ?? null,
-      border: "border-violet-200",
-      spark: kpiSparklines.awaiting,
-    },
-    {
-      title: "Est. MV Leakage",
-      value: formatByMode(dashboard.estimatedMVLeakage ?? 0, currencyMode),
-      delta: null,
-      border: "border-blue-200",
-      spark: [2, 3, 4, 3, 5, 6],
-    },
-    {
       title: "Cash Risk Score",
       value: String(dashboard.dailyCashRiskScore ?? 0),
       delta: null,
@@ -457,6 +428,15 @@ export default function IGRSOverviewPage() {
 
   return (
     <div className="p-4 md:p-5 space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Overview</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Revenue assurance dashboard — payable vs paid, risk signals, and leakage analysis
+          </p>
+        </div>
+      </div>
+
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-xs">
           <JurisdictionBadge />
@@ -524,50 +504,65 @@ export default function IGRSOverviewPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-3">
-        <Card className="xl:col-span-1">
-          <CardContent className="py-3 flex items-center justify-between">
-            <p className="text-xs text-slate-500">Prohibited Land Hits</p>
-            <p className="text-xl font-semibold">{thresholdStats.prohibitedHits}</p>
-          </CardContent>
-        </Card>
-        <Card className="xl:col-span-1">
-          <CardContent className="py-3 flex items-center justify-between">
-            <p className="text-xs text-slate-500">Gap &gt; Threshold</p>
-            <p className="text-xl font-semibold">{thresholdStats.gapOverThreshold}</p>
-          </CardContent>
-        </Card>
-        <Card className="xl:col-span-1">
-          <CardContent className="py-3 flex items-center justify-between">
-            <p className="text-xs text-slate-500">Delay &gt; Threshold</p>
-            <p className="text-xl font-semibold">{thresholdStats.delayOverThreshold}</p>
-          </CardContent>
-        </Card>
-        <Card className="xl:col-span-1">
-          <CardContent className="py-3 flex items-center justify-between">
-            <p className="text-xs text-slate-500">Data Integrity Flags</p>
-            <p className="text-xl font-semibold">{thresholdStats.dataIntegrityFlags}</p>
-          </CardContent>
-        </Card>
-        <Card
-          className="xl:col-span-1 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => router.push("/igrs/revenue-assurance/cases?signal=ExemptionRisk")}
-        >
-          <CardContent className="py-3 flex items-center justify-between">
-            <p className="text-xs text-purple-600">Exemption Abuse</p>
-            <p className="text-xl font-semibold text-purple-700">{thresholdStats.exemptionAbuseFlags}</p>
-          </CardContent>
-        </Card>
-        <Card
-          className="xl:col-span-1 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => router.push("/igrs/revenue-assurance/cases?signal=CashReconciliation")}
-        >
-          <CardContent className="py-3 flex items-center justify-between">
-            <p className="text-xs text-emerald-600">Cash Recon Alerts</p>
-            <p className="text-xl font-semibold text-emerald-700">{thresholdStats.cashReconAlerts}</p>
-          </CardContent>
-        </Card>
-      </div>
+      <button
+        onClick={() => setDetailsOpen((prev) => !prev)}
+        className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 transition-colors py-1"
+      >
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${detailsOpen ? "rotate-0" : "-rotate-90"}`} />
+        <span className="font-medium">Detailed Metrics</span>
+        <span className="text-slate-400">({10} indicators)</span>
+      </button>
+
+      {detailsOpen && (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+          <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2">
+            <p className="text-[11px] text-slate-500">Total Paid</p>
+            <p className="text-sm font-semibold">{formatByMode(dashboard.totalPaid, currencyMode)}</p>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2">
+            <p className="text-[11px] text-slate-500">Avg Challan Delay</p>
+            <p className="text-sm font-semibold">{dashboard.avgChallanDelayDays} days</p>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2">
+            <p className="text-[11px] text-slate-500">Awaiting Review</p>
+            <p className="text-sm font-semibold">{dashboard.casesAwaitingReview}</p>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2">
+            <p className="text-[11px] text-slate-500">Est. MV Leakage</p>
+            <p className="text-sm font-semibold">{formatByMode(dashboard.estimatedMVLeakage ?? 0, currencyMode)}</p>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2">
+            <p className="text-[11px] text-slate-500">Prohibited Land</p>
+            <p className="text-sm font-semibold">{thresholdStats.prohibitedHits}</p>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2">
+            <p className="text-[11px] text-slate-500">Gap &gt; Threshold</p>
+            <p className="text-sm font-semibold">{thresholdStats.gapOverThreshold}</p>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2">
+            <p className="text-[11px] text-slate-500">Delay &gt; Threshold</p>
+            <p className="text-sm font-semibold">{thresholdStats.delayOverThreshold}</p>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2">
+            <p className="text-[11px] text-slate-500">Data Integrity</p>
+            <p className="text-sm font-semibold">{thresholdStats.dataIntegrityFlags}</p>
+          </div>
+          <div
+            className="flex items-center justify-between rounded-lg border border-purple-200 bg-purple-50/50 px-3 py-2 cursor-pointer hover:bg-purple-50 transition-colors"
+            onClick={() => router.push("/igrs/revenue-assurance/cases?signal=ExemptionRisk")}
+          >
+            <p className="text-[11px] text-purple-600">Exemption Abuse</p>
+            <p className="text-sm font-semibold text-purple-700">{thresholdStats.exemptionAbuseFlags}</p>
+          </div>
+          <div
+            className="flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50/50 px-3 py-2 cursor-pointer hover:bg-emerald-50 transition-colors"
+            onClick={() => router.push("/igrs/revenue-assurance/cases?signal=CashReconciliation")}
+          >
+            <p className="text-[11px] text-emerald-600">Cash Recon Alerts</p>
+            <p className="text-sm font-semibold text-emerald-700">{thresholdStats.cashReconAlerts}</p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
         <Card>
@@ -603,8 +598,8 @@ export default function IGRSOverviewPage() {
             <p className="text-xs text-slate-500">Impact distribution by signal type</p>
           </CardHeader>
           <CardContent className="pt-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-center">
-              <div className="h-[220px]">
+            <div className="grid grid-cols-[1fr_1fr] gap-3 items-center">
+              <div style={{ width: "100%", height: 220 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie

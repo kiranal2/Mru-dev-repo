@@ -55,6 +55,13 @@ const SUGGESTED_PROMPTS: SuggestedPrompt[] = [
   { id: "sp-6", icon: PieChart, text: "Break down AR balance by business unit", category: "Analysis" },
 ];
 
+const FAVORITE_PROMPTS: SuggestedPrompt[] = [
+  { id: "fav-1", icon: TrendingUp, text: "Show me AR aging summary for all customers", category: "AR Aging" },
+  { id: "fav-2", icon: Receipt, text: "List all open invoices over $100,000", category: "Invoices" },
+  { id: "fav-3", icon: DollarSign, text: "What is unapplied cash by entity?", category: "Cash App" },
+  { id: "fav-4", icon: AlertCircle, text: "Show overdue invoices by business unit", category: "Collections" },
+];
+
 type Message = {
   id: string;
   message: string;
@@ -101,6 +108,7 @@ interface CommandCenterProps {
   onOpenLivePinModal?: () => void;
   onOpenCreateWatchModal?: () => void;
   onOpenCreateTemplateModal?: () => void;
+  onPopulateComposer?: (text: string) => void;
   messagesEndRef: React.RefObject<HTMLDivElement>;
   // Session management props
   onNewChat?: () => void;
@@ -998,6 +1006,7 @@ export default function CommandCenter({
   onOpenLivePinModal,
   onOpenCreateWatchModal,
   onOpenCreateTemplateModal,
+  onPopulateComposer,
   messagesEndRef,
   onNewChat,
   onCancelQuery,
@@ -1010,7 +1019,53 @@ export default function CommandCenter({
 }: CommandCenterProps) {
   const router = useRouter();
   const [expandedTableId, setExpandedTableId] = useState<string | null>(null);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [activePanel, setActivePanel] = useState<"history" | "favorites" | "suggestions" | null>(null);
+  const [sessionFavorites, setSessionFavorites] = useState<SuggestedPrompt[]>([]);
+
+  // Panel helpers — toggle or close
+  const togglePanel = useCallback((panel: "history" | "favorites" | "suggestions") => {
+    setActivePanel((prev) => (prev === panel ? null : panel));
+  }, []);
+
+  const closePanel = useCallback(() => {
+    setActivePanel(null);
+  }, []);
+
+  // Close panel on Escape
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closePanel();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [closePanel]);
+
+  // All favorites (built-in + session-saved)
+  const allFavorites = useMemo(
+    () => [...FAVORITE_PROMPTS, ...sessionFavorites],
+    [sessionFavorites]
+  );
+
+  const handleSaveFavorite = useCallback(() => {
+    if (!composerValue.trim()) return;
+    const newFav: SuggestedPrompt = {
+      id: `fav-user-${Date.now()}`,
+      icon: Star,
+      text: composerValue.trim(),
+      category: "My Prompts",
+    };
+    setSessionFavorites((prev) => [...prev, newFav]);
+  }, [composerValue]);
+
+  const handlePopulate = useCallback(
+    (text: string) => {
+      if (onPopulateComposer) {
+        onPopulateComposer(text);
+      }
+      closePanel();
+    },
+    [onPopulateComposer, closePanel]
+  );
 
   // Time-based greeting
   const greeting = useMemo(() => {
@@ -1231,23 +1286,42 @@ export default function CommandCenter({
                     <div className="absolute bottom-4 left-4 flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => setIsHistoryOpen(true)}
-                        className="w-10 h-8 rounded-full border border-[#E5E7EB] bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#EEF8FF] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#6B7EF3] focus:ring-offset-1"
+                        onClick={() => togglePanel("history")}
+                        className={cn(
+                          "w-10 h-8 rounded-full border bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#EEF8FF] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#6B7EF3] focus:ring-offset-1",
+                          activePanel === "history"
+                            ? "border-primary text-primary bg-primary/5"
+                            : "border-[#E5E7EB] text-[#7C8A9A]"
+                        )}
                         aria-label="History"
                       >
-                        <svg
-                          className="w-5 h-5 text-[#7C8A9A]"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
+                        <Clock size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => togglePanel("favorites")}
+                        className={cn(
+                          "w-10 h-8 rounded-full border bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#EEF8FF] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#6B7EF3] focus:ring-offset-1",
+                          activePanel === "favorites"
+                            ? "border-primary text-primary bg-primary/5"
+                            : "border-[#E5E7EB] text-[#7C8A9A]"
+                        )}
+                        aria-label="Favorites"
+                      >
+                        <Star size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => togglePanel("suggestions")}
+                        className={cn(
+                          "w-10 h-8 rounded-full border bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#EEF8FF] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#6B7EF3] focus:ring-offset-1",
+                          activePanel === "suggestions"
+                            ? "border-primary text-primary bg-primary/5"
+                            : "border-[#E5E7EB] text-[#7C8A9A]"
+                        )}
+                        aria-label="Suggestions"
+                      >
+                        <Lightbulb size={14} />
                       </button>
                     </div>
 
@@ -1360,9 +1434,14 @@ export default function CommandCenter({
                           <TooltipTrigger asChild>
                             <button
                               type="button"
-                              onClick={() => setIsHistoryOpen(true)}
+                              onClick={() => togglePanel("history")}
                               aria-label="History"
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                              className={cn(
+                                "inline-flex h-8 w-8 items-center justify-center rounded-full border bg-white transition-colors",
+                                activePanel === "history"
+                                  ? "border-primary bg-primary/5 text-primary"
+                                  : "border-slate-200 text-slate-900 hover:bg-slate-50 hover:border-slate-300"
+                              )}
                             >
                               <Clock size={14} />
                             </button>
@@ -1373,7 +1452,19 @@ export default function CommandCenter({
                         </Tooltip>
                         <Tooltip delayDuration={150}>
                           <TooltipTrigger asChild>
-                            <CircularButton icon={<Star size={14} />} aria-label="Favorites" />
+                            <button
+                              type="button"
+                              onClick={() => togglePanel("favorites")}
+                              aria-label="Favorites"
+                              className={cn(
+                                "inline-flex h-8 w-8 items-center justify-center rounded-full border bg-white transition-colors",
+                                activePanel === "favorites"
+                                  ? "border-primary bg-primary/5 text-primary"
+                                  : "border-slate-200 text-slate-900 hover:bg-slate-50 hover:border-slate-300"
+                              )}
+                            >
+                              <Star size={14} />
+                            </button>
                           </TooltipTrigger>
                           <TooltipContent side="top" align="center" sideOffset={8}>
                             Favorites
@@ -1381,10 +1472,19 @@ export default function CommandCenter({
                         </Tooltip>
                         <Tooltip delayDuration={150}>
                           <TooltipTrigger asChild>
-                            <CircularButton
-                              icon={<Lightbulb size={14} />}
+                            <button
+                              type="button"
+                              onClick={() => togglePanel("suggestions")}
                               aria-label="Suggestions"
-                            />
+                              className={cn(
+                                "inline-flex h-8 w-8 items-center justify-center rounded-full border bg-white transition-colors",
+                                activePanel === "suggestions"
+                                  ? "border-primary bg-primary/5 text-primary"
+                                  : "border-slate-200 text-slate-900 hover:bg-slate-50 hover:border-slate-300"
+                              )}
+                            >
+                              <Lightbulb size={14} />
+                            </button>
                           </TooltipTrigger>
                           <TooltipContent side="top" align="center" sideOffset={8}>
                             Suggestions
@@ -1549,115 +1649,226 @@ export default function CommandCenter({
         </div>
       </div>
 
-      {/* Chat History Drawer – slides in from the right */}
-      {isHistoryOpen && (
+      {/* Right-side Drawer – slides in from the right (History / Favorites / Suggestions) */}
+      {activePanel && (
         <button
           type="button"
-          aria-label="Close history"
+          aria-label="Close panel"
           className="fixed inset-0 z-30"
-          onClick={() => setIsHistoryOpen(false)}
+          onClick={closePanel}
         />
       )}
       <div
         className={cn(
           "fixed top-0 right-0 bottom-0 w-[400px] max-w-[85vw] bg-white border-l border-[#E5E7EB] shadow-xl flex flex-col z-40 transition-transform duration-300 ease-out",
-          isHistoryOpen ? "translate-x-0" : "translate-x-full"
+          activePanel ? "translate-x-0" : "translate-x-full"
         )}
-        aria-hidden={!isHistoryOpen}
+        aria-hidden={!activePanel}
       >
+        {/* Drawer header */}
         <div className="border-b border-[#E5E7EB] px-4 py-3 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-slate-900" />
-            <h2 className="text-lg font-semibold text-[#191919]">Chat History</h2>
+            {activePanel === "history" && <Clock className="w-5 h-5 text-slate-900" />}
+            {activePanel === "favorites" && <Star className="w-5 h-5 text-amber-500" />}
+            {activePanel === "suggestions" && <Lightbulb className="w-5 h-5 text-amber-500" />}
+            <h2 className="text-lg font-semibold text-[#191919]">
+              {activePanel === "history" && "Chat History"}
+              {activePanel === "favorites" && "Favorites"}
+              {activePanel === "suggestions" && "Suggestions"}
+            </h2>
           </div>
           <button
             type="button"
             aria-label="Close"
-            onClick={() => setIsHistoryOpen(false)}
+            onClick={closePanel}
             className="p-1.5 rounded-md hover:bg-[#F1F5F9] text-[#64748B]"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
-        <p className="text-sm text-[#64748B] p-4 shrink-0">
-          {isLoadingSessions
-            ? "Loading\u2026"
-            : sessionsLoadFailed
-              ? "Unable to load sessions"
-              : `${chatSessions.length} session${chatSessions.length !== 1 ? "s" : ""}`}
-        </p>
-        <div className="flex-1 overflow-y-auto px-4 pb-4">
-          {isLoadingSessions ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
-              <p className="text-sm text-[#64748B]">Loading sessions\u2026</p>
-            </div>
-          ) : sessionsLoadFailed ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <WifiOff className="w-12 h-12 text-[#F59E0B] mb-3" />
-              <p className="text-sm font-medium text-[#92400E]">Connection issue</p>
-              <p className="text-xs text-[#94A3B8] mt-1">
-                We couldn&apos;t load your sessions right now. Please check your connection and try
-                again.
-              </p>
-              {onRetrySessions && (
-                <button
-                  type="button"
-                  onClick={onRetrySessions}
-                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-900 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  Retry
-                </button>
+
+        {/* ── History content ── */}
+        {activePanel === "history" && (
+          <>
+            <p className="text-sm text-[#64748B] p-4 shrink-0">
+              {isLoadingSessions
+                ? "Loading\u2026"
+                : sessionsLoadFailed
+                  ? "Unable to load sessions"
+                  : `${chatSessions.length} session${chatSessions.length !== 1 ? "s" : ""}`}
+            </p>
+            <div className="flex-1 overflow-y-auto px-4 pb-4">
+              {isLoadingSessions ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
+                  <p className="text-sm text-[#64748B]">Loading sessions\u2026</p>
+                </div>
+              ) : sessionsLoadFailed ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <WifiOff className="w-12 h-12 text-[#F59E0B] mb-3" />
+                  <p className="text-sm font-medium text-[#92400E]">Connection issue</p>
+                  <p className="text-xs text-[#94A3B8] mt-1">
+                    We couldn&apos;t load your sessions right now. Please check your connection and try
+                    again.
+                  </p>
+                  {onRetrySessions && (
+                    <button
+                      type="button"
+                      onClick={onRetrySessions}
+                      className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-900 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      Retry
+                    </button>
+                  )}
+                </div>
+              ) : chatSessions.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Clock className="w-12 h-12 text-[#CBD5E1] mb-3" />
+                  <p className="text-sm text-[#64748B]">No chat history yet</p>
+                  <p className="text-xs text-[#94A3B8] mt-1">Your sessions will appear here</p>
+                </div>
+              ) : (
+                <ul className="space-y-3">
+                  {chatSessions.map((s) => (
+                    <li
+                      key={s.session_id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => {
+                        onSessionClick?.(s);
+                        closePanel();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onSessionClick?.(s);
+                          closePanel();
+                        }
+                      }}
+                      className={cn(
+                        "rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-left transition-colors hover:border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
+                        activeSessionId === s.session_id && "border-blue-500 bg-blue-50"
+                      )}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-medium text-slate-900 truncate">
+                          {s.title || "Untitled"}
+                        </span>
+                        <span className="text-xs text-[#64748B] shrink-0">
+                          {s.message_count} msg{s.message_count !== 1 ? "s" : ""}
+                        </span>
+                      </div>
+                      {s.updated_at && (
+                        <p className="text-[10px] text-[#94A3B8] mt-1">
+                          {formatRelativeTime(s.updated_at)}
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
-          ) : chatSessions.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Clock className="w-12 h-12 text-[#CBD5E1] mb-3" />
-              <p className="text-sm text-[#64748B]">No chat history yet</p>
-              <p className="text-xs text-[#94A3B8] mt-1">Your sessions will appear here</p>
+          </>
+        )}
+
+        {/* ── Favorites content ── */}
+        {activePanel === "favorites" && (
+          <>
+            <p className="text-sm text-[#64748B] p-4 shrink-0">
+              {allFavorites.length} saved prompt{allFavorites.length !== 1 ? "s" : ""}
+            </p>
+            <div className="flex-1 overflow-y-auto px-4 pb-4">
+              {allFavorites.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Star className="w-12 h-12 text-[#CBD5E1] mb-3" />
+                  <p className="text-sm text-[#64748B]">No favorites yet</p>
+                  <p className="text-xs text-[#94A3B8] mt-1">Save prompts you use often</p>
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {allFavorites.map((fav) => {
+                    const Icon = fav.icon;
+                    return (
+                      <li
+                        key={fav.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handlePopulate(fav.text)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handlePopulate(fav.text);
+                          }
+                        }}
+                        className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-left transition-colors hover:border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-start gap-3"
+                      >
+                        <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-[#EEF2FF] flex items-center justify-center">
+                          <Icon size={14} className="text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-slate-700 leading-snug">{fav.text}</p>
+                          <span className="text-[11px] text-[#94A3B8] mt-0.5 inline-block">{fav.category}</span>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
-          ) : (
-            <ul className="space-y-3">
-              {chatSessions.map((s) => (
-                <li
-                  key={s.session_id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => {
-                    onSessionClick?.(s);
-                    setIsHistoryOpen(false);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      onSessionClick?.(s);
-                      setIsHistoryOpen(false);
-                    }
-                  }}
-                  className={cn(
-                    "rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-left transition-colors hover:border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
-                    activeSessionId === s.session_id && "border-blue-500 bg-blue-50"
-                  )}
+            {composerValue.trim() && (
+              <div className="border-t border-[#E5E7EB] px-4 py-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleSaveFavorite}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-amber-200 bg-amber-50 text-sm font-medium text-amber-700 hover:bg-amber-100 transition-colors"
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-slate-900 truncate">
-                      {s.title || "Untitled"}
-                    </span>
-                    <span className="text-xs text-[#64748B] shrink-0">
-                      {s.message_count} msg{s.message_count !== 1 ? "s" : ""}
-                    </span>
-                  </div>
-                  {s.updated_at && (
-                    <p className="text-[10px] text-[#94A3B8] mt-1">
-                      {formatRelativeTime(s.updated_at)}
-                    </p>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                  <Star size={14} />
+                  Save current prompt as favorite
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ── Suggestions content ── */}
+        {activePanel === "suggestions" && (
+          <>
+            <p className="text-sm text-[#64748B] p-4 shrink-0">
+              {SUGGESTED_PROMPTS.length} suggested prompt{SUGGESTED_PROMPTS.length !== 1 ? "s" : ""}
+            </p>
+            <div className="flex-1 overflow-y-auto px-4 pb-4">
+              <ul className="space-y-2">
+                {SUGGESTED_PROMPTS.map((sug) => {
+                  const Icon = sug.icon;
+                  return (
+                    <li
+                      key={sug.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => handlePopulate(sug.text)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handlePopulate(sug.text);
+                        }
+                      }}
+                      className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-left transition-colors hover:border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-start gap-3"
+                    >
+                      <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-[#EEF2FF] flex items-center justify-center">
+                        <Icon size={14} className="text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-slate-700 leading-snug">{sug.text}</p>
+                        <span className="text-[11px] text-[#94A3B8] mt-0.5 inline-block">{sug.category}</span>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </>
+        )}
       </div>
     </main>
   );
