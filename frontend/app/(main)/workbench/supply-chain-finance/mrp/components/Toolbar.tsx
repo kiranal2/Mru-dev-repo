@@ -3,13 +3,21 @@
 import {
   PanelLeftClose,
   PanelLeft,
-  LayoutDashboard,
   Plus,
-  CheckSquare,
-  Square,
+  Search,
+  X,
+  Zap,
+  AlertTriangle,
+  CheckCircle2,
+  ArrowRight,
+  Truck,
+  Flag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { ViewsMenu } from "../../components/ViewsMenu";
+import { cn } from "@/lib/utils";
 import type { BulkActionModal } from "../types";
 
 interface ToolbarProps {
@@ -23,136 +31,159 @@ interface ToolbarProps {
   selectedRows: Set<string>;
   rowCount: number;
   onSelectAll: () => void;
+  onClearSelection: () => void;
   onBulkAction: (action: BulkActionModal) => void;
-  metrics: { autoClearPercent: number; exceptionsCount: number } | undefined;
+  metrics: { autoClearPercent: number; exceptionsCount: number; slaStatus?: string } | undefined;
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
 }
 
 export function Toolbar({
   sidebarCollapsed,
   onToggleSidebar,
-  showDashboard,
-  onToggleDashboard,
   onNewPO,
   onApplyView,
   onSaveView,
   selectedRows,
-  rowCount,
-  onSelectAll,
+  onClearSelection,
   onBulkAction,
   metrics,
+  searchQuery,
+  onSearchChange,
 }: ToolbarProps) {
+  const count = selectedRows.size;
+  const hasSelection = count > 0;
+
   return (
-    <>
-      <div className="border-b border-gray-200 bg-gray-50 px-3 py-1">
-        <div className="flex items-center justify-between">
+    <div className="border-b border-slate-200 bg-white px-4 py-2">
+      <div className="flex items-center justify-between gap-3">
+        {/* Left side */}
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           <Button
             variant="ghost"
             size="icon"
+            className="h-8 w-8 shrink-0"
             onClick={onToggleSidebar}
             title={sidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
           >
             {sidebarCollapsed ? (
-              <PanelLeft className="h-5 w-5" />
+              <PanelLeft className="h-4 w-4" />
             ) : (
-              <PanelLeftClose className="h-5 w-5" />
+              <PanelLeftClose className="h-4 w-4" />
             )}
           </Button>
 
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onToggleDashboard}
-              title="Toggle Dashboard"
-            >
-              <LayoutDashboard className="h-5 w-5" />
-            </Button>
+          <div className="h-5 w-px bg-slate-200 shrink-0" />
 
-            <Button onClick={onNewPO} size="sm" title="Create New PO Line">
-              <Plus className="h-4 w-4 mr-2" />
-              New PO Line
-            </Button>
+          {/* Selection bar — replaces search when active */}
+          {hasSelection ? (
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg pl-3 pr-1.5 py-1">
+              <span className="text-xs font-semibold text-slate-700 whitespace-nowrap">
+                {count} selected
+              </span>
+              <button
+                onClick={onClearSelection}
+                className="p-0.5 rounded hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
 
-            <ViewsMenu onApply={onApplyView} onSave={onSaveView} />
-          </div>
-        </div>
-      </div>
+              <div className="h-4 w-px bg-slate-200 mx-0.5" />
 
-      <div className="px-3 py-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onSelectAll}
-              className="flex items-center gap-2"
-            >
-              {selectedRows.size === rowCount && rowCount > 0 ? (
-                <CheckSquare className="h-4 w-4" />
-              ) : (
-                <Square className="h-4 w-4" />
-              )}
-              Select All
-            </Button>
-
-            <div className="flex gap-2">
               <Button
-                variant="outline"
                 size="sm"
-                disabled={selectedRows.size === 0}
+                variant="ghost"
+                className="h-7 px-2.5 text-[11px] font-medium text-emerald-700 hover:bg-emerald-50"
                 onClick={() => onBulkAction("accept")}
-                className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100 hover:text-green-800 disabled:opacity-50"
               >
-                Accept Commit
+                <CheckCircle2 className="h-3 w-3 mr-1" />
+                Accept
               </Button>
               <Button
-                variant="outline"
                 size="sm"
-                disabled={selectedRows.size === 0}
+                variant="ghost"
+                className="h-7 px-2.5 text-[11px] font-medium text-amber-700 hover:bg-amber-50"
                 onClick={() => onBulkAction("counter")}
-                className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 hover:text-amber-800 disabled:opacity-50"
               >
-                Counter-Date
+                <ArrowRight className="h-3 w-3 mr-1" />
+                Counter
               </Button>
               <Button
-                variant="outline"
                 size="sm"
-                disabled={selectedRows.size === 0}
+                variant="ghost"
+                className="h-7 px-2.5 text-[11px] font-medium text-blue-700 hover:bg-blue-50"
                 onClick={() => onBulkAction("tracking")}
-                className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 hover:text-blue-800 disabled:opacity-50"
               >
-                Request Tracking
+                <Truck className="h-3 w-3 mr-1" />
+                Tracking
               </Button>
               <Button
-                variant="outline"
                 size="sm"
-                disabled={selectedRows.size === 0}
+                variant="ghost"
+                className="h-7 px-2.5 text-[11px] font-medium text-red-700 hover:bg-red-50"
                 onClick={() => onBulkAction("escalate")}
-                className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:text-red-800 disabled:opacity-50"
               >
+                <Flag className="h-3 w-3 mr-1" />
                 Escalate
               </Button>
             </div>
-          </div>
-
-          {metrics && (
-            <div className="flex items-center gap-4">
-              <div className="text-sm">
-                <span className="text-slate-600">Auto-clear:</span>{" "}
-                <span className="text-green-600 font-medium">
-                  {metrics.autoClearPercent}%
-                </span>
-              </div>
-              <div className="text-sm">
-                <span className="text-slate-600">Exceptions:</span>{" "}
-                <span className="text-[#000000] font-medium">
-                  {metrics.exceptionsCount}
-                </span>
-              </div>
+          ) : (
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              <Input
+                type="text"
+                placeholder="Search PO, supplier, item..."
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="h-8 pl-8 w-64 text-xs bg-white"
+              />
             </div>
           )}
         </div>
+
+        {/* Right side */}
+        <div className="flex items-center gap-3 shrink-0">
+          {metrics && (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 text-xs">
+                <Zap className="h-3.5 w-3.5 text-emerald-500" />
+                <span className="text-slate-500">Auto-clear:</span>
+                <span className="font-semibold text-emerald-600">{metrics.autoClearPercent}%</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs">
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                <span className="text-slate-500">Open:</span>
+                <span className="font-semibold text-slate-900">{metrics.exceptionsCount}</span>
+              </div>
+              {metrics.slaStatus && (
+                <Badge
+                  className={cn(
+                    "text-[10px] border font-bold",
+                    metrics.slaStatus === "AT RISK"
+                      ? "border-red-200 bg-red-100 text-red-700"
+                      : "border-emerald-200 bg-emerald-100 text-emerald-700"
+                  )}
+                >
+                  {metrics.slaStatus}
+                </Badge>
+              )}
+            </div>
+          )}
+
+          <div className="h-5 w-px bg-slate-200" />
+
+          <Button
+            onClick={onNewPO}
+            size="sm"
+            className="h-8 text-xs bg-slate-800 hover:bg-slate-700"
+          >
+            <Plus className="h-3.5 w-3.5 mr-1" />
+            New PO
+          </Button>
+
+          <ViewsMenu onApply={onApplyView} onSave={onSaveView} />
+        </div>
       </div>
-    </>
+    </div>
   );
 }

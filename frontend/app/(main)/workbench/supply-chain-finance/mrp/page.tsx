@@ -1,9 +1,9 @@
 "use client";
 
-import { Upload, Download, Package } from "lucide-react";
+import { Upload, Download, Package, LayoutDashboard } from "lucide-react";
 import Breadcrumb from "@/components/layout/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { SignalDrawer } from "../components/SignalDrawer";
+import { Card, CardContent } from "@/components/ui/card";
 import { DashboardMetrics } from "../components/DashboardMetrics";
 import { useMrp } from "./hooks/useMrp";
 import { Sidebar } from "./components/Sidebar";
@@ -11,6 +11,7 @@ import { Toolbar } from "./components/Toolbar";
 import { SignalsTable } from "./components/SignalsTable";
 import { Pagination } from "./components/Pagination";
 import { BulkActionModals } from "./components/BulkActionModals";
+import { SignalDetailSheet } from "./components/SignalDetailSheet";
 
 export default function WorkbenchPage() {
   const mrp = useMrp();
@@ -18,33 +19,46 @@ export default function WorkbenchPage() {
   return (
     <div className="flex flex-col bg-white" style={{ height: "100%", minHeight: 0 }}>
       {/* Page Header */}
-      <header className="sticky top-0 z-10 bg-white px-6 py-2 flex-shrink-0">
+      <header className="sticky top-0 z-10 flex-shrink-0 border-b border-slate-200 bg-white px-6 py-2">
         <Breadcrumb activeRoute="workbench/supply-chain-finance/mrp" className="mb-1.5" />
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-3">
-            <Package className="h-6 w-6 text-slate-700" />
-            <h1 className="text-2xl font-bold text-[#000000] mt-2">MRP Workbench</h1>
+            <div className="rounded-lg bg-slate-800 p-1.5">
+              <Package className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold tracking-tight text-slate-900">MRP Workbench</h1>
+              <p className="text-xs text-slate-500">Supply chain exception management & PO tracking</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => mrp.handleBulkAction("upload")}>
-              <Upload className="h-4 w-4 mr-2" />
+            <Button
+              variant={mrp.showDashboard ? "default" : "outline"}
+              size="sm"
+              className={`h-8 text-xs ${mrp.showDashboard ? "bg-slate-800 hover:bg-slate-700" : "border-slate-300 bg-white"}`}
+              onClick={() => mrp.setShowDashboard(!mrp.showDashboard)}
+            >
+              <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
+              Dashboard
+            </Button>
+            <Button variant="outline" size="sm" className="h-8 text-xs border-slate-300 bg-white" onClick={() => mrp.handleBulkAction("upload")}>
+              <Upload className="h-3.5 w-3.5 mr-1.5" />
               Upload CSV
             </Button>
-            <Button variant="outline" size="sm" onClick={mrp.handleExport}>
-              <Download className="h-4 w-4 mr-2" />
-              Export CSV
+            <Button variant="outline" size="sm" className="h-8 text-xs border-slate-300 bg-white" onClick={mrp.handleExport}>
+              <Download className="h-3.5 w-3.5 mr-1.5" />
+              Export
             </Button>
           </div>
         </div>
-        <div className="border-b border-[#B7B7B7] mt-4"></div>
       </header>
 
       <div className="flex-1 overflow-hidden">
         <div className="flex h-full overflow-hidden bg-white text-gray-900">
           {/* Sidebar */}
           <aside
-            className={`border-r border-gray-200 bg-gray-50 flex flex-col transition-all duration-300 ${
-              mrp.sidebarCollapsed ? "w-0 overflow-hidden" : "w-80"
+            className={`border-r border-slate-200 bg-slate-50/80 flex flex-col transition-all duration-300 ${
+              mrp.sidebarCollapsed ? "w-0 overflow-hidden" : "w-72"
             }`}
           >
             <Sidebar
@@ -83,51 +97,55 @@ export default function WorkbenchPage() {
               selectedRows={mrp.selectedRows}
               rowCount={mrp.rows.length}
               onSelectAll={mrp.handleSelectAll}
+              onClearSelection={mrp.clearSelection}
               onBulkAction={mrp.handleBulkAction}
               metrics={mrp.metrics}
+              searchQuery={mrp.searchQuery}
+              onSearchChange={mrp.setSearchQuery}
             />
 
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto p-4 md:p-5 space-y-4">
               {mrp.showDashboard && (
-                <div className="p-6 pt-4">
-                  <DashboardMetrics
-                    autoRefresh={mrp.autoRefresh}
-                    onToggleRefresh={() => mrp.setAutoRefresh(!mrp.autoRefresh)}
-                  />
-                </div>
+                <DashboardMetrics
+                  autoRefresh={mrp.autoRefresh}
+                  onToggleRefresh={() => mrp.setAutoRefresh(!mrp.autoRefresh)}
+                />
               )}
 
-              <SignalsTable
-                rows={mrp.rows}
-                isLoading={mrp.isLoading}
-                sort={mrp.sort}
-                selectedRows={mrp.selectedRows}
-                onSort={mrp.handleSort}
-                onRowClick={mrp.handleRowClick}
-                onToggleRow={mrp.toggleRowSelection}
-              />
-            </div>
+              <Card>
+                <CardContent className="p-0 overflow-hidden">
+                  <SignalsTable
+                    rows={mrp.rows}
+                    isLoading={mrp.isLoading}
+                    sort={mrp.sort}
+                    selectedRows={mrp.selectedRows}
+                    onSort={mrp.handleSort}
+                    onRowClick={mrp.handleRowClick}
+                    onToggleRow={mrp.toggleRowSelection}
+                    onSelectAll={mrp.handleSelectAll}
+                  />
 
-            <Pagination
-              page={mrp.page}
-              pageSize={mrp.pageSize}
-              total={mrp.total}
-              totalPages={mrp.totalPages}
-              onPageChange={mrp.setPage}
-              onPageSizeChange={mrp.setPageSize}
-            />
+                  <Pagination
+                    page={mrp.page}
+                    pageSize={mrp.pageSize}
+                    total={mrp.total}
+                    totalPages={mrp.totalPages}
+                    onPageChange={mrp.setPage}
+                    onPageSizeChange={mrp.setPageSize}
+                  />
+                </CardContent>
+              </Card>
+            </div>
           </main>
         </div>
       </div>
 
-      {/* Signal Detail Drawer */}
-      {mrp.drawerSignalId && (
-        <SignalDrawer
-          signalId={mrp.drawerSignalId}
-          onClose={() => mrp.setDrawerSignalId(null)}
-          onAction={mrp.invalidateAll}
-        />
-      )}
+      {/* Signal Detail Sheet — works with local data */}
+      <SignalDetailSheet
+        signal={mrp.activeSignal}
+        open={!!mrp.activeSignal}
+        onClose={() => mrp.setDrawerSignalId(null)}
+      />
 
       {/* Bulk Action Modals */}
       <BulkActionModals

@@ -233,6 +233,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   const handleToggleMenu = () => {
     setIsMenuCollapsed(!isMenuCollapsed);
     setIsMenuHovered(false);
+    setIsPanelHovered(false);
     setHoveredRailItem(null);
   };
 

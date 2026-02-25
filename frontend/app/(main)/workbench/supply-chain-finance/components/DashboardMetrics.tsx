@@ -8,10 +8,14 @@ import {
   CheckCircle,
   AlertTriangle,
   RefreshCw,
+  Truck,
+  Zap,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FiltersService } from "../services/FiltersService";
+import { MOCK_DASHBOARD_STATS } from "../mrp/mock-data";
+import { cn } from "@/lib/utils";
 
 type Props = {
   autoRefresh: boolean;
@@ -21,119 +25,124 @@ type Props = {
 export function DashboardMetrics({ autoRefresh, onToggleRefresh }: Props) {
   const { data: dashboardStats } = useQuery({
     queryKey: ["dashboard-stats"],
-    queryFn: () => FiltersService.getDashboardStats(),
+    queryFn: async () => {
+      try {
+        const result = await FiltersService.getDashboardStats();
+        return result.totalOpen > 0 ? result : MOCK_DASHBOARD_STATS;
+      } catch {
+        return MOCK_DASHBOARD_STATS;
+      }
+    },
     refetchInterval: false,
   });
 
   if (!dashboardStats) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <Card className="p-4 animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-          <div className="h-8 bg-gray-200 rounded w-16"></div>
-        </Card>
-      </div>
+      <Card className="p-4">
+        <div className="grid grid-cols-5 gap-6 animate-pulse">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i}>
+              <div className="h-3 bg-slate-200 rounded w-20 mb-2" />
+              <div className="h-6 bg-slate-200 rounded w-14" />
+            </div>
+          ))}
+        </div>
+      </Card>
     );
   }
 
   const cards = [
     {
-      label: "Total Open Exceptions",
+      label: "Open Exceptions",
       value: dashboardStats.totalOpen,
       change: dashboardStats.openChange,
       icon: AlertTriangle,
-      color: "red",
+      iconColor: "text-red-500",
+      valueSuffix: "",
     },
     {
-      label: "Avg Resolution Time",
-      value: `${dashboardStats.avgResolutionTime}d`,
+      label: "Avg Resolution",
+      value: dashboardStats.avgResolutionTime,
       change: dashboardStats.resolutionTimeChange,
       icon: Clock,
-      color: "blue",
+      iconColor: "text-blue-500",
+      valueSuffix: "d",
       inverse: true,
     },
     {
-      label: "Supplier Response Rate",
-      value: `${dashboardStats.supplierResponseRate}%`,
+      label: "Response Rate",
+      value: dashboardStats.supplierResponseRate,
       change: dashboardStats.responseRateChange,
       icon: CheckCircle,
-      color: "green",
+      iconColor: "text-emerald-500",
+      valueSuffix: "%",
     },
     {
-      label: "On-Time Delivery %",
-      value: `${dashboardStats.onTimeDeliveryRate}%`,
+      label: "On-Time Delivery",
+      value: dashboardStats.onTimeDeliveryRate,
       change: dashboardStats.deliveryRateChange,
-      icon: TrendingUp,
-      color: "green",
+      icon: Truck,
+      iconColor: "text-teal-500",
+      valueSuffix: "%",
     },
     {
       label: "Auto-Clear Rate",
-      value: `${dashboardStats.autoClearPercent}%`,
+      value: dashboardStats.autoClearPercent,
       change: dashboardStats.autoClearChange,
-      icon: CheckCircle,
-      color: "green",
+      icon: Zap,
+      iconColor: "text-amber-500",
+      valueSuffix: "%",
     },
   ];
 
   return (
-    <div className="mb-6">
+    <Card className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-slate-700">Dashboard Overview</h2>
+        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide">Performance Overview</h3>
         <Button
-          variant={autoRefresh ? "default" : "outline"}
+          variant="ghost"
           size="sm"
+          className={cn("h-7 text-[11px] text-slate-500", autoRefresh && "text-blue-600")}
           onClick={onToggleRefresh}
-          title={autoRefresh ? "Auto-refresh enabled" : "Auto-refresh disabled"}
         >
-          <RefreshCw className={`h-4 w-4 mr-2 ${autoRefresh ? "animate-spin" : ""}`} />
-          {autoRefresh ? "Auto-Refresh ON" : "Auto-Refresh OFF"}
+          <RefreshCw className={cn("h-3 w-3 mr-1.5", autoRefresh && "animate-spin")} />
+          {autoRefresh ? "Auto-Refresh ON" : "Auto-Refresh"}
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-5 divide-x divide-slate-200">
         {cards.map((card, idx) => {
           const isPositive = card.inverse ? card.change < 0 : card.change > 0;
           const isNegative = card.inverse ? card.change > 0 : card.change < 0;
 
           return (
-            <Card key={idx} className="p-4 hover:shadow-md transition">
-              <div className="flex items-start justify-between mb-2">
-                <span className="text-xs text-slate-600 font-medium">{card.label}</span>
-                <card.icon
-                  className={`h-4 w-4 ${
-                    card.color === "red"
-                      ? "text-red-600"
-                      : card.color === "blue"
-                        ? "text-blue-600"
-                        : "text-green-600"
-                  }`}
-                />
+            <div key={idx} className={cn("px-4", idx === 0 && "pl-0", idx === cards.length - 1 && "pr-0")}>
+              <div className="flex items-center gap-1.5 mb-1">
+                <card.icon className={cn("h-3.5 w-3.5", card.iconColor)} />
+                <span className="text-[11px] font-medium text-slate-500">{card.label}</span>
               </div>
-
-              <div className="flex items-end justify-between">
-                <div className="text-2xl font-semibold text-[#000000]">{card.value}</div>
-
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl font-bold text-slate-900">
+                  {card.value}{card.valueSuffix}
+                </span>
                 {card.change !== 0 && (
-                  <div
-                    className={`flex items-center gap-1 text-xs font-medium ${
-                      isPositive ? "text-green-600" : isNegative ? "text-red-600" : "text-slate-500"
-                    }`}
-                  >
+                  <span className={cn(
+                    "flex items-center gap-0.5 text-[11px] font-medium",
+                    isPositive ? "text-emerald-600" : isNegative ? "text-red-500" : "text-slate-400"
+                  )}>
                     {isPositive ? (
                       <TrendingUp className="h-3 w-3" />
                     ) : isNegative ? (
                       <TrendingDown className="h-3 w-3" />
                     ) : null}
-                    <span>{Math.abs(card.change)}%</span>
-                  </div>
+                    {Math.abs(card.change)}%
+                  </span>
                 )}
               </div>
-
-              <div className="mt-2 text-xs text-slate-500">vs last week</div>
-            </Card>
+            </div>
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 }

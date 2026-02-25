@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { SignalsService, SignalListParams } from "../../services/SignalsService";
 import { FiltersService } from "../../services/FiltersService";
@@ -10,6 +10,15 @@ import { supabase } from "../../lib/supabase";
 import { format } from "date-fns";
 import { INITIAL_NEW_PO_FORM } from "../constants";
 import type { BulkActionModal, SortState, NewPOForm } from "../types";
+import {
+  MOCK_SUPPLIERS,
+  MOCK_SEVERITY_COUNTS,
+  MOCK_QUICKVIEW_COUNTS,
+  MOCK_GROUPED_COUNTS,
+  MOCK_METRICS,
+  filterMockSignals,
+  getMockSeverityCounts,
+} from "../mock-data";
 
 function useLocalStorage<T>(key: string, defaultValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [value, setValue] = useState<T>(() => {
@@ -34,11 +43,19 @@ function useLocalStorage<T>(key: string, defaultValue: T): [T, React.Dispatch<Re
 
 function useLocalStorageString(key: string, defaultValue: string): [string, (v: string) => void] {
   const [value, setValue] = useState<string>(() => {
-    return localStorage.getItem(key) || defaultValue;
+    try {
+      return localStorage.getItem(key) || defaultValue;
+    } catch {
+      return defaultValue;
+    }
   });
 
   const setAndPersist = (newValue: string) => {
-    localStorage.setItem(key, newValue);
+    try {
+      localStorage.setItem(key, newValue);
+    } catch {
+      // ignore
+    }
     setValue(newValue);
   };
 
@@ -69,7 +86,7 @@ export function useMrp() {
   const [pageSize, setPageSize] = useState(25);
   const [sort, setSort] = useState<SortState>({ field: "score", direction: "desc" });
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [drawerSignalId, setDrawerSignalId] = useState<string | null>(null);
   const [bulkActionModal, setBulkActionModal] = useState<BulkActionModal>(null);
   const [counterDate, setCounterDate] = useState("");
@@ -97,44 +114,112 @@ export function useMrp() {
     sort,
   };
 
-  // Queries
+  // Queries — each falls back to mock data on error or empty result
   const { data: signalsData, isLoading } = useQuery({
     queryKey: ["signals", params],
-    queryFn: () => SignalsService.list(params),
+    queryFn: async () => {
+      try {
+        const result = await SignalsService.list(params);
+        if (result.rows.length > 0) return result;
+        // Supabase returned empty — use mock
+        return filterMockSignals({
+          quickView,
+          severities: selectedSeverities,
+          supplierIds: selectedSuppliers,
+          q: searchQuery,
+          sort,
+          page,
+          pageSize,
+        });
+      } catch {
+        return filterMockSignals({
+          quickView,
+          severities: selectedSeverities,
+          supplierIds: selectedSuppliers,
+          q: searchQuery,
+          sort,
+          page,
+          pageSize,
+        });
+      }
+    },
   });
 
   const { data: suppliers } = useQuery({
     queryKey: ["suppliers"],
-    queryFn: () => FiltersService.getSuppliers(),
+    queryFn: async () => {
+      try {
+        const result = await FiltersService.getSuppliers();
+        return result.length > 0 ? result : MOCK_SUPPLIERS;
+      } catch {
+        return MOCK_SUPPLIERS;
+      }
+    },
   });
 
   const { data: severityCounts } = useQuery({
     queryKey: ["severity-counts", quickView],
-    queryFn: () => FiltersService.getSeverityCounts(quickView),
+    queryFn: async () => {
+      try {
+        const result = await FiltersService.getSeverityCounts(quickView);
+        const total = result.HIGH + result.MEDIUM + result.LOW;
+        return total > 0 ? result : getMockSeverityCounts(quickView);
+      } catch {
+        return getMockSeverityCounts(quickView);
+      }
+    },
     refetchInterval: false,
   });
 
   const { data: quickViewCounts } = useQuery({
     queryKey: ["quickview-counts"],
-    queryFn: () => FiltersService.getQuickViewCounts(),
+    queryFn: async () => {
+      try {
+        const result = await FiltersService.getQuickViewCounts();
+        return result.NEW + result.MONITORING + result.COMPLETED > 0 ? result : MOCK_QUICKVIEW_COUNTS;
+      } catch {
+        return MOCK_QUICKVIEW_COUNTS;
+      }
+    },
     refetchInterval: false,
   });
 
   const { data: groupedCounts } = useQuery({
     queryKey: ["grouped-counts"],
-    queryFn: () => FiltersService.getGroupedCounts(),
+    queryFn: async () => {
+      try {
+        const result = await FiltersService.getGroupedCounts();
+        const total = result.NEW.total + result.MONITORING.total + result.COMPLETED.total;
+        return total > 0 ? result : MOCK_GROUPED_COUNTS;
+      } catch {
+        return MOCK_GROUPED_COUNTS;
+      }
+    },
     refetchInterval: false,
   });
 
   const { data: metrics } = useQuery({
     queryKey: ["metrics"],
-    queryFn: () => FiltersService.getMetrics(),
+    queryFn: async () => {
+      try {
+        const result = await FiltersService.getMetrics();
+        return result.exceptionsCount > 0 ? result : MOCK_METRICS;
+      } catch {
+        return MOCK_METRICS;
+      }
+    },
     refetchInterval: false,
   });
 
   const rows = signalsData?.rows || [];
   const total = signalsData?.total || 0;
   const totalPages = Math.ceil(total / pageSize);
+
+  // Active signal for detail sheet (looked up from current rows)
+  const activeSignal = useMemo(() => {
+    if (!drawerSignalId) return null;
+    return rows.find((r: any) => r.signal_id === drawerSignalId) || null;
+  }, [drawerSignalId, rows]);
 
   // Invalidation helper
   const invalidateAll = () => {
@@ -279,8 +364,12 @@ export function useMrp() {
     if (selectedRows.size === rows.length) {
       setSelectedRows(new Set());
     } else {
-      setSelectedRows(new Set(rows.map((r) => r.signal_id)));
+      setSelectedRows(new Set(rows.map((r: any) => r.signal_id)));
     }
+  };
+
+  const clearSelection = () => {
+    setSelectedRows(new Set());
   };
 
   const handleRowClick = (signalId: string) => {
@@ -307,19 +396,19 @@ export function useMrp() {
     }
 
     if (action === "counter" && signalsData?.rows) {
-      const selectedSignals = signalsData.rows.filter((signal) =>
+      const selectedSignals = signalsData.rows.filter((signal: any) =>
         selectedRows.has(signal.signal_id)
       );
 
       if (selectedSignals.length > 0) {
         if (selectedSignals.length === 1) {
-          const signal = selectedSignals[0];
+          const signal = selectedSignals[0] as any;
           if (signal.po_line.mrp_required_date) {
             setCounterDate(format(new Date(signal.po_line.mrp_required_date), "yyyy-MM-dd"));
           }
         } else {
           const latestMrpDate = selectedSignals.reduce(
-            (latest, signal) => {
+            (latest: Date | null, signal: any) => {
               if (!signal.po_line.mrp_required_date) return latest;
               const currentDate = new Date(signal.po_line.mrp_required_date);
               return !latest || currentDate > latest ? currentDate : latest;
@@ -487,6 +576,7 @@ export function useMrp() {
     totalPages,
     isLoading,
     suppliers,
+    activeSignal,
     severityCounts,
     quickViewCounts,
     groupedCounts,
@@ -500,6 +590,7 @@ export function useMrp() {
     // Handlers
     handleSort,
     handleSelectAll,
+    clearSelection,
     handleRowClick,
     handleExport,
     handleBulkAction,

@@ -16,6 +16,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Sheet,
   SheetContent,
   SheetHeader,
@@ -45,6 +52,9 @@ import {
   Paperclip,
   Plus,
   RotateCcw,
+  Eye,
+  Bell,
+  Mail,
   Search,
   Send,
   Sparkles,
@@ -52,6 +62,7 @@ import {
   TrendingUp,
   Upload,
   X,
+  BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -148,9 +159,7 @@ interface AiResponse {
 }
 
 interface PromptSuggestion {
-  tag: string;
   prompt: string;
-  tone: "green" | "amber" | "blue" | "cyan";
 }
 
 type MaterialityMode = "default" | "tight" | "loose";
@@ -166,11 +175,44 @@ const MATERIALITY_OPTIONS: Array<{ value: MaterialityMode; label: string }> = [
 const CONSOLIDATION_OPTIONS = ["Consolidated", "Parent", "Subsidiary"];
 const CURRENCY_OPTIONS = ["USD", "EUR", "INR"];
 const AI_PROMPT_SUGGESTIONS: PromptSuggestion[] = [
-  { tag: "Revenue", prompt: "Show revenue bridge from Q2 to Q3", tone: "green" },
-  { tag: "Sensitivity", prompt: "Show impact of losing top 3 accounts", tone: "amber" },
-  { tag: "Balance Sheet", prompt: "Show roll-forward for key BS accounts", tone: "blue" },
-  { tag: "Period Close", prompt: "Show close timeline and deadlines", tone: "cyan" },
+  { prompt: "Show revenue bridge from Q2 to Q3" },
+  { prompt: "Show impact of losing top 3 accounts" },
+  { prompt: "Show roll-forward for key BS accounts" },
+  { prompt: "Show close timeline and deadlines" },
 ];
+const EVIDENCE_TYPE_OPTIONS = [
+  { value: "journal-entry", label: "Journal Entry" },
+  { value: "invoice", label: "Invoice" },
+  { value: "contract", label: "Contract" },
+  { value: "bank-advice", label: "Bank Advice" },
+  { value: "supporting-doc", label: "Supporting Document" },
+];
+const QUICK_LINK_EVIDENCE_OPTIONS = ["GL Extract", "Trial Balance", "Subledger Report", "Bank Rec"];
+const AI_THINKING_STEPS = [
+  "Understanding your question",
+  "Scanning filtered Flux accounts",
+  "Calculating account deltas and drivers",
+  "Drafting response",
+];
+
+const CASH_FLOW_BRIDGE_DATA: CfRow[] = [
+  { label: "Net Income", val: 6.8 },
+  { label: "Depreciation & Non-cash", val: 1.1 },
+  { label: "AR (Increase)", val: -0.8 },
+  { label: "Inventory (Decrease)", val: 0.6 },
+  { label: "AP (Increase)", val: 0.8 },
+  { label: "Other WC", val: 0.9 },
+];
+
+const KPI_SNAPSHOT = {
+  revenue: { value: 52.9, pct: 9.8 },
+  grossMargin: { value: 20.3, pct: 14.0 },
+  operatingCashFlow: { value: 9.4, pct: 11.2 },
+  workingCapital: {
+    value: 1.0,
+    components: ["AR +$0.8M", "Inv -$0.6M", "AP +$0.8M"],
+  },
+} as const;
 
 /* ──────────────────────────────────── MOCK DATA ──────────────────────────────────── */
 
@@ -338,14 +380,7 @@ const FALLBACK_DATA: FluxPageData = {
     { driver: "Timing (AP)", impact: 0.8, confidence: "High" },
     { driver: "Inventory Usage", impact: -0.6, confidence: "Med" },
   ],
-  cf: [
-    { label: "Net Income", val: 6.8 },
-    { label: "Depreciation & Non-cash", val: 1.1 },
-    { label: "AR (Increase)", val: -0.8 },
-    { label: "Inventory (Decrease)", val: 0.6 },
-    { label: "AP (Increase)", val: 0.8 },
-    { label: "Other WC", val: 0.9 },
-  ],
+  cf: CASH_FLOW_BRIDGE_DATA,
   aiExplanations: [
     { acct: "4000 Revenue", delta: 4.7, driver: "Price ↑ / Volume ↑", conf: "High", owner: "Sales Ops", evidence: true, status: "Open" },
     { acct: "1200 AR", delta: 0.8, driver: "Collections timing", conf: "Med", owner: "AR Lead", evidence: false, status: "Open" },
@@ -552,30 +587,7 @@ function buildPageData(rawItems: FluxRaw[]): FluxPageData {
     .sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact))
     .slice(0, 8);
 
-  const revenueDelta = isRows
-    .filter((row) => row.acct.startsWith("4"))
-    .reduce((sum, row) => sum + (row.actual - row.base), 0);
-  const expenseDelta = isRows
-    .filter((row) => ["5", "6", "7"].includes(row.acct.charAt(0)))
-    .reduce((sum, row) => sum + (row.actual - row.base), 0);
-
-  const arRow = bsRows.find((row) => /receivable/i.test(row.name));
-  const inventoryRow = bsRows.find((row) => /inventory/i.test(row.name));
-  const apRow = bsRows.find((row) => /payable/i.test(row.name));
-
-  const arDelta = arRow ? arRow.actual - arRow.base : 0;
-  const inventoryDelta = inventoryRow ? inventoryRow.actual - inventoryRow.base : 0;
-  const apDelta = apRow ? apRow.actual - apRow.base : 0;
-  const totalBsDelta = bsRows.reduce((sum, row) => sum + (row.actual - row.base), 0);
-
-  const cf: CfRow[] = [
-    { label: "Net Income", val: round1(revenueDelta - expenseDelta) },
-    { label: "Depreciation & Non-cash", val: 1.1 },
-    { label: "AR (Increase)", val: round1(-arDelta) },
-    { label: "Inventory (Decrease)", val: round1(-inventoryDelta) },
-    { label: "AP (Increase)", val: round1(apDelta) },
-    { label: "Other WC", val: round1(totalBsDelta - arDelta - inventoryDelta - apDelta) },
-  ];
+  const cf: CfRow[] = CASH_FLOW_BRIDGE_DATA.map((row) => ({ ...row }));
 
   const aiExplanations = rows
     .filter((row) => row.significant || row.aiExplanation)
@@ -622,13 +634,6 @@ function metricToneClass(tone: "positive" | "negative" | "neutral"): string {
   return "border-slate-200 bg-slate-50 text-slate-600";
 }
 
-function promptTagClass(tone: PromptSuggestion["tone"]): string {
-  if (tone === "green") return "border-emerald-200 bg-emerald-100 text-emerald-700";
-  if (tone === "amber") return "border-amber-200 bg-amber-100 text-amber-700";
-  if (tone === "cyan") return "border-cyan-200 bg-cyan-100 text-cyan-700";
-  return "border-blue-200 bg-blue-100 text-blue-700";
-}
-
 function drawRoundedRect(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -671,19 +676,65 @@ export default function FluxAnalysisPage() {
 
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiResponses, setAiResponses] = useState<AiResponse[]>([]);
+  const [aiIsThinking, setAiIsThinking] = useState(false);
+  const [aiPendingQuestion, setAiPendingQuestion] = useState("");
+  const [aiThinkingSteps, setAiThinkingSteps] = useState<string[]>([]);
   const [priceSlider, setPriceSlider] = useState([1]);
   const [volumeSlider, setVolumeSlider] = useState([2]);
   const [fxSlider, setFxSlider] = useState([0]);
+  const [watchDialogOpen, setWatchDialogOpen] = useState(false);
+  const [watchName, setWatchName] = useState("Flux Watch — Q3 2025");
+  const [watchThresholdType, setWatchThresholdType] = useState<"variance_pct" | "variance_amount">("variance_pct");
+  const [watchThresholdValue, setWatchThresholdValue] = useState("5");
+  const [watchFrequency, setWatchFrequency] = useState("daily");
+  const [watchNotifyVia, setWatchNotifyVia] = useState("email");
+  const [watchSelectedIds, setWatchSelectedIds] = useState<string[]>([]);
+  const [watchRecipients, setWatchRecipients] = useState<string[]>([]);
+  const [evidenceDialogOpen, setEvidenceDialogOpen] = useState(false);
+  const [evidenceTargetRow, setEvidenceTargetRow] = useState<FluxRow | null>(null);
+  const [evidenceType, setEvidenceType] = useState("journal-entry");
+  const [evidenceNotes, setEvidenceNotes] = useState("");
+  const [evidenceFileName, setEvidenceFileName] = useState("");
+  const [evidenceQuickLinks, setEvidenceQuickLinks] = useState<string[]>([]);
+  const [evidenceOverrides, setEvidenceOverrides] = useState<Record<string, boolean>>({});
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const aiThinkingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const aiResponseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const evidenceFileInputRef = useRef<HTMLInputElement>(null);
   const pageSize = 10;
 
   const allRows = useMemo(() => [...data.is, ...data.bs], [data.is, data.bs]);
+  const watchIsRows = useMemo(
+    () => [...data.is].sort((a, b) => a.acct.localeCompare(b.acct, undefined, { numeric: true })),
+    [data.is]
+  );
+  const watchBsRows = useMemo(
+    () => [...data.bs].sort((a, b) => a.acct.localeCompare(b.acct, undefined, { numeric: true })),
+    [data.bs]
+  );
+  const watchAllRows = useMemo(() => [...watchIsRows, ...watchBsRows], [watchIsRows, watchBsRows]);
 
   const ownerOptions = useMemo(() => {
     const unique = new Set(allRows.map((row) => row.owner));
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
   }, [allRows]);
+  const watchRecipientOptions = useMemo(() => {
+    const unique = new Set(["Controller", "FP&A", ...ownerOptions]);
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }, [ownerOptions]);
+  const defaultWatchRecipients = useMemo(() => {
+    const preferred = ["Controller", "FP&A"].filter((person) =>
+      watchRecipientOptions.includes(person)
+    );
+    return preferred.length ? preferred : watchRecipientOptions.slice(0, 2);
+  }, [watchRecipientOptions]);
+  const watchDefaultSelectedIds = useMemo(
+    () => watchAllRows.filter((row) => row.status !== "Closed").map((row) => row.id),
+    [watchAllRows]
+  );
+  const watchSelectedSet = useMemo(() => new Set(watchSelectedIds), [watchSelectedIds]);
+  const evidenceQuickLinkSet = useMemo(() => new Set(evidenceQuickLinks), [evidenceQuickLinks]);
 
   const statusOptions = useMemo(() => {
     const unique = new Set(allRows.map((row) => row.status));
@@ -751,30 +802,7 @@ export default function FluxAnalysisPage() {
     return revenueRows.sort((a, b) => b.actual - a.actual)[0] ?? null;
   }, [filteredAllRows]);
 
-  const kpiGrossMargin = useMemo(
-    () => filteredAllRows.find((row) => /gross margin/i.test(row.name)) ?? null,
-    [filteredAllRows]
-  );
-
   const kpiCfTotal = useMemo(() => data.cf.reduce((sum, row) => sum + row.val, 0), [data.cf]);
-
-  const workingCapitalDelta = useMemo(
-    () => filteredBS.reduce((sum, row) => sum + (row.actual - row.base), 0),
-    [filteredBS]
-  );
-
-  const wcBreakdown = useMemo(
-    () =>
-      [...filteredBS]
-        .sort((a, b) => Math.abs(b.actual - b.base) - Math.abs(a.actual - a.base))
-        .slice(0, 3)
-        .map((row) => {
-          const delta = row.actual - row.base;
-          const shortName = row.name.split(" ")[0];
-          return `${shortName} ${delta >= 0 ? "+" : ""}$${Math.abs(delta).toFixed(1)}M`;
-        }),
-    [filteredBS]
-  );
 
   const topDrivers = useMemo(() => {
     if (!filteredAllRows.length) return data.drivers;
@@ -820,29 +848,371 @@ export default function FluxAnalysisPage() {
     return fromRows.length ? fromRows : data.aiExplanations;
   }, [filteredAllRows, data.aiExplanations]);
 
-  const generateAIResponse = (question: string) => {
+  const promptSuggestions = useMemo(() => {
+    if (!detailRow) return AI_PROMPT_SUGGESTIONS;
+    return [
+      {
+        prompt: `Explain ${detailRow.name} variance and next actions`,
+      },
+      ...AI_PROMPT_SUGGESTIONS,
+    ];
+  }, [detailRow]);
+  const aiAutocompleteSuggestions = useMemo(() => {
+    const query = aiPrompt.trim().toLowerCase();
+    if (!query) return [] as PromptSuggestion[];
+
+    const words = query.split(/\s+/).filter(Boolean);
+    const scored = promptSuggestions.map((suggestion, index) => {
+      const text = suggestion.prompt.toLowerCase();
+      let score = 0;
+      if (text.includes(query)) score += 10;
+      if (words.length) {
+        score += words.filter((word) => text.includes(word)).length;
+      }
+      return { suggestion, score, index };
+    });
+
+    const matched = scored
+      .filter((item) => item.score > 0)
+      .sort((a, b) => (b.score === a.score ? a.index - b.index : b.score - a.score))
+      .map((item) => item.suggestion);
+
+    return (matched.length ? matched : promptSuggestions).slice(0, 6);
+  }, [aiPrompt, promptSuggestions]);
+  const showAiAutocomplete = !aiIsThinking && aiPrompt.trim().length > 0 && aiAutocompleteSuggestions.length > 0;
+
+  const signedMoney = (value: number) =>
+    `${value >= 0 ? "+" : "-"}$${Math.abs(value).toFixed(1)}M`;
+
+  const generateAIResponse = (question: string): Omit<AiResponse, "id" | "q"> => {
     const prompt = question.toLowerCase();
-    if (/ar|receivable/.test(prompt)) {
-      return "AR moved due to collection timing. Recommended actions: prioritize high-dollar invoices, trigger reminders, and validate credit holds for repeat late payers.";
+    const openItems = filteredAllRows.filter((row) => row.status !== "Closed").length;
+    const inReviewItems = filteredAllRows.filter((row) => row.status === "In Review").length;
+    const netIsDelta = filteredIS.reduce((sum, row) => sum + (row.actual - row.base), 0);
+    const topMovers = [...filteredAllRows]
+      .sort((a, b) => Math.abs(b.actual - b.base) - Math.abs(a.actual - a.base))
+      .slice(0, 3);
+
+    const baseMetrics: AiResponse["metrics"] = [
+      {
+        label: "Net IS Delta",
+        value: signedMoney(netIsDelta),
+        tone: netIsDelta >= 0 ? "positive" : "negative",
+      },
+      {
+        label: "Operating CF",
+        value: signedMoney(kpiCfTotal),
+        tone: kpiCfTotal >= 0 ? "positive" : "negative",
+      },
+      {
+        label: "Open Items",
+        value: `${openItems}`,
+        tone: openItems === 0 ? "positive" : "neutral",
+      },
+    ];
+
+    if (/classify|drivers?|accounts/.test(prompt)) {
+      const bullets = topDrivers.slice(0, 3).map((driver) => {
+        const pct = (kpiRevenue?.base ?? 48.2) ? driver.impact / (kpiRevenue?.base ?? 48.2) : 0;
+        return `${driver.driver}: ${signedMoney(driver.impact)} (${fmtPct(pct)}) with ${driver.confidence} confidence.`;
+      });
+      return {
+        summary: `Matched saved prompt: "Classify drivers for all accounts". Top driver clusters are computed from the current filtered Flux accounts.`,
+        metrics: baseMetrics,
+        bullets,
+        matchedPrompt: "Classify drivers for all accounts",
+      };
     }
-    if (/price.*flat/.test(prompt)) {
-      return "Holding price flat lowers expected uplift significantly. Volume and mix still contribute, but margin expansion would compress in this scenario.";
+
+    if (/revenue|bridge.*q2|bridge.*q3|price|volume|mix/.test(prompt)) {
+      const projectedRevenue =
+        (kpiRevenue?.base ?? 48.2) *
+        ((priceSlider[0] / 100) * 0.45 +
+          (volumeSlider[0] / 100) * 0.35 +
+          (fxSlider[0] / 100) * -0.2);
+      const bullets = [
+        `Revenue sensitivity based on current sliders is ${signedMoney(projectedRevenue)}.`,
+        ...topMovers.slice(0, 2).map((row) => {
+          const delta = row.actual - row.base;
+          const pct = row.base ? delta / row.base : 0;
+          return `${row.name}: ${signedMoney(delta)} (${fmtPct(pct)}), owner ${row.owner}.`;
+        }),
+      ];
+      return {
+        summary: "Revenue bridge generated from current period deltas. You can tune Price/Volume/FX sliders to simulate alternate outcomes.",
+        metrics: [
+          ...baseMetrics.slice(0, 2),
+          {
+            label: "Projected Rev Delta",
+            value: signedMoney(projectedRevenue),
+            tone: projectedRevenue >= 0 ? "positive" : "negative",
+          },
+        ],
+        bullets,
+        matchedPrompt: "Show revenue bridge from Q2 to Q3",
+      };
     }
-    if (/bridge|working capital/.test(prompt)) {
-      return "Working capital bridge combines AR, inventory, and AP movements. AR drag is partially offset by AP timing and inventory efficiency.";
+
+    if (/impact|losing|sensitivity|what if|price held flat/.test(prompt)) {
+      const projectedRevenue =
+        (kpiRevenue?.base ?? 48.2) *
+        ((priceSlider[0] / 100) * 0.45 +
+          (volumeSlider[0] / 100) * 0.35 +
+          (fxSlider[0] / 100) * -0.2);
+      const stressImpact = -Math.abs((kpiRevenue?.actual ?? 0) * 0.12);
+      return {
+        summary: "Scenario response generated from current Flux profile with a stressed revenue assumption.",
+        metrics: [
+          {
+            label: "Stress Case",
+            value: signedMoney(stressImpact),
+            tone: "negative",
+          },
+          {
+            label: "Projected Rev Delta",
+            value: signedMoney(projectedRevenue),
+            tone: projectedRevenue >= 0 ? "positive" : "negative",
+          },
+          {
+            label: "In Review",
+            value: `${inReviewItems}`,
+            tone: "neutral",
+          },
+        ],
+        bullets: [
+          "Loss concentration risk is highest in top revenue-bearing accounts currently marked Open or In Review.",
+          "Prioritize collection and renewal actions for accounts contributing the largest positive deltas.",
+          "Use watchlist to track the stressed cohort through period close.",
+        ],
+        matchedPrompt: "Show impact of losing top 3 accounts",
+      };
     }
-    if (/classify|g&a|driver/.test(prompt)) {
-      return "G&A drivers classified: Professional fees (+$0.2M) are audit-related one-time costs, facilities are flat on lease terms, and admin headcount is unchanged. Net movement is -$0.1M from timing of legal spend.";
+
+    if (/working capital|wc|roll[- ]?forward|balance sheet|ar|receivable|ap|inventory/.test(prompt)) {
+      const arRow = filteredBS.find((row) => /receivable/i.test(row.name));
+      const invRow = filteredBS.find((row) => /inventory/i.test(row.name));
+      const apRow = filteredBS.find((row) => /payable/i.test(row.name));
+      const arDelta = arRow ? arRow.actual - arRow.base : 0;
+      const invDelta = invRow ? invRow.actual - invRow.base : 0;
+      const apDelta = apRow ? apRow.actual - apRow.base : 0;
+
+      return {
+        summary: "Working capital and roll-forward view generated from Balance Sheet accounts in the current filter context.",
+        metrics: [
+          { label: "AR Delta", value: signedMoney(arDelta), tone: arDelta <= 0 ? "positive" : "negative" },
+          { label: "Inventory Delta", value: signedMoney(invDelta), tone: invDelta <= 0 ? "positive" : "negative" },
+          { label: "AP Delta", value: signedMoney(apDelta), tone: apDelta >= 0 ? "positive" : "neutral" },
+        ],
+        bullets: [
+          `Collections driver: ${arRow ? `${arRow.name} is ${signedMoney(arDelta)}.` : "No AR line in current scope."}`,
+          `Inventory driver: ${invRow ? `${invRow.name} is ${signedMoney(invDelta)}.` : "No inventory line in current scope."}`,
+          `Payables driver: ${apRow ? `${apRow.name} is ${signedMoney(apDelta)}.` : "No AP line in current scope."}`,
+        ],
+        matchedPrompt: "Show roll-forward for key BS accounts",
+      };
     }
-    return "Top drivers currently include price-volume mix, collections timing, and working-capital levers. Focus on open items with missing evidence first.";
+
+    if (/close|timeline|deadline|period/.test(prompt)) {
+      return {
+        summary: "Close timeline summary generated from current review statuses and recent activity.",
+        metrics: [
+          { label: "Open", value: `${openItems - inReviewItems}`, tone: "neutral" },
+          { label: "In Review", value: `${inReviewItems}`, tone: "neutral" },
+          { label: "Closed", value: `${filteredAllRows.length - openItems}`, tone: "positive" },
+        ],
+        bullets: [
+          "Review open accounts older than 3 days first and attach evidence before closure.",
+          "Route In Review items to owners with highest absolute delta to reduce close risk.",
+          "Use AI Proposed Explanations as draft narratives for controller approval.",
+        ],
+        matchedPrompt: "Show close timeline and deadlines",
+      };
+    }
+
+    const fallbackBullets = topMovers.length
+      ? topMovers.map((row) => {
+          const delta = row.actual - row.base;
+          const pct = row.base ? delta / row.base : 0;
+          return `${row.name}: ${signedMoney(delta)} (${fmtPct(pct)}), owner ${row.owner}, status ${row.status}.`;
+        })
+      : ["No matching rows in current filters. Expand filters or include noise to generate deeper insights."];
+
+    return {
+      summary: `No exact saved prompt matched "${question}". Generated a data-driven summary from current Flux accounts.`,
+      metrics: baseMetrics,
+      bullets: fallbackBullets,
+      matchedPrompt: null,
+    };
   };
 
+  const clearAiSimulationTimers = useCallback(() => {
+    if (aiThinkingIntervalRef.current) {
+      clearInterval(aiThinkingIntervalRef.current);
+      aiThinkingIntervalRef.current = null;
+    }
+    if (aiResponseTimeoutRef.current) {
+      clearTimeout(aiResponseTimeoutRef.current);
+      aiResponseTimeoutRef.current = null;
+    }
+  }, []);
+
+  const resetAiSimulation = useCallback(() => {
+    clearAiSimulationTimers();
+    setAiIsThinking(false);
+    setAiPendingQuestion("");
+    setAiThinkingSteps([]);
+  }, [clearAiSimulationTimers]);
+
+  useEffect(() => {
+    return () => {
+      clearAiSimulationTimers();
+    };
+  }, [clearAiSimulationTimers]);
+
   const handleAsk = (rawPrompt?: string) => {
+    if (aiIsThinking) return;
     const nextPrompt = (rawPrompt ?? aiPrompt).trim();
     if (!nextPrompt) return;
+
     const response = generateAIResponse(nextPrompt);
-    setAiResponses((prev) => [{ q: nextPrompt, a: response }, ...prev].slice(0, 6));
+    const responseId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
     setAiPrompt("");
+    setAiIsThinking(true);
+    setAiPendingQuestion(nextPrompt);
+    setAiThinkingSteps(AI_THINKING_STEPS.length ? [AI_THINKING_STEPS[0]] : []);
+
+    clearAiSimulationTimers();
+
+    let stepIndex = 1;
+    aiThinkingIntervalRef.current = setInterval(() => {
+      if (stepIndex >= AI_THINKING_STEPS.length) {
+        if (aiThinkingIntervalRef.current) {
+          clearInterval(aiThinkingIntervalRef.current);
+          aiThinkingIntervalRef.current = null;
+        }
+        return;
+      }
+      const nextStep = AI_THINKING_STEPS[stepIndex];
+      stepIndex += 1;
+      setAiThinkingSteps((prev) => [...prev, nextStep]);
+    }, 360);
+
+    const thinkingDurationMs = Math.max(1200, AI_THINKING_STEPS.length * 360 + 420);
+    aiResponseTimeoutRef.current = setTimeout(() => {
+      clearAiSimulationTimers();
+      setAiResponses((prev) => [
+        {
+          id: responseId,
+          q: nextPrompt,
+          ...response,
+        },
+        ...prev,
+      ].slice(0, 8));
+      setAiIsThinking(false);
+      setAiPendingQuestion("");
+      setAiThinkingSteps([]);
+    }, thinkingDurationMs);
+  };
+
+  const handleSelectPromptSuggestion = (suggestionPrompt: string) => {
+    if (aiIsThinking) return;
+    setAiPrompt(suggestionPrompt);
+  };
+
+  const handleNewChat = () => {
+    resetAiSimulation();
+    setAiResponses([]);
+    setAiPrompt("");
+    toast.success("Started a new AI chat session");
+  };
+
+  const toggleWatchAccount = (id: string, shouldInclude: boolean) => {
+    setWatchSelectedIds((prev) => {
+      if (shouldInclude) {
+        if (prev.includes(id)) return prev;
+        return [...prev, id];
+      }
+      return prev.filter((value) => value !== id);
+    });
+  };
+
+  const toggleWatchRecipient = (recipient: string) => {
+    setWatchRecipients((prev) =>
+      prev.includes(recipient)
+        ? prev.filter((value) => value !== recipient)
+        : [...prev, recipient]
+    );
+  };
+
+  const handleOpenWatchDialog = () => {
+    const periodLabel = data.is[0]?.currentPeriod ?? "Q3 2025";
+    setWatchName(`Flux Watch — ${periodLabel}`);
+    setWatchThresholdType("variance_pct");
+    setWatchThresholdValue("5");
+    setWatchFrequency("daily");
+    setWatchNotifyVia("email");
+    setWatchSelectedIds(watchDefaultSelectedIds);
+    setWatchRecipients(defaultWatchRecipients);
+    setWatchDialogOpen(true);
+  };
+
+  const handleCreateWatch = () => {
+    if (!watchName.trim()) {
+      toast.error("Watch name is required");
+      return;
+    }
+    if (!watchSelectedIds.length) {
+      toast.error("Select at least one account to monitor");
+      return;
+    }
+    if (!watchRecipients.length) {
+      toast.error("Select at least one recipient");
+      return;
+    }
+    toast.success(`Watch "${watchName}" created for ${watchSelectedIds.length} accounts`);
+    setWatchDialogOpen(false);
+  };
+
+  const hasEvidence = useCallback(
+    (row: Pick<FluxRow, "id" | "evidence">) => evidenceOverrides[row.id] ?? row.evidence,
+    [evidenceOverrides]
+  );
+
+  const handleOpenEvidenceDialog = (row: FluxRow) => {
+    setEvidenceTargetRow(row);
+    setEvidenceType("journal-entry");
+    setEvidenceNotes("");
+    setEvidenceFileName("");
+    setEvidenceQuickLinks([]);
+    setEvidenceDialogOpen(true);
+  };
+
+  const handleEvidenceFileSelection = (file?: File | null) => {
+    if (!file) return;
+    setEvidenceFileName(file.name);
+  };
+
+  const handleEvidenceFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleEvidenceFileSelection(event.target.files?.[0]);
+    event.currentTarget.value = "";
+  };
+
+  const toggleEvidenceQuickLink = (quickLink: string) => {
+    setEvidenceQuickLinks((prev) =>
+      prev.includes(quickLink) ? prev.filter((item) => item !== quickLink) : [...prev, quickLink]
+    );
+  };
+
+  const handleAttachEvidence = () => {
+    if (!evidenceTargetRow) return;
+    if (!evidenceFileName && evidenceQuickLinks.length === 0) {
+      toast.error("Add a file or quick-link before attaching evidence");
+      return;
+    }
+    setEvidenceOverrides((prev) => ({ ...prev, [evidenceTargetRow.id]: true }));
+    setEvidenceDialogOpen(false);
+    toast.success(`Evidence attached for ${evidenceTargetRow.name} (${evidenceTargetRow.acct})`);
   };
 
   const calculateSensitivity = () => {
@@ -881,7 +1251,17 @@ export default function FluxAnalysisPage() {
     const range = max - min || 1;
     const y = (value: number) => rect.height - 40 - ((value - min) / range) * (rect.height - 80);
 
-    ctx.strokeStyle = "#e2e8f0";
+    for (let i = 0; i < 4; i += 1) {
+      const gy = 20 + ((rect.height - 80) / 3) * i;
+      ctx.strokeStyle = "#f1f5f9";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(16, gy);
+      ctx.lineTo(rect.width - 16, gy);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "#94a3b8";
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(16, y(0));
@@ -890,8 +1270,10 @@ export default function FluxAnalysisPage() {
 
     cumulative = 0;
     let x = pad;
+    const formatBridgeValue = (value: number) =>
+      `${value >= 0 ? "+" : ""}$${Math.abs(value).toFixed(1)}M`;
 
-    steps.forEach((step) => {
+    steps.forEach((step, idx) => {
       const from = cumulative;
       const to = cumulative + step.val;
       const top = Math.min(y(from), y(to));
@@ -901,10 +1283,29 @@ export default function FluxAnalysisPage() {
       drawRoundedRect(ctx, x, top, barW, height, 6);
       ctx.fill();
 
-      ctx.fillStyle = "#0f172a";
-      ctx.font = "11px ui-sans-serif";
+      const valueLabelY = step.val >= 0 ? top - 8 : top + height + 16;
+      ctx.fillStyle = "#334155";
+      ctx.font = "600 11px ui-sans-serif";
       ctx.textAlign = "center";
+      ctx.fillText(formatBridgeValue(step.val), x + barW / 2, valueLabelY);
+
+      ctx.fillStyle = "#475569";
+      ctx.font = "11px ui-sans-serif";
       ctx.fillText(step.label, x + barW / 2, rect.height - 16);
+
+      if (idx < steps.length - 1) {
+        const nextX = x + barW + gap;
+        const connectorY = y(to);
+        ctx.save();
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 1.25;
+        ctx.beginPath();
+        ctx.moveTo(x + barW + 2, connectorY);
+        ctx.lineTo(nextX - 2, connectorY);
+        ctx.stroke();
+        ctx.restore();
+      }
 
       cumulative = to;
       x += barW + gap;
@@ -943,11 +1344,11 @@ export default function FluxAnalysisPage() {
   const tableStart = activeRows.length === 0 ? 0 : pageStart + 1;
   const tableEnd = Math.min(pageStart + pageSize, activeRows.length);
 
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
   const detailDelta = detailRow ? detailRow.actual - detailRow.base : 0;
   const detailPct = detailRow && detailRow.base ? detailDelta / detailRow.base : 0;
   const detailAi = detailRow ? AI_ANALYSIS_MAP[detailRow.acct] : null;
+  const detailHasEvidence = detailRow ? hasEvidence(detailRow) : false;
+  const hasAiConversation = aiResponses.length > 0 || aiIsThinking;
 
   /* ─── Table row renderer (reused for IS and BS tabs) ─── */
   const renderTableRows = (rows: FluxRow[]) => {
@@ -963,10 +1364,11 @@ export default function FluxAnalysisPage() {
     return rows.map((row) => {
       const delta = row.actual - row.base;
       const pct = row.base ? delta / row.base : 0;
+      const rowHasEvidence = hasEvidence(row);
       return (
         <TableRow
           key={row.id}
-          className="cursor-pointer transition-colors hover:bg-slate-50"
+          className="cursor-pointer transition-colors hover:bg-blue-50/40"
           onClick={() => handleRowClick(row)}
         >
           <TableCell className="text-xs font-medium">{row.acct}</TableCell>
@@ -985,7 +1387,7 @@ export default function FluxAnalysisPage() {
           <TableCell className="text-xs">{row.driver}</TableCell>
           <TableCell className="text-xs">{row.owner}</TableCell>
           <TableCell className="text-xs">
-            {row.evidence ? (
+            {rowHasEvidence ? (
               <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-[11px] text-emerald-700">
                 <Paperclip className="mr-1 h-3 w-3" /> Attached
               </Badge>
@@ -996,18 +1398,18 @@ export default function FluxAnalysisPage() {
                 className="h-6 px-2 text-xs text-slate-500"
                 onClick={(e) => {
                   e.stopPropagation();
-                  toast.success(`Evidence requested for ${row.acct}`);
+                  handleOpenEvidenceDialog(row);
                 }}
               >
-                <Paperclip className="mr-1 h-3 w-3" /> Attach
+                <Paperclip className="mr-1 h-3 w-3" /> Add Evidence
               </Button>
             )}
           </TableCell>
-          <TableCell className="text-xs">
-            <Badge className={cn("border text-[11px]", statusClass(row.status))}>
-              {row.status === "Open" && <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-orange-500" />}
-              {row.status === "In Review" && <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-amber-500" />}
-              {row.status === "Closed" && <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />}
+          <TableCell className="min-w-[118px] text-xs">
+            <Badge className={cn("whitespace-nowrap rounded-full border px-3 py-1 text-[11px] font-semibold", statusClass(row.status))}>
+              {row.status === "Open" && <span className="inline-block h-1.5 w-1.5 rounded-full bg-orange-500" />}
+              {row.status === "In Review" && <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500" />}
+              {row.status === "Closed" && <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />}
               {row.status}
             </Badge>
           </TableCell>
@@ -1018,39 +1420,33 @@ export default function FluxAnalysisPage() {
 
   /* ─── Pagination Component ─── */
   const renderPagination = () => (
-    <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className="flex items-center justify-between p-3 border-t border-slate-200 bg-slate-50/70">
       <span className="text-xs text-slate-500">
         Showing {tableStart}–{tableEnd} of {activeRows.length}
       </span>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         <Button
           variant="outline"
-          size="icon"
-          className="h-8 w-8"
+          size="sm"
+          className="h-7 text-xs"
           disabled={page <= 1}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-3.5 w-3.5 mr-1" />
+          Prev
         </Button>
-        {pageNumbers.map((num) => (
-          <Button
-            key={num}
-            variant={num === page ? "default" : "outline"}
-            size="icon"
-            className={cn("h-8 w-8 text-xs", num === page && "bg-[#205375] text-white hover:bg-[#1b4563]")}
-            onClick={() => setPage(num)}
-          >
-            {num}
-          </Button>
-        ))}
+        <span className="text-xs text-slate-600">
+          Page {page} of {totalPages}
+        </span>
         <Button
           variant="outline"
-          size="icon"
-          className="h-8 w-8"
+          size="sm"
+          className="h-7 text-xs"
           disabled={page >= totalPages}
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
         >
-          <ChevronRight className="h-4 w-4" />
+          Next
+          <ChevronRight className="h-3.5 w-3.5 ml-1" />
         </Button>
       </div>
     </div>
@@ -1063,17 +1459,22 @@ export default function FluxAnalysisPage() {
       {/* ─── Header ─── */}
       <header className="sticky top-0 z-10 flex-shrink-0 border-b border-slate-200 bg-white px-6 py-2">
         <Breadcrumb activeRoute="reports/analysis/flux-analysis" className="mb-1.5" />
-        <div className="mb-2 mt-1 flex flex-wrap items-center justify-between gap-3">
+        <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Flux Analysis</h1>
-            <div className="flex flex-wrap items-center gap-1.5">
-              <Badge className="border border-blue-200 bg-blue-50 text-[#205375] text-[11px]">
+            <div className="rounded-lg bg-slate-800 p-1.5">
+              <BarChart3 className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold tracking-tight text-slate-900">Flux Analysis</h1>
+              <p className="text-xs text-slate-500">Period variance analysis & AI-driven driver decomposition</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 ml-2">
+              <Badge className="border border-blue-200 bg-blue-50 text-slate-800 text-[11px]">
                 <FileText className="mr-1 h-3 w-3" /> Q2 2025 → Q3 2025
               </Badge>
               <Badge variant="outline" className="text-[11px]">
                 <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" /> Consolidated
               </Badge>
-              <Badge variant="outline" className="text-[11px]">Workspace: Q3 Close</Badge>
               <Badge variant="outline" className="text-[11px]">{currency}</Badge>
             </div>
           </div>
@@ -1083,8 +1484,8 @@ export default function FluxAnalysisPage() {
             </Button>
             <Button
               size="sm"
-              className="bg-[#205375] text-white hover:bg-[#1b4563]"
-              onClick={() => toast.success("Watch created for material variances")}
+              className="bg-slate-800 text-white hover:bg-slate-700"
+              onClick={handleOpenWatchDialog}
             >
               <Plus className="mr-1.5 h-4 w-4" /> Create Watch
             </Button>
@@ -1177,55 +1578,73 @@ export default function FluxAnalysisPage() {
           </div>
 
           {/* ─── KPI Cards ─── */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Card className="border-l-4 border-l-blue-500 border-slate-200 p-4 shadow-sm">
-              <div className="mb-1 text-xs font-medium text-slate-500">Revenue</div>
-              <div className="text-3xl font-bold tracking-tight text-slate-900">
-                ${kpiRevenue ? kpiRevenue.actual.toFixed(1) : "--"}M
-              </div>
-              {kpiRevenue && (
-                <div className={cn("mt-1.5 flex items-center gap-1 text-xs font-semibold", kpiRevenue.actual - kpiRevenue.base >= 0 ? "text-emerald-600" : "text-red-600")}>
-                  <TrendingUp className="h-3 w-3" />
-                  {fmtPct((kpiRevenue.actual - kpiRevenue.base) / Math.max(1, kpiRevenue.base))} vs prior
+          <Card className="p-4">
+            <div className="grid grid-cols-4 divide-x divide-slate-200">
+              <div className="px-4 first:pl-0">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <TrendingUp className="h-3.5 w-3.5 text-blue-500" />
+                  <span className="text-[11px] font-medium text-slate-500">Revenue</span>
                 </div>
-              )}
-            </Card>
-
-            <Card className="border-l-4 border-l-emerald-500 border-slate-200 p-4 shadow-sm">
-              <div className="mb-1 text-xs font-medium text-slate-500">Gross Margin</div>
-              <div className="text-3xl font-bold tracking-tight text-slate-900">
-                ${kpiGrossMargin ? kpiGrossMargin.actual.toFixed(1) : "--"}M
-              </div>
-              {kpiGrossMargin && (
-                <div className={cn("mt-1.5 flex items-center gap-1 text-xs font-semibold", kpiGrossMargin.actual - kpiGrossMargin.base >= 0 ? "text-emerald-600" : "text-red-600")}>
-                  <TrendingUp className="h-3 w-3" />
-                  {fmtPct((kpiGrossMargin.actual - kpiGrossMargin.base) / Math.max(1, kpiGrossMargin.base))} vs prior
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xl font-bold text-slate-900">
+                    ${KPI_SNAPSHOT.revenue.value.toFixed(1)}M
+                  </span>
                 </div>
-              )}
-            </Card>
+                <div className="mt-0.5 flex items-center gap-0.5 text-[11px] font-medium text-emerald-600">
+                  <TrendingUp className="h-3 w-3" />
+                  +{KPI_SNAPSHOT.revenue.pct.toFixed(1)}% vs prior
+                </div>
+              </div>
 
-            <Card className="border-l-4 border-l-teal-500 border-slate-200 p-4 shadow-sm">
-              <div className="mb-1 text-xs font-medium text-slate-500">Operating Cash Flow</div>
-              <div className="text-3xl font-bold tracking-tight text-slate-900">${kpiCfTotal.toFixed(1)}M</div>
-              <div className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-emerald-600">
-                <TrendingUp className="h-3 w-3" />
-                +11.2% vs prior
+              <div className="px-4">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+                  <span className="text-[11px] font-medium text-slate-500">Gross Margin</span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xl font-bold text-slate-900">
+                    ${KPI_SNAPSHOT.grossMargin.value.toFixed(1)}M
+                  </span>
+                </div>
+                <div className="mt-0.5 flex items-center gap-0.5 text-[11px] font-medium text-emerald-600">
+                  <TrendingUp className="h-3 w-3" />
+                  +{KPI_SNAPSHOT.grossMargin.pct.toFixed(1)}% vs prior
+                </div>
               </div>
-            </Card>
 
-            <Card className="border-l-4 border-l-indigo-500 border-slate-200 p-4 shadow-sm">
-              <div className="mb-1 text-xs font-medium text-slate-500">Working Capital &Delta;</div>
-              <div className="text-3xl font-bold tracking-tight text-slate-900">
-                {workingCapitalDelta >= 0 ? "+" : "-"}${Math.abs(workingCapitalDelta).toFixed(1)}M
+              <div className="px-4">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <TrendingUp className="h-3.5 w-3.5 text-teal-500" />
+                  <span className="text-[11px] font-medium text-slate-500">Operating Cash Flow</span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xl font-bold text-slate-900">${KPI_SNAPSHOT.operatingCashFlow.value.toFixed(1)}M</span>
+                </div>
+                <div className="mt-0.5 flex items-center gap-0.5 text-[11px] font-medium text-emerald-600">
+                  <TrendingUp className="h-3 w-3" />
+                  +{KPI_SNAPSHOT.operatingCashFlow.pct.toFixed(1)}% vs prior
+                </div>
               </div>
-              <div className="mt-1.5 text-xs text-slate-500">
-                {wcBreakdown.join(" \u2022 ") || "No material WC lines"}
+
+              <div className="px-4 last:pr-0">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <TrendingUp className="h-3.5 w-3.5 text-indigo-500" />
+                  <span className="text-[11px] font-medium text-slate-500">Working Capital &Delta;</span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xl font-bold text-slate-900">
+                    +${KPI_SNAPSHOT.workingCapital.value.toFixed(1)}M
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate-500 mt-0.5">
+                  {KPI_SNAPSHOT.workingCapital.components.join(" \u2022 ")}
+                </div>
               </div>
-            </Card>
-          </div>
+            </div>
+          </Card>
 
           {/* ─── Main Grid: Table + AI Sidebar ─── */}
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_500px]">
             {/* ─── LEFT: Tables & Drivers ─── */}
             <div className="min-w-0 space-y-4">
               {/* ─── Tab Tables ─── */}
@@ -1233,13 +1652,13 @@ export default function FluxAnalysisPage() {
                 <Tabs value={activeView} onValueChange={(v) => setActiveView(v as "is" | "bs" | "cf")}>
                   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-4 pt-3 pb-0">
                     <TabsList className="bg-transparent p-0">
-                      <TabsTrigger value="is" className="rounded-none border-b-2 border-transparent px-4 pb-2 text-xs data-[state=active]:border-[#205375] data-[state=active]:text-[#205375] data-[state=active]:shadow-none">
+                      <TabsTrigger value="is" className="rounded-none border-b-2 border-transparent px-4 pb-2 text-xs data-[state=active]:border-slate-800 data-[state=active]:text-slate-800 data-[state=active]:shadow-none">
                         Income Statement
                       </TabsTrigger>
-                      <TabsTrigger value="bs" className="rounded-none border-b-2 border-transparent px-4 pb-2 text-xs data-[state=active]:border-[#205375] data-[state=active]:text-[#205375] data-[state=active]:shadow-none">
+                      <TabsTrigger value="bs" className="rounded-none border-b-2 border-transparent px-4 pb-2 text-xs data-[state=active]:border-slate-800 data-[state=active]:text-slate-800 data-[state=active]:shadow-none">
                         Balance Sheet
                       </TabsTrigger>
-                      <TabsTrigger value="cf" className="rounded-none border-b-2 border-transparent px-4 pb-2 text-xs data-[state=active]:border-[#205375] data-[state=active]:text-[#205375] data-[state=active]:shadow-none">
+                      <TabsTrigger value="cf" className="rounded-none border-b-2 border-transparent px-4 pb-2 text-xs data-[state=active]:border-slate-800 data-[state=active]:text-slate-800 data-[state=active]:shadow-none">
                         Cash Flow Bridge
                       </TabsTrigger>
                     </TabsList>
@@ -1249,24 +1668,24 @@ export default function FluxAnalysisPage() {
                   <div className="p-4">
                     <TabsContent value="is" className="mt-0 space-y-3">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-semibold text-[#205375]">Income Statement Coverage</h3>
+                        <h3 className="text-sm font-semibold text-slate-800">Income Statement Coverage</h3>
                         <span className="text-xs text-slate-500">{filteredIS.length} accounts</span>
                       </div>
                       <div className="overflow-x-auto rounded-lg border border-slate-200">
                         <div className="min-w-[920px]">
                           <Table>
                             <TableHeader>
-                              <TableRow className="bg-slate-50">
-                                <TableHead className="text-xs font-medium text-slate-600">Acct</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Name</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Base</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Actual</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">&Delta;</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">&Delta;%</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Driver</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Owner</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Evidence</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Status</TableHead>
+                              <TableRow className="bg-slate-900">
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Acct</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Name</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Base</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Actual</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">&Delta;</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">&Delta;%</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Driver</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Owner</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Evidence</TableHead>
+                                <TableHead className="min-w-[118px] text-xs font-medium text-slate-100 uppercase tracking-wide">Status</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>{renderTableRows(pagedRows)}</TableBody>
@@ -1278,24 +1697,24 @@ export default function FluxAnalysisPage() {
 
                     <TabsContent value="bs" className="mt-0 space-y-3">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-semibold text-[#205375]">Balance Sheet Coverage</h3>
+                        <h3 className="text-sm font-semibold text-slate-800">Balance Sheet Coverage</h3>
                         <span className="text-xs text-slate-500">{filteredBS.length} accounts</span>
                       </div>
                       <div className="overflow-x-auto rounded-lg border border-slate-200">
                         <div className="min-w-[920px]">
                           <Table>
                             <TableHeader>
-                              <TableRow className="bg-slate-50">
-                                <TableHead className="text-xs font-medium text-slate-600">Acct</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Name</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Base</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Actual</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">&Delta;</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">&Delta;%</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Driver</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Owner</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Evidence</TableHead>
-                                <TableHead className="text-xs font-medium text-slate-600">Status</TableHead>
+                              <TableRow className="bg-slate-900">
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Acct</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Name</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Base</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Actual</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">&Delta;</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">&Delta;%</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Driver</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Owner</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Evidence</TableHead>
+                                <TableHead className="min-w-[118px] text-xs font-medium text-slate-100 uppercase tracking-wide">Status</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>{renderTableRows(pagedRows)}</TableBody>
@@ -1305,17 +1724,17 @@ export default function FluxAnalysisPage() {
                       {renderPagination()}
 
                       <div>
-                        <h4 className="mb-2 text-sm font-semibold text-[#205375]">Balance Sheet Roll-forward</h4>
+                        <h4 className="mb-2 text-sm font-semibold text-slate-800">Balance Sheet Roll-forward</h4>
                         <div className="overflow-x-auto rounded-lg border border-slate-200">
                           <div className="min-w-[700px]">
                             <Table>
                               <TableHeader>
-                                <TableRow className="bg-slate-50">
-                                  <TableHead className="text-xs">Account</TableHead>
-                                  <TableHead className="text-xs">Opening</TableHead>
-                                  <TableHead className="text-xs">Activity</TableHead>
-                                  <TableHead className="text-xs">Closing</TableHead>
-                                  <TableHead className="text-xs">Notes</TableHead>
+                                <TableRow className="bg-slate-900">
+                                  <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Account</TableHead>
+                                  <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Opening</TableHead>
+                                  <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Activity</TableHead>
+                                  <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Closing</TableHead>
+                                  <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Notes</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
@@ -1338,7 +1757,12 @@ export default function FluxAnalysisPage() {
                     </TabsContent>
 
                     <TabsContent value="cf" className="mt-0 space-y-3">
-                      <h3 className="text-sm font-semibold text-[#205375]">Operating Cash Flow Bridge</h3>
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h3 className="text-sm font-semibold text-slate-800">Operating Cash Flow Bridge</h3>
+                        <span className="rounded-md border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-semibold text-sky-900">
+                          Operating CF: {signedMoney(kpiCfTotal)}
+                        </span>
+                      </div>
                       <canvas
                         ref={canvasRef}
                         className="h-[300px] w-full rounded-lg border border-dashed border-slate-300 bg-gradient-to-b from-white to-slate-50"
@@ -1347,10 +1771,10 @@ export default function FluxAnalysisPage() {
                         <div className="min-w-[500px]">
                           <Table>
                             <TableHeader>
-                              <TableRow className="bg-slate-50">
-                                <TableHead className="text-xs">Component</TableHead>
-                                <TableHead className="text-xs">Impact</TableHead>
-                                <TableHead className="text-xs">Narrative</TableHead>
+                              <TableRow className="bg-slate-900">
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Component</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Impact</TableHead>
+                                <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Narrative</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -1388,12 +1812,12 @@ export default function FluxAnalysisPage() {
                   <div className="min-w-[620px]">
                     <Table>
                       <TableHeader>
-                        <TableRow className="bg-slate-50">
-                          <TableHead className="text-xs font-medium text-slate-600">Driver</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-600">Impact ($)</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-600">Impact (%)</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-600">Confidence</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-600">Trend</TableHead>
+                        <TableRow className="bg-slate-900">
+                          <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Driver</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Impact ($)</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Impact (%)</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Confidence</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-100 uppercase tracking-wide">Trend</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1418,11 +1842,11 @@ export default function FluxAnalysisPage() {
                                 <div className="flex items-center gap-2">
                                   <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100">
                                     <div
-                                      className={cn("h-full rounded-full", pct >= 0 ? "bg-[#205375]" : "bg-red-400")}
+                                      className={cn("h-full rounded-full", pct >= 0 ? "bg-slate-800" : "bg-red-400")}
                                       style={{ width: `${Math.min(100, Math.abs(pct) * 260)}%` }}
                                     />
                                   </div>
-                                  <span className={cn("h-2 w-2 rounded-full", pct >= 0 ? "bg-[#205375]" : "bg-red-400")} />
+                                  <span className={cn("h-2 w-2 rounded-full", pct >= 0 ? "bg-slate-800" : "bg-red-400")} />
                                 </div>
                               </TableCell>
                             </TableRow>
@@ -1439,14 +1863,24 @@ export default function FluxAnalysisPage() {
             <aside className="min-w-0 space-y-4">
               {/* AI Analysis Chat */}
               <Card className="overflow-hidden border-slate-200 shadow-sm">
-                <div className="bg-[#205375] px-4 py-3">
-                  <div className="flex items-center gap-2 text-white">
-                    <Sparkles className="h-4 w-4" />
-                    <h3 className="text-sm font-semibold">AI Analysis</h3>
+                <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-4 py-3">
+                  <div className="flex items-center justify-between text-white">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4" />
+                      <h3 className="text-sm font-semibold">AI Analysis</h3>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleNewChat}
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/90 transition-colors hover:text-white"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      New Chat
+                    </button>
                   </div>
                 </div>
-                <div className="p-4">
-                  {aiResponses.length === 0 ? (
+                <div className="space-y-3 p-4">
+                  {!hasAiConversation ? (
                     <div className="flex flex-col items-center py-6 text-center">
                       <div className="mb-3 rounded-full bg-slate-100 p-3">
                         <Sparkles className="h-6 w-6 text-slate-400" />
@@ -1454,24 +1888,107 @@ export default function FluxAnalysisPage() {
                       <p className="text-xs text-slate-500">Ask a question or try a suggestion below</p>
                     </div>
                   ) : (
-                    <div className="mb-3 max-h-48 space-y-2 overflow-y-auto">
-                      {aiResponses.map((r, i) => (
-                        <div key={`${r.q}-${i}`} className="space-y-1 border-b border-slate-100 pb-2 text-xs last:border-0">
-                          <div className="font-medium text-slate-700">Q: {r.q}</div>
-                          <div className="text-slate-600">{r.a}</div>
+                    <div className="max-h-[360px] space-y-3 overflow-y-auto pr-1">
+                      {aiIsThinking ? (
+                        <div className="animate-fade-slide-up rounded-xl border border-slate-200 bg-slate-50 p-3">
+                          <div className="flex items-start gap-2">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-white">
+                              Q
+                            </div>
+                            <div className="flex-1 text-sm font-semibold text-slate-800">
+                              {aiPendingQuestion}
+                            </div>
+                          </div>
+                          <div className="mt-2 flex items-start gap-2">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-white">
+                              <Sparkles className="h-3.5 w-3.5" />
+                            </div>
+                            <div
+                              className="flex-1 space-y-1.5 rounded-lg border border-slate-200 bg-white p-2.5"
+                              aria-live="polite"
+                              aria-busy="true"
+                            >
+                              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                                AI is analyzing
+                              </p>
+                              {aiThinkingSteps.map((step, idx) => {
+                                const isLatest = idx === aiThinkingSteps.length - 1;
+                                return (
+                                  <div
+                                    key={`${step}-${idx}`}
+                                    className={cn(
+                                      "text-xs",
+                                      isLatest ? "font-medium text-slate-700" : "text-slate-500"
+                                    )}
+                                  >
+                                    {step}
+                                    {isLatest ? (
+                                      <span className="ml-1.5 inline-flex items-center gap-1 align-middle">
+                                        <span className="h-1.5 w-1.5 rounded-full bg-slate-400 typing-dot-1" />
+                                        <span className="h-1.5 w-1.5 rounded-full bg-slate-400 typing-dot-2" />
+                                        <span className="h-1.5 w-1.5 rounded-full bg-slate-400 typing-dot-3" />
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      ) : null}
+
+                      {aiResponses.map((response) => (
+                        <div key={response.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                          <div className="flex items-start gap-2">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-white">
+                              Q
+                            </div>
+                            <div className="flex-1 text-sm font-semibold text-slate-800">{response.q}</div>
+                          </div>
+                          <div className="mt-2 flex items-start gap-2">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-white">
+                              <Sparkles className="h-3.5 w-3.5" />
+                            </div>
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm leading-6 text-slate-700">{response.summary}</p>
+                              {response.matchedPrompt ? (
+                                <p className="text-[11px] text-slate-500">
+                                  Matched saved prompt: {response.matchedPrompt}
+                                </p>
+                              ) : null}
+                              <div className="flex flex-wrap gap-1.5">
+                                {response.metrics.map((metric) => (
+                                  <Badge
+                                    key={`${response.id}-${metric.label}`}
+                                    className={cn("border text-[11px] font-semibold", metricToneClass(metric.tone))}
+                                  >
+                                    {metric.label}: {metric.value}
+                                  </Badge>
+                                ))}
+                              </div>
+                              <ul className="space-y-1">
+                                {response.bullets.map((bullet, index) => (
+                                  <li key={`${response.id}-${index}`} className="text-xs text-slate-700">
+                                    • {bullet}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  <div className="flex items-center gap-2">
-                    <Input
+                  <div className="flex items-end gap-2">
+                    <Textarea
                       value={aiPrompt}
                       onChange={(e) => setAiPrompt(e.target.value)}
-                      placeholder="Ask: Explain AR increase and cash impact"
-                      className="h-9 text-xs"
+                      placeholder={aiIsThinking ? "AI is analyzing your request..." : "Ask: Explain AR increase and cash impact"}
+                      disabled={aiIsThinking}
+                      className="min-h-[90px] resize-none border-2 border-slate-200 text-sm focus-visible:ring-slate-800"
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") {
+                        if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault();
                           handleAsk();
                         }
@@ -1479,25 +1996,42 @@ export default function FluxAnalysisPage() {
                     />
                     <Button
                       size="icon"
-                      className="h-9 w-9 shrink-0 bg-[#205375] hover:bg-[#1b4563]"
+                      className="h-10 w-10 shrink-0 bg-slate-800 hover:bg-slate-700"
                       onClick={() => handleAsk()}
+                      disabled={aiIsThinking || !aiPrompt.trim()}
                     >
-                      <Send className="h-4 w-4" />
+                      {aiIsThinking ? (
+                        <div className="flex items-center gap-1">
+                          <span className="h-1.5 w-1.5 rounded-full bg-white typing-dot-1" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-white typing-dot-2" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-white typing-dot-3" />
+                        </div>
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )}
                     </Button>
                   </div>
 
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {AI_QUICK_PROMPTS.map((p) => (
-                      <button
-                        key={p}
-                        type="button"
-                        onClick={() => handleAsk(p)}
-                        className="rounded-full border border-slate-200 px-2.5 py-1 text-[11px] text-slate-500 transition-colors hover:border-blue-300 hover:text-[#205375]"
-                      >
-                        &ldquo;{p}&rdquo;
-                      </button>
-                    ))}
-                  </div>
+                  {showAiAutocomplete ? (
+                    <div className="overflow-hidden rounded-xl border border-slate-200">
+                      <div className="border-b border-slate-100 bg-slate-50 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                        Suggestions
+                      </div>
+                      {aiAutocompleteSuggestions.map((suggestion, index) => (
+                        <button
+                          key={suggestion.prompt}
+                          type="button"
+                          onClick={() => handleSelectPromptSuggestion(suggestion.prompt)}
+                          className={cn(
+                            "flex w-full items-center px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50",
+                            index > 0 && "border-t border-slate-100"
+                          )}
+                        >
+                          {suggestion.prompt}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               </Card>
 
@@ -1579,20 +2113,403 @@ export default function FluxAnalysisPage() {
         </div>
       </div>
 
+      <Dialog open={evidenceDialogOpen} onOpenChange={setEvidenceDialogOpen}>
+        <DialogContent className="max-h-[88vh] gap-3 overflow-y-auto p-4 sm:max-w-[560px]">
+          <DialogHeader className="space-y-2 pr-8">
+            <DialogTitle className="flex items-center gap-2 text-2xl font-bold text-slate-900">
+              <Paperclip className="h-4.5 w-4.5 text-sky-700" />
+              Attach Evidence
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500">
+              Upload supporting documentation for{" "}
+              {evidenceTargetRow ? `${evidenceTargetRow.name} (${evidenceTargetRow.acct})` : "the selected account"}.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3.5">
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-slate-700">Evidence Type</Label>
+              <Select value={evidenceType} onValueChange={setEvidenceType}>
+                <SelectTrigger className="h-10 rounded-lg border border-slate-200 px-3 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {EVIDENCE_TYPE_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-slate-700">Upload File</Label>
+              <input
+                ref={evidenceFileInputRef}
+                type="file"
+                className="hidden"
+                accept=".pdf,.xlsx,.xls,.csv,.doc,.docx,.png,.jpg,.jpeg,.webp"
+                onChange={handleEvidenceFileChange}
+              />
+              <button
+                type="button"
+                className={cn(
+                  "w-full rounded-lg border border-dashed p-5 text-center transition-colors",
+                  evidenceFileName ? "border-emerald-200 bg-emerald-50" : "border-slate-200 hover:bg-slate-50"
+                )}
+                onClick={() => evidenceFileInputRef.current?.click()}
+                onDragOver={(event) => {
+                  event.preventDefault();
+                }}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  handleEvidenceFileSelection(event.dataTransfer.files?.[0]);
+                }}
+              >
+                {evidenceFileName ? (
+                  <div>
+                    <p className="text-sm font-semibold text-emerald-700">{evidenceFileName}</p>
+                    <p className="text-xs text-emerald-600">Selected file. Click to replace.</p>
+                  </div>
+                ) : (
+                  <div>
+                    <Upload className="mx-auto mb-1.5 h-7 w-7 text-slate-300" />
+                    <p className="text-base font-medium text-slate-700">Click to upload or drag and drop</p>
+                    <p className="text-xs text-slate-400">PDF, Excel, CSV, Word, Images (max 25MB)</p>
+                  </div>
+                )}
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-slate-700">Notes (optional)</Label>
+              <Textarea
+                value={evidenceNotes}
+                onChange={(event) => setEvidenceNotes(event.target.value)}
+                className="min-h-[84px] rounded-lg border-slate-200 text-sm"
+                placeholder="Add context, reference numbers, or reviewer instructions..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-slate-700">Or quick-link existing</Label>
+              <div className="flex flex-wrap gap-2">
+                {QUICK_LINK_EVIDENCE_OPTIONS.map((option) => {
+                  const selected = evidenceQuickLinkSet.has(option);
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => toggleEvidenceQuickLink(option)}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors",
+                        selected
+                          ? "border-sky-200 bg-sky-50 text-sky-800"
+                          : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                      )}
+                    >
+                      <FileText className="h-3.5 w-3.5" />
+                      {option}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 border-t border-slate-200 pt-3">
+            <Button
+              variant="outline"
+              className="h-9 px-4 text-sm"
+              onClick={() => setEvidenceDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="h-9 bg-sky-800 px-4 text-sm text-white hover:bg-sky-700"
+              onClick={handleAttachEvidence}
+            >
+              <Paperclip className="mr-2 h-4 w-4" />
+              Attach Evidence
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={watchDialogOpen} onOpenChange={setWatchDialogOpen}>
+        <DialogContent className="max-h-[88vh] gap-3 overflow-y-auto p-4 sm:max-w-[700px]">
+          <DialogHeader className="space-y-1 pr-8">
+            <DialogTitle className="flex items-center gap-2 text-xl font-bold text-slate-900">
+              <Eye className="h-4.5 w-4.5 text-slate-700" />
+              Create Watch
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-600">
+              Monitor accounts for variance changes and get notified when thresholds are breached.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-800">Watch Name</Label>
+              <Input
+                value={watchName}
+                onChange={(e) => setWatchName(e.target.value)}
+                className="h-9 text-sm"
+                placeholder="Flux Watch — Q3 2025"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <Label className="text-xs font-semibold text-slate-800">Accounts to Monitor</Label>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-700">
+                  <button
+                    type="button"
+                    className="hover:text-slate-900"
+                    onClick={() => setWatchSelectedIds(watchAllRows.map((row) => row.id))}
+                  >
+                    Select all
+                  </button>
+                  <span className="text-slate-300">|</span>
+                  <button
+                    type="button"
+                    className="hover:text-slate-900"
+                    onClick={() =>
+                      setWatchSelectedIds(
+                        watchAllRows
+                          .filter((row) => row.status !== "Closed")
+                          .map((row) => row.id)
+                      )
+                    }
+                  >
+                    Open only
+                  </button>
+                  <span className="text-slate-300">|</span>
+                  <button
+                    type="button"
+                    className="hover:text-slate-900"
+                    onClick={() => setWatchSelectedIds([])}
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-hidden rounded-xl border border-slate-200">
+                <div className="max-h-[220px] overflow-y-auto">
+                  <div className="border-b border-slate-100 bg-slate-50 px-4 py-2 text-xs font-semibold tracking-wide text-slate-500">
+                    INCOME STATEMENT
+                  </div>
+                  {watchIsRows.map((row) => {
+                    const isSelected = watchSelectedSet.has(row.id);
+                    return (
+                      <div
+                        key={row.id}
+                        className="flex cursor-pointer items-center gap-2.5 border-b border-slate-100 px-3 py-2 hover:bg-slate-50"
+                        onClick={() => toggleWatchAccount(row.id, !isSelected)}
+                      >
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={(checked) =>
+                            toggleWatchAccount(row.id, Boolean(checked))
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <span className="w-14 font-mono text-xs text-slate-400">{row.acct}</span>
+                        <span className="text-xs text-slate-800">{row.name}</span>
+                        <Badge
+                          className={cn(
+                            "ml-auto border text-[10px]",
+                            statusClass(row.status)
+                          )}
+                        >
+                          {row.status}
+                        </Badge>
+                      </div>
+                    );
+                  })}
+
+                  <div className="border-b border-slate-100 bg-slate-50 px-4 py-2 text-xs font-semibold tracking-wide text-slate-500">
+                    BALANCE SHEET
+                  </div>
+                  {watchBsRows.map((row) => {
+                    const isSelected = watchSelectedSet.has(row.id);
+                    return (
+                      <div
+                        key={row.id}
+                        className="flex cursor-pointer items-center gap-2.5 border-b border-slate-100 px-3 py-2 hover:bg-slate-50"
+                        onClick={() => toggleWatchAccount(row.id, !isSelected)}
+                      >
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={(checked) =>
+                            toggleWatchAccount(row.id, Boolean(checked))
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <span className="w-14 font-mono text-xs text-slate-400">{row.acct}</span>
+                        <span className="text-xs text-slate-800">{row.name}</span>
+                        <Badge
+                          className={cn(
+                            "ml-auto border text-[10px]",
+                            statusClass(row.status)
+                          )}
+                        >
+                          {row.status}
+                        </Badge>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-500">
+                {watchSelectedIds.length} of {watchAllRows.length} accounts selected
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-slate-800">Alert Threshold</Label>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-[220px_1fr]">
+                <Select value={watchThresholdType} onValueChange={(value) => setWatchThresholdType(value as "variance_pct" | "variance_amount")}>
+                  <SelectTrigger className="h-9 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="variance_pct">Variance %</SelectItem>
+                    <SelectItem value="variance_amount">Variance Amount</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    value={watchThresholdValue}
+                    onChange={(e) => setWatchThresholdValue(e.target.value)}
+                    className="h-9 pr-10 text-sm"
+                    min="0"
+                    step={watchThresholdType === "variance_pct" ? "0.1" : "0.1"}
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400">
+                    {watchThresholdType === "variance_pct" ? "%" : "M"}
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs text-slate-500">
+                Alert when any monitored account variance exceeds {watchThresholdValue || "0"}
+                {watchThresholdType === "variance_pct" ? "%" : "M"}.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label className="text-xs font-semibold text-slate-800">Check Frequency</Label>
+                <Select value={watchFrequency} onValueChange={setWatchFrequency}>
+                  <SelectTrigger className="h-9 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-semibold text-slate-800">Notify Via</Label>
+                <Select value={watchNotifyVia} onValueChange={setWatchNotifyVia}>
+                  <SelectTrigger className="h-9 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="email">
+                      <span className="inline-flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Email
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="slack">Slack</SelectItem>
+                    <SelectItem value="teams">Teams</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-slate-800">Recipients</Label>
+              <div className="flex flex-wrap gap-2">
+                {watchRecipientOptions.map((recipient) => {
+                  const selected = watchRecipients.includes(recipient);
+                  return (
+                    <button
+                      type="button"
+                      key={recipient}
+                      onClick={() => toggleWatchRecipient(recipient)}
+                      className={cn(
+                        "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
+                        selected
+                          ? "border-sky-200 bg-sky-50 text-sky-800"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                      )}
+                    >
+                      {recipient}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-200 pt-4">
+              <Button
+                variant="outline"
+                className="h-9 px-5 text-sm"
+                onClick={() => setWatchDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="h-9 bg-slate-800 px-5 text-sm text-white hover:bg-slate-700"
+                onClick={handleCreateWatch}
+              >
+                <Bell className="mr-2 h-4 w-4" />
+                Create Watch ({watchSelectedIds.length} accounts)
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* ─── Detail Drawer ─── */}
       <Sheet open={detailOpen} onOpenChange={setDetailOpen}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
+        <SheetContent className="w-full overflow-y-auto sm:max-w-lg p-0">
           {detailRow && (
             <>
-              <SheetHeader className="pb-4">
-                <SheetTitle className="text-2xl font-bold text-slate-900">{detailRow.name}</SheetTitle>
-                <p className="text-sm text-slate-500">
-                  Acct {detailRow.acct} &nbsp;|&nbsp; Owner: {detailRow.owner}
-                </p>
-              </SheetHeader>
+              {/* Dark gradient header */}
+              <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-5">
+                <SheetHeader className="pb-0">
+                  <SheetTitle className="text-lg font-bold text-white">{detailRow.name}</SheetTitle>
+                  <p className="text-sm text-slate-300">
+                    Acct {detailRow.acct} &nbsp;|&nbsp; Owner: {detailRow.owner}
+                  </p>
+                </SheetHeader>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <Badge variant="outline" className="border-slate-500 text-xs text-slate-200">{detailRow.driver}</Badge>
+                  <Badge className={cn("border text-xs", statusClass(detailRow.status))}>
+                    <span className={cn("mr-1 inline-block h-1.5 w-1.5 rounded-full", detailRow.status === "Closed" ? "bg-emerald-500" : detailRow.status === "In Review" ? "bg-amber-500" : "bg-orange-500")} />
+                    {detailRow.status}
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className={cn("text-xs", detailHasEvidence ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-slate-500 text-slate-200")}
+                  >
+                    <Paperclip className="mr-1 h-3 w-3" /> {detailHasEvidence ? "Attached" : "Attach"}
+                  </Badge>
+                </div>
+              </div>
 
+              <div className="px-6 py-5 space-y-5">
               {/* Base / Actual / Delta cards */}
-              <div className="mb-4 grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
                   <div className="text-[11px] font-medium text-slate-500">Base (Q2)</div>
                   <div className="mt-1 text-xl font-bold text-slate-900">{fmtMoney(detailRow.base)}</div>
@@ -1612,23 +2529,8 @@ export default function FluxAnalysisPage() {
                 </div>
               </div>
 
-              {/* Tags */}
-              <div className="mb-5 flex flex-wrap items-center gap-2">
-                <Badge variant="outline" className="text-xs">{detailRow.driver}</Badge>
-                <Badge className={cn("border text-xs", statusClass(detailRow.status))}>
-                  <span className={cn("mr-1 inline-block h-1.5 w-1.5 rounded-full", detailRow.status === "Closed" ? "bg-emerald-500" : detailRow.status === "In Review" ? "bg-amber-500" : "bg-orange-500")} />
-                  {detailRow.status}
-                </Badge>
-                <Badge
-                  variant="outline"
-                  className={cn("text-xs", detailRow.evidence ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "")}
-                >
-                  <Paperclip className="mr-1 h-3 w-3" /> {detailRow.evidence ? "Attached" : "Attach"}
-                </Badge>
-              </div>
-
               {/* Timeline */}
-              <div className="mb-5 rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                 <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Timeline</h4>
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-slate-600">
                   <span className="flex items-center gap-1">
@@ -1640,20 +2542,29 @@ export default function FluxAnalysisPage() {
               </div>
 
               {/* Evidence Files */}
-              <div className="mb-5 rounded-lg border border-slate-200 p-4">
+              <div className="rounded-lg border border-slate-200 p-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence Files (0)</h4>
-                  <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => toast.success("Upload dialog opened")}>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Evidence Files ({detailHasEvidence ? 1 : 0})
+                  </h4>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => handleOpenEvidenceDialog(detailRow)}
+                  >
                     <Upload className="mr-1.5 h-3 w-3" /> Add Evidence
                   </Button>
                 </div>
                 <p className="mt-2 text-xs text-slate-400">
-                  No files attached yet. Upload supporting documentation to improve close readiness.
+                  {detailHasEvidence
+                    ? "Evidence is attached for this account. You can add more supporting documents."
+                    : "No files attached yet. Upload supporting documentation to improve close readiness."}
                 </p>
               </div>
 
               {/* Recent Activity */}
-              <div className="mb-5 rounded-lg border border-slate-200 p-4">
+              <div className="rounded-lg border border-slate-200 p-4">
                 <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Recent Activity</h4>
                 <div className="space-y-3">
                   {ACTIVITY_LOG.map((a, i) => (
@@ -1670,9 +2581,9 @@ export default function FluxAnalysisPage() {
               </div>
 
               {/* AI Analysis */}
-              <div className="mb-5 rounded-lg border border-slate-200 p-4">
+              <div className="rounded-lg border border-slate-200 p-4">
                 <div className="mb-2 flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-[#205375]" />
+                  <Sparkles className="h-4 w-4 text-slate-800" />
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">AI Analysis</h4>
                 </div>
                 {detailAi ? (
@@ -1710,6 +2621,7 @@ export default function FluxAnalysisPage() {
                 <MessageSquare className="h-4 w-4" />
                 Ask AI about {detailRow.name}
               </Button>
+              </div>
             </>
           )}
         </SheetContent>
