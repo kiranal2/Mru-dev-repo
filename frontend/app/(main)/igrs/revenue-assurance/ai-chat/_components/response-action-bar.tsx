@@ -76,8 +76,8 @@ function extractCaseIdsFromMessage(msg: ConversationMessage): string[] {
 
 function getCasesRoute(msg: ConversationMessage): string {
   const caseIds = extractCaseIdsFromMessage(msg);
-  if (caseIds.length === 0) return "/igrs/revenue-assurance/cases";
-  return `/igrs/revenue-assurance/cases?caseIds=${encodeURIComponent(caseIds.join(","))}`;
+  if (caseIds.length === 0) return "/igrs/revenue-assurance/cases?from=ai-chat";
+  return `/igrs/revenue-assurance/cases?caseIds=${encodeURIComponent(caseIds.join(","))}&from=ai-chat`;
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────

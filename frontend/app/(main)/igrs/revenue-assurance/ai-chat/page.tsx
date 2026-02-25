@@ -55,40 +55,162 @@ function findBestMatch(input: string, allPrompts: PromptTemplate[]): PromptTempl
 // ── Inline Chart Renderer ────────────────────────────────────────────────────
 
 function InlineChart({ chart }: { chart: InlineChartData }) {
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
+
   if (chart.type === "bar") {
     const maxVal = Math.max(...chart.datasets.flatMap((d) => d.data), 1);
-    const barGroupW = 400 / Math.max(chart.labels.length, 1);
+    const barGroupW = 540 / Math.max(chart.labels.length, 1);
     const barW = (barGroupW * 0.6) / Math.max(chart.datasets.length, 1);
+    const multiDs = chart.datasets.length > 1;
     return (
-      <svg viewBox="0 0 420 160" className="w-full max-w-md mt-2">
-        {chart.labels.map((label, li) => (
-          <g key={label}>
-            {chart.datasets.map((ds, di) => {
-              const h = (ds.data[li] / maxVal) * 110;
-              const x = 30 + li * barGroupW + di * barW;
-              return (
-                <rect key={di} x={x} y={130 - h} width={barW - 2} height={h} fill={ds.color} rx={2} />
-              );
-            })}
-            <text
-              x={30 + li * barGroupW + (barGroupW * 0.3) / 2}
-              y={148}
-              textAnchor="middle"
-              className="text-[8px] fill-slate-500"
-            >
-              {label}
-            </text>
-          </g>
-        ))}
-        {chart.datasets.map((ds, di) => (
-          <g key={di}>
-            <rect x={30 + di * 80} y={2} width={8} height={8} rx={1} fill={ds.color} />
-            <text x={42 + di * 80} y={10} className="text-[8px] fill-slate-500">
-              {ds.label}
-            </text>
-          </g>
-        ))}
-      </svg>
+      <div className="flex justify-center">
+        <svg viewBox="0 0 580 240" className="w-full max-w-2xl mt-2">
+          {/* Y-axis scale labels */}
+          {[0, 1, 2, 3, 4].map((i) => {
+            const val = maxVal - (i / 4) * maxVal;
+            return (
+              <g key={`y-${i}`}>
+                <line x1={36} y1={30 + i * 45} x2={570} y2={30 + i * 45} stroke="#e2e8f0" strokeWidth={0.5} />
+                <text x={28} y={34 + i * 45} textAnchor="end" className="text-[7px] fill-slate-400">
+                  {val % 1 === 0 ? val : val.toFixed(1)}
+                </text>
+              </g>
+            );
+          })}
+          {/* Baseline */}
+          <line x1={36} y1={210} x2={570} y2={210} stroke="#cbd5e1" strokeWidth={0.8} />
+
+          {chart.labels.map((label, li) => {
+            const isHovered = hoverIdx === li;
+            return (
+              <g
+                key={label}
+                onMouseEnter={() => setHoverIdx(li)}
+                onMouseLeave={() => setHoverIdx(null)}
+                className="cursor-pointer"
+              >
+                {/* Hover highlight column */}
+                {isHovered && (
+                  <rect
+                    x={40 + li * barGroupW - 4}
+                    y={25}
+                    width={barGroupW * 0.6 + 8}
+                    height={190}
+                    fill="#6366f1"
+                    opacity={0.06}
+                    rx={4}
+                  />
+                )}
+                {/* Invisible hit area for hover */}
+                <rect
+                  x={40 + li * barGroupW - 4}
+                  y={25}
+                  width={barGroupW}
+                  height={210}
+                  fill="transparent"
+                />
+                {chart.datasets.map((ds, di) => {
+                  const h = (ds.data[li] / maxVal) * 170;
+                  const x = 40 + li * barGroupW + di * barW;
+                  return (
+                    <g key={di}>
+                      <rect
+                        x={x}
+                        y={210 - h}
+                        width={barW - 2}
+                        height={h}
+                        fill={ds.color}
+                        rx={3}
+                        opacity={hoverIdx !== null && !isHovered ? 0.4 : 1}
+                        style={{ transition: "opacity 0.15s" }}
+                      />
+                      {/* Value label on hover */}
+                      {isHovered && (
+                        <text
+                          x={x + (barW - 2) / 2}
+                          y={210 - h - 6}
+                          textAnchor="middle"
+                          className="text-[8px] font-semibold"
+                          fill={ds.color}
+                        >
+                          {ds.data[li]}
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
+                <text
+                  x={40 + li * barGroupW + (barGroupW * 0.3) / 2}
+                  y={228}
+                  textAnchor="middle"
+                  className="text-[9px]"
+                  fill={isHovered ? "#1e293b" : "#64748b"}
+                  fontWeight={isHovered ? 600 : 400}
+                >
+                  {label}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Legend */}
+          {chart.datasets.map((ds, di) => (
+            <g key={di}>
+              <rect x={40 + di * 110} y={4} width={10} height={10} rx={2} fill={ds.color} />
+              <text x={54 + di * 110} y={13} className="text-[9px] fill-slate-500">
+                {ds.label}
+              </text>
+            </g>
+          ))}
+
+          {/* Tooltip */}
+          {hoverIdx !== null && (
+            <g>
+              {(() => {
+                const tipX = Math.min(
+                  Math.max(40 + hoverIdx * barGroupW + (barGroupW * 0.3) / 2, 70),
+                  multiDs ? 470 : 510
+                );
+                const tipW = multiDs ? 110 : 80;
+                const tipH = 16 + chart.datasets.length * 16;
+                return (
+                  <>
+                    <rect
+                      x={tipX - tipW / 2}
+                      y={20}
+                      width={tipW}
+                      height={tipH}
+                      rx={4}
+                      fill="#1e293b"
+                      opacity={0.92}
+                    />
+                    {/* Arrow */}
+                    <polygon
+                      points={`${tipX - 4},${20 + tipH} ${tipX + 4},${20 + tipH} ${tipX},${20 + tipH + 5}`}
+                      fill="#1e293b"
+                      opacity={0.92}
+                    />
+                    <text x={tipX} y={34} textAnchor="middle" className="text-[8px] font-semibold" fill="white">
+                      {chart.labels[hoverIdx]}
+                    </text>
+                    {chart.datasets.map((ds, di) => (
+                      <g key={di}>
+                        <rect x={tipX - tipW / 2 + 8} y={38 + di * 16} width={6} height={6} rx={1} fill={ds.color} />
+                        <text x={tipX - tipW / 2 + 18} y={44 + di * 16} className="text-[7px]" fill="#94a3b8">
+                          {ds.label}:
+                        </text>
+                        <text x={tipX + tipW / 2 - 8} y={44 + di * 16} textAnchor="end" className="text-[8px] font-semibold" fill="white">
+                          {ds.data[hoverIdx]}
+                        </text>
+                      </g>
+                    ))}
+                  </>
+                );
+              })()}
+            </g>
+          )}
+        </svg>
+      </div>
     );
   }
 
@@ -96,92 +218,269 @@ function InlineChart({ chart }: { chart: InlineChartData }) {
     const maxVal = Math.max(...chart.datasets.flatMap((d) => d.data), 1);
     const minVal = Math.min(...chart.datasets.flatMap((d) => d.data), 0);
     const rng = maxVal - minVal || 1;
+    const multiDs = chart.datasets.length > 1;
     return (
-      <svg viewBox="0 0 420 160" className="w-full max-w-md mt-2">
-        {chart.datasets.map((ds, di) => {
-          const path = ds.data
-            .map((v, i) => {
-              const x = 30 + (i / Math.max(ds.data.length - 1, 1)) * 360;
-              const y = 130 - ((v - minVal) / rng) * 110;
-              return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
-            })
-            .join(" ");
-          return (
-            <g key={di}>
-              <path d={path} fill="none" stroke={ds.color} strokeWidth={2} />
-              {ds.data.map((v, i) => {
-                const x = 30 + (i / Math.max(ds.data.length - 1, 1)) * 360;
-                const y = 130 - ((v - minVal) / rng) * 110;
-                return <circle key={i} cx={x} cy={y} r={2.5} fill={ds.color} />;
-              })}
-            </g>
-          );
-        })}
-        {chart.labels.map((label, i) => (
-          <text
-            key={i}
-            x={30 + (i / Math.max(chart.labels.length - 1, 1)) * 360}
-            y={148}
-            textAnchor="middle"
-            className="text-[8px] fill-slate-500"
-          >
-            {label}
-          </text>
-        ))}
-        {chart.datasets.map((ds, di) => (
-          <g key={di}>
-            <rect x={30 + di * 80} y={2} width={8} height={8} rx={1} fill={ds.color} />
-            <text x={42 + di * 80} y={10} className="text-[8px] fill-slate-500">
-              {ds.label}
+      <div className="flex justify-center">
+        <svg viewBox="0 0 580 240" className="w-full max-w-2xl mt-2">
+          {/* Y-axis scale labels */}
+          {[0, 1, 2, 3, 4].map((i) => {
+            const val = maxVal - (i / 4) * (maxVal - minVal);
+            return (
+              <g key={`y-${i}`}>
+                <line x1={36} y1={30 + i * 45} x2={570} y2={30 + i * 45} stroke="#e2e8f0" strokeWidth={0.5} />
+                <text x={28} y={34 + i * 45} textAnchor="end" className="text-[7px] fill-slate-400">
+                  {val % 1 === 0 ? val : val.toFixed(1)}
+                </text>
+              </g>
+            );
+          })}
+          <line x1={36} y1={210} x2={570} y2={210} stroke="#cbd5e1" strokeWidth={0.8} />
+
+          {/* Vertical hover column indicator */}
+          {hoverIdx !== null && (
+            <line
+              x1={40 + (hoverIdx / Math.max(chart.labels.length - 1, 1)) * 520}
+              y1={25}
+              x2={40 + (hoverIdx / Math.max(chart.labels.length - 1, 1)) * 520}
+              y2={210}
+              stroke="#6366f1"
+              strokeWidth={1}
+              strokeDasharray="3,3"
+              opacity={0.4}
+            />
+          )}
+
+          {chart.datasets.map((ds, di) => {
+            const path = ds.data
+              .map((v, i) => {
+                const x = 40 + (i / Math.max(ds.data.length - 1, 1)) * 520;
+                const y = 210 - ((v - minVal) / rng) * 170;
+                return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+              })
+              .join(" ");
+            return (
+              <g key={di}>
+                <path d={path} fill="none" stroke={ds.color} strokeWidth={2.5} />
+                {ds.data.map((v, i) => {
+                  const x = 40 + (i / Math.max(ds.data.length - 1, 1)) * 520;
+                  const y = 210 - ((v - minVal) / rng) * 170;
+                  const isHovered = hoverIdx === i;
+                  return (
+                    <g key={i}>
+                      <circle
+                        cx={x}
+                        cy={y}
+                        r={isHovered ? 6 : 3.5}
+                        fill={isHovered ? "white" : ds.color}
+                        stroke={ds.color}
+                        strokeWidth={isHovered ? 2.5 : 0}
+                        style={{ transition: "r 0.15s, fill 0.15s" }}
+                      />
+                      {isHovered && (
+                        <text x={x} y={y - 10} textAnchor="middle" className="text-[8px] font-semibold" fill={ds.color}>
+                          {v}
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
+              </g>
+            );
+          })}
+
+          {/* Invisible hit areas for each data point */}
+          {chart.labels.map((label, i) => {
+            const x = 40 + (i / Math.max(chart.labels.length - 1, 1)) * 520;
+            const colW = 520 / Math.max(chart.labels.length - 1, 1);
+            return (
+              <rect
+                key={`hit-${i}`}
+                x={x - colW / 2}
+                y={25}
+                width={colW}
+                height={210}
+                fill="transparent"
+                onMouseEnter={() => setHoverIdx(i)}
+                onMouseLeave={() => setHoverIdx(null)}
+                className="cursor-pointer"
+              />
+            );
+          })}
+
+          {chart.labels.map((label, i) => (
+            <text
+              key={i}
+              x={40 + (i / Math.max(chart.labels.length - 1, 1)) * 520}
+              y={228}
+              textAnchor="middle"
+              className="text-[9px]"
+              fill={hoverIdx === i ? "#1e293b" : "#64748b"}
+              fontWeight={hoverIdx === i ? 600 : 400}
+            >
+              {label}
             </text>
-          </g>
-        ))}
-      </svg>
+          ))}
+
+          {/* Legend */}
+          {chart.datasets.map((ds, di) => (
+            <g key={di}>
+              <rect x={40 + di * 110} y={4} width={10} height={10} rx={2} fill={ds.color} />
+              <text x={54 + di * 110} y={13} className="text-[9px] fill-slate-500">
+                {ds.label}
+              </text>
+            </g>
+          ))}
+
+          {/* Tooltip */}
+          {hoverIdx !== null && (
+            <g>
+              {(() => {
+                const tipX = Math.min(
+                  Math.max(40 + (hoverIdx / Math.max(chart.labels.length - 1, 1)) * 520, 70),
+                  multiDs ? 470 : 510
+                );
+                const tipW = multiDs ? 110 : 80;
+                const tipH = 16 + chart.datasets.length * 16;
+                return (
+                  <>
+                    <rect x={tipX - tipW / 2} y={20} width={tipW} height={tipH} rx={4} fill="#1e293b" opacity={0.92} />
+                    <polygon
+                      points={`${tipX - 4},${20 + tipH} ${tipX + 4},${20 + tipH} ${tipX},${20 + tipH + 5}`}
+                      fill="#1e293b"
+                      opacity={0.92}
+                    />
+                    <text x={tipX} y={34} textAnchor="middle" className="text-[8px] font-semibold" fill="white">
+                      {chart.labels[hoverIdx]}
+                    </text>
+                    {chart.datasets.map((ds, di) => (
+                      <g key={di}>
+                        <rect x={tipX - tipW / 2 + 8} y={38 + di * 16} width={6} height={6} rx={1} fill={ds.color} />
+                        <text x={tipX - tipW / 2 + 18} y={44 + di * 16} className="text-[7px]" fill="#94a3b8">
+                          {ds.label}:
+                        </text>
+                        <text x={tipX + tipW / 2 - 8} y={44 + di * 16} textAnchor="end" className="text-[8px] font-semibold" fill="white">
+                          {ds.data[hoverIdx]}
+                        </text>
+                      </g>
+                    ))}
+                  </>
+                );
+              })()}
+            </g>
+          )}
+        </svg>
+      </div>
     );
   }
 
   if (chart.type === "donut") {
     const total = chart.datasets[0]?.data.reduce((s, v) => s + v, 0) || 1;
     let angle = -90;
-    const cx = 80;
-    const cy = 80;
-    const r = 60;
-    const innerR = 35;
+    const cx = 130;
+    const cy = 120;
+    const r = 90;
+    const innerR = 52;
     const colors = ["#7c3aed", "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#ec4899"];
 
+    // Pre-compute slice angles for hover detection
+    const slices: { startAngle: number; endAngle: number; value: number }[] = [];
+    let tempAngle = -90;
+    for (const val of chart.datasets[0]?.data ?? []) {
+      const sa = tempAngle;
+      tempAngle += (val / total) * 360;
+      slices.push({ startAngle: sa, endAngle: tempAngle, value: val });
+    }
+
+    angle = -90;
     return (
-      <svg viewBox="0 0 250 170" className="w-full max-w-xs mt-2">
-        {chart.datasets[0]?.data.map((val, i) => {
-          const sliceAngle = (val / total) * 360;
-          const startAngle = angle;
-          const endAngle = angle + sliceAngle;
-          angle = endAngle;
+      <div className="flex justify-center">
+        <svg viewBox="0 0 400 250" className="w-full max-w-xl mt-2">
+          {chart.datasets[0]?.data.map((val, i) => {
+            const sliceAngle = (val / total) * 360;
+            const startAngle = angle;
+            const endAngle = angle + sliceAngle;
+            angle = endAngle;
 
-          const startRad = (startAngle * Math.PI) / 180;
-          const endRad = (endAngle * Math.PI) / 180;
-          const largeArc = sliceAngle > 180 ? 1 : 0;
+            const startRad = (startAngle * Math.PI) / 180;
+            const endRad = (endAngle * Math.PI) / 180;
+            const largeArc = sliceAngle > 180 ? 1 : 0;
+            const isHovered = hoverIdx === i;
+            const hoverR = isHovered ? r + 5 : r;
+            const hoverInnerR = isHovered ? innerR - 2 : innerR;
 
-          const x1 = cx + r * Math.cos(startRad);
-          const y1 = cy + r * Math.sin(startRad);
-          const x2 = cx + r * Math.cos(endRad);
-          const y2 = cy + r * Math.sin(endRad);
-          const ix1 = cx + innerR * Math.cos(startRad);
-          const iy1 = cy + innerR * Math.sin(startRad);
-          const ix2 = cx + innerR * Math.cos(endRad);
-          const iy2 = cy + innerR * Math.sin(endRad);
+            const x1 = cx + hoverR * Math.cos(startRad);
+            const y1 = cy + hoverR * Math.sin(startRad);
+            const x2 = cx + hoverR * Math.cos(endRad);
+            const y2 = cy + hoverR * Math.sin(endRad);
+            const ix1 = cx + hoverInnerR * Math.cos(startRad);
+            const iy1 = cy + hoverInnerR * Math.sin(startRad);
+            const ix2 = cx + hoverInnerR * Math.cos(endRad);
+            const iy2 = cy + hoverInnerR * Math.sin(endRad);
 
-          const d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${innerR} ${innerR} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
-          return <path key={i} d={d} fill={colors[i % colors.length]} />;
-        })}
-        {chart.labels.map((label, i) => (
-          <g key={i}>
-            <rect x={170} y={20 + i * 18} width={8} height={8} rx={1} fill={colors[i % 6]} />
-            <text x={182} y={28 + i * 18} className="text-[8px] fill-slate-600">
-              {label}
-            </text>
-          </g>
-        ))}
-      </svg>
+            const d = `M ${x1} ${y1} A ${hoverR} ${hoverR} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${hoverInnerR} ${hoverInnerR} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
+            return (
+              <path
+                key={i}
+                d={d}
+                fill={colors[i % colors.length]}
+                opacity={hoverIdx !== null && !isHovered ? 0.5 : 1}
+                onMouseEnter={() => setHoverIdx(i)}
+                onMouseLeave={() => setHoverIdx(null)}
+                className="cursor-pointer"
+                style={{ transition: "opacity 0.15s" }}
+              />
+            );
+          })}
+
+          {/* Center total on hover */}
+          {hoverIdx !== null && (
+            <>
+              <text x={cx} y={cy - 6} textAnchor="middle" className="text-[9px]" fill="#64748b">
+                {chart.labels[hoverIdx]}
+              </text>
+              <text x={cx} y={cy + 10} textAnchor="middle" className="text-[14px] font-bold" fill="#1e293b">
+                {chart.datasets[0]?.data[hoverIdx]}
+              </text>
+              <text x={cx} y={cy + 22} textAnchor="middle" className="text-[8px]" fill="#94a3b8">
+                {((chart.datasets[0]?.data[hoverIdx] ?? 0) / total * 100).toFixed(1)}%
+              </text>
+            </>
+          )}
+          {hoverIdx === null && (
+            <>
+              <text x={cx} y={cy + 4} textAnchor="middle" className="text-[11px] font-semibold" fill="#1e293b">
+                {total.toFixed(total % 1 === 0 ? 0 : 1)}
+              </text>
+              <text x={cx} y={cy + 16} textAnchor="middle" className="text-[7px]" fill="#94a3b8">
+                Total
+              </text>
+            </>
+          )}
+
+          {/* Legend with values */}
+          {chart.labels.map((label, i) => {
+            const isHovered = hoverIdx === i;
+            const pct = ((chart.datasets[0]?.data[i] ?? 0) / total * 100).toFixed(1);
+            return (
+              <g
+                key={i}
+                onMouseEnter={() => setHoverIdx(i)}
+                onMouseLeave={() => setHoverIdx(null)}
+                className="cursor-pointer"
+              >
+                <rect x={265} y={36 + i * 26} width={130} height={22} rx={4} fill={isHovered ? "#f1f5f9" : "transparent"} />
+                <rect x={270} y={40 + i * 26} width={10} height={10} rx={2} fill={colors[i % 6]} />
+                <text x={286} y={49 + i * 26} className="text-[9px]" fill={isHovered ? "#1e293b" : "#475569"} fontWeight={isHovered ? 600 : 400}>
+                  {label}
+                </text>
+                <text x={390} y={49 + i * 26} textAnchor="end" className="text-[8px]" fill={isHovered ? "#1e293b" : "#94a3b8"} fontWeight={isHovered ? 600 : 400}>
+                  {pct}%
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
     );
   }
 
@@ -336,7 +635,7 @@ function AIBubble({
               <div
                 className={cn(
                   "overflow-hidden transition-all duration-300 ease-in-out",
-                  chartVisible ? "max-h-[300px] opacity-100 mt-2" : "max-h-0 opacity-0"
+                  chartVisible ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0"
                 )}
               >
                 <div className="rounded-lg bg-slate-50/50 border border-slate-100 p-3">
@@ -606,6 +905,30 @@ function getSamplePrompts(role?: string): string[] {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
+// Session persistence
+// ═════════════════════════════════════════════════════════════════════════════
+
+const CHAT_SESSION_KEY = "igrs-ai-chat-messages";
+
+function saveMessagesToSession(msgs: ConversationMessage[]) {
+  try {
+    sessionStorage.setItem(CHAT_SESSION_KEY, JSON.stringify(msgs));
+  } catch {
+    // storage full or unavailable — no-op
+  }
+}
+
+function restoreMessagesFromSession(): ConversationMessage[] {
+  try {
+    const raw = sessionStorage.getItem(CHAT_SESSION_KEY);
+    if (raw) return JSON.parse(raw) as ConversationMessage[];
+  } catch {
+    // corrupted — no-op
+  }
+  return [];
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
 // Main Page Component
 // ═════════════════════════════════════════════════════════════════════════════
 
@@ -613,7 +936,7 @@ export default function AIChatPage() {
   const { promptData, isLoading: dataLoading, error: dataError } = useAIChat();
   const { session } = useIGRSRole();
 
-  const [messages, setMessages] = useState<ConversationMessage[]>([]);
+  const [messages, setMessages] = useState<ConversationMessage[]>(() => restoreMessagesFromSession());
   const [composerValue, setComposerValue] = useState("");
   const [showPlaceholder, setShowPlaceholder] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
@@ -631,6 +954,11 @@ export default function AIChatPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const streamingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Persist messages to sessionStorage on change
+  useEffect(() => {
+    saveMessagesToSession(messages);
+  }, [messages]);
 
   // Panel helpers
   const togglePanel = useCallback((panel: "favorites" | "suggestions") => {
@@ -859,6 +1187,7 @@ export default function AIChatPage() {
     setShowSuggestions(false);
     setSuggestions([]);
     setSelectedSuggestionIdx(-1);
+    try { sessionStorage.removeItem(CHAT_SESSION_KEY); } catch { /* no-op */ }
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {

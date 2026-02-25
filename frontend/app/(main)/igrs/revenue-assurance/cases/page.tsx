@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useJurisdictionFilteredCases } from "@/hooks/data/use-jurisdiction-filtered-cases";
 import { useIGRSCaseMutation } from "@/hooks/data";
@@ -44,6 +44,8 @@ import {
 } from "@/components/ui/dialog";
 import {
   AlertTriangle,
+  ArrowLeft,
+  Bot,
   CalendarDays,
   CheckCircle2,
   ChevronDown,
@@ -1250,6 +1252,8 @@ function CaseDrawer({
 
 export default function IGRSCasesPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const cameFromChat = searchParams.get("from") === "ai-chat";
   const initialLoadStartedAtRef = useRef(Date.now());
   const firstLoadSettledRef = useRef(false);
   const [showInitialLoading, setShowInitialLoading] = useState(true);
@@ -1729,6 +1733,16 @@ export default function IGRSCasesPage() {
             <span className="text-xs font-medium">Refreshing cases data...</span>
           </div>
         </div>
+      )}
+      {cameFromChat && (
+        <button
+          onClick={() => router.push("/igrs/revenue-assurance/ai-chat")}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg border border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors text-sm font-medium group w-fit"
+        >
+          <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+          <Bot size={15} />
+          Back to AI Chat
+        </button>
       )}
       <div className="space-y-1">
         <div className="flex items-center justify-between mb-2">
