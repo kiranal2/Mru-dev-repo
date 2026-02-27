@@ -8,7 +8,7 @@ Meeru AI is an **enterprise financial operations platform** that automates and o
 
 ## Tech Stack
 
-Next.js 13 App Router, TypeScript, Tailwind CSS, Shadcn/UI, Lucide icons. Current page count: 91 (`find app -name page.tsx | wc -l`). No testing framework.
+Next.js 13 App Router, TypeScript, Tailwind CSS, Shadcn/UI, Lucide icons. Current page count: 92 (`find app -name page.tsx | wc -l`). No testing framework.
 
 ## Commands
 
@@ -93,7 +93,7 @@ Action-oriented tools for deep operational work. Unlike Reports, Workbenches are
 | Page | What It Does |
 |------|-------------|
 | **Cash Application** (14 pages) | Main workbench: payment matching, remittance extraction, exception handling, GL posting. AI confidence scores: >95% auto-approve, 70-95% review, <70% manual |
-| **Cash Collection** | Collections management — AI-prioritized aging invoices, log attempts, track payment plans |
+| **Collections Workbench** | Unified collections management — 4-tab workbench (Accounts, Dunning, Promises, Correspondence) with sidebar+table+drawer pattern |
 | **Disputes** | Invoice dispute management — log reason/amount, coordinate resolution, track timelines |
 | **Merchant Dashboard** | Merchant payment operations overview |
 
@@ -252,6 +252,8 @@ dataService.workspace          — pins, watchlist, activityFeed, dataTemplates
 dataService.automation         — workflows
 dataService.ai                 — chat sessions
 dataService.common             — notifications, auditLog, users
+dataService.merchantPortal     — accounts, invoices, payments, disputes, credit memos, payment methods
+dataService.collections        — records, customer360, dunning sequences/templates, promises, correspondence
 ```
 
 ## Coding Conventions
@@ -369,3 +371,55 @@ Key routes in `app/api/`:
   - Updated `SIGNAL_LABELS` in `overview/page.tsx` and `cases/page.tsx`, `SIGNAL_OPTIONS` in `cases/page.tsx`, `IGRS_SIGNAL_CONFIG` labels in `lib/data/types/igrs.ts`, threshold card label in `overview/page.tsx`.
   - Updated CLAUDE.md signal list to show both display names and code identifiers.
   - No env/script/command changes. Build verified with zero TypeScript errors.
+
+### 2026-02-27
+- **Merchant Invoicing Data Foundation** — Phase 1 of Merchant Invoicing BRD. Created complete data layer for Merchant Portal and Collections modules.
+  - **New types** (`lib/data/types/merchant.ts`): 15 union types (`MerchantAccountStatus`, `MerchantPaymentStatus`, `MerchantInvoiceStatus`, `MerchantDisputeStatus`, `MerchantDisputeType`, `CollectionSeverity`, `CollectionStatus`, `DunningStep`, `DunningStatus`, `PromiseStatus`, `CorrespondenceType`, `CorrespondenceChannel`, `PaymentMethodType`, `ACHVerificationStatus`, `CreditMemoStatus`) and 19 interfaces for Merchant Portal + Collections.
+  - **New filter types** (`lib/data/types/filters.ts`): `MerchantInvoiceFilters`, `CollectionFilters`, `DunningFilters` extending `BaseFilters`.
+  - **Mock data** (13 JSON files): `public/data/merchant/` (accounts, invoices, payments, payment-methods, disputes, credit-memos, notifications) and `public/data/collections/` (records, customer360, dunning-sequences, dunning-templates, promises, correspondence).
+  - **Hooks** (4 new files in `hooks/data/`): `use-merchant-portal.ts` (10 hooks), `use-collections.ts` (3 hooks), `use-customer360.ts` (2 hooks), `use-dunning.ts` (7 hooks).
+  - **Data service wiring**: Added `merchantPortal` and `collections` modules to `json-provider.ts`, `api-provider.ts`, and `data-service.ts`.
+  - **Navigation**: Added 3 items under Order-to-Cash: Merchant Portal (`Store` icon), Merchant Dashboard (`BarChart3` icon), Collections (`PhoneCall` icon). Added `Store`, `PhoneCall` to lucide imports.
+  - **Barrel exports updated**: `lib/data/types/index.ts` and `hooks/data/index.ts`.
+  - Data service modules now include: `dataService.merchantPortal` and `dataService.collections`.
+  - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.
+
+### 2026-02-27 (b)
+- **Collections Portal Phase 2 — B1 + B7**: Built Collections Dashboard and enhanced Cash Collection Workbench.
+  - **B1: Collections Dashboard** (`app/(main)/workbench/order-to-cash/collections/page.tsx`, 791 lines): New AR manager command center with 5 KPI cards (Total AR, Past Due, Avg Days Past Due, Collection Rate, Promise Pipeline), inline SVG AR aging waterfall chart, collector workload heatmap matrix, top 10 past-due accounts table with dunning status, daily action queue summary (follow-ups due, promises expiring, dunning actions), team performance metrics. Uses `useCollections`, `usePromisesToPay`, `useDunningSequences`, `useCorrespondence` hooks.
+  - **B7: Cash Collection Enhancement** (`app/(main)/workbench/order-to-cash/cash-collection/page.tsx`, rewritten from 844→1013 lines): Replaced 120 synthetic records with `useCollections()` hook. Added 4 KPI stat cards in header. Added inline SVG aging mini-chart. Added "View Customer 360" button in drawer. Added Dunning status + Days columns in table. Added risk score progress bar in drawer. Wired refetch() on actions. Fixed all hardcoded colors (#205375→bg-primary, etc). Updated severity mapping to match CollectionRecord capitalized values. Added loading/error/empty states.
+  - **Routes**: `/workbench/order-to-cash/collections` (new), `/workbench/order-to-cash/cash-collection` (enhanced).
+  - Page count increased from 91 to 92.
+  - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.
+
+### 2026-02-27 (c)
+- **Collections Portal Phase 2 — B2 + B3**: Built Customer 360 View and Auto-Dunning Manager pages.
+  - **B2: Customer 360 View** (`app/(main)/workbench/order-to-cash/collections/customer/[customerId]/page.tsx`): Dynamic route showing comprehensive customer financial profile. 4 summary cards (Total Outstanding, Past Due, Credit Score with colored bar, DSO). 5 tabs: (1) AR Summary with inline SVG stacked aging bar chart, 12-month payment history bar chart (green=on-time, red=late), credit utilization progress bar with 80% warning; (2) Collection Activity timeline with type/channel filtering; (3) Promises & Commitments table with fulfillment stats; (4) Dunning Status with step progress visualization (connected circles); (5) Contacts card grid with primary highlighting. Action buttons: Log Call, Send Email, Record Promise, Start Dunning. Uses `useCustomer360`, `useCollections`, `useCorrespondence`, `usePromisesToPay`, `useDunningSequences` hooks.
+  - **B3: Auto-Dunning Manager** (`app/(main)/workbench/order-to-cash/collections/dunning/page.tsx`): Dunning sequence management dashboard. 4 KPI cards (Active Sequences, Amount Under Dunning, Avg Step Progress, Actions Due Today). 3 tabs: (1) Active Sequences with search/status filter, table with 5-dot step progress visualization, expandable rows showing full step timeline with completion dates; (2) Templates grid with tone badges, merge field highlighting ({{variable}} in blue spans), Sheet preview panel; (3) Effectiveness with inline SVG dunning funnel chart, completion stats, outcome rates, recent dunning correspondence table. Uses `useDunningSequences`, `useDunningTemplates`, `useCorrespondence` hooks.
+  - **Routes**: `/workbench/order-to-cash/collections/customer/[customerId]` (new, dynamic), `/workbench/order-to-cash/collections/dunning` (new, static).
+  - Page count increased from 92 to 94.
+  - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.
+
+### 2026-02-27 (d)
+- **Collections Portal Phase 2 — B4 + B5**: Built Promise-to-Pay Tracker and Correspondence Center pages.
+  - **B4: Promise-to-Pay Tracker** (`app/(main)/workbench/order-to-cash/collections/promises/page.tsx`, 822 lines): 5 KPI cards (Total Promised, Total Received, Fulfillment Rate, Due Today, At Risk). Urgent callout section for Due Today/Overdue promises with "Take Action" buttons. Inline SVG promise pipeline visualization (status flow: Active→Due Today→Fulfilled/Overdue→Broken with counts and amounts). Filter bar with search, status, payment method, and sort. Table with 9 columns including color-coded status/method badges, past-date highlighting, and clickable rows. Detail Sheet with summary grid, invoice references, promise timeline visualization, related collection record lookup, and action buttons (Mark Fulfilled/Broken/Cancel). Uses `usePromisesToPay`, `useCollections` hooks.
+  - **B5: Correspondence Center** (`app/(main)/workbench/order-to-cash/collections/correspondence/page.tsx`, 1176 lines): 4 KPI cards (Total Correspondence, This Week, Outbound/Inbound split, Avg Response Time). Channel breakdown horizontal bar chart. Filter bar with search, type, channel, direction, sort. Dual view toggle: Table view (9 columns with type/channel/direction badges, linked customer names) and Timeline view (grouped by relative date — Today/Yesterday/This Week/Earlier/Older — with vertical timeline dots). Detail Sheet with full correspondence info, outcome highlighting, related references. "Log New" Sheet form with customer select, type/channel/direction, subject, content textarea, contact person, outcome, duration (phone only). Uses `useCorrespondence`, `useCorrespondenceMutation`, `useCollections` hooks.
+  - **Routes**: `/workbench/order-to-cash/collections/promises` (new), `/workbench/order-to-cash/collections/correspondence` (new).
+  - Page count increased from 94 to 96.
+  - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.
+
+### 2026-02-27 (e)
+- **Collections Consolidation — Unified Workbench**: Merged 5 separate collections pages into a single tabbed workbench at `/workbench/order-to-cash/collections`.
+  - **Deleted 4 pages**: `collections/dunning/page.tsx` (B3), `collections/promises/page.tsx` (B4), `collections/correspondence/page.tsx` (B5), `cash-collection/page.tsx` (B7).
+  - **Rewritten** `collections/page.tsx` (~1700 lines): Unified Collections Workbench with 4 tabs (Accounts, Dunning, Promises, Correspondence), sidebar+table+drawer layout matching Cash Collection pattern.
+    - **Accounts tab** (default): Collection records with sidebar filters (search, collector, severity), quick views (All/Active/In Progress/Resolved), aging signal cards, bulk actions (Send Dunning, Schedule Call, Log Promise, Escalate), AR aging waterfall SVG, detail drawer with Customer 360 link.
+    - **Dunning tab**: Dunning sequences table with step progress dots, expandable row timelines, search/status sidebar filters, status summary counts.
+    - **Promises tab**: Promise-to-pay table with status/method/sort sidebar filters, pipeline summary, detail sheet with action buttons (Mark Fulfilled/Broken/Cancel).
+    - **Correspondence tab**: Correspondence log with type/channel/direction sidebar filters, table+timeline view toggle, channel breakdown chart, detail sheet, "Log New" form.
+  - **KPIs adapt per tab**: Accounts (Outstanding/Past Due/Active/Critical), Dunning (Sequences/Amount/Progress/Actions Due), Promises (Promised/Received/Rate/At Risk), Correspondence (Total/Week/Direction/Channels).
+  - **Navigation**: Removed `cash-collection` entry from `lib/navigation.ts`, renamed `Collections` to `Collections Workbench`, moved to first position under Order-to-Cash.
+  - **Breadcrumb**: Updated `components/layout/breadcrumb.tsx` label from "Collections" to "Collections Workbench".
+  - **Customer 360**: `collections/customer/[customerId]/page.tsx` kept unchanged as drill-down detail page.
+  - **Removed routes**: `/collections/dunning`, `/collections/promises`, `/collections/correspondence`, `/cash-collection`.
+  - Page count decreased from 96 to 92.
+  - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.

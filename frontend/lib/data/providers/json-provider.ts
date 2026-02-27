@@ -20,8 +20,13 @@ import type {
   Workflow, WorkflowExecution,
   MrpSignal, MrpSupplier, MrpSeverityCounts, MrpGroupedCounts, MrpMetrics, MrpSignalFilters,
   Notification, AuditEntry, User, ChatSession,
+  MerchantAccount, MerchantInvoice, MerchantPayment, MerchantDispute,
+  MerchantCreditMemo, MerchantPaymentMethod, MerchantNotification, MerchantContact,
+  CollectionRecord, Customer360, DunningSequence, DunningTemplate,
+  PromiseToPay, Correspondence,
   IGRSCaseFilters, RevenueCaseFilters, PaymentFilters, RemittanceFilters,
   ExceptionFilters, CloseTaskFilters, ReconFilters, AuditFilters,
+  MerchantInvoiceFilters, CollectionFilters, DunningFilters,
   PaginatedResult, BaseFilters,
 } from '../types';
 
@@ -719,5 +724,325 @@ export const common = {
 
   async getUsers(): Promise<User[]> {
     return loadJson<User[]>('/data/admin/users.json');
+  },
+};
+
+// ─── Merchant Portal ────────────────────────────────────────────────────────
+
+let merchantAccounts: MerchantAccount[] | null = null;
+let merchantInvoices: MerchantInvoice[] | null = null;
+let merchantPayments: MerchantPayment[] | null = null;
+let merchantDisputes: MerchantDispute[] | null = null;
+
+async function getMerchantAccounts(): Promise<MerchantAccount[]> {
+  if (!merchantAccounts) merchantAccounts = clone(await loadJson<MerchantAccount[]>('/data/merchant/accounts.json'));
+  return merchantAccounts;
+}
+
+async function getMerchantInvoices(): Promise<MerchantInvoice[]> {
+  if (!merchantInvoices) merchantInvoices = clone(await loadJson<MerchantInvoice[]>('/data/merchant/invoices.json'));
+  return merchantInvoices;
+}
+
+async function getMerchantPayments(): Promise<MerchantPayment[]> {
+  if (!merchantPayments) merchantPayments = clone(await loadJson<MerchantPayment[]>('/data/merchant/payments.json'));
+  return merchantPayments;
+}
+
+async function getMerchantDisputes(): Promise<MerchantDispute[]> {
+  if (!merchantDisputes) merchantDisputes = clone(await loadJson<MerchantDispute[]>('/data/merchant/disputes.json'));
+  return merchantDisputes;
+}
+
+export const merchantPortal = {
+  async getAccounts(filters?: BaseFilters): Promise<PaginatedResult<MerchantAccount>> {
+    let items = await getMerchantAccounts();
+    items = applySearch(items as unknown as Record<string, unknown>[], filters?.search) as unknown as MerchantAccount[];
+    items = applySort(items, filters?.sortBy ?? 'name', filters?.sortOrder ?? 'asc');
+    return applyPagination(items, filters?.page, filters?.pageSize);
+  },
+
+  async getAccount(id: string): Promise<MerchantAccount | undefined> {
+    const items = await getMerchantAccounts();
+    return items.find(a => a.id === id);
+  },
+
+  async getInvoices(filters?: MerchantInvoiceFilters): Promise<PaginatedResult<MerchantInvoice>> {
+    let items = await getMerchantInvoices();
+    items = applySearch(items as unknown as Record<string, unknown>[], filters?.search) as unknown as MerchantInvoice[];
+    items = applyArrayFilter(items, 'status', filters?.status);
+    if (filters?.accountId) items = items.filter(i => i.accountId === filters.accountId);
+    if (filters?.minAmount != null) items = items.filter(i => i.totalAmount >= filters.minAmount!);
+    if (filters?.maxAmount != null) items = items.filter(i => i.totalAmount <= filters.maxAmount!);
+    items = applySort(items, filters?.sortBy ?? 'issueDate', filters?.sortOrder ?? 'desc');
+    return applyPagination(items, filters?.page, filters?.pageSize);
+  },
+
+  async getInvoice(id: string): Promise<MerchantInvoice | undefined> {
+    const items = await getMerchantInvoices();
+    return items.find(i => i.id === id);
+  },
+
+  async getPayments(accountId?: string): Promise<PaginatedResult<MerchantPayment>> {
+    let items = await getMerchantPayments();
+    if (accountId) items = items.filter(p => p.accountId === accountId);
+    items = applySort(items, 'paymentDate', 'desc');
+    return applyPagination(items);
+  },
+
+  async createPayment(data: Partial<MerchantPayment>): Promise<MerchantPayment> {
+    const items = await getMerchantPayments();
+    const newPayment: MerchantPayment = {
+      id: `MPAY-${Date.now()}`,
+      paymentNumber: `PAY-${Date.now()}`,
+      accountId: '',
+      accountName: '',
+      amount: 0,
+      method: 'ACH',
+      status: 'Pending',
+      paymentDate: new Date().toISOString().split('T')[0],
+      allocations: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...data,
+    };
+    items.unshift(newPayment);
+    return newPayment;
+  },
+
+  async getPaymentMethods(accountId?: string): Promise<MerchantPaymentMethod[]> {
+    const items = await loadJson<MerchantPaymentMethod[]>('/data/merchant/payment-methods.json');
+    if (accountId) return items.filter(m => m.accountId === accountId);
+    return items;
+  },
+
+  async getDisputes(accountId?: string): Promise<PaginatedResult<MerchantDispute>> {
+    let items = await getMerchantDisputes();
+    if (accountId) items = items.filter(d => d.accountId === accountId);
+    items = applySort(items, 'filedDate', 'desc');
+    return applyPagination(items);
+  },
+
+  async createDispute(data: Partial<MerchantDispute>): Promise<MerchantDispute> {
+    const items = await getMerchantDisputes();
+    const newDispute: MerchantDispute = {
+      id: `DSP-${Date.now()}`,
+      disputeNumber: `DSP-${Date.now()}`,
+      accountId: '',
+      accountName: '',
+      invoiceId: '',
+      invoiceNumber: '',
+      type: 'Other',
+      status: 'Open',
+      amount: 0,
+      description: '',
+      communications: [],
+      filedDate: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...data,
+    };
+    items.unshift(newDispute);
+    return newDispute;
+  },
+
+  async updateDispute(id: string, updates: Partial<MerchantDispute>): Promise<MerchantDispute | undefined> {
+    const items = await getMerchantDisputes();
+    const idx = items.findIndex(d => d.id === id);
+    if (idx === -1) return undefined;
+    items[idx] = { ...items[idx], ...updates, updatedAt: new Date().toISOString() };
+    return items[idx];
+  },
+
+  async getCreditMemos(accountId?: string): Promise<MerchantCreditMemo[]> {
+    const items = await loadJson<MerchantCreditMemo[]>('/data/merchant/credit-memos.json');
+    if (accountId) return items.filter(m => m.accountId === accountId);
+    return items;
+  },
+
+  async getNotifications(accountId?: string): Promise<MerchantNotification[]> {
+    const items = await loadJson<MerchantNotification[]>('/data/merchant/notifications.json');
+    if (accountId) return items.filter(n => n.accountId === accountId);
+    return items;
+  },
+
+  async getContacts(accountId: string): Promise<MerchantContact[]> {
+    // Contacts are embedded in accounts for now; extract from customer360 data
+    const customer360 = await loadJson<Customer360[]>('/data/collections/customer360.json');
+    const customer = customer360.find(c => c.customerId === accountId);
+    if (!customer) return [];
+    return customer.contacts.map((c, i) => ({
+      id: `CONT-${accountId}-${i}`,
+      accountId,
+      name: c.name,
+      email: c.email,
+      phone: c.phone,
+      title: c.title,
+      isPrimary: c.isPrimary,
+    }));
+  },
+};
+
+// ─── Collections ────────────────────────────────────────────────────────────
+
+let collectionRecords: CollectionRecord[] | null = null;
+let dunningSequences: DunningSequence[] | null = null;
+let promisesToPay: PromiseToPay[] | null = null;
+
+async function getCollectionRecords(): Promise<CollectionRecord[]> {
+  if (!collectionRecords) collectionRecords = clone(await loadJson<CollectionRecord[]>('/data/collections/records.json'));
+  return collectionRecords;
+}
+
+async function getDunningSequences(): Promise<DunningSequence[]> {
+  if (!dunningSequences) dunningSequences = clone(await loadJson<DunningSequence[]>('/data/collections/dunning-sequences.json'));
+  return dunningSequences;
+}
+
+async function getPromisesToPay(): Promise<PromiseToPay[]> {
+  if (!promisesToPay) promisesToPay = clone(await loadJson<PromiseToPay[]>('/data/collections/promises.json'));
+  return promisesToPay;
+}
+
+export const collections = {
+  async getRecords(filters?: CollectionFilters): Promise<PaginatedResult<CollectionRecord>> {
+    let items = await getCollectionRecords();
+    items = applySearch(items as unknown as Record<string, unknown>[], filters?.search) as unknown as CollectionRecord[];
+    items = applyArrayFilter(items, 'severity', filters?.severity);
+    items = applyArrayFilter(items, 'status', filters?.status);
+    items = applyArrayFilter(items, 'agingBucket', filters?.bucket);
+    if (filters?.collector) items = items.filter(r => r.assignedTo === filters.collector);
+    if (filters?.minPastDue != null) items = items.filter(r => r.pastDueAmount >= filters.minPastDue!);
+    if (filters?.maxPastDue != null) items = items.filter(r => r.pastDueAmount <= filters.maxPastDue!);
+    items = applySort(items, filters?.sortBy ?? 'riskScore', filters?.sortOrder ?? 'desc');
+    return applyPagination(items, filters?.page, filters?.pageSize);
+  },
+
+  async getRecord(id: string): Promise<CollectionRecord | undefined> {
+    const items = await getCollectionRecords();
+    return items.find(r => r.id === id);
+  },
+
+  async updateRecord(id: string, updates: Partial<CollectionRecord>): Promise<CollectionRecord | undefined> {
+    const items = await getCollectionRecords();
+    const idx = items.findIndex(r => r.id === id);
+    if (idx === -1) return undefined;
+    items[idx] = { ...items[idx], ...updates, updatedAt: new Date().toISOString() };
+    return items[idx];
+  },
+
+  async getCustomer360(customerId: string): Promise<Customer360 | undefined> {
+    const items = await loadJson<Customer360[]>('/data/collections/customer360.json');
+    return items.find(c => c.customerId === customerId);
+  },
+
+  async getCustomer360List(filters?: BaseFilters): Promise<PaginatedResult<Customer360>> {
+    let items = await loadJson<Customer360[]>('/data/collections/customer360.json');
+    items = applySearch(items as unknown as Record<string, unknown>[], filters?.search) as unknown as Customer360[];
+    items = applySort(items, filters?.sortBy ?? 'customerName', filters?.sortOrder ?? 'asc');
+    return applyPagination(items, filters?.page, filters?.pageSize);
+  },
+
+  async getDunningSequences(filters?: DunningFilters): Promise<PaginatedResult<DunningSequence>> {
+    let items = await getDunningSequences();
+    items = applySearch(items as unknown as Record<string, unknown>[], filters?.search) as unknown as DunningSequence[];
+    items = applyArrayFilter(items, 'status', filters?.status);
+    items = applyArrayFilter(items, 'currentStep', filters?.currentStep);
+    if (filters?.customerId) items = items.filter(d => d.customerId === filters.customerId);
+    items = applySort(items, filters?.sortBy ?? 'createdAt', filters?.sortOrder ?? 'desc');
+    return applyPagination(items, filters?.page, filters?.pageSize);
+  },
+
+  async createDunningSequence(data: Partial<DunningSequence>): Promise<DunningSequence> {
+    const items = await getDunningSequences();
+    const newSeq: DunningSequence = {
+      id: `DUN-${Date.now()}`,
+      customerId: '',
+      customerName: '',
+      currentStep: 'Friendly Reminder',
+      currentStepNumber: 1,
+      totalSteps: 5,
+      status: 'Active',
+      totalAmount: 0,
+      invoiceIds: [],
+      steps: [],
+      startDate: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...data,
+    };
+    items.unshift(newSeq);
+    return newSeq;
+  },
+
+  async updateDunningSequence(id: string, updates: Partial<DunningSequence>): Promise<DunningSequence | undefined> {
+    const items = await getDunningSequences();
+    const idx = items.findIndex(d => d.id === id);
+    if (idx === -1) return undefined;
+    items[idx] = { ...items[idx], ...updates, updatedAt: new Date().toISOString() };
+    return items[idx];
+  },
+
+  async getDunningTemplates(): Promise<DunningTemplate[]> {
+    return loadJson<DunningTemplate[]>('/data/collections/dunning-templates.json');
+  },
+
+  async getPromises(filters?: BaseFilters): Promise<PaginatedResult<PromiseToPay>> {
+    let items = await getPromisesToPay();
+    items = applySearch(items as unknown as Record<string, unknown>[], filters?.search) as unknown as PromiseToPay[];
+    items = applySort(items, filters?.sortBy ?? 'promisedDate', filters?.sortOrder ?? 'asc');
+    return applyPagination(items, filters?.page, filters?.pageSize);
+  },
+
+  async createPromise(data: Partial<PromiseToPay>): Promise<PromiseToPay> {
+    const items = await getPromisesToPay();
+    const newPromise: PromiseToPay = {
+      id: `PTP-${Date.now()}`,
+      customerId: '',
+      customerName: '',
+      promisedAmount: 0,
+      promisedDate: new Date().toISOString().split('T')[0],
+      status: 'Active',
+      invoiceIds: [],
+      capturedBy: '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...data,
+    };
+    items.unshift(newPromise);
+    return newPromise;
+  },
+
+  async updatePromise(id: string, updates: Partial<PromiseToPay>): Promise<PromiseToPay | undefined> {
+    const items = await getPromisesToPay();
+    const idx = items.findIndex(p => p.id === id);
+    if (idx === -1) return undefined;
+    items[idx] = { ...items[idx], ...updates, updatedAt: new Date().toISOString() };
+    return items[idx];
+  },
+
+  async getCorrespondence(customerId?: string): Promise<PaginatedResult<Correspondence>> {
+    let items = await loadJson<Correspondence[]>('/data/collections/correspondence.json');
+    if (customerId) items = items.filter(c => c.customerId === customerId);
+    items = applySort(items, 'sentAt', 'desc');
+    return applyPagination(items);
+  },
+
+  async createCorrespondence(data: Partial<Correspondence>): Promise<Correspondence> {
+    // Correspondence is read from static JSON; create returns a mock
+    const newCorr: Correspondence = {
+      id: `COR-${Date.now()}`,
+      customerId: '',
+      customerName: '',
+      type: 'General',
+      channel: 'Email',
+      content: '',
+      direction: 'Outbound',
+      sentBy: '',
+      sentAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      ...data,
+    };
+    return newCorr;
   },
 };

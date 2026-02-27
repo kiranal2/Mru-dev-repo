@@ -1,0 +1,286 @@
+[
+  {
+    "id": "INV-001", "invoiceNumber": "INV-2026-0001", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "status": "Open", "issueDate": "2026-02-01", "dueDate": "2026-03-03",
+    "subtotal": 45000, "tax": 3712.50, "totalAmount": 48712.50, "paidAmount": 0, "balanceDue": 48712.50,
+    "lineItems": [
+      { "id": "LI-001", "description": "Enterprise Platform License - Q1 2026", "quantity": 1, "unitPrice": 35000, "amount": 35000, "tax": 2887.50 },
+      { "id": "LI-002", "description": "Premium Support Package", "quantity": 1, "unitPrice": 10000, "amount": 10000, "tax": 825 }
+    ],
+    "poNumber": "PO-TF-2026-001", "createdAt": "2026-02-01T00:00:00Z", "updatedAt": "2026-02-01T00:00:00Z"
+  },
+  {
+    "id": "INV-002", "invoiceNumber": "INV-2026-0002", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "status": "Paid", "issueDate": "2026-01-15", "dueDate": "2026-02-14",
+    "subtotal": 32500, "tax": 2681.25, "totalAmount": 35181.25, "paidAmount": 35181.25, "balanceDue": 0,
+    "lineItems": [
+      { "id": "LI-003", "description": "Data Analytics Module", "quantity": 1, "unitPrice": 22500, "amount": 22500, "tax": 1856.25 },
+      { "id": "LI-004", "description": "API Integration Setup", "quantity": 1, "unitPrice": 10000, "amount": 10000, "tax": 825 }
+    ],
+    "createdAt": "2026-01-15T00:00:00Z", "updatedAt": "2026-02-15T10:00:00Z"
+  },
+  {
+    "id": "INV-003", "invoiceNumber": "INV-2026-0003", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "status": "Disputed", "issueDate": "2026-01-20", "dueDate": "2026-02-19",
+    "subtotal": 18500, "tax": 1526.25, "totalAmount": 20026.25, "paidAmount": 0, "balanceDue": 20026.25,
+    "lineItems": [
+      { "id": "LI-005", "description": "Custom Report Development - 40hrs", "quantity": 40, "unitPrice": 250, "amount": 10000, "tax": 825 },
+      { "id": "LI-006", "description": "Training Sessions", "quantity": 5, "unitPrice": 1700, "amount": 8500, "tax": 701.25 }
+    ],
+    "notes": "Merchant disputes hours billed", "createdAt": "2026-01-20T00:00:00Z", "updatedAt": "2026-02-23T11:00:00Z"
+  },
+  {
+    "id": "INV-004", "invoiceNumber": "INV-2026-0004", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "status": "Partial", "issueDate": "2026-01-10", "dueDate": "2026-02-09",
+    "subtotal": 28750, "tax": 2371.88, "totalAmount": 31121.88, "paidAmount": 15000, "balanceDue": 16121.88,
+    "lineItems": [
+      { "id": "LI-007", "description": "Cloud Hosting - January", "quantity": 1, "unitPrice": 18750, "amount": 18750, "tax": 1546.88 },
+      { "id": "LI-008", "description": "Bandwidth Overage", "quantity": 1, "unitPrice": 10000, "amount": 10000, "tax": 825 }
+    ],
+    "createdAt": "2026-01-10T00:00:00Z", "updatedAt": "2026-02-05T14:30:00Z"
+  },
+  {
+    "id": "INV-005", "invoiceNumber": "INV-2026-0005", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "status": "Open", "issueDate": "2026-02-15", "dueDate": "2026-03-17",
+    "subtotal": 28750, "tax": 2371.88, "totalAmount": 31121.88, "paidAmount": 0, "balanceDue": 31121.88,
+    "lineItems": [
+      { "id": "LI-009", "description": "Cloud Hosting - February", "quantity": 1, "unitPrice": 18750, "amount": 18750, "tax": 1546.88 },
+      { "id": "LI-010", "description": "SSL Certificates Renewal", "quantity": 5, "unitPrice": 2000, "amount": 10000, "tax": 825 }
+    ],
+    "createdAt": "2026-02-15T00:00:00Z", "updatedAt": "2026-02-15T00:00:00Z"
+  },
+  {
+    "id": "INV-006", "invoiceNumber": "INV-2026-0006", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "status": "Open", "issueDate": "2026-02-01", "dueDate": "2026-03-18",
+    "subtotal": 67500, "tax": 5568.75, "totalAmount": 73068.75, "paidAmount": 0, "balanceDue": 73068.75,
+    "lineItems": [
+      { "id": "LI-011", "description": "POS Integration - 50 stores", "quantity": 50, "unitPrice": 1000, "amount": 50000, "tax": 4125 },
+      { "id": "LI-012", "description": "Inventory Sync Module", "quantity": 1, "unitPrice": 17500, "amount": 17500, "tax": 1443.75 }
+    ],
+    "poNumber": "PO-GR-2026-012", "createdAt": "2026-02-01T00:00:00Z", "updatedAt": "2026-02-01T00:00:00Z"
+  },
+  {
+    "id": "INV-007", "invoiceNumber": "INV-2026-0007", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "status": "Partial", "issueDate": "2026-01-05", "dueDate": "2026-02-19",
+    "subtotal": 54000, "tax": 4455, "totalAmount": 58455, "paidAmount": 30000, "balanceDue": 28455,
+    "lineItems": [
+      { "id": "LI-013", "description": "E-commerce Platform License", "quantity": 1, "unitPrice": 42000, "amount": 42000, "tax": 3465 },
+      { "id": "LI-014", "description": "Payment Gateway Integration", "quantity": 1, "unitPrice": 12000, "amount": 12000, "tax": 990 }
+    ],
+    "createdAt": "2026-01-05T00:00:00Z", "updatedAt": "2026-02-10T11:00:00Z"
+  },
+  {
+    "id": "INV-008", "invoiceNumber": "INV-2026-0008", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "status": "Overdue", "issueDate": "2025-12-20", "dueDate": "2026-02-03",
+    "subtotal": 42000, "tax": 3465, "totalAmount": 45465, "paidAmount": 0, "balanceDue": 45465,
+    "lineItems": [
+      { "id": "LI-015", "description": "Analytics Dashboard - Retail", "quantity": 1, "unitPrice": 30000, "amount": 30000, "tax": 2475 },
+      { "id": "LI-016", "description": "Customer Segmentation Engine", "quantity": 1, "unitPrice": 12000, "amount": 12000, "tax": 990 }
+    ],
+    "createdAt": "2025-12-20T00:00:00Z", "updatedAt": "2026-02-18T09:00:00Z"
+  },
+  {
+    "id": "INV-009", "invoiceNumber": "INV-2026-0009", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "status": "Paid", "issueDate": "2025-12-01", "dueDate": "2026-01-15",
+    "subtotal": 24000, "tax": 1980, "totalAmount": 25980, "paidAmount": 25980, "balanceDue": 0,
+    "lineItems": [
+      { "id": "LI-017", "description": "Staff Training - 20 users", "quantity": 20, "unitPrice": 1200, "amount": 24000, "tax": 1980 }
+    ],
+    "createdAt": "2025-12-01T00:00:00Z", "updatedAt": "2026-01-12T10:00:00Z"
+  },
+  {
+    "id": "INV-010", "invoiceNumber": "INV-2026-0010", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "status": "Open", "issueDate": "2026-02-10", "dueDate": "2026-03-27",
+    "subtotal": 36000, "tax": 2970, "totalAmount": 38970, "paidAmount": 0, "balanceDue": 38970,
+    "lineItems": [
+      { "id": "LI-018", "description": "Supply Chain Visibility Module", "quantity": 1, "unitPrice": 36000, "amount": 36000, "tax": 2970 }
+    ],
+    "poNumber": "PO-GR-2026-015", "createdAt": "2026-02-10T00:00:00Z", "updatedAt": "2026-02-10T00:00:00Z"
+  },
+  {
+    "id": "INV-011", "invoiceNumber": "INV-2026-0011", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "status": "Open", "issueDate": "2026-02-15", "dueDate": "2026-04-01",
+    "subtotal": 18500, "tax": 1526.25, "totalAmount": 20026.25, "paidAmount": 0, "balanceDue": 20026.25,
+    "lineItems": [
+      { "id": "LI-019", "description": "Returns Management System", "quantity": 1, "unitPrice": 18500, "amount": 18500, "tax": 1526.25 }
+    ],
+    "createdAt": "2026-02-15T00:00:00Z", "updatedAt": "2026-02-15T00:00:00Z"
+  },
+  {
+    "id": "INV-012", "invoiceNumber": "INV-2026-0012", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "status": "Disputed", "issueDate": "2026-01-20", "dueDate": "2026-03-06",
+    "subtotal": 15000, "tax": 1237.50, "totalAmount": 16237.50, "paidAmount": 0, "balanceDue": 16237.50,
+    "lineItems": [
+      { "id": "LI-020", "description": "Consulting - Store Layout Optimization", "quantity": 30, "unitPrice": 500, "amount": 15000, "tax": 1237.50 }
+    ],
+    "notes": "Merchant disputes scope of consulting work", "createdAt": "2026-01-20T00:00:00Z", "updatedAt": "2026-02-15T14:00:00Z"
+  },
+  {
+    "id": "INV-013", "invoiceNumber": "INV-2026-0013", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "status": "Open", "issueDate": "2026-02-20", "dueDate": "2026-04-06",
+    "subtotal": 25400, "tax": 2095.50, "totalAmount": 27495.50, "paidAmount": 0, "balanceDue": 27495.50,
+    "lineItems": [
+      { "id": "LI-021", "description": "Loyalty Program Integration", "quantity": 1, "unitPrice": 25400, "amount": 25400, "tax": 2095.50 }
+    ],
+    "createdAt": "2026-02-20T00:00:00Z", "updatedAt": "2026-02-20T00:00:00Z"
+  },
+  {
+    "id": "INV-014", "invoiceNumber": "INV-2026-0014", "accountId": "MA-003", "accountName": "MedHealth Partners",
+    "status": "Open", "issueDate": "2026-02-10", "dueDate": "2026-03-12",
+    "subtotal": 38000, "tax": 3135, "totalAmount": 41135, "paidAmount": 0, "balanceDue": 41135,
+    "lineItems": [
+      { "id": "LI-022", "description": "HIPAA Compliance Module", "quantity": 1, "unitPrice": 28000, "amount": 28000, "tax": 2310 },
+      { "id": "LI-023", "description": "Patient Portal Setup", "quantity": 1, "unitPrice": 10000, "amount": 10000, "tax": 825 }
+    ],
+    "poNumber": "PO-MH-2026-003", "createdAt": "2026-02-10T00:00:00Z", "updatedAt": "2026-02-10T00:00:00Z"
+  },
+  {
+    "id": "INV-015", "invoiceNumber": "INV-2026-0015", "accountId": "MA-003", "accountName": "MedHealth Partners",
+    "status": "Paid", "issueDate": "2026-01-25", "dueDate": "2026-02-24",
+    "subtotal": 18500, "tax": 1526.25, "totalAmount": 20026.25, "paidAmount": 20026.25, "balanceDue": 0,
+    "lineItems": [
+      { "id": "LI-024", "description": "EHR Integration", "quantity": 1, "unitPrice": 18500, "amount": 18500, "tax": 1526.25 }
+    ],
+    "createdAt": "2026-01-25T00:00:00Z", "updatedAt": "2026-02-22T16:45:00Z"
+  },
+  {
+    "id": "INV-016", "invoiceNumber": "INV-2026-0016", "accountId": "MA-003", "accountName": "MedHealth Partners",
+    "status": "Open", "issueDate": "2026-02-20", "dueDate": "2026-03-22",
+    "subtotal": 31200, "tax": 2574, "totalAmount": 33774, "paidAmount": 0, "balanceDue": 33774,
+    "lineItems": [
+      { "id": "LI-025", "description": "Telemedicine Platform License", "quantity": 1, "unitPrice": 31200, "amount": 31200, "tax": 2574 }
+    ],
+    "createdAt": "2026-02-20T00:00:00Z", "updatedAt": "2026-02-20T00:00:00Z"
+  },
+  {
+    "id": "INV-017", "invoiceNumber": "INV-2026-0017", "accountId": "MA-004", "accountName": "Pacific Manufacturing",
+    "status": "Overdue", "issueDate": "2025-11-15", "dueDate": "2026-01-14",
+    "subtotal": 55000, "tax": 4537.50, "totalAmount": 59537.50, "paidAmount": 0, "balanceDue": 59537.50,
+    "lineItems": [
+      { "id": "LI-026", "description": "MES Integration", "quantity": 1, "unitPrice": 40000, "amount": 40000, "tax": 3300 },
+      { "id": "LI-027", "description": "Quality Control Module", "quantity": 1, "unitPrice": 15000, "amount": 15000, "tax": 1237.50 }
+    ],
+    "createdAt": "2025-11-15T00:00:00Z", "updatedAt": "2026-01-15T09:00:00Z"
+  },
+  {
+    "id": "INV-018", "invoiceNumber": "INV-2026-0018", "accountId": "MA-004", "accountName": "Pacific Manufacturing",
+    "status": "Overdue", "issueDate": "2025-12-01", "dueDate": "2026-01-30",
+    "subtotal": 32500, "tax": 2681.25, "totalAmount": 35181.25, "paidAmount": 0, "balanceDue": 35181.25,
+    "lineItems": [
+      { "id": "LI-028", "description": "Supply Chain Optimization", "quantity": 1, "unitPrice": 32500, "amount": 32500, "tax": 2681.25 }
+    ],
+    "createdAt": "2025-12-01T00:00:00Z", "updatedAt": "2026-01-30T00:00:00Z"
+  },
+  {
+    "id": "INV-019", "invoiceNumber": "INV-2026-0019", "accountId": "MA-004", "accountName": "Pacific Manufacturing",
+    "status": "Overdue", "issueDate": "2025-12-15", "dueDate": "2026-02-13",
+    "subtotal": 28000, "tax": 2310, "totalAmount": 30310, "paidAmount": 0, "balanceDue": 30310,
+    "lineItems": [
+      { "id": "LI-029", "description": "Warehouse Management System", "quantity": 1, "unitPrice": 28000, "amount": 28000, "tax": 2310 }
+    ],
+    "createdAt": "2025-12-15T00:00:00Z", "updatedAt": "2026-02-13T00:00:00Z"
+  },
+  {
+    "id": "INV-020", "invoiceNumber": "INV-2026-0020", "accountId": "MA-004", "accountName": "Pacific Manufacturing",
+    "status": "Partial", "issueDate": "2025-11-01", "dueDate": "2025-12-31",
+    "subtotal": 45000, "tax": 3712.50, "totalAmount": 48712.50, "paidAmount": 12000, "balanceDue": 36712.50,
+    "lineItems": [
+      { "id": "LI-030", "description": "Production Planning Module", "quantity": 1, "unitPrice": 45000, "amount": 45000, "tax": 3712.50 }
+    ],
+    "createdAt": "2025-11-01T00:00:00Z", "updatedAt": "2025-12-05T14:00:00Z"
+  },
+  {
+    "id": "INV-021", "invoiceNumber": "INV-2026-0021", "accountId": "MA-004", "accountName": "Pacific Manufacturing",
+    "status": "Overdue", "issueDate": "2026-01-05", "dueDate": "2026-03-06",
+    "subtotal": 15000, "tax": 1237.50, "totalAmount": 16237.50, "paidAmount": 0, "balanceDue": 16237.50,
+    "lineItems": [
+      { "id": "LI-031", "description": "Equipment Maintenance Tracking", "quantity": 1, "unitPrice": 15000, "amount": 15000, "tax": 1237.50 }
+    ],
+    "createdAt": "2026-01-05T00:00:00Z", "updatedAt": "2026-01-05T00:00:00Z"
+  },
+  {
+    "id": "INV-022", "invoiceNumber": "INV-2026-0022", "accountId": "MA-004", "accountName": "Pacific Manufacturing",
+    "status": "Credit", "issueDate": "2025-12-20", "dueDate": "2025-12-20",
+    "subtotal": -5000, "tax": -412.50, "totalAmount": -5412.50, "paidAmount": 0, "balanceDue": -5412.50,
+    "lineItems": [
+      { "id": "LI-032", "description": "Credit - Service disruption compensation", "quantity": 1, "unitPrice": -5000, "amount": -5000, "tax": -412.50 }
+    ],
+    "createdAt": "2025-12-20T00:00:00Z", "updatedAt": "2025-12-20T00:00:00Z"
+  },
+  {
+    "id": "INV-023", "invoiceNumber": "INV-2026-0023", "accountId": "MA-005", "accountName": "Sunrise Logistics",
+    "status": "Paid", "issueDate": "2026-01-20", "dueDate": "2026-02-19",
+    "subtotal": 28150, "tax": 2322.38, "totalAmount": 30472.38, "paidAmount": 30472.38, "balanceDue": 0,
+    "lineItems": [
+      { "id": "LI-033", "description": "Fleet Management System", "quantity": 1, "unitPrice": 28150, "amount": 28150, "tax": 2322.38 }
+    ],
+    "createdAt": "2026-01-20T00:00:00Z", "updatedAt": "2026-02-25T10:20:00Z"
+  },
+  {
+    "id": "INV-024", "invoiceNumber": "INV-2026-0024", "accountId": "MA-005", "accountName": "Sunrise Logistics",
+    "status": "Open", "issueDate": "2026-02-15", "dueDate": "2026-03-17",
+    "subtotal": 56300, "tax": 4644.75, "totalAmount": 60944.75, "paidAmount": 0, "balanceDue": 60944.75,
+    "lineItems": [
+      { "id": "LI-034", "description": "Route Optimization Engine", "quantity": 1, "unitPrice": 35000, "amount": 35000, "tax": 2887.50 },
+      { "id": "LI-035", "description": "Real-time Tracking Module", "quantity": 1, "unitPrice": 21300, "amount": 21300, "tax": 1757.25 }
+    ],
+    "poNumber": "PO-SL-2026-008", "createdAt": "2026-02-15T00:00:00Z", "updatedAt": "2026-02-15T00:00:00Z"
+  },
+  {
+    "id": "INV-025", "invoiceNumber": "INV-2026-0025", "accountId": "MA-006", "accountName": "Pinnacle Financial Group",
+    "status": "Paid", "issueDate": "2026-01-15", "dueDate": "2026-02-14",
+    "subtotal": 125000, "tax": 10312.50, "totalAmount": 135312.50, "paidAmount": 135312.50, "balanceDue": 0,
+    "lineItems": [
+      { "id": "LI-036", "description": "Risk Analytics Platform", "quantity": 1, "unitPrice": 85000, "amount": 85000, "tax": 7012.50 },
+      { "id": "LI-037", "description": "Compliance Monitoring Suite", "quantity": 1, "unitPrice": 40000, "amount": 40000, "tax": 3300 }
+    ],
+    "poNumber": "PO-PF-2026-001", "createdAt": "2026-01-15T00:00:00Z", "updatedAt": "2026-02-20T15:00:00Z"
+  },
+  {
+    "id": "INV-026", "invoiceNumber": "INV-2026-0026", "accountId": "MA-006", "accountName": "Pinnacle Financial Group",
+    "status": "Open", "issueDate": "2026-02-10", "dueDate": "2026-03-12",
+    "subtotal": 175000, "tax": 14437.50, "totalAmount": 189437.50, "paidAmount": 0, "balanceDue": 189437.50,
+    "lineItems": [
+      { "id": "LI-038", "description": "Trading Platform Enhancement", "quantity": 1, "unitPrice": 120000, "amount": 120000, "tax": 9900 },
+      { "id": "LI-039", "description": "Market Data Feed Integration", "quantity": 1, "unitPrice": 55000, "amount": 55000, "tax": 4537.50 }
+    ],
+    "poNumber": "PO-PF-2026-005", "createdAt": "2026-02-10T00:00:00Z", "updatedAt": "2026-02-10T00:00:00Z"
+  },
+  {
+    "id": "INV-027", "invoiceNumber": "INV-2026-0027", "accountId": "MA-006", "accountName": "Pinnacle Financial Group",
+    "status": "Open", "issueDate": "2026-02-20", "dueDate": "2026-03-22",
+    "subtotal": 87000, "tax": 7177.50, "totalAmount": 94177.50, "paidAmount": 0, "balanceDue": 94177.50,
+    "lineItems": [
+      { "id": "LI-040", "description": "Client Portfolio Dashboard", "quantity": 1, "unitPrice": 52000, "amount": 52000, "tax": 4290 },
+      { "id": "LI-041", "description": "Regulatory Reporting Module", "quantity": 1, "unitPrice": 35000, "amount": 35000, "tax": 2887.50 }
+    ],
+    "createdAt": "2026-02-20T00:00:00Z", "updatedAt": "2026-02-20T00:00:00Z"
+  },
+  {
+    "id": "INV-028", "invoiceNumber": "INV-2026-0028", "accountId": "MA-006", "accountName": "Pinnacle Financial Group",
+    "status": "Disputed", "issueDate": "2026-01-25", "dueDate": "2026-02-24",
+    "subtotal": 45000, "tax": 3712.50, "totalAmount": 48712.50, "paidAmount": 0, "balanceDue": 48712.50,
+    "lineItems": [
+      { "id": "LI-042", "description": "Consulting - Regulatory Review", "quantity": 60, "unitPrice": 750, "amount": 45000, "tax": 3712.50 }
+    ],
+    "notes": "Dispute over hours billed vs agreed scope", "createdAt": "2026-01-25T00:00:00Z", "updatedAt": "2026-02-19T11:30:00Z"
+  },
+  {
+    "id": "INV-029", "invoiceNumber": "INV-2026-0029", "accountId": "MA-003", "accountName": "MedHealth Partners",
+    "status": "Credit", "issueDate": "2026-02-05", "dueDate": "2026-02-05",
+    "subtotal": -5000, "tax": -412.50, "totalAmount": -5412.50, "paidAmount": 0, "balanceDue": -5412.50,
+    "lineItems": [
+      { "id": "LI-043", "description": "Credit - Downtime compensation", "quantity": 1, "unitPrice": -5000, "amount": -5000, "tax": -412.50 }
+    ],
+    "createdAt": "2026-02-05T00:00:00Z", "updatedAt": "2026-02-05T00:00:00Z"
+  },
+  {
+    "id": "INV-030", "invoiceNumber": "INV-2026-0030", "accountId": "MA-005", "accountName": "Sunrise Logistics",
+    "status": "Void", "issueDate": "2026-01-05", "dueDate": "2026-02-04",
+    "subtotal": 12000, "tax": 990, "totalAmount": 12990, "paidAmount": 0, "balanceDue": 0,
+    "lineItems": [
+      { "id": "LI-044", "description": "Cancelled - Warehouse Module (voided)", "quantity": 1, "unitPrice": 12000, "amount": 12000, "tax": 990 }
+    ],
+    "notes": "Voided per customer request", "createdAt": "2026-01-05T00:00:00Z", "updatedAt": "2026-01-10T09:00:00Z"
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "DUN-001", "customerId": "MA-001", "customerName": "TechFlow Solutions",
+    "currentStep": "Friendly Reminder", "currentStepNumber": 1, "totalSteps": 5, "status": "Active",
+    "totalAmount": 16121.88, "invoiceIds": ["INV-004"],
+    "steps": [
+      { "stepNumber": 1, "name": "Friendly Reminder", "daysAfterDue": 3, "templateId": "TPL-001", "channel": "Email", "completed": false }
+    ],
+    "startDate": "2026-02-12", "nextActionDate": "2026-02-28",
+    "createdAt": "2026-02-12T00:00:00Z", "updatedAt": "2026-02-12T00:00:00Z"
+  },
+  {
+    "id": "DUN-002", "customerId": "MA-002", "customerName": "Global Retail Corp",
+    "currentStep": "Second Notice", "currentStepNumber": 2, "totalSteps": 5, "status": "Active",
+    "totalAmount": 45465, "invoiceIds": ["INV-008"],
+    "steps": [
+      { "stepNumber": 1, "name": "Friendly Reminder", "daysAfterDue": 3, "templateId": "TPL-001", "channel": "Email", "completed": true, "executedDate": "2026-02-06" },
+      { "stepNumber": 2, "name": "Second Notice", "daysAfterDue": 10, "templateId": "TPL-002", "channel": "Email", "completed": false }
+    ],
+    "startDate": "2026-02-06", "nextActionDate": "2026-02-27",
+    "createdAt": "2026-02-06T00:00:00Z", "updatedAt": "2026-02-18T09:00:00Z"
+  },
+  {
+    "id": "DUN-003", "customerId": "MA-006", "customerName": "Pinnacle Financial Group",
+    "currentStep": "Friendly Reminder", "currentStepNumber": 1, "totalSteps": 5, "status": "Completed",
+    "totalAmount": 48712.50, "invoiceIds": ["INV-028"],
+    "steps": [
+      { "stepNumber": 1, "name": "Friendly Reminder", "daysAfterDue": 3, "templateId": "TPL-001", "channel": "Email", "completed": true, "executedDate": "2026-02-27" }
+    ],
+    "startDate": "2026-02-27",
+    "createdAt": "2026-02-27T00:00:00Z", "updatedAt": "2026-02-27T08:00:00Z"
+  },
+  {
+    "id": "DUN-004", "customerId": "MA-004", "customerName": "Pacific Manufacturing",
+    "currentStep": "Final Notice", "currentStepNumber": 5, "totalSteps": 5, "status": "Active",
+    "totalAmount": 178650, "invoiceIds": ["INV-017", "INV-018", "INV-019", "INV-020", "INV-021"],
+    "steps": [
+      { "stepNumber": 1, "name": "Friendly Reminder", "daysAfterDue": 3, "templateId": "TPL-001", "channel": "Email", "completed": true, "executedDate": "2026-01-03" },
+      { "stepNumber": 2, "name": "Second Notice", "daysAfterDue": 10, "templateId": "TPL-002", "channel": "Email", "completed": true, "executedDate": "2026-01-10" },
+      { "stepNumber": 3, "name": "Urgent Notice", "daysAfterDue": 21, "templateId": "TPL-003", "channel": "Phone", "completed": true, "executedDate": "2026-01-21" },
+      { "stepNumber": 4, "name": "Pre-Collection", "daysAfterDue": 35, "templateId": "TPL-004", "channel": "Letter", "completed": true, "executedDate": "2026-02-04" },
+      { "stepNumber": 5, "name": "Final Notice", "daysAfterDue": 50, "templateId": "TPL-005", "channel": "Letter", "completed": false }
+    ],
+    "startDate": "2026-01-03", "nextActionDate": "2026-02-28",
+    "createdAt": "2026-01-03T00:00:00Z", "updatedAt": "2026-02-10T08:00:00Z"
+  },
+  {
+    "id": "DUN-005", "customerId": "CUST-007", "customerName": "Apex Dynamics Inc",
+    "currentStep": "Urgent Notice", "currentStepNumber": 3, "totalSteps": 5, "status": "Paused",
+    "totalAmount": 125000, "invoiceIds": ["INV-A001", "INV-A002"],
+    "steps": [
+      { "stepNumber": 1, "name": "Friendly Reminder", "daysAfterDue": 3, "templateId": "TPL-001", "channel": "Email", "completed": true, "executedDate": "2026-01-18" },
+      { "stepNumber": 2, "name": "Second Notice", "daysAfterDue": 10, "templateId": "TPL-002", "channel": "Email", "completed": true, "executedDate": "2026-01-25" },
+      { "stepNumber": 3, "name": "Urgent Notice", "daysAfterDue": 21, "templateId": "TPL-003", "channel": "Phone", "completed": false }
+    ],
+    "startDate": "2026-01-18", "pauseReason": "Customer negotiating payment plan",
+    "createdAt": "2026-01-18T00:00:00Z", "updatedAt": "2026-02-15T11:00:00Z"
+  },
+  {
+    "id": "DUN-006", "customerId": "CUST-010", "customerName": "Summit Healthcare Group",
+    "currentStep": "Pre-Collection", "currentStepNumber": 4, "totalSteps": 5, "status": "Active",
+    "totalAmount": 98000, "invoiceIds": ["INV-S001", "INV-S002", "INV-S003"],
+    "steps": [
+      { "stepNumber": 1, "name": "Friendly Reminder", "daysAfterDue": 3, "templateId": "TPL-001", "channel": "Email", "completed": true, "executedDate": "2026-01-08" },
+      { "stepNumber": 2, "name": "Second Notice", "daysAfterDue": 10, "templateId": "TPL-002", "channel": "Email", "completed": true, "executedDate": "2026-01-15" },
+      { "stepNumber": 3, "name": "Urgent Notice", "daysAfterDue": 21, "templateId": "TPL-003", "channel": "Phone", "completed": true, "executedDate": "2026-01-26" },
+      { "stepNumber": 4, "name": "Pre-Collection", "daysAfterDue": 35, "templateId": "TPL-004", "channel": "Letter", "completed": false }
+    ],
+    "startDate": "2026-01-08", "nextActionDate": "2026-02-27",
+    "createdAt": "2026-01-08T00:00:00Z", "updatedAt": "2026-02-19T10:00:00Z"
+  },
+  {
+    "id": "DUN-007", "customerId": "CUST-011", "customerName": "Redwood Construction",
+    "currentStep": "Final Notice", "currentStepNumber": 5, "totalSteps": 5, "status": "Completed",
+    "totalAmount": 234000, "invoiceIds": ["INV-R001", "INV-R002", "INV-R003", "INV-R004"],
+    "steps": [
+      { "stepNumber": 1, "name": "Friendly Reminder", "daysAfterDue": 3, "templateId": "TPL-001", "channel": "Email", "completed": true, "executedDate": "2025-12-01" },
+      { "stepNumber": 2, "name": "Second Notice", "daysAfterDue": 10, "templateId": "TPL-002", "channel": "Email", "completed": true, "executedDate": "2025-12-08" },
+      { "stepNumber": 3, "name": "Urgent Notice", "daysAfterDue": 21, "templateId": "TPL-003", "channel": "Phone", "completed": true, "executedDate": "2025-12-19" },
+      { "stepNumber": 4, "name": "Pre-Collection", "daysAfterDue": 35, "templateId": "TPL-004", "channel": "Letter", "completed": true, "executedDate": "2026-01-02" },
+      { "stepNumber": 5, "name": "Final Notice", "daysAfterDue": 50, "templateId": "TPL-005", "channel": "Letter", "completed": true, "executedDate": "2026-01-17" }
+    ],
+    "startDate": "2025-12-01",
+    "createdAt": "2025-12-01T00:00:00Z", "updatedAt": "2026-01-17T10:00:00Z"
+  },
+  {
+    "id": "DUN-008", "customerId": "CUST-013", "customerName": "Metro Transit Authority",
+    "currentStep": "Second Notice", "currentStepNumber": 2, "totalSteps": 5, "status": "Active",
+    "totalAmount": 56000, "invoiceIds": ["INV-MT001", "INV-MT002"],
+    "steps": [
+      { "stepNumber": 1, "name": "Friendly Reminder", "daysAfterDue": 3, "templateId": "TPL-001", "channel": "Email", "completed": true, "executedDate": "2026-01-25" },
+      { "stepNumber": 2, "name": "Second Notice", "daysAfterDue": 10, "templateId": "TPL-002", "channel": "Email", "completed": false }
+    ],
+    "startDate": "2026-01-25", "nextActionDate": "2026-02-27",
+    "createdAt": "2026-01-25T00:00:00Z", "updatedAt": "2026-02-17T15:00:00Z"
+  },
+  {
+    "id": "DUN-009", "customerId": "CUST-015", "customerName": "Atlas Manufacturing Co",
+    "currentStep": "Urgent Notice", "currentStepNumber": 3, "totalSteps": 5, "status": "Active",
+    "totalAmount": 142000, "invoiceIds": ["INV-AM001", "INV-AM002", "INV-AM003"],
+    "steps": [
+      { "stepNumber": 1, "name": "Friendly Reminder", "daysAfterDue": 3, "templateId": "TPL-001", "channel": "Email", "completed": true, "executedDate": "2026-01-05" },
+      { "stepNumber": 2, "name": "Second Notice", "daysAfterDue": 10, "templateId": "TPL-002", "channel": "Email", "completed": true, "executedDate": "2026-01-12" },
+      { "stepNumber": 3, "name": "Urgent Notice", "daysAfterDue": 21, "templateId": "TPL-003", "channel": "Phone", "completed": false }
+    ],
+    "startDate": "2026-01-05", "nextActionDate": "2026-02-28",
+    "createdAt": "2026-01-05T00:00:00Z", "updatedAt": "2026-02-21T09:00:00Z"
+  },
+  {
+    "id": "DUN-010", "customerId": "CUST-022", "customerName": "Northern Star Mining",
+    "currentStep": "Pre-Collection", "currentStepNumber": 4, "totalSteps": 5, "status": "Cancelled",
+    "totalAmount": 105000, "invoiceIds": ["INV-NS001", "INV-NS002"],
+    "steps": [
+      { "stepNumber": 1, "name": "Friendly Reminder", "daysAfterDue": 3, "templateId": "TPL-001", "channel": "Email", "completed": true, "executedDate": "2026-01-15" },
+      { "stepNumber": 2, "name": "Second Notice", "daysAfterDue": 10, "templateId": "TPL-002", "channel": "Email", "completed": true, "executedDate": "2026-01-22" },
+      { "stepNumber": 3, "name": "Urgent Notice", "daysAfterDue": 21, "templateId": "TPL-003", "channel": "Phone", "completed": true, "executedDate": "2026-02-02" },
+      { "stepNumber": 4, "name": "Pre-Collection", "daysAfterDue": 35, "templateId": "TPL-004", "channel": "Letter", "completed": false }
+    ],
+    "startDate": "2026-01-15", "pauseReason": "Cancelled - customer agreed to restructured payment terms",
+    "createdAt": "2026-01-15T00:00:00Z", "updatedAt": "2026-02-20T11:00:00Z"
+  }
+]

@@ -114,3 +114,36 @@ export const common = {
   getAuditLog: notConfigured,
   getUsers: notConfigured,
 };
+
+export const merchantPortal = {
+  getAccounts: notConfigured,
+  getAccount: notConfigured,
+  getInvoices: notConfigured,
+  getInvoice: notConfigured,
+  getPayments: notConfigured,
+  createPayment: notConfigured,
+  getPaymentMethods: notConfigured,
+  getDisputes: notConfigured,
+  createDispute: notConfigured,
+  updateDispute: notConfigured,
+  getCreditMemos: notConfigured,
+  getNotifications: notConfigured,
+  getContacts: notConfigured,
+};
+
+export const collections = {
+  getRecords: notConfigured,
+  getRecord: notConfigured,
+  updateRecord: notConfigured,
+  getCustomer360: notConfigured,
+  getCustomer360List: notConfigured,
+  getDunningSequences: notConfigured,
+  createDunningSequence: notConfigured,
+  updateDunningSequence: notConfigured,
+  getDunningTemplates: notConfigured,
+  getPromises: notConfigured,
+  createPromise: notConfigured,
+  updatePromise: notConfigured,
+  getCorrespondence: notConfigured,
+  createCorrespondence: notConfigured,
+};

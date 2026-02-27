@@ -41,6 +41,8 @@ import {
   RefreshCw,
   Landmark,
   Building2,
+  Store,
+  PhoneCall,
 } from "lucide-react";
 
 type RailItem = "home" | "automation" | "reports" | "workbench" | "igrs" | "admin";
@@ -213,10 +215,10 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       route: "/workbench/order-to-cash",
       children: [
         {
-          id: "cash-collection",
-          label: "Cash Collection Workbench",
-          icon: React.createElement(Wallet, { size: 16 }),
-          route: "/workbench/order-to-cash/cash-collection",
+          id: "collections",
+          label: "Collections Workbench",
+          icon: React.createElement(PhoneCall, { size: 16 }),
+          route: "/workbench/order-to-cash/collections",
         },
         {
           id: "cash-application",
@@ -229,6 +231,18 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
           label: "Disputes",
           icon: React.createElement(FileText, { size: 16 }),
           route: "/workbench/order-to-cash/disputes",
+        },
+        {
+          id: "merchant-portal",
+          label: "Merchant Portal",
+          icon: React.createElement(Store, { size: 16 }),
+          route: "/workbench/order-to-cash/merchant-portal",
+        },
+        {
+          id: "merchant-dashboard",
+          label: "Merchant Dashboard",
+          icon: React.createElement(BarChart3, { size: 16 }),
+          route: "/workbench/order-to-cash/merchant-dashboard",
         },
       ],
     },

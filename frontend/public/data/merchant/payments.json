@@ -1,0 +1,90 @@
+[
+  {
+    "id": "MPAY-001", "paymentNumber": "PAY-2026-0001", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "amount": 35181.25, "method": "ACH", "status": "Completed", "paymentDate": "2026-02-15",
+    "paymentMethodId": "PM-001",
+    "allocations": [{ "invoiceId": "INV-002", "invoiceNumber": "INV-2026-0002", "amount": 35181.25 }],
+    "referenceNumber": "ACH-8834721", "createdAt": "2026-02-15T10:00:00Z", "updatedAt": "2026-02-15T10:30:00Z"
+  },
+  {
+    "id": "MPAY-002", "paymentNumber": "PAY-2026-0002", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "amount": 15000, "method": "ACH", "status": "Completed", "paymentDate": "2026-02-05",
+    "paymentMethodId": "PM-001",
+    "allocations": [{ "invoiceId": "INV-004", "invoiceNumber": "INV-2026-0004", "amount": 15000 }],
+    "referenceNumber": "ACH-8823115", "createdAt": "2026-02-05T14:30:00Z", "updatedAt": "2026-02-05T15:00:00Z"
+  },
+  {
+    "id": "MPAY-003", "paymentNumber": "PAY-2026-0003", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "amount": 54000, "method": "ACH", "status": "Completed", "paymentDate": "2026-02-10",
+    "paymentMethodId": "PM-004",
+    "allocations": [
+      { "invoiceId": "INV-009", "invoiceNumber": "INV-2026-0009", "amount": 25980 },
+      { "invoiceId": "INV-007", "invoiceNumber": "INV-2026-0007", "amount": 28020 }
+    ],
+    "referenceNumber": "ACH-9912034", "createdAt": "2026-02-10T11:00:00Z", "updatedAt": "2026-02-10T11:45:00Z"
+  },
+  {
+    "id": "MPAY-004", "paymentNumber": "PAY-2026-0004", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "amount": 42000, "method": "Credit Card", "status": "Failed", "paymentDate": "2026-02-16",
+    "paymentMethodId": "PM-005",
+    "allocations": [{ "invoiceId": "INV-008", "invoiceNumber": "INV-2026-0008", "amount": 42000 }],
+    "notes": "Card declined - insufficient funds", "createdAt": "2026-02-16T10:30:00Z", "updatedAt": "2026-02-16T10:35:00Z"
+  },
+  {
+    "id": "MPAY-005", "paymentNumber": "PAY-2026-0005", "accountId": "MA-003", "accountName": "MedHealth Partners",
+    "amount": 20026.25, "method": "ACH", "status": "Completed", "paymentDate": "2026-02-22",
+    "paymentMethodId": "PM-006",
+    "allocations": [{ "invoiceId": "INV-015", "invoiceNumber": "INV-2026-0015", "amount": 20026.25 }],
+    "referenceNumber": "ACH-7711298", "createdAt": "2026-02-22T16:45:00Z", "updatedAt": "2026-02-22T17:00:00Z"
+  },
+  {
+    "id": "MPAY-006", "paymentNumber": "PAY-2026-0006", "accountId": "MA-004", "accountName": "Pacific Manufacturing",
+    "amount": 12000, "method": "ACH", "status": "Completed", "paymentDate": "2025-12-05",
+    "paymentMethodId": "PM-008",
+    "allocations": [{ "invoiceId": "INV-020", "invoiceNumber": "INV-2026-0020", "amount": 12000 }],
+    "referenceNumber": "ACH-5543219", "createdAt": "2025-12-05T14:00:00Z", "updatedAt": "2025-12-05T14:30:00Z"
+  },
+  {
+    "id": "MPAY-007", "paymentNumber": "PAY-2026-0007", "accountId": "MA-005", "accountName": "Sunrise Logistics",
+    "amount": 30472.38, "method": "ACH", "status": "Completed", "paymentDate": "2026-02-25",
+    "paymentMethodId": "PM-009",
+    "allocations": [{ "invoiceId": "INV-023", "invoiceNumber": "INV-2026-0023", "amount": 30472.38 }],
+    "referenceNumber": "ACH-6628411", "createdAt": "2026-02-25T10:00:00Z", "updatedAt": "2026-02-25T10:20:00Z"
+  },
+  {
+    "id": "MPAY-008", "paymentNumber": "PAY-2026-0008", "accountId": "MA-006", "accountName": "Pinnacle Financial Group",
+    "amount": 135312.50, "method": "Wire", "status": "Completed", "paymentDate": "2026-02-20",
+    "paymentMethodId": "PM-011",
+    "allocations": [{ "invoiceId": "INV-025", "invoiceNumber": "INV-2026-0025", "amount": 135312.50 }],
+    "referenceNumber": "WIRE-PFG-20260220", "createdAt": "2026-02-20T15:00:00Z", "updatedAt": "2026-02-20T15:30:00Z"
+  },
+  {
+    "id": "MPAY-009", "paymentNumber": "PAY-2026-0009", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "amount": 48712.50, "method": "ACH", "status": "Pending", "paymentDate": "2026-02-27",
+    "paymentMethodId": "PM-001",
+    "allocations": [{ "invoiceId": "INV-001", "invoiceNumber": "INV-2026-0001", "amount": 48712.50 }],
+    "createdAt": "2026-02-27T08:00:00Z", "updatedAt": "2026-02-27T08:00:00Z"
+  },
+  {
+    "id": "MPAY-010", "paymentNumber": "PAY-2026-0010", "accountId": "MA-005", "accountName": "Sunrise Logistics",
+    "amount": 60944.75, "method": "ACH", "status": "Processing", "paymentDate": "2026-02-26",
+    "paymentMethodId": "PM-009",
+    "allocations": [{ "invoiceId": "INV-024", "invoiceNumber": "INV-2026-0024", "amount": 60944.75 }],
+    "createdAt": "2026-02-26T09:00:00Z", "updatedAt": "2026-02-26T09:15:00Z"
+  },
+  {
+    "id": "MPAY-011", "paymentNumber": "PAY-2026-0011", "accountId": "MA-006", "accountName": "Pinnacle Financial Group",
+    "amount": 94177.50, "method": "Wire", "status": "Pending", "paymentDate": "2026-02-28",
+    "paymentMethodId": "PM-011",
+    "allocations": [{ "invoiceId": "INV-027", "invoiceNumber": "INV-2026-0027", "amount": 94177.50 }],
+    "createdAt": "2026-02-27T10:00:00Z", "updatedAt": "2026-02-27T10:00:00Z"
+  },
+  {
+    "id": "MPAY-012", "paymentNumber": "PAY-2026-0012", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "amount": 45465, "method": "ACH", "status": "Refunded", "paymentDate": "2026-02-12",
+    "paymentMethodId": "PM-004",
+    "allocations": [{ "invoiceId": "INV-008", "invoiceNumber": "INV-2026-0008", "amount": 45465 }],
+    "notes": "Refunded due to processing error", "referenceNumber": "ACH-9918822",
+    "createdAt": "2026-02-12T11:00:00Z", "updatedAt": "2026-02-14T09:00:00Z"
+  }
+]

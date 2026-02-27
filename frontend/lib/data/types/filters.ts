@@ -212,6 +212,54 @@ export interface AuditFilters extends BaseFilters {
 }
 
 /**
+ * Filters for querying merchant invoices.
+ */
+export interface MerchantInvoiceFilters extends BaseFilters {
+  /** Filter by one or more invoice statuses */
+  status?: string[];
+  /** Start of the date range (ISO-8601) */
+  dateFrom?: string;
+  /** End of the date range (ISO-8601) */
+  dateTo?: string;
+  /** Minimum invoice amount */
+  minAmount?: number;
+  /** Maximum invoice amount */
+  maxAmount?: number;
+  /** Filter by merchant account ID */
+  accountId?: string;
+}
+
+/**
+ * Filters for querying collection records.
+ */
+export interface CollectionFilters extends BaseFilters {
+  /** Filter by one or more severity levels */
+  severity?: string[];
+  /** Filter by one or more collection statuses */
+  status?: string[];
+  /** Filter by assigned collector */
+  collector?: string;
+  /** Filter by aging bucket */
+  bucket?: string[];
+  /** Minimum past due amount */
+  minPastDue?: number;
+  /** Maximum past due amount */
+  maxPastDue?: number;
+}
+
+/**
+ * Filters for querying dunning sequences.
+ */
+export interface DunningFilters extends BaseFilters {
+  /** Filter by one or more dunning statuses */
+  status?: string[];
+  /** Filter by current dunning step */
+  currentStep?: string[];
+  /** Filter by customer ID */
+  customerId?: string;
+}
+
+/**
  * Generic paginated result wrapper returned by all list endpoints.
  * Wraps an array of items with pagination metadata.
  *

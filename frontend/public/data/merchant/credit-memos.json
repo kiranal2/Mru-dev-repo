@@ -1,0 +1,53 @@
+[
+  {
+    "id": "CM-001", "memoNumber": "CM-2026-0001", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "originalAmount": 10825, "remainingBalance": 10825, "status": "Available",
+    "reason": "Duplicate bandwidth overage charge on INV-2026-0004",
+    "relatedInvoiceId": "INV-004", "relatedInvoiceNumber": "INV-2026-0004",
+    "issueDate": "2026-02-07", "expirationDate": "2026-08-07", "createdAt": "2026-02-07T10:00:00Z"
+  },
+  {
+    "id": "CM-002", "memoNumber": "CM-2026-0002", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "originalAmount": 5000, "remainingBalance": 0, "status": "Fully Applied",
+    "reason": "Promotional credit for annual contract renewal",
+    "issueDate": "2026-01-15", "createdAt": "2026-01-15T08:00:00Z"
+  },
+  {
+    "id": "CM-003", "memoNumber": "CM-2026-0003", "accountId": "MA-003", "accountName": "MedHealth Partners",
+    "originalAmount": 5412.50, "remainingBalance": 5412.50, "status": "Available",
+    "reason": "Downtime compensation - 4 hours system unavailability",
+    "issueDate": "2026-02-05", "expirationDate": "2026-08-05", "createdAt": "2026-02-05T10:00:00Z"
+  },
+  {
+    "id": "CM-004", "memoNumber": "CM-2026-0004", "accountId": "MA-004", "accountName": "Pacific Manufacturing",
+    "originalAmount": 5412.50, "remainingBalance": 5412.50, "status": "Available",
+    "reason": "Service disruption compensation",
+    "issueDate": "2025-12-20", "expirationDate": "2026-06-20", "createdAt": "2025-12-20T10:00:00Z"
+  },
+  {
+    "id": "CM-005", "memoNumber": "CM-2026-0005", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "originalAmount": 8250, "remainingBalance": 3250, "status": "Partially Applied",
+    "reason": "Volume discount adjustment for Q4 2025",
+    "issueDate": "2026-01-10", "expirationDate": "2026-07-10", "createdAt": "2026-01-10T09:00:00Z"
+  },
+  {
+    "id": "CM-006", "memoNumber": "CM-2026-0006", "accountId": "MA-006", "accountName": "Pinnacle Financial Group",
+    "originalAmount": 8500, "remainingBalance": 0, "status": "Fully Applied",
+    "reason": "Compliance suite downtime compensation",
+    "relatedInvoiceId": "INV-025", "relatedInvoiceNumber": "INV-2026-0025",
+    "issueDate": "2026-02-19", "createdAt": "2026-02-19T11:30:00Z"
+  },
+  {
+    "id": "CM-007", "memoNumber": "CM-2026-0007", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "originalAmount": 2500, "remainingBalance": 0, "status": "Expired",
+    "reason": "Early payment discount - Q3 2025",
+    "issueDate": "2025-09-15", "expirationDate": "2025-12-15", "createdAt": "2025-09-15T10:00:00Z"
+  },
+  {
+    "id": "CM-008", "memoNumber": "CM-2026-0008", "accountId": "MA-005", "accountName": "Sunrise Logistics",
+    "originalAmount": 5412.50, "remainingBalance": 5412.50, "status": "Available",
+    "reason": "Promotional discount not applied on INV-2026-0024",
+    "relatedInvoiceId": "INV-024", "relatedInvoiceNumber": "INV-2026-0024",
+    "issueDate": "2026-02-17", "expirationDate": "2026-08-17", "createdAt": "2026-02-17T09:00:00Z"
+  }
+]

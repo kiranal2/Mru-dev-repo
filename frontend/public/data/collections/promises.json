@@ -1,0 +1,87 @@
+[
+  {
+    "id": "PTP-001", "customerId": "MA-001", "customerName": "TechFlow Solutions",
+    "promisedAmount": 16121.88, "promisedDate": "2026-03-05", "status": "Active",
+    "paymentMethod": "ACH", "invoiceIds": ["INV-004"],
+    "notes": "Will pay remaining balance on INV-004 by March 5", "capturedBy": "Jennifer Walsh",
+    "createdAt": "2026-02-20T14:00:00Z", "updatedAt": "2026-02-20T14:00:00Z"
+  },
+  {
+    "id": "PTP-002", "customerId": "MA-002", "customerName": "Global Retail Corp",
+    "promisedAmount": 45465, "promisedDate": "2026-02-28", "status": "Due Today",
+    "paymentMethod": "ACH", "invoiceIds": ["INV-008"],
+    "notes": "CFO approved payment for overdue invoice", "capturedBy": "Jennifer Walsh",
+    "createdAt": "2026-02-18T10:00:00Z", "updatedAt": "2026-02-27T00:00:00Z"
+  },
+  {
+    "id": "PTP-003", "customerId": "MA-003", "customerName": "MedHealth Partners",
+    "promisedAmount": 41135, "promisedDate": "2026-03-10", "status": "Active",
+    "paymentMethod": "ACH", "invoiceIds": ["INV-014"],
+    "notes": "Standard payment cycle", "capturedBy": "Robert Kim",
+    "createdAt": "2026-02-22T17:00:00Z", "updatedAt": "2026-02-22T17:00:00Z"
+  },
+  {
+    "id": "PTP-004", "customerId": "MA-004", "customerName": "Pacific Manufacturing",
+    "promisedAmount": 50000, "promisedDate": "2026-02-15", "status": "Broken",
+    "paymentMethod": "ACH", "invoiceIds": ["INV-017", "INV-018"],
+    "notes": "Promised partial payment of $50K by Feb 15. Payment not received.", "capturedBy": "Jennifer Walsh",
+    "createdAt": "2026-02-01T09:00:00Z", "updatedAt": "2026-02-16T00:00:00Z"
+  },
+  {
+    "id": "PTP-005", "customerId": "MA-004", "customerName": "Pacific Manufacturing",
+    "promisedAmount": 30000, "promisedDate": "2026-03-01", "status": "Overdue",
+    "paymentMethod": "Wire", "invoiceIds": ["INV-017"],
+    "notes": "Renegotiated after broken promise. Controller committed to wire transfer.", "capturedBy": "Jennifer Walsh",
+    "createdAt": "2026-02-16T10:00:00Z", "updatedAt": "2026-02-27T00:00:00Z"
+  },
+  {
+    "id": "PTP-006", "customerId": "CUST-007", "customerName": "Apex Dynamics Inc",
+    "promisedAmount": 42000, "promisedDate": "2026-02-28", "status": "Due Today",
+    "paymentMethod": "ACH", "invoiceIds": ["INV-A001"],
+    "notes": "First installment of 3-month payment plan", "capturedBy": "Jennifer Walsh",
+    "createdAt": "2026-02-15T14:00:00Z", "updatedAt": "2026-02-27T00:00:00Z"
+  },
+  {
+    "id": "PTP-007", "customerId": "MA-006", "customerName": "Pinnacle Financial Group",
+    "promisedAmount": 135312.50, "promisedDate": "2026-02-20", "status": "Fulfilled",
+    "paymentMethod": "Wire", "invoiceIds": ["INV-025"],
+    "receivedAmount": 135312.50, "receivedDate": "2026-02-20",
+    "notes": "Wire transfer for full invoice amount", "capturedBy": "Robert Kim",
+    "createdAt": "2026-02-18T09:00:00Z", "updatedAt": "2026-02-20T15:00:00Z"
+  },
+  {
+    "id": "PTP-008", "customerId": "MA-005", "customerName": "Sunrise Logistics",
+    "promisedAmount": 30472.38, "promisedDate": "2026-02-25", "status": "Fulfilled",
+    "paymentMethod": "ACH", "invoiceIds": ["INV-023"],
+    "receivedAmount": 30472.38, "receivedDate": "2026-02-25",
+    "notes": "Paid 6 days early", "capturedBy": "Robert Kim",
+    "createdAt": "2026-02-20T11:00:00Z", "updatedAt": "2026-02-25T10:20:00Z"
+  },
+  {
+    "id": "PTP-009", "customerId": "CUST-015", "customerName": "Atlas Manufacturing Co",
+    "promisedAmount": 50000, "promisedDate": "2026-02-28", "status": "Due Today",
+    "paymentMethod": "ACH", "invoiceIds": ["INV-AM001"],
+    "notes": "Partial payment - first of three installments", "capturedBy": "Jennifer Walsh",
+    "createdAt": "2026-02-21T09:00:00Z", "updatedAt": "2026-02-27T00:00:00Z"
+  },
+  {
+    "id": "PTP-010", "customerId": "CUST-018", "customerName": "Coastal Shipping Lines",
+    "promisedAmount": 40000, "promisedDate": "2026-02-27", "status": "Overdue",
+    "paymentMethod": "Wire", "invoiceIds": ["INV-CS001", "INV-CS002"],
+    "notes": "Committed to partial payment by end of week", "capturedBy": "Robert Kim",
+    "createdAt": "2026-02-22T14:00:00Z", "updatedAt": "2026-02-27T00:00:00Z"
+  },
+  {
+    "id": "PTP-011", "customerId": "CUST-011", "customerName": "Redwood Construction",
+    "promisedAmount": 100000, "promisedDate": "2026-01-15", "status": "Broken",
+    "paymentMethod": "Wire", "invoiceIds": ["INV-R001", "INV-R002"],
+    "notes": "Owner promised substantial payment. Never received. Account unresponsive since.", "capturedBy": "Jennifer Walsh",
+    "createdAt": "2025-12-20T10:00:00Z", "updatedAt": "2026-01-16T00:00:00Z"
+  },
+  {
+    "id": "PTP-012", "customerId": "CUST-008", "customerName": "NovaTech Systems",
+    "promisedAmount": 32000, "promisedDate": "2026-03-05", "status": "Cancelled",
+    "notes": "Cancelled - customer made partial payment directly instead", "capturedBy": "Robert Kim",
+    "createdAt": "2026-02-15T10:00:00Z", "updatedAt": "2026-02-21T11:00:00Z"
+  }
+]

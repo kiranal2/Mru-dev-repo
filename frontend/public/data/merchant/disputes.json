@@ -1,0 +1,136 @@
+[
+  {
+    "id": "DSP-001", "disputeNumber": "DSP-2026-0001", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "invoiceId": "INV-003", "invoiceNumber": "INV-2026-0003", "type": "Billing Error",
+    "status": "Open", "amount": 10000,
+    "description": "We were billed for 40 hours of custom report development but only received 25 hours of work.",
+    "assignedTo": "Sarah Chen",
+    "communications": [
+      { "id": "COM-001", "timestamp": "2026-02-23T11:00:00Z", "author": "John Miller", "authorRole": "Merchant", "message": "Filing dispute - we only received 25 hours of the 40 hours billed for custom report development." },
+      { "id": "COM-002", "timestamp": "2026-02-23T14:00:00Z", "author": "Sarah Chen", "authorRole": "Support", "message": "Thank you for bringing this to our attention. I'm reviewing the time logs now." }
+    ],
+    "filedDate": "2026-02-23", "createdAt": "2026-02-23T11:00:00Z", "updatedAt": "2026-02-23T14:00:00Z"
+  },
+  {
+    "id": "DSP-002", "disputeNumber": "DSP-2026-0002", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "invoiceId": "INV-012", "invoiceNumber": "INV-2026-0012", "type": "Service Issue",
+    "status": "Under Review", "amount": 15000,
+    "description": "Consulting services for store layout optimization did not meet the agreed-upon scope and deliverables.",
+    "assignedTo": "Mike Johnson",
+    "communications": [
+      { "id": "COM-003", "timestamp": "2026-02-15T14:00:00Z", "author": "Lisa Park", "authorRole": "Merchant", "message": "The consulting engagement did not cover the 30 stores as agreed. Only 18 stores were visited." },
+      { "id": "COM-004", "timestamp": "2026-02-16T09:00:00Z", "author": "Mike Johnson", "authorRole": "Support", "message": "I'm pulling up the SOW to verify the scope. Will update you within 48 hours." },
+      { "id": "COM-005", "timestamp": "2026-02-18T10:30:00Z", "author": "Mike Johnson", "authorRole": "Support", "message": "Confirmed that only 18 stores were completed. Escalating to the consulting team for resolution." }
+    ],
+    "filedDate": "2026-02-15", "createdAt": "2026-02-15T14:00:00Z", "updatedAt": "2026-02-18T10:30:00Z"
+  },
+  {
+    "id": "DSP-003", "disputeNumber": "DSP-2026-0003", "accountId": "MA-006", "accountName": "Pinnacle Financial Group",
+    "invoiceId": "INV-028", "invoiceNumber": "INV-2026-0028", "type": "Billing Error",
+    "status": "Under Review", "amount": 45000,
+    "description": "Billed for 60 hours of regulatory review consulting but the agreed scope was 40 hours maximum.",
+    "assignedTo": "Sarah Chen",
+    "communications": [
+      { "id": "COM-006", "timestamp": "2026-02-19T09:00:00Z", "author": "David Wright", "authorRole": "Merchant", "message": "Our contract clearly states a cap of 40 hours for this engagement. Please adjust." },
+      { "id": "COM-007", "timestamp": "2026-02-19T11:30:00Z", "author": "Sarah Chen", "authorRole": "Support", "message": "Reviewing the contract terms now. The additional 20 hours may have been pre-approved via email." },
+      { "id": "COM-008", "timestamp": "2026-02-20T14:00:00Z", "author": "System", "authorRole": "System", "message": "Case escalated to dispute review committee." }
+    ],
+    "filedDate": "2026-02-19", "createdAt": "2026-02-19T09:00:00Z", "updatedAt": "2026-02-20T14:00:00Z"
+  },
+  {
+    "id": "DSP-004", "disputeNumber": "DSP-2026-0004", "accountId": "MA-004", "accountName": "Pacific Manufacturing",
+    "invoiceId": "INV-017", "invoiceNumber": "INV-2026-0017", "type": "Quality",
+    "status": "Escalated", "amount": 40000,
+    "description": "MES Integration was incomplete and caused production line disruptions for 3 days.",
+    "assignedTo": "Mike Johnson",
+    "communications": [
+      { "id": "COM-009", "timestamp": "2026-01-20T10:00:00Z", "author": "Tom Richards", "authorRole": "Merchant", "message": "The MES integration failed during go-live and caused 3 days of production downtime." },
+      { "id": "COM-010", "timestamp": "2026-01-21T09:00:00Z", "author": "Mike Johnson", "authorRole": "Support", "message": "We apologize for the disruption. Our engineering team is investigating." },
+      { "id": "COM-011", "timestamp": "2026-02-01T11:00:00Z", "author": "Mike Johnson", "authorRole": "Support", "message": "Engineering confirmed the root cause. Escalating for executive review and compensation discussion." }
+    ],
+    "filedDate": "2026-01-20", "createdAt": "2026-01-20T10:00:00Z", "updatedAt": "2026-02-01T11:00:00Z"
+  },
+  {
+    "id": "DSP-005", "disputeNumber": "DSP-2026-0005", "accountId": "MA-001", "accountName": "TechFlow Solutions",
+    "invoiceId": "INV-004", "invoiceNumber": "INV-2026-0004", "type": "Duplicate Charge",
+    "status": "Resolved", "amount": 10000,
+    "description": "Bandwidth overage charge appears to be a duplicate of a charge already on a previous invoice.",
+    "resolution": "Confirmed duplicate charge. Credit memo CM-001 issued for $10,825.00 (including tax).",
+    "creditedAmount": 10825,
+    "assignedTo": "Sarah Chen",
+    "communications": [
+      { "id": "COM-012", "timestamp": "2026-02-06T09:00:00Z", "author": "John Miller", "authorRole": "Merchant", "message": "The bandwidth overage charge of $10,000 appears on both INV-2025-0048 and INV-2026-0004." },
+      { "id": "COM-013", "timestamp": "2026-02-06T14:00:00Z", "author": "Sarah Chen", "authorRole": "Support", "message": "I can confirm this is a duplicate charge. Processing credit memo now." },
+      { "id": "COM-014", "timestamp": "2026-02-07T10:00:00Z", "author": "System", "authorRole": "System", "message": "Credit memo CM-001 issued for $10,825.00." }
+    ],
+    "filedDate": "2026-02-06", "resolvedDate": "2026-02-07", "createdAt": "2026-02-06T09:00:00Z", "updatedAt": "2026-02-07T10:00:00Z"
+  },
+  {
+    "id": "DSP-006", "disputeNumber": "DSP-2026-0006", "accountId": "MA-006", "accountName": "Pinnacle Financial Group",
+    "invoiceId": "INV-025", "invoiceNumber": "INV-2026-0025", "type": "Service Issue",
+    "status": "Resolved", "amount": 8500,
+    "description": "Compliance monitoring suite was unavailable for 12 hours during a critical reporting period.",
+    "resolution": "Service credit of $8,500.00 applied as goodwill compensation.",
+    "creditedAmount": 8500,
+    "assignedTo": "Mike Johnson",
+    "communications": [
+      { "id": "COM-015", "timestamp": "2026-02-14T08:00:00Z", "author": "David Wright", "authorRole": "Merchant", "message": "The compliance suite was down for 12 hours on Feb 13 during our quarterly SEC filing window." },
+      { "id": "COM-016", "timestamp": "2026-02-14T11:00:00Z", "author": "Mike Johnson", "authorRole": "Support", "message": "We sincerely apologize. Processing a service credit immediately." },
+      { "id": "COM-017", "timestamp": "2026-02-19T11:30:00Z", "author": "System", "authorRole": "System", "message": "Credit memo CM-006 issued for $8,500.00." }
+    ],
+    "filedDate": "2026-02-14", "resolvedDate": "2026-02-19", "createdAt": "2026-02-14T08:00:00Z", "updatedAt": "2026-02-19T11:30:00Z"
+  },
+  {
+    "id": "DSP-007", "disputeNumber": "DSP-2026-0007", "accountId": "MA-003", "accountName": "MedHealth Partners",
+    "invoiceId": "INV-014", "invoiceNumber": "INV-2026-0014", "type": "Billing Error",
+    "status": "Rejected", "amount": 10000,
+    "description": "Patient portal setup was quoted at $8,000, not $10,000 as billed.",
+    "resolution": "Original quote verified at $10,000 per signed SOW dated 2026-01-15. Dispute rejected.",
+    "assignedTo": "Sarah Chen",
+    "communications": [
+      { "id": "COM-018", "timestamp": "2026-02-12T09:00:00Z", "author": "Dr. Karen Lee", "authorRole": "Merchant", "message": "Our internal records show a quote of $8,000 for the patient portal setup." },
+      { "id": "COM-019", "timestamp": "2026-02-12T15:00:00Z", "author": "Sarah Chen", "authorRole": "Support", "message": "The signed SOW from Jan 15 shows $10,000 for patient portal setup. Attaching the document." },
+      { "id": "COM-020", "timestamp": "2026-02-13T10:00:00Z", "author": "Dr. Karen Lee", "authorRole": "Merchant", "message": "I see the signed SOW. We'll process the payment." }
+    ],
+    "filedDate": "2026-02-12", "resolvedDate": "2026-02-13", "createdAt": "2026-02-12T09:00:00Z", "updatedAt": "2026-02-13T10:00:00Z"
+  },
+  {
+    "id": "DSP-008", "disputeNumber": "DSP-2026-0008", "accountId": "MA-002", "accountName": "Global Retail Corp",
+    "invoiceId": "INV-006", "invoiceNumber": "INV-2026-0006", "type": "Unauthorized",
+    "status": "Open", "amount": 50000,
+    "description": "POS integration for 50 stores was not authorized. Only 30 stores were in the approved scope.",
+    "assignedTo": "Mike Johnson",
+    "communications": [
+      { "id": "COM-021", "timestamp": "2026-02-22T10:00:00Z", "author": "Lisa Park", "authorRole": "Merchant", "message": "Our approval was for 30 stores only. The additional 20 stores were never authorized." },
+      { "id": "COM-022", "timestamp": "2026-02-22T14:30:00Z", "author": "Mike Johnson", "authorRole": "Support", "message": "Reviewing the change order documentation. Will respond within 24 hours." }
+    ],
+    "filedDate": "2026-02-22", "createdAt": "2026-02-22T10:00:00Z", "updatedAt": "2026-02-22T14:30:00Z"
+  },
+  {
+    "id": "DSP-009", "disputeNumber": "DSP-2026-0009", "accountId": "MA-004", "accountName": "Pacific Manufacturing",
+    "invoiceId": "INV-018", "invoiceNumber": "INV-2026-0018", "type": "Quality",
+    "status": "Open", "amount": 32500,
+    "description": "Supply chain optimization deliverables did not meet the agreed quality standards.",
+    "assignedTo": "Sarah Chen",
+    "communications": [
+      { "id": "COM-023", "timestamp": "2026-02-20T11:00:00Z", "author": "Tom Richards", "authorRole": "Merchant", "message": "The optimization recommendations were generic and not tailored to our operations as promised." },
+      { "id": "COM-024", "timestamp": "2026-02-21T09:00:00Z", "author": "Sarah Chen", "authorRole": "Support", "message": "I understand your concerns. Scheduling a review meeting with the delivery team." }
+    ],
+    "filedDate": "2026-02-20", "createdAt": "2026-02-20T11:00:00Z", "updatedAt": "2026-02-21T09:00:00Z"
+  },
+  {
+    "id": "DSP-010", "disputeNumber": "DSP-2026-0010", "accountId": "MA-005", "accountName": "Sunrise Logistics",
+    "invoiceId": "INV-024", "invoiceNumber": "INV-2026-0024", "type": "Other",
+    "status": "Resolved", "amount": 5000,
+    "description": "Promotional discount of $5,000 was not applied as agreed during contract renewal.",
+    "resolution": "Confirmed promotional discount was missing. Credit memo CM-008 issued for $5,412.50.",
+    "creditedAmount": 5412.50,
+    "assignedTo": "Mike Johnson",
+    "communications": [
+      { "id": "COM-025", "timestamp": "2026-02-16T10:00:00Z", "author": "Maria Santos", "authorRole": "Merchant", "message": "Our renewal agreement included a $5,000 promotional discount that isn't reflected on INV-2026-0024." },
+      { "id": "COM-026", "timestamp": "2026-02-16T15:00:00Z", "author": "Mike Johnson", "authorRole": "Support", "message": "Confirmed - the discount was approved but missed during invoicing. Issuing credit memo." },
+      { "id": "COM-027", "timestamp": "2026-02-17T09:00:00Z", "author": "System", "authorRole": "System", "message": "Credit memo CM-008 issued for $5,412.50 (including tax adjustment)." }
+    ],
+    "filedDate": "2026-02-16", "resolvedDate": "2026-02-17", "createdAt": "2026-02-16T10:00:00Z", "updatedAt": "2026-02-17T09:00:00Z"
+  }
+]

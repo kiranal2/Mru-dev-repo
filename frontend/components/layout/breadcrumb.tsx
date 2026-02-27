@@ -63,6 +63,7 @@ export default function Breadcrumb({ activeRoute, className }: BreadcrumbProps) 
           breadcrumbs.push("Email Inbox");
         if (parts[3] === "remittances" && parts[4] === "list") breadcrumbs.push("Remittances");
       }
+      if (parts[2] === "collections") breadcrumbs.push("Collections Workbench");
       if (parts[2] === "reconciliations") breadcrumbs.push("Reconciliations");
       if (parts[2] === "close") breadcrumbs.push("Close");
       if (parts[2] === "mrp") breadcrumbs.push("MRP");

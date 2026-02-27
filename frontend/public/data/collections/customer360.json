@@ -1,0 +1,159 @@
+[
+  {
+    "customerId": "MA-001", "customerName": "TechFlow Solutions", "industry": "Technology", "segment": "Enterprise",
+    "creditScore": 78, "creditLimit": 500000, "totalOutstanding": 145250, "totalPastDue": 16121.88,
+    "avgDaysToPay": 28, "dso": 32, "paymentTerms": "Net 30",
+    "agingBreakdown": { "current": 129128.12, "days1to30": 16121.88, "days31to60": 0, "days61to90": 0, "days90plus": 0 },
+    "paymentHistory": [
+      { "month": "2025-03", "amountPaid": 42000, "onTime": true }, { "month": "2025-04", "amountPaid": 35000, "onTime": true },
+      { "month": "2025-05", "amountPaid": 28000, "onTime": true }, { "month": "2025-06", "amountPaid": 45000, "onTime": false },
+      { "month": "2025-07", "amountPaid": 32000, "onTime": true }, { "month": "2025-08", "amountPaid": 38000, "onTime": true },
+      { "month": "2025-09", "amountPaid": 41000, "onTime": true }, { "month": "2025-10", "amountPaid": 29000, "onTime": true },
+      { "month": "2025-11", "amountPaid": 36000, "onTime": true }, { "month": "2025-12", "amountPaid": 44000, "onTime": true },
+      { "month": "2026-01", "amountPaid": 40000, "onTime": true }, { "month": "2026-02", "amountPaid": 50181.25, "onTime": true }
+    ],
+    "openDisputeCount": 1, "totalDisputeAmount": 10000,
+    "contacts": [
+      { "name": "John Miller", "email": "jmiller@techflow.com", "phone": "(415) 555-0111", "title": "CFO", "isPrimary": true },
+      { "name": "Amy Chen", "email": "achen@techflow.com", "phone": "(415) 555-0112", "title": "AP Manager", "isPrimary": false }
+    ],
+    "lastPaymentDate": "2026-02-15", "lastPaymentAmount": 35181.25, "riskFlag": "Low"
+  },
+  {
+    "customerId": "MA-002", "customerName": "Global Retail Corp", "industry": "Retail", "segment": "Enterprise",
+    "creditScore": 62, "creditLimit": 750000, "totalOutstanding": 287400, "totalPastDue": 45465,
+    "avgDaysToPay": 42, "dso": 48, "paymentTerms": "Net 45",
+    "agingBreakdown": { "current": 241935, "days1to30": 45465, "days31to60": 0, "days61to90": 0, "days90plus": 0 },
+    "paymentHistory": [
+      { "month": "2025-03", "amountPaid": 55000, "onTime": false }, { "month": "2025-04", "amountPaid": 48000, "onTime": true },
+      { "month": "2025-05", "amountPaid": 62000, "onTime": false }, { "month": "2025-06", "amountPaid": 51000, "onTime": true },
+      { "month": "2025-07", "amountPaid": 44000, "onTime": false }, { "month": "2025-08", "amountPaid": 58000, "onTime": true },
+      { "month": "2025-09", "amountPaid": 47000, "onTime": false }, { "month": "2025-10", "amountPaid": 53000, "onTime": true },
+      { "month": "2025-11", "amountPaid": 60000, "onTime": false }, { "month": "2025-12", "amountPaid": 42000, "onTime": true },
+      { "month": "2026-01", "amountPaid": 25980, "onTime": true }, { "month": "2026-02", "amountPaid": 54000, "onTime": false }
+    ],
+    "openDisputeCount": 2, "totalDisputeAmount": 65000,
+    "contacts": [
+      { "name": "Lisa Park", "email": "lpark@globalretail.com", "phone": "(212) 555-0221", "title": "VP Finance", "isPrimary": true },
+      { "name": "James Wong", "email": "jwong@globalretail.com", "phone": "(212) 555-0222", "title": "AP Director", "isPrimary": false }
+    ],
+    "lastPaymentDate": "2026-02-10", "lastPaymentAmount": 54000, "riskFlag": "High"
+  },
+  {
+    "customerId": "MA-003", "customerName": "MedHealth Partners", "industry": "Healthcare", "segment": "Mid-Market",
+    "creditScore": 85, "creditLimit": 300000, "totalOutstanding": 92800, "totalPastDue": 0,
+    "avgDaysToPay": 25, "dso": 27, "paymentTerms": "Net 30",
+    "agingBreakdown": { "current": 92800, "days1to30": 0, "days31to60": 0, "days61to90": 0, "days90plus": 0 },
+    "paymentHistory": [
+      { "month": "2025-03", "amountPaid": 18000, "onTime": true }, { "month": "2025-04", "amountPaid": 22000, "onTime": true },
+      { "month": "2025-05", "amountPaid": 19500, "onTime": true }, { "month": "2025-06", "amountPaid": 24000, "onTime": true },
+      { "month": "2025-07", "amountPaid": 20000, "onTime": true }, { "month": "2025-08", "amountPaid": 21500, "onTime": true },
+      { "month": "2025-09", "amountPaid": 23000, "onTime": true }, { "month": "2025-10", "amountPaid": 18000, "onTime": true },
+      { "month": "2025-11", "amountPaid": 25000, "onTime": true }, { "month": "2025-12", "amountPaid": 20000, "onTime": true },
+      { "month": "2026-01", "amountPaid": 22000, "onTime": true }, { "month": "2026-02", "amountPaid": 20026.25, "onTime": true }
+    ],
+    "openDisputeCount": 0, "totalDisputeAmount": 0,
+    "contacts": [
+      { "name": "Dr. Karen Lee", "email": "klee@medhealth.com", "phone": "(617) 555-0331", "title": "Finance Director", "isPrimary": true }
+    ],
+    "lastPaymentDate": "2026-02-22", "lastPaymentAmount": 20026.25, "riskFlag": "Low"
+  },
+  {
+    "customerId": "MA-004", "customerName": "Pacific Manufacturing", "industry": "Manufacturing", "segment": "Mid-Market",
+    "creditScore": 35, "creditLimit": 250000, "totalOutstanding": 178650, "totalPastDue": 178650,
+    "avgDaysToPay": 68, "dso": 75, "paymentTerms": "Net 60",
+    "agingBreakdown": { "current": 0, "days1to30": 16237.50, "days31to60": 30310, "days61to90": 94718.75, "days90plus": 37383.75 },
+    "paymentHistory": [
+      { "month": "2025-03", "amountPaid": 30000, "onTime": false }, { "month": "2025-04", "amountPaid": 25000, "onTime": false },
+      { "month": "2025-05", "amountPaid": 35000, "onTime": true }, { "month": "2025-06", "amountPaid": 0, "onTime": false },
+      { "month": "2025-07", "amountPaid": 20000, "onTime": false }, { "month": "2025-08", "amountPaid": 28000, "onTime": false },
+      { "month": "2025-09", "amountPaid": 15000, "onTime": false }, { "month": "2025-10", "amountPaid": 22000, "onTime": false },
+      { "month": "2025-11", "amountPaid": 10000, "onTime": false }, { "month": "2025-12", "amountPaid": 12000, "onTime": false },
+      { "month": "2026-01", "amountPaid": 0, "onTime": false }, { "month": "2026-02", "amountPaid": 0, "onTime": false }
+    ],
+    "openDisputeCount": 2, "totalDisputeAmount": 72500,
+    "contacts": [
+      { "name": "Tom Richards", "email": "trichards@pacificmfg.com", "phone": "(503) 555-0441", "title": "Controller", "isPrimary": true },
+      { "name": "Nancy Huang", "email": "nhuang@pacificmfg.com", "phone": "(503) 555-0442", "title": "AP Clerk", "isPrimary": false }
+    ],
+    "lastPaymentDate": "2025-12-05", "lastPaymentAmount": 12000, "riskFlag": "Critical"
+  },
+  {
+    "customerId": "MA-005", "customerName": "Sunrise Logistics", "industry": "Logistics", "segment": "SMB",
+    "creditScore": 88, "creditLimit": 200000, "totalOutstanding": 56300, "totalPastDue": 0,
+    "avgDaysToPay": 22, "dso": 24, "paymentTerms": "Net 30",
+    "agingBreakdown": { "current": 56300, "days1to30": 0, "days31to60": 0, "days61to90": 0, "days90plus": 0 },
+    "paymentHistory": [
+      { "month": "2025-03", "amountPaid": 15000, "onTime": true }, { "month": "2025-04", "amountPaid": 18000, "onTime": true },
+      { "month": "2025-05", "amountPaid": 12000, "onTime": true }, { "month": "2025-06", "amountPaid": 20000, "onTime": true },
+      { "month": "2025-07", "amountPaid": 16000, "onTime": true }, { "month": "2025-08", "amountPaid": 22000, "onTime": true },
+      { "month": "2025-09", "amountPaid": 19000, "onTime": true }, { "month": "2025-10", "amountPaid": 14000, "onTime": true },
+      { "month": "2025-11", "amountPaid": 21000, "onTime": true }, { "month": "2025-12", "amountPaid": 17000, "onTime": true },
+      { "month": "2026-01", "amountPaid": 25000, "onTime": true }, { "month": "2026-02", "amountPaid": 30472.38, "onTime": true }
+    ],
+    "openDisputeCount": 0, "totalDisputeAmount": 0,
+    "contacts": [
+      { "name": "Maria Santos", "email": "msantos@sunriselogistics.com", "phone": "(305) 555-0551", "title": "Finance Manager", "isPrimary": true }
+    ],
+    "lastPaymentDate": "2026-02-25", "lastPaymentAmount": 30472.38, "riskFlag": "Low"
+  },
+  {
+    "customerId": "MA-006", "customerName": "Pinnacle Financial Group", "industry": "Financial Services", "segment": "Enterprise",
+    "creditScore": 72, "creditLimit": 1000000, "totalOutstanding": 412000, "totalPastDue": 48712.50,
+    "avgDaysToPay": 30, "dso": 33, "paymentTerms": "Net 30",
+    "agingBreakdown": { "current": 363287.50, "days1to30": 48712.50, "days31to60": 0, "days61to90": 0, "days90plus": 0 },
+    "paymentHistory": [
+      { "month": "2025-03", "amountPaid": 120000, "onTime": true }, { "month": "2025-04", "amountPaid": 95000, "onTime": true },
+      { "month": "2025-05", "amountPaid": 110000, "onTime": true }, { "month": "2025-06", "amountPaid": 85000, "onTime": false },
+      { "month": "2025-07", "amountPaid": 130000, "onTime": true }, { "month": "2025-08", "amountPaid": 100000, "onTime": true },
+      { "month": "2025-09", "amountPaid": 115000, "onTime": true }, { "month": "2025-10", "amountPaid": 90000, "onTime": true },
+      { "month": "2025-11", "amountPaid": 125000, "onTime": true }, { "month": "2025-12", "amountPaid": 105000, "onTime": true },
+      { "month": "2026-01", "amountPaid": 98000, "onTime": true }, { "month": "2026-02", "amountPaid": 135312.50, "onTime": true }
+    ],
+    "openDisputeCount": 1, "totalDisputeAmount": 45000,
+    "contacts": [
+      { "name": "David Wright", "email": "dwright@pinnaclefg.com", "phone": "(312) 555-0661", "title": "CFO", "isPrimary": true },
+      { "name": "Rachel Kim", "email": "rkim@pinnaclefg.com", "phone": "(312) 555-0662", "title": "Treasury Manager", "isPrimary": false }
+    ],
+    "lastPaymentDate": "2026-02-20", "lastPaymentAmount": 135312.50, "riskFlag": "Medium"
+  },
+  {
+    "customerId": "CUST-007", "customerName": "Apex Dynamics Inc", "industry": "Automotive", "segment": "Mid-Market",
+    "creditScore": 48, "creditLimit": 300000, "totalOutstanding": 198000, "totalPastDue": 125000,
+    "avgDaysToPay": 55, "dso": 58, "paymentTerms": "Net 30",
+    "agingBreakdown": { "current": 73000, "days1to30": 0, "days31to60": 125000, "days61to90": 0, "days90plus": 0 },
+    "paymentHistory": [
+      { "month": "2025-03", "amountPaid": 40000, "onTime": true }, { "month": "2025-04", "amountPaid": 35000, "onTime": false },
+      { "month": "2025-05", "amountPaid": 42000, "onTime": false }, { "month": "2025-06", "amountPaid": 30000, "onTime": false },
+      { "month": "2025-07", "amountPaid": 38000, "onTime": false }, { "month": "2025-08", "amountPaid": 45000, "onTime": true },
+      { "month": "2025-09", "amountPaid": 28000, "onTime": false }, { "month": "2025-10", "amountPaid": 33000, "onTime": false },
+      { "month": "2025-11", "amountPaid": 25000, "onTime": false }, { "month": "2025-12", "amountPaid": 20000, "onTime": false },
+      { "month": "2026-01", "amountPaid": 15000, "onTime": false }, { "month": "2026-02", "amountPaid": 0, "onTime": false }
+    ],
+    "openDisputeCount": 0, "totalDisputeAmount": 0,
+    "contacts": [
+      { "name": "Robert Chang", "email": "rchang@apexdynamics.com", "phone": "(248) 555-0771", "title": "Controller", "isPrimary": true }
+    ],
+    "lastPaymentDate": "2026-01-28", "lastPaymentAmount": 15000, "riskFlag": "High"
+  },
+  {
+    "customerId": "CUST-011", "customerName": "Redwood Construction", "industry": "Construction", "segment": "Mid-Market",
+    "creditScore": 22, "creditLimit": 350000, "totalOutstanding": 234000, "totalPastDue": 234000,
+    "avgDaysToPay": 95, "dso": 105, "paymentTerms": "Net 30",
+    "agingBreakdown": { "current": 0, "days1to30": 0, "days31to60": 0, "days61to90": 78000, "days90plus": 156000 },
+    "paymentHistory": [
+      { "month": "2025-03", "amountPaid": 45000, "onTime": false }, { "month": "2025-04", "amountPaid": 30000, "onTime": false },
+      { "month": "2025-05", "amountPaid": 35000, "onTime": false }, { "month": "2025-06", "amountPaid": 20000, "onTime": false },
+      { "month": "2025-07", "amountPaid": 15000, "onTime": false }, { "month": "2025-08", "amountPaid": 10000, "onTime": false },
+      { "month": "2025-09", "amountPaid": 5000, "onTime": false }, { "month": "2025-10", "amountPaid": 0, "onTime": false },
+      { "month": "2025-11", "amountPaid": 0, "onTime": false }, { "month": "2025-12", "amountPaid": 0, "onTime": false },
+      { "month": "2026-01", "amountPaid": 0, "onTime": false }, { "month": "2026-02", "amountPaid": 0, "onTime": false }
+    ],
+    "openDisputeCount": 0, "totalDisputeAmount": 0,
+    "contacts": [
+      { "name": "Mark Thompson", "email": "mthompson@redwoodconst.com", "phone": "(916) 555-1101", "title": "Owner", "isPrimary": true }
+    ],
+    "lastPaymentDate": "2025-09-15", "lastPaymentAmount": 5000, "riskFlag": "Critical",
+    "notes": "Company experiencing severe financial difficulties. Legal team engaged."
+  }
+]

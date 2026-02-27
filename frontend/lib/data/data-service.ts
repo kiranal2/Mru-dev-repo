@@ -45,6 +45,10 @@ export const dataService = {
   ai: provider.ai,
   /** Common (notifications, audit, users) */
   common: provider.common,
+  /** Merchant Portal */
+  merchantPortal: provider.merchantPortal,
+  /** Collections */
+  collections: provider.collections,
 };
 
 export type DataService = typeof dataService;

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "TPL-001", "name": "Friendly Payment Reminder",
+    "subject": "Friendly Reminder: Invoice {{invoiceNumber}} Payment Due",
+    "body": "Dear {{customerName}},\n\nThis is a friendly reminder that invoice {{invoiceNumber}} for {{amount}} was due on {{dueDate}}. If you have already sent payment, please disregard this notice.\n\nIf you have any questions about this invoice, please don't hesitate to contact us.\n\nBest regards,\n{{companyName}} Accounts Receivable",
+    "step": "Friendly Reminder", "tone": "Friendly", "isActive": true, "createdAt": "2025-06-01T00:00:00Z"
+  },
+  {
+    "id": "TPL-002", "name": "Second Payment Notice",
+    "subject": "Second Notice: Outstanding Balance on Invoice {{invoiceNumber}}",
+    "body": "Dear {{customerName}},\n\nOur records indicate that invoice {{invoiceNumber}} for {{amount}}, which was due on {{dueDate}}, remains unpaid. This is now {{daysPastDue}} days past due.\n\nPlease arrange payment at your earliest convenience. If there are any issues preventing payment, please contact us to discuss.\n\nThank you,\n{{companyName}} Accounts Receivable",
+    "step": "Second Notice", "tone": "Firm", "isActive": true, "createdAt": "2025-06-01T00:00:00Z"
+  },
+  {
+    "id": "TPL-003", "name": "Urgent Payment Required",
+    "subject": "URGENT: Immediate Payment Required - Invoice {{invoiceNumber}}",
+    "body": "Dear {{customerName}},\n\nDespite our previous communications, invoice {{invoiceNumber}} for {{amount}} remains unpaid and is now {{daysPastDue}} days past due.\n\nImmediate payment is required to avoid further action. Please contact us within 48 hours to arrange payment or discuss a payment plan.\n\nRegards,\n{{companyName}} Collections Department",
+    "step": "Urgent Notice", "tone": "Urgent", "isActive": true, "createdAt": "2025-06-01T00:00:00Z"
+  },
+  {
+    "id": "TPL-004", "name": "Pre-Collection Warning",
+    "subject": "Important: Your Account May Be Referred to Collections",
+    "body": "Dear {{customerName}},\n\nThis letter serves as formal notice that your account has an outstanding balance of {{amount}} that is {{daysPastDue}} days past due.\n\nIf payment is not received within 14 days of this notice, we may be compelled to refer your account to a third-party collection agency. This action may affect your credit standing.\n\nTo avoid this, please contact us immediately at {{contactPhone}} to arrange payment.\n\nSincerely,\n{{companyName}} Collections Department",
+    "step": "Pre-Collection", "tone": "Final", "isActive": true, "createdAt": "2025-06-01T00:00:00Z"
+  },
+  {
+    "id": "TPL-005", "name": "Final Notice Before Collections",
+    "subject": "FINAL NOTICE: Account {{accountNumber}} - Immediate Action Required",
+    "body": "Dear {{customerName}},\n\nThis is your final notice regarding the outstanding balance of {{amount}} on account {{accountNumber}}, which is now {{daysPastDue}} days past due.\n\nUnless full payment or an acceptable payment arrangement is received within 7 business days, your account will be referred to our collection agency. This may result in additional fees and a negative impact on your credit rating.\n\nTo resolve this matter, please contact our collections team at {{contactPhone}} immediately.\n\nThis communication is an attempt to collect a debt.\n\nSincerely,\n{{companyName}} Legal & Collections",
+    "step": "Final Notice", "tone": "Final", "isActive": true, "createdAt": "2025-06-01T00:00:00Z"
+  }
+]

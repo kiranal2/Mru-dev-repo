@@ -9,4 +9,5 @@ export * from './workspace';
 export * from './automation';
 export * from './mrp';
 export * from './common';
+export * from './merchant';
 export * from './filters';
