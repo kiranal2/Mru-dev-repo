@@ -29,12 +29,13 @@ export function usePaymentsQueue() {
     dateRange: "all",
     amountRange: "all",
     method: "all",
+    jeStatus: "all",
     status: "all",
     remittanceSource: "all",
     assignedTo: "all",
   });
 
-  const [activeSubFilter, setActiveSubFilter] = useState<string>("exact");
+  const [activeSubFilter, setActiveSubFilter] = useState<string>("");
   const [activeContextualFilter, setActiveContextualFilter] = useState<string>("");
   const [isCriticalFilterActive, setIsCriticalFilterActive] = useState<boolean>(false);
 
@@ -141,9 +142,7 @@ export function usePaymentsQueue() {
       setActiveContextualFilter("");
     }
     if (subfilterParam !== null) {
-      setActiveSubFilter(subfilterParam || "exact");
-    } else if (resolvedStatus === "AutoMatched") {
-      setActiveSubFilter("exact");
+      setActiveSubFilter(subfilterParam || "");
     }
   }, [searchParams]);
 
@@ -187,6 +186,20 @@ export function usePaymentsQueue() {
 
       if (filters.method !== "all" && payment.method !== filters.method) {
         return false;
+      }
+
+      if (filters.jeStatus !== "all") {
+        const isSubmitted = payment.je_flow_state === "SUBMITTED";
+        const isRequired = Boolean(payment.je_required);
+        if (filters.jeStatus === "required" && !isRequired) {
+          return false;
+        }
+        if (filters.jeStatus === "submitted" && !isSubmitted) {
+          return false;
+        }
+        if (filters.jeStatus === "none" && (isRequired || isSubmitted)) {
+          return false;
+        }
       }
 
       if (filters.status !== "all" && payment.status !== filters.status) {
@@ -870,19 +883,39 @@ export function usePaymentsQueue() {
       ...prev,
       status: filter === "critical" ? "all" : filter,
     }));
-    if (filter === "AutoMatched") {
-      setActiveSubFilter("exact");
-    }
+    if (filter !== "AutoMatched") setActiveSubFilter("");
     setIsCriticalFilterActive(filter === "critical");
     setActiveContextualFilter("");
   };
 
   const handleSubFilterClick = (filter: string) => {
-    setActiveSubFilter(filter);
+    setActiveSubFilter(activeSubFilter === filter ? "" : filter);
+  };
+
+  const handleAutoMatchedSubFilterChange = (filter: string) => {
+    setActiveSubFilter(filter === "all" ? "" : filter);
   };
 
   const handleContextualFilterClick = (filter: string) => {
     setActiveContextualFilter(filter);
+  };
+
+  const handleContextualSubFilterChange = (filter: string) => {
+    setActiveContextualFilter(filter === "all" ? "" : filter);
+  };
+
+  const handleQueueStatusChange = (status: string) => {
+    setActiveSignalFilter(null);
+    setActiveSegment(status === "all" ? null : status);
+    setFilters((prev) => ({
+      ...prev,
+      status: status === "critical" || status === "all" ? "all" : status,
+    }));
+    setIsCriticalFilterActive(status === "critical");
+    setActiveContextualFilter("");
+    if (status !== "AutoMatched") {
+      setActiveSubFilter("");
+    }
   };
 
   const handleClearContextualFilter = () => {
@@ -896,11 +929,12 @@ export function usePaymentsQueue() {
       dateRange: "all",
       amountRange: "all",
       method: "all",
+      jeStatus: "all",
       status: "all",
       remittanceSource: "all",
       assignedTo: "all",
     });
-    setActiveSubFilter("exact");
+    setActiveSubFilter("");
     setActiveContextualFilter("");
     setIsCriticalFilterActive(false);
     setSelectedIds([]);
@@ -1280,7 +1314,10 @@ export function usePaymentsQueue() {
     handlePageSizeChange,
     handleChipClick,
     handleSubFilterClick,
+    handleAutoMatchedSubFilterChange,
     handleContextualFilterClick,
+    handleContextualSubFilterChange,
+    handleQueueStatusChange,
     handleClearContextualFilter,
     handleClearFilters,
     handleSignalClick,

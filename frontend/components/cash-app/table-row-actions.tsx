@@ -33,10 +33,11 @@ export function TableRowActions({
   return (
     <TooltipProvider delayDuration={200}>
       <div className="flex items-center gap-1">
-        {showPrimaryAction && canApprove && (
+        {showPrimaryAction && canApprove && isHovered && (
           <Button
             size="sm"
-            className="h-7 px-2.5 text-xs bg-blue-600 hover:bg-blue-700 text-white"
+            variant="outline"
+            className="h-7 px-2.5 text-xs border-slate-300 text-slate-700 hover:bg-slate-100"
             onClick={(e) => {
               e.stopPropagation();
               onApprovePost?.(payment);

@@ -40,6 +40,7 @@ export interface QueryResult {
   next_steps: string[];
   follow_up_prompts?: string[];
   tool_results: any[];
+  rich_cards?: any[];
 }
 
 // Response from GET /query/{query_id}/result

@@ -1,39 +1,17 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Download, TrendingUp, TrendingDown } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import {
+  Download, TrendingUp, TrendingDown, Search,
+  AlertTriangle, CheckCircle2, Clock, Sparkles, X, Eye, FileText,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import Breadcrumb from '@/components/layout/breadcrumb';
 import { useFluxAnalysis } from '@/hooks/data';
 import type { FluxVariance } from '@/lib/data/types';
 
-const ENTITIES = ['All Entities', 'US-Parent', 'EMEA-GmbH', 'APAC-Pte'];
-const CUSTOMERS = [
-  'Acme Retail', 'Globex Corp', 'Initech', 'Umbrella Health', 'Hooli Cloud',
-  'Soylent Foods', 'Stark Industries', 'Wayne Enterprises', 'Wonka Brands',
-  'Cyberdyne Systems', 'Tyrell Bio', 'Duff Beverage', 'Oscorp', 'Aperture Labs'
-];
-const PRODUCTS = ['Subscriptions', 'Services', 'Hardware', 'Support', 'Training'];
-const REGIONS = ['Americas', 'EMEA', 'APAC'];
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-interface Transaction {
-  date: Date;
-  entity: string;
-  customer: string;
-  product: string;
-  region: string;
-  amount: number;
-}
 
 interface GroupedData {
   key: string;
@@ -41,509 +19,515 @@ interface GroupedData {
   prior: number;
   varDollar: number;
   varPct: number;
+  // Enriched fields from flux data
+  status?: string;
+  aiExplanation?: string;
+  isSignificant?: boolean;
+  threshold?: number;
+  accountNumber?: string;
+  reviewedBy?: string | null;
+  currentPeriodLabel?: string;
+  priorPeriodLabel?: string;
 }
 
-const rnd = (min: number, max: number) => Math.round(min + Math.random() * (max - min));
-const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
-const generateSyntheticData = (): Transaction[] => {
-  const facts: Transaction[] = [];
-  const today = new Date();
-
-  for (let i = 0; i < 24; i++) {
-    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-    const rows = rnd(60, 90);
-
-    for (let j = 0; j < rows; j++) {
-      const monthsBack = today.getFullYear() * 12 + today.getMonth() - (d.getFullYear() * 12 + d.getMonth());
-      const base = 2000 + monthsBack * rnd(10, 40);
-      const amt = Math.max(50, Math.round((base + rnd(-800, 1200)) / 10) * 10);
-
-      facts.push({
-        date: new Date(d.getFullYear(), d.getMonth(), rnd(1, 28)),
-        entity: pick(ENTITIES.slice(1)),
-        customer: pick(CUSTOMERS),
-        product: pick(PRODUCTS),
-        region: pick(REGIONS),
-        amount: amt
-      });
-    }
-  }
-
-  return facts;
-};
-
-// Transform FluxVariance[] into GroupedData[] for the variance display
 function transformFluxToGrouped(variances: FluxVariance[]): GroupedData[] {
   return variances.map((v) => ({
     key: v.accountName,
-    current: v.currentPeriod,
-    prior: v.priorPeriod,
+    current: v.currentValue,
+    prior: v.priorValue,
     varDollar: v.varianceAmount,
-    varPct: v.variancePct / 100,
+    varPct: v.priorValue === 0 ? 0 : v.varianceAmount / v.priorValue,
+    status: v.status,
+    aiExplanation: v.aiExplanation,
+    isSignificant: v.isSignificant,
+    threshold: v.threshold,
+    accountNumber: v.accountNumber,
+    reviewedBy: v.reviewedBy,
+    currentPeriodLabel: v.currentPeriod,
+    priorPeriodLabel: v.priorPeriod,
   }));
 }
 
+// Status badge component
+function StatusBadge({ status }: { status?: string }) {
+  if (!status) return null;
+  const map: Record<string, { bg: string; text: string; icon: typeof CheckCircle2 }> = {
+    Reviewed: { bg: 'bg-green-50 border-green-200', text: 'text-green-700', icon: CheckCircle2 },
+    InReview: { bg: 'bg-amber-50 border-amber-200', text: 'text-amber-700', icon: Clock },
+    AutoClosed: { bg: 'bg-slate-50 border-slate-200', text: 'text-slate-500', icon: Sparkles },
+  };
+  const s = map[status] || map.AutoClosed;
+  const Icon = s.icon;
+  const label = status === 'InReview' ? 'In Review' : status === 'AutoClosed' ? 'Auto-Closed' : status;
+  return (
+    <span className={cn('inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium border', s.bg, s.text)}>
+      <Icon className="w-2.5 h-2.5" />{label}
+    </span>
+  );
+}
+
+// Variance bar — inline horizontal bar showing magnitude relative to max
+function VarianceBar({ value, maxAbs }: { value: number; maxAbs: number }) {
+  const pct = maxAbs > 0 ? Math.min(Math.abs(value) / maxAbs * 100, 100) : 0;
+  const isPositive = value >= 0;
+  return (
+    <div className="flex items-center gap-1.5 min-w-[80px]">
+      <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+        <div
+          className={cn('h-full rounded-full', isPositive ? 'bg-green-400' : 'bg-red-400')}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// SVG Waterfall chart
+function WaterfallChart({ groups }: { groups: GroupedData[] }) {
+  const sorted = [...groups].sort((a, b) => Math.abs(b.varDollar) - Math.abs(a.varDollar)).slice(0, 8);
+  if (sorted.length === 0) return null;
+
+  const maxVal = Math.max(...sorted.map(g => Math.abs(g.varDollar)));
+  const chartW = 720;
+  const chartH = 120;
+  const barW = Math.min(70, (chartW - 40) / sorted.length - 8);
+  const totalW = sorted.length * (barW + 8);
+  const startX = (chartW - totalW) / 2;
+
+  return (
+    <div className="bg-white rounded-lg border border-slate-200 px-4 py-3 mb-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-semibold text-slate-700">Variance Waterfall — Top {sorted.length} by magnitude</span>
+        <span className="text-[10px] text-slate-400">Sorted by |$ Variance|</span>
+      </div>
+      <svg width={chartW} height={chartH} className="w-full" viewBox={`0 0 ${chartW} ${chartH}`} preserveAspectRatio="xMidYMid meet">
+        {/* Zero line */}
+        <line x1={0} y1={chartH / 2} x2={chartW} y2={chartH / 2} stroke="#e2e8f0" strokeWidth={1} />
+        {sorted.map((g, i) => {
+          const x = startX + i * (barW + 8);
+          const height = maxVal > 0 ? (Math.abs(g.varDollar) / maxVal) * (chartH / 2 - 14) : 0;
+          const isUp = g.varDollar >= 0;
+          const y = isUp ? chartH / 2 - height : chartH / 2;
+          const color = isUp ? '#22c55e' : '#ef4444';
+          const labelShort = g.key.length > 9 ? g.key.slice(0, 8) + '…' : g.key;
+          return (
+            <g key={i}>
+              <rect x={x} y={y} width={barW} height={Math.max(height, 2)} rx={3} fill={color} opacity={0.75} />
+              <text x={x + barW / 2} y={isUp ? y - 3 : y + height + 9} textAnchor="middle" className="fill-slate-600" fontSize={8} fontWeight={600}>
+                {isUp ? '+' : '-'}${Math.abs(g.varDollar) >= 1e6 ? `${(Math.abs(g.varDollar) / 1e6).toFixed(0)}M` : `${(Math.abs(g.varDollar) / 1e3).toFixed(0)}K`}
+              </text>
+              <text x={x + barW / 2} y={chartH - 1} textAnchor="middle" className="fill-slate-400" fontSize={7}>
+                {labelShort}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
 export default function OneClickVariancePage() {
-  // Fetch data from the new data layer
   const { data: fluxVariances, loading: dataLoading, error: dataError } = useFluxAnalysis();
 
-  // Transform flux data into grouped format for direct use
   const fluxGrouped = useMemo(() => {
-    if (fluxVariances.length > 0) {
-      return transformFluxToGrouped(fluxVariances);
-    }
+    if (fluxVariances.length > 0) return transformFluxToGrouped(fluxVariances);
     return null;
   }, [fluxVariances]);
 
-  const [facts] = useState<Transaction[]>(() => generateSyntheticData());
-
-  const today = new Date();
-  const defaultMonth = today.getMonth();
-  const defaultYear = today.getFullYear();
-
-  const [entity, setEntity] = useState('All Entities');
-  const [customerFilter, setCustomerFilter] = useState('');
-  const [month, setMonth] = useState(String(defaultMonth));
-  const [year, setYear] = useState(String(defaultYear));
-  const [mode, setMode] = useState<'MoM' | 'QoQ' | 'YoY'>('MoM');
-  const [groupBy, setGroupBy] = useState<'customer' | 'entity' | 'product' | 'region'>('customer');
-  const [hasRun, setHasRun] = useState(false);
-
-  const years = useMemo(() => {
-    const uniqueYears = new Set(facts.map(f => f.date.getFullYear()));
-    return Array.from(uniqueYears).sort((a, b) => b - a);
-  }, [facts]);
-
-  const getPriorPeriod = (y: number, m: number, analysisMode: 'MoM' | 'QoQ' | 'YoY') => {
-    if (analysisMode === 'MoM') {
-      const p = new Date(y, m - 1, 1);
-      return { y: p.getFullYear(), m: p.getMonth() };
-    }
-    if (analysisMode === 'QoQ') {
-      const p = new Date(y, m - 3, 1);
-      return { y: p.getFullYear(), m: p.getMonth() };
-    }
-    return { y: y - 1, m };
-  };
-
-  const analysis = useMemo(() => {
-    if (!hasRun) return null;
-
-    const y = Number(year);
-    const m = Number(month);
-
-    let curMonths: Array<{y: number, m: number}> = [];
-    let priMonths: Array<{y: number, m: number}> = [];
-
-    if (mode === 'QoQ') {
-      curMonths = [0, 1, 2].map(k => {
-        const d = new Date(y, m - k, 1);
-        return { y: d.getFullYear(), m: d.getMonth() };
-      });
-      const pp = getPriorPeriod(y, m, mode);
-      priMonths = [0, 1, 2].map(k => {
-        const d = new Date(pp.y, pp.m - k, 1);
-        return { y: d.getFullYear(), m: d.getMonth() };
-      });
-    } else {
-      curMonths = [{ y, m }];
-      const pp = getPriorPeriod(y, m, mode);
-      priMonths = [{ y: pp.y, m: pp.m }];
-    }
-
-    const curSet = new Set(curMonths.map(x => `${x.y}-${x.m}`));
-    const priSet = new Set(priMonths.map(x => `${x.y}-${x.m}`));
-
-    const filtered = facts.filter(f => {
-      const periodKey = `${f.date.getFullYear()}-${f.date.getMonth()}`;
-      const matchesEntity = entity === 'All Entities' || f.entity === entity;
-      const matchesCustomer = !customerFilter || f.customer.toLowerCase().includes(customerFilter.toLowerCase());
-      const matchesPeriod = curSet.has(periodKey) || priSet.has(periodKey);
-
-      return matchesEntity && matchesCustomer && matchesPeriod;
-    });
-
-    const grouped = new Map<string, { cur: number; pri: number }>();
-
-    filtered.forEach(f => {
-      const periodKey = `${f.date.getFullYear()}-${f.date.getMonth()}`;
-      const key = f[groupBy];
-
-      if (!grouped.has(key)) {
-        grouped.set(key, { cur: 0, pri: 0 });
-      }
-
-      const slot = grouped.get(key)!;
-      if (curSet.has(periodKey)) {
-        slot.cur += f.amount;
-      } else if (priSet.has(periodKey)) {
-        slot.pri += f.amount;
-      }
-    });
-
-    const results: GroupedData[] = Array.from(grouped.entries()).map(([key, value]) => ({
-      key,
-      current: value.cur,
-      prior: value.pri,
-      varDollar: value.cur - value.pri,
-      varPct: value.pri === 0 ? (value.cur > 0 ? Infinity : 0) : (value.cur - value.pri) / value.pri
-    }));
-
-    const detailRows = filtered.filter(f => {
-      const periodKey = `${f.date.getFullYear()}-${f.date.getMonth()}`;
-      return curSet.has(periodKey);
-    });
-
-    return {
-      groups: results,
-      detailRows,
-      totals: {
-        current: results.reduce((sum, g) => sum + g.current, 0),
-        prior: results.reduce((sum, g) => sum + g.prior, 0)
-      }
-    };
-  }, [facts, entity, customerFilter, month, year, mode, groupBy, hasRun]);
-
-  const handleRun = () => {
-    setHasRun(true);
-    toast.success('Analysis complete');
-  };
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sigFilter, setSigFilter] = useState<'all' | 'material' | 'below'>('all');
+  const [selectedRow, setSelectedRow] = useState<GroupedData | null>(null);
+  const [showDrawer, setShowDrawer] = useState(false);
 
   const handleDownloadCSV = () => {
-    if (!analysis) {
-      toast.error('Run analysis first');
-      return;
-    }
-
-    const rows = analysis.detailRows;
-    const header = ['Date', 'Entity', 'Customer', 'Product', 'Region', 'Amount'];
+    const rows = effectiveGroups;
+    if (rows.length === 0) { toast.error('No data to export'); return; }
+    const header = ['Account', 'Current', 'Prior', '$ Variance', '% Variance', 'Status', 'Significant'];
     const csvRows = [header.join(',')];
-
     rows.forEach(r => {
-      const values = [
-        r.date.toISOString().slice(0, 10),
-        r.entity,
-        r.customer,
-        r.product,
-        r.region,
-        r.amount
-      ];
-      csvRows.push(values.map(v => String(v).includes(',') ? `"${v}"` : v).join(','));
+      csvRows.push([r.key, r.current, r.prior, r.varDollar, (r.varPct * 100).toFixed(1) + '%', r.status || '', r.isSignificant ? 'Yes' : 'No'].join(','));
     });
-
-    const csv = csvRows.join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `variance-${mode}-${MONTH_NAMES[Number(month)]}-${year}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const a = document.createElement('a'); a.href = url;
+    a.download = 'variance-analysis.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
-
     toast.success('CSV downloaded');
   };
 
   const fmt = (n: number) => n.toLocaleString(undefined, { maximumFractionDigits: 0 });
-  const fmtPct = (n: number) => {
-    if (!isFinite(n)) return '-';
-    return `${(n * 100).toFixed(1)}%`;
+  const fmtCompact = (n: number) => {
+    const abs = Math.abs(n);
+    if (abs >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
+    if (abs >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
+    if (abs >= 1e3) return `${(n / 1e3).toFixed(0)}K`;
+    return fmt(n);
   };
+  const fmtPct = (n: number) => { if (!isFinite(n)) return '-'; return `${(n * 100).toFixed(1)}%`; };
 
-  // Use analysis groups if available, otherwise fall back to flux data layer
-  const effectiveGroups = analysis?.groups || fluxGrouped || [];
+  const effectiveGroups = fluxGrouped || [];
 
-  const topMovers = effectiveGroups
-    .filter(g => g.varDollar > 0)
-    .sort((a, b) => b.varDollar - a.varDollar)
-    .slice(0, 10);
+  const filteredGroups = useMemo(() => {
+    let result = effectiveGroups;
+    if (searchTerm) result = result.filter(g => g.key.toLowerCase().includes(searchTerm.toLowerCase()));
+    if (sigFilter === 'material') result = result.filter(g => g.isSignificant);
+    if (sigFilter === 'below') result = result.filter(g => !g.isSignificant);
+    return result;
+  }, [effectiveGroups, searchTerm, sigFilter]);
 
-  const bottomMovers = effectiveGroups
-    .filter(g => g.varDollar < 0)
-    .sort((a, b) => a.varDollar - b.varDollar)
-    .slice(0, 10);
+  const topMovers = filteredGroups.filter(g => g.varDollar > 0).sort((a, b) => b.varDollar - a.varDollar).slice(0, 10);
+  const bottomMovers = filteredGroups.filter(g => g.varDollar < 0).sort((a, b) => a.varDollar - b.varDollar).slice(0, 10);
 
-  const totals = analysis?.totals || (fluxGrouped ? {
-    current: fluxGrouped.reduce((sum, g) => sum + g.current, 0),
-    prior: fluxGrouped.reduce((sum, g) => sum + g.prior, 0),
-  } : { current: 0, prior: 0 });
+  const totals = fluxGrouped ? {
+    current: fluxGrouped.reduce((s, g) => s + g.current, 0),
+    prior: fluxGrouped.reduce((s, g) => s + g.prior, 0),
+  } : { current: 0, prior: 0 };
   const totalVarDollar = totals.current - totals.prior;
   const totalVarPct = totals.prior === 0 ? 0 : totalVarDollar / totals.prior;
+  const reviewedCount = effectiveGroups.filter(g => g.status === 'Reviewed').length;
+  const maxAbsVar = Math.max(...filteredGroups.map(g => Math.abs(g.varDollar)), 1);
+  const handleRowClick = (g: GroupedData) => { setSelectedRow(g); setShowDrawer(true); };
 
   return (
-    <div className="h-full bg-white flex flex-col overflow-hidden">
-      {/* Page Header */}
-      <header className="sticky top-0 z-10 bg-white px-6 py-2 flex-shrink-0">
-        <Breadcrumb activeRoute="reports/analysis/one-click-variance" className="mb-1.5" />
-        <h1 className="text-2xl font-bold text-[#000000] mt-2">One-Click Variance</h1>
-        <p className="text-sm text-[#606060]">Pull cross-system data by entity, customer, and period. Choose MoM, QoQ, or YoY and get instant variance results with top and bottom movers. Download details to CSV.</p>
-        <div className="border-b border-[#B7B7B7] mt-4"></div>
-      </header>
-
-      {dataLoading && (
-        <div className="flex items-center justify-center py-4 px-6">
-          <div className="text-sm text-slate-500">Loading variance data from data layer...</div>
-        </div>
-      )}
-      {dataError && (
-        <div className="flex items-center justify-center py-4 px-6">
-          <div className="text-sm text-red-500">Error loading data: {dataError}</div>
-        </div>
-      )}
-
-      <div className="flex-1 flex overflow-hidden">
-        <aside className="w-[320px] flex-shrink-0 overflow-y-auto scrollbar-hide py-6 pl-6">
-          <Card className="p-4">
-              <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-4">Controls</h3>
-
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="entity" className="text-xs text-slate-600 mb-2 block">Entity</Label>
-                  <Select value={entity} onValueChange={setEntity}>
-                    <SelectTrigger id="entity">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ENTITIES.map(e => (
-                        <SelectItem key={e} value={e}>{e}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="customer" className="text-xs text-slate-600 mb-2 block">Customer name - optional</Label>
-                  <Input
-                    id="customer"
-                    value={customerFilter}
-                    onChange={(e) => setCustomerFilter(e.target.value)}
-                    placeholder="Search customer..."
-                  />
-                </div>
-
-                <div>
-                  <Label className="text-xs text-slate-600 mb-2 block">Period</Label>
-                  <div className="flex gap-2">
-                    <Select value={month} onValueChange={setMonth}>
-                      <SelectTrigger className="flex-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {MONTH_NAMES.map((m, idx) => (
-                          <SelectItem key={idx} value={String(idx)}>{m}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={year} onValueChange={setYear}>
-                      <SelectTrigger className="flex-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {years.map(y => (
-                          <SelectItem key={y} value={String(y)}>{y}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <p className="text-xs text-slate-500 mt-2">Current period. Prior period is derived from the analysis mode.</p>
-                </div>
-
-                <div>
-                  <Label className="text-xs text-slate-600 mb-2 block">Analysis mode</Label>
-                  <RadioGroup value={mode} onValueChange={(v) => setMode(v as any)}>
-                    <div className="flex gap-2">
-                      <div className="flex items-center space-x-2 border border-slate-200 rounded-full px-3 py-1.5">
-                        <RadioGroupItem value="MoM" id="mom" />
-                        <Label htmlFor="mom" className="cursor-pointer text-sm">MoM</Label>
-                      </div>
-                      <div className="flex items-center space-x-2 border border-slate-200 rounded-full px-3 py-1.5">
-                        <RadioGroupItem value="QoQ" id="qoq" />
-                        <Label htmlFor="qoq" className="cursor-pointer text-sm">QoQ</Label>
-                      </div>
-                      <div className="flex items-center space-x-2 border border-slate-200 rounded-full px-3 py-1.5">
-                        <RadioGroupItem value="YoY" id="yoy" />
-                        <Label htmlFor="yoy" className="cursor-pointer text-sm">YoY</Label>
-                      </div>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div>
-                  <Label htmlFor="groupBy" className="text-xs text-slate-600 mb-2 block">Group by</Label>
-                  <Select value={groupBy} onValueChange={(v) => setGroupBy(v as any)}>
-                    <SelectTrigger id="groupBy">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="customer">Customer</SelectItem>
-                      <SelectItem value="entity">Entity</SelectItem>
-                      <SelectItem value="product">Product</SelectItem>
-                      <SelectItem value="region">Region</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex gap-2 pt-2">
-                  <Button onClick={handleRun} className="flex-1">
-                    Run Analysis
-                  </Button>
-                  <Button onClick={handleDownloadCSV} variant="outline" size="icon">
-                    <Download className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <p className="text-xs text-slate-500">Data is synthetic. Buttons simulate one-click actions.</p>
-              </div>
-            </Card>
-          </aside>
-
-          <div className="flex-1 overflow-y-auto scrollbar-hide p-6">
-            <div className="max-w-[1280px] space-y-4">
-              <div className="grid grid-cols-4 gap-3">
-              <Card className="p-4 border-slate-200">
-                <div className="text-xs text-slate-600 mb-1">Current Period Total</div>
-                <div className="text-xl font-bold">${fmt(totals.current)}</div>
-              </Card>
-              <Card className="p-4 border-slate-200">
-                <div className="text-xs text-slate-600 mb-1">Prior Period Total</div>
-                <div className="text-xl font-bold">${fmt(totals.prior)}</div>
-              </Card>
-              <Card className="p-4 border-slate-200">
-                <div className="text-xs text-slate-600 mb-1">$ Variance</div>
-                <div className={cn("text-xl font-bold", totalVarDollar >= 0 ? "text-green-600" : "text-red-600")}>
-                  {totalVarDollar >= 0 ? '+' : ''} ${fmt(Math.abs(totalVarDollar))}
-                </div>
-              </Card>
-              <Card className="p-4 border-slate-200">
-                <div className="text-xs text-slate-600 mb-1">% Variance</div>
-                <div className={cn("text-xl font-bold", totalVarPct >= 0 ? "text-green-600" : "text-red-600")}>
-                  {totalVarPct >= 0 ? '+' : ''}{fmtPct(totalVarPct)}
-                </div>
-              </Card>
+    <div className="h-full flex flex-col bg-slate-50">
+      {/* ─── Title ─── */}
+      <div className="px-5 pt-3 pb-1 bg-slate-50">
+        <h1 className="text-sm font-semibold text-slate-900">One-Click Variance</h1>
+        <p className="text-[11px] text-slate-500">AI auto-identifies material variances and generates narrative explanations</p>
+      </div>
+      <div className="flex-1 overflow-auto">
+        <div className="px-5 py-2">
+          {/* Toolbar: Search + Filter tabs + KPI chips + Download */}
+          <div className="flex items-center gap-2 mb-3">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
+              <Input placeholder="Search accounts..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-8 w-44 h-7 text-xs bg-white" />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="p-4 border-slate-200">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold">Top 10 by $ increase</h3>
-                  <Badge variant="outline">{topMovers.length} of {analysis?.groups.length || 0}</Badge>
-                </div>
-                <div className="border rounded-lg overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-slate-50">
-                        <TableHead className="text-xs">Name</TableHead>
-                        <TableHead className="text-xs">Group</TableHead>
-                        <TableHead className="text-xs text-right">Current</TableHead>
-                        <TableHead className="text-xs text-right">Prior</TableHead>
-                        <TableHead className="text-xs text-right">$ Var</TableHead>
-                        <TableHead className="text-xs text-right">% Var</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {topMovers.map((g, idx) => (
-                        <TableRow key={idx} className="text-xs">
-                          <TableCell className="font-medium">{g.key}</TableCell>
-                          <TableCell className="text-slate-600">{groupBy}</TableCell>
-                          <TableCell className="text-right">${fmt(g.current)}</TableCell>
-                          <TableCell className="text-right">${fmt(g.prior)}</TableCell>
-                          <TableCell className="text-right">
-                            <Badge className="bg-green-100 text-green-700 border-green-200">
-                              <TrendingUp className="h-3 w-3 mr-1" />
-                              +${fmt(g.varDollar)}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right text-green-600">+{fmtPct(g.varPct)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </Card>
-
-              <Card className="p-4 border-slate-200">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold">Bottom 10 by $ decrease</h3>
-                  <Badge variant="outline">{bottomMovers.length} of {analysis?.groups.length || 0}</Badge>
-                </div>
-                <div className="border rounded-lg overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-slate-50">
-                        <TableHead className="text-xs">Name</TableHead>
-                        <TableHead className="text-xs">Group</TableHead>
-                        <TableHead className="text-xs text-right">Current</TableHead>
-                        <TableHead className="text-xs text-right">Prior</TableHead>
-                        <TableHead className="text-xs text-right">$ Var</TableHead>
-                        <TableHead className="text-xs text-right">% Var</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {bottomMovers.map((g, idx) => (
-                        <TableRow key={idx} className="text-xs">
-                          <TableCell className="font-medium">{g.key}</TableCell>
-                          <TableCell className="text-slate-600">{groupBy}</TableCell>
-                          <TableCell className="text-right">${fmt(g.current)}</TableCell>
-                          <TableCell className="text-right">${fmt(g.prior)}</TableCell>
-                          <TableCell className="text-right">
-                            <Badge className="bg-red-100 text-red-700 border-red-200">
-                              <TrendingDown className="h-3 w-3 mr-1" />
-                              -${fmt(Math.abs(g.varDollar))}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right text-red-600">{fmtPct(g.varPct)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </Card>
+            {/* Significance filter tabs */}
+            <div className="flex items-center gap-1">
+              {([
+                { id: 'all' as const, label: 'All', count: effectiveGroups.length },
+                { id: 'material' as const, label: 'Material', count: effectiveGroups.filter(g => g.isSignificant).length },
+                { id: 'below' as const, label: 'Below Threshold', count: effectiveGroups.filter(g => !g.isSignificant).length },
+              ]).map((tab) => (
+                <button key={tab.id} onClick={() => setSigFilter(tab.id)}
+                  className={cn("px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors",
+                    sigFilter === tab.id
+                      ? "bg-white text-primary shadow-sm border border-slate-200"
+                      : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                  )}
+                >
+                  {tab.label}
+                  <span className="ml-1 text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 rounded-full">{tab.count}</span>
+                </button>
+              ))}
             </div>
 
-            <Card className="p-4 border-slate-200">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <span className="font-semibold text-sm">Details</span>
-                  <span className="text-slate-500 text-sm ml-2">
-                    - {mode} ending {MONTH_NAMES[Number(month)]} {year} - grouped by {groupBy}
-                  </span>
-                </div>
-                <Badge variant="outline">{analysis?.detailRows.length || 0} rows</Badge>
+            {/* KPI stat chips */}
+            <div className="flex items-center gap-2 text-[11px] ml-auto">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                <span className="text-slate-500">Current</span>
+                <span className="font-semibold text-slate-900">${fmtCompact(totals.current)}</span>
               </div>
-              <div className="border rounded-lg overflow-hidden max-h-[380px] overflow-y-auto">
-                <Table>
-                  <TableHeader className="sticky top-0 bg-slate-50">
-                    <TableRow>
-                      <TableHead className="text-xs">Date</TableHead>
-                      <TableHead className="text-xs">Entity</TableHead>
-                      <TableHead className="text-xs">Customer</TableHead>
-                      <TableHead className="text-xs">Product</TableHead>
-                      <TableHead className="text-xs">Region</TableHead>
-                      <TableHead className="text-xs text-right">Amount</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {analysis?.detailRows
-                      .sort((a, b) => a.date.getTime() - b.date.getTime())
-                      .map((r, idx) => (
-                        <TableRow key={idx} className="text-xs">
-                          <TableCell>{r.date.toISOString().slice(0, 10)}</TableCell>
-                          <TableCell>{r.entity}</TableCell>
-                          <TableCell>{r.customer}</TableCell>
-                          <TableCell>{r.product}</TableCell>
-                          <TableCell>{r.region}</TableCell>
-                          <TableCell className="text-right font-medium">${fmt(r.amount)}</TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                <span className="text-slate-500">Prior</span>
+                <span className="font-semibold text-slate-900">${fmtCompact(totals.prior)}</span>
               </div>
-            </Card>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                <span className="text-slate-500">$ Var</span>
+                <span className={cn("font-semibold", totalVarDollar >= 0 ? "text-green-700" : "text-red-600")}>
+                  {totalVarDollar >= 0 ? '+' : '-'}${fmtCompact(Math.abs(totalVarDollar))}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                <span className="text-slate-500">Reviewed</span>
+                <span className="font-semibold text-green-700">{reviewedCount}/{effectiveGroups.length}</span>
+              </div>
+            </div>
+
+            {/* Download */}
+            <button onClick={handleDownloadCSV} className="flex items-center justify-center h-7 w-7 rounded border border-slate-200 text-slate-500 hover:bg-slate-100 transition-colors">
+              <Download className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {dataLoading && <div className="text-xs text-slate-500 mb-2">Loading variance data...</div>}
+          {dataError && <div className="text-xs text-red-500 mb-2">Error: {dataError}</div>}
+
+          {/* Waterfall chart */}
+          <WaterfallChart groups={filteredGroups} />
+
+          {/* Top / Bottom tables */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            {/* Top movers */}
+            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
+                <span className="text-xs font-semibold text-slate-700">Top Increases</span>
+                <span className="text-[10px] text-slate-400">{topMovers.length} of {filteredGroups.length}</span>
+              </div>
+              <div className="overflow-auto" style={{ maxHeight: '280px' }}>
+                <table className="w-full text-xs">
+                  <thead className="sticky top-0 bg-slate-50">
+                    <tr className="border-b border-slate-100">
+                      <th className="text-left font-medium text-slate-500 px-3 py-1.5">Account</th>
+                      <th className="text-right font-medium text-slate-500 px-3 py-1.5">Current</th>
+                      <th className="text-right font-medium text-slate-500 px-3 py-1.5">Prior</th>
+                      <th className="text-right font-medium text-slate-500 px-3 py-1.5">$ Var</th>
+                      <th className="text-right font-medium text-slate-500 px-3 py-1.5">%</th>
+                      {<th className="text-center font-medium text-slate-500 px-2 py-1.5">Status</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topMovers.length === 0 ? (
+                      <tr><td colSpan={6} className="text-center text-slate-400 py-6">No increases found</td></tr>
+                    ) : topMovers.map((g, idx) => (
+                      <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50/50 cursor-pointer" onClick={() => handleRowClick(g)}>
+                        <td className="px-3 py-1.5">
+                          <div className="font-medium text-slate-800">{g.key}</div>
+                          {g.isSignificant && <AlertTriangle className="inline w-2.5 h-2.5 text-amber-500 ml-1" />}
+                        </td>
+                        <td className="px-3 py-1.5 text-right text-slate-600">${fmtCompact(g.current)}</td>
+                        <td className="px-3 py-1.5 text-right text-slate-600">${fmtCompact(g.prior)}</td>
+                        <td className="px-3 py-1.5 text-right">
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-green-50 text-green-700 text-[10px] font-medium border border-green-200">
+                            <TrendingUp className="w-2.5 h-2.5" />+${fmtCompact(g.varDollar)}
+                          </span>
+                        </td>
+                        <td className="px-3 py-1.5 text-right text-green-700 font-medium">+{fmtPct(g.varPct)}</td>
+                        {<td className="px-2 py-1.5 text-center"><StatusBadge status={g.status} /></td>}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Bottom movers */}
+            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
+                <span className="text-xs font-semibold text-slate-700">Top Decreases</span>
+                <span className="text-[10px] text-slate-400">{bottomMovers.length} of {filteredGroups.length}</span>
+              </div>
+              <div className="overflow-auto" style={{ maxHeight: '280px' }}>
+                <table className="w-full text-xs">
+                  <thead className="sticky top-0 bg-slate-50">
+                    <tr className="border-b border-slate-100">
+                      <th className="text-left font-medium text-slate-500 px-3 py-1.5">Account</th>
+                      <th className="text-right font-medium text-slate-500 px-3 py-1.5">Current</th>
+                      <th className="text-right font-medium text-slate-500 px-3 py-1.5">Prior</th>
+                      <th className="text-right font-medium text-slate-500 px-3 py-1.5">$ Var</th>
+                      <th className="text-right font-medium text-slate-500 px-3 py-1.5">%</th>
+                      {<th className="text-center font-medium text-slate-500 px-2 py-1.5">Status</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bottomMovers.length === 0 ? (
+                      <tr><td colSpan={6} className="text-center text-slate-400 py-6">No decreases found</td></tr>
+                    ) : bottomMovers.map((g, idx) => (
+                      <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50/50 cursor-pointer" onClick={() => handleRowClick(g)}>
+                        <td className="px-3 py-1.5">
+                          <div className="font-medium text-slate-800">{g.key}</div>
+                          {g.isSignificant && <AlertTriangle className="inline w-2.5 h-2.5 text-amber-500 ml-1" />}
+                        </td>
+                        <td className="px-3 py-1.5 text-right text-slate-600">${fmtCompact(g.current)}</td>
+                        <td className="px-3 py-1.5 text-right text-slate-600">${fmtCompact(g.prior)}</td>
+                        <td className="px-3 py-1.5 text-right">
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-red-50 text-red-700 text-[10px] font-medium border border-red-200">
+                            <TrendingDown className="w-2.5 h-2.5" />-${fmtCompact(Math.abs(g.varDollar))}
+                          </span>
+                        </td>
+                        <td className="px-3 py-1.5 text-right text-red-600 font-medium">{fmtPct(g.varPct)}</td>
+                        {<td className="px-2 py-1.5 text-center"><StatusBadge status={g.status} /></td>}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* All Variances full table */}
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden mb-4">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
+              <span className="text-xs font-semibold text-slate-700">
+                All Variances
+                <span className="font-normal text-slate-400 ml-2">Account Data · {effectiveGroups.length} accounts</span>
+              </span>
+              <span className="text-[10px] text-slate-400">{filteredGroups.length} accounts</span>
+            </div>
+            <div className="overflow-auto" style={{ maxHeight: '400px' }}>
+              <table className="w-full text-xs">
+                <thead className="sticky top-0 bg-slate-50">
+                  <tr className="border-b border-slate-100">
+                    <th className="text-left font-medium text-slate-500 px-3 py-2 w-[200px]">Account</th>
+                    <th className="text-right font-medium text-slate-500 px-3 py-2">Current</th>
+                    <th className="text-right font-medium text-slate-500 px-3 py-2">Prior</th>
+                    <th className="text-right font-medium text-slate-500 px-3 py-2">$ Variance</th>
+                    <th className="text-right font-medium text-slate-500 px-3 py-2">%</th>
+                    <th className="font-medium text-slate-500 px-3 py-2 w-[90px]">Magnitude</th>
+                    {<th className="text-center font-medium text-slate-500 px-2 py-2">Status</th>}
+                    {<th className="text-center font-medium text-slate-500 px-2 py-2 w-[30px]"><Eye className="w-3 h-3 mx-auto" /></th>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredGroups.length === 0 ? (
+                    <tr><td colSpan={8} className="text-center text-slate-400 py-8">No data available</td></tr>
+                  ) : [...filteredGroups]
+                    .sort((a, b) => Math.abs(b.varDollar) - Math.abs(a.varDollar))
+                    .map((g, idx) => {
+                      const isPos = g.varDollar >= 0;
+                      return (
+                        <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50/50 cursor-pointer" onClick={() => handleRowClick(g)}>
+                          <td className="px-3 py-2">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-medium text-slate-800">{g.key}</span>
+                              {g.isSignificant && <AlertTriangle className="w-3 h-3 text-amber-500 flex-shrink-0" />}
+                              {g.accountNumber && <span className="text-[10px] text-slate-400">#{g.accountNumber}</span>}
+                            </div>
+                          </td>
+                          <td className="px-3 py-2 text-right text-slate-600">${fmtCompact(g.current)}</td>
+                          <td className="px-3 py-2 text-right text-slate-600">${fmtCompact(g.prior)}</td>
+                          <td className="px-3 py-2 text-right">
+                            <span className={cn(
+                              "inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium border",
+                              isPos ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"
+                            )}>
+                              {isPos ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />}
+                              {isPos ? '+' : '-'}${fmtCompact(Math.abs(g.varDollar))}
+                            </span>
+                          </td>
+                          <td className={cn("px-3 py-2 text-right font-medium", isPos ? "text-green-700" : "text-red-600")}>
+                            {isPos ? '+' : ''}{fmtPct(g.varPct)}
+                          </td>
+                          <td className="px-3 py-2"><VarianceBar value={g.varDollar} maxAbs={maxAbsVar} /></td>
+                          {<td className="px-2 py-2 text-center"><StatusBadge status={g.status} /></td>}
+                          <td className="px-2 py-2 text-center">
+                            {g.aiExplanation && <Sparkles className="w-3 h-3 text-primary mx-auto" />}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Detail Drawer */}
+      <Sheet open={showDrawer} onOpenChange={setShowDrawer}>
+        <SheetContent className="w-[440px] sm:max-w-[440px] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="text-sm font-semibold">{selectedRow?.key}</SheetTitle>
+          </SheetHeader>
+          {selectedRow && (
+            <div className="mt-4 space-y-4">
+              {/* Summary */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <div className="text-[10px] text-slate-500 mb-0.5">Current Period</div>
+                  <div className="text-sm font-semibold">${fmtCompact(selectedRow.current)}</div>
+                  {selectedRow.currentPeriodLabel && <div className="text-[10px] text-slate-400">{selectedRow.currentPeriodLabel}</div>}
+                </div>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <div className="text-[10px] text-slate-500 mb-0.5">Prior Period</div>
+                  <div className="text-sm font-semibold">${fmtCompact(selectedRow.prior)}</div>
+                  {selectedRow.priorPeriodLabel && <div className="text-[10px] text-slate-400">{selectedRow.priorPeriodLabel}</div>}
+                </div>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <div className="text-[10px] text-slate-500 mb-0.5">$ Variance</div>
+                  <div className={cn("text-sm font-semibold", selectedRow.varDollar >= 0 ? "text-green-700" : "text-red-600")}>
+                    {selectedRow.varDollar >= 0 ? '+' : '-'}${fmtCompact(Math.abs(selectedRow.varDollar))}
+                  </div>
+                </div>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <div className="text-[10px] text-slate-500 mb-0.5">% Variance</div>
+                  <div className={cn("text-sm font-semibold", selectedRow.varPct >= 0 ? "text-green-700" : "text-red-600")}>
+                    {selectedRow.varPct >= 0 ? '+' : ''}{fmtPct(selectedRow.varPct)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Metadata */}
+              <div className="flex flex-wrap gap-2">
+                {selectedRow.status && <StatusBadge status={selectedRow.status} />}
+                {selectedRow.isSignificant && (
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium border bg-amber-50 border-amber-200 text-amber-700">
+                    <AlertTriangle className="w-2.5 h-2.5" />Material
+                  </span>
+                )}
+                {selectedRow.threshold !== undefined && (
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium border bg-slate-50 border-slate-200 text-slate-500">
+                    Threshold: {selectedRow.threshold}%
+                  </span>
+                )}
+                {selectedRow.accountNumber && (
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium border bg-slate-50 border-slate-200 text-slate-500">
+                    <FileText className="w-2.5 h-2.5" />Account #{selectedRow.accountNumber}
+                  </span>
+                )}
+              </div>
+
+              {/* Variance bar */}
+              <div>
+                <div className="text-[10px] text-slate-500 mb-1.5">Relative Magnitude</div>
+                <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
+                  <div
+                    className={cn("h-full rounded-full transition-all", selectedRow.varDollar >= 0 ? "bg-green-400" : "bg-red-400")}
+                    style={{ width: `${Math.min(Math.abs(selectedRow.varDollar) / maxAbsVar * 100, 100)}%` }}
+                  />
+                </div>
+                <div className="flex justify-between mt-1 text-[10px] text-slate-400">
+                  <span>0</span>
+                  <span>${fmtCompact(maxAbsVar)}</span>
+                </div>
+              </div>
+
+              {/* AI Explanation */}
+              {selectedRow.aiExplanation && (
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Sparkles className="w-3.5 h-3.5 text-primary" />
+                    <span className="text-xs font-semibold text-slate-700">AI Explanation</span>
+                  </div>
+                  <div className="bg-primary/5 border border-primary/10 rounded-lg p-3 text-xs text-slate-700 leading-relaxed">
+                    {selectedRow.aiExplanation}
+                  </div>
+                </div>
+              )}
+
+              {/* Reviewer info */}
+              {selectedRow.reviewedBy && (
+                <div className="text-[11px] text-slate-500 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                  Reviewed by {selectedRow.reviewedBy}
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-2 border-t border-slate-100">
+                <button onClick={() => { toast.success(`Marked ${selectedRow.key} as reviewed`); setShowDrawer(false); }}
+                  className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-md bg-primary text-white text-xs font-medium hover:bg-primary/90 transition-colors">
+                  <CheckCircle2 className="w-3.5 h-3.5" />Mark Reviewed
+                </button>
+                <button onClick={() => { toast.info(`Flagged ${selectedRow.key} for follow-up`); }}
+                  className="flex items-center justify-center gap-1.5 h-8 px-3 rounded-md border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                  <AlertTriangle className="w-3.5 h-3.5" />Flag
+                </button>
+                <button onClick={() => setShowDrawer(false)}
+                  className="flex items-center justify-center h-8 w-8 rounded-md border border-slate-200 text-slate-400 hover:bg-slate-50 transition-colors">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+    </div>
   );
 }

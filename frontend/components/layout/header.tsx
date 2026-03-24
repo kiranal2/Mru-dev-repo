@@ -13,6 +13,17 @@ interface HeaderProps {
 export default function Header({ loadingState }: HeaderProps) {
   const pathname = usePathname();
   const isIGRSModule = pathname?.startsWith("/igrs/");
+  const isCashAppWorkbench = pathname?.startsWith("/workbench/order-to-cash/cash-application");
+  const isCollectionsWorkbench = pathname?.startsWith("/workbench/order-to-cash/collections");
+
+  let headerTitle: string | null = null;
+  if (isIGRSModule) {
+    headerTitle = "Revenue Intelligence & Leakage Detection System";
+  } else if (isCashAppWorkbench) {
+    headerTitle = "Cash App Workbench";
+  } else if (isCollectionsWorkbench) {
+    headerTitle = "Collections Workbench";
+  }
 
   return (
     <>
@@ -30,9 +41,9 @@ export default function Header({ loadingState }: HeaderProps) {
       >
         <div className="flex items-center gap-3 min-w-0">
           <img src="/meeru-logo.png" alt="Meeru AI Logo" className="h-8 w-auto object-contain" />
-          {isIGRSModule && (
+          {headerTitle && (
             <span className="hidden lg:inline text-sm font-semibold text-slate-900 truncate">
-              Revenue Intelligence &amp; Leakage Detection System
+              {headerTitle}
             </span>
           )}
         </div>

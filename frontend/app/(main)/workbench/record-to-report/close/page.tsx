@@ -1,38 +1,43 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { Search, Download, AlertCircle, Clock, Ban, Link2, FileText } from 'lucide-react';
-import { LinkReconModal } from '@/components/modals/link-recon-modal';
-import { QuickCreateTaskModal } from '@/components/modals/quick-create-task-modal';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { SavedViewsDropdown } from '@/components/workspace/saved-views-dropdown';
-import { BindingsSection } from '@/components/workspace/bindings-section';
-import { PersonaSwitcher, Persona } from '@/components/workspace/persona-switcher';
+import { useState, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
-  AccountantDashboard,
-  ControllerDashboard,
-  CFODashboard
-} from '@/components/workspace/persona-dashboards';
-import Breadcrumb from '@/components/layout/breadcrumb';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+  AlertCircle,
+  Ban,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Download,
+  FileText,
+  Link2,
+  ListFilter,
+  Plus,
+  Search,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
+} from "@/components/ui/sheet";
 import {
   Dialog,
   DialogContent,
@@ -40,669 +45,1139 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { useCloseTasks } from '@/hooks/data';
-import type { CloseTask, CloseTaskFilters } from '@/lib/data/types';
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { useCloseTasks } from "@/hooks/data";
+import { LinkReconModal } from "@/components/modals/link-recon-modal";
+import { QuickCreateTaskModal } from "@/components/modals/quick-create-task-modal";
+import type { CloseTask, CloseTaskFilters } from "@/lib/data/types";
+
+/* ── Constants ─────────────────────────────────────────────────── */
+
+const PHASES = ["All", "Pre-Close", "Core Close", "Post-Close", "Reporting"] as const;
+
+const STATUSES = [
+  "All",
+  "Not Started",
+  "In Progress",
+  "Pending Review",
+  "Blocked",
+  "Completed",
+] as const;
+
+const STATUS_DOT: Record<string, string> = {
+  "Not Started": "bg-slate-400",
+  "In Progress": "bg-blue-500",
+  "Pending Review": "bg-amber-500",
+  Completed: "bg-emerald-500",
+  Blocked: "bg-red-500",
+};
+
+const STATUS_CLASS: Record<string, string> = {
+  "Not Started": "text-slate-700 bg-slate-50 border-slate-200",
+  "In Progress": "text-blue-700 bg-blue-50 border-blue-200",
+  "Pending Review": "text-amber-700 bg-amber-50 border-amber-200",
+  Completed: "text-emerald-700 bg-emerald-50 border-emerald-200",
+  Blocked: "text-red-700 bg-red-50 border-red-200",
+};
+
+const PHASE_CLASS: Record<string, string> = {
+  "Pre-Close": "text-violet-700 bg-violet-50 border-violet-200",
+  "Core Close": "text-blue-700 bg-blue-50 border-blue-200",
+  "Post-Close": "text-teal-700 bg-teal-50 border-teal-200",
+  Reporting: "text-slate-700 bg-slate-50 border-slate-200",
+};
+
+const PRIORITY_CLASS: Record<string, string> = {
+  Critical: "text-red-700 bg-red-50 border-red-200",
+  High: "text-orange-700 bg-orange-50 border-orange-200",
+  Medium: "text-slate-600 bg-slate-50 border-slate-200",
+  Low: "text-slate-500 bg-slate-50 border-slate-200",
+};
+
+/* ── Helpers ───────────────────────────────────────────────────── */
+
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function daysLate(dueDate: string, status: string): number {
+  if (status === "Completed") return 0;
+  const diff = Math.floor(
+    (Date.now() - new Date(dueDate).getTime()) / 86_400_000
+  );
+  return diff > 0 ? diff : 0;
+}
+
+function checklistProgress(
+  list?: Array<{ label: string; checked: boolean }>
+): string {
+  if (!list || list.length === 0) return "—";
+  const done = list.filter((c) => c.checked).length;
+  return `${done}/${list.length}`;
+}
+
+function fmtMinutes(m: number): string {
+  if (m === 0) return "—";
+  const h = Math.floor(m / 60);
+  const mins = m % 60;
+  return h > 0 ? `${h}h ${mins > 0 ? `${mins}m` : ""}`.trim() : `${mins}m`;
+}
+
+/* ── Page ──────────────────────────────────────────────────────── */
 
 export default function CloseWorkbenchPage() {
   const router = useRouter();
+
+  /* State */
+  const [searchQuery, setSearchQuery] = useState("");
+  const [phaseFilter, setPhaseFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [priorityFilter, setPriorityFilter] = useState("ALL");
+  const [assigneeFilter, setAssigneeFilter] = useState("ALL");
+  const [entityFilter, setEntityFilter] = useState("Consolidated");
+  const [page, setPage] = useState(1);
+  const pageSize = 25;
+
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectedTask, setSelectedTask] = useState<CloseTask | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [explainOpen, setExplainOpen] = useState(false);
+  const [drawerTab, setDrawerTab] = useState<"details" | "checklist" | "linked">("details");
   const [blockDialogOpen, setBlockDialogOpen] = useState(false);
-  const [blockReason, setBlockReason] = useState('');
+  const [blockReason, setBlockReason] = useState("");
   const [linkReconOpen, setLinkReconOpen] = useState(false);
   const [quickCreateOpen, setQuickCreateOpen] = useState(false);
-  const [quickCreateType, setQuickCreateType] = useState('');
-  const [currentPersona, setCurrentPersona] = useState<Persona>('ACCOUNTANT');
+  const [quickCreateType, setQuickCreateType] = useState("");
 
-  const [entity, setEntity] = useState('Consolidated');
-  const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
-  const [statusFilter, setStatusFilter] = useState('ALL');
-  const [assigneeFilter, setAssigneeFilter] = useState('ALL');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
-  const [filteredTasks, setFilteredTasks] = useState<CloseTask[]>([]);
-
-  // Build filters for the hook
+  /* Hook filters */
   const filters: CloseTaskFilters = useMemo(() => {
     const f: CloseTaskFilters = {
       page,
       pageSize,
       search: searchQuery || undefined,
-      subsidiary: entity !== 'Consolidated' ? entity : undefined,
+      subsidiary: entityFilter !== "Consolidated" ? entityFilter : undefined,
     };
-    if (statusFilter !== 'ALL') f.status = [statusFilter];
-    if (assigneeFilter !== 'ALL') f.assignedTo = assigneeFilter;
+    if (phaseFilter !== "All") f.phase = [phaseFilter];
+    if (statusFilter !== "All") f.status = [statusFilter];
+    if (priorityFilter !== "ALL") f.priority = [priorityFilter];
+    if (assigneeFilter !== "ALL") f.assignedTo = assigneeFilter;
     return f;
-  }, [page, pageSize, searchQuery, entity, statusFilter, assigneeFilter]);
+  }, [page, pageSize, searchQuery, entityFilter, phaseFilter, statusFilter, priorityFilter, assigneeFilter]);
 
   const { data: tasks, total, loading, error, refetch, updateTask } = useCloseTasks(filters);
 
-  // Map CloseTask[] to the persona dashboard Task shape
-  const dashboardTasks = useMemo(() =>
-    tasks.map(t => ({
-      id: t.id,
-      status: t.status,
-      priority: t.priority,
-      assignee_id: t.assignedTo,
-      due_date: t.dueDate,
-      type: t.phase,
-    })),
+  /* Derived */
+  const uniqueAssignees = useMemo(
+    () => Array.from(new Set(tasks.map((t) => t.assignedTo).filter(Boolean))),
     [tasks]
   );
 
-  // Compute KPIs from the tasks array
   const kpis = useMemo(() => {
-    if (!tasks || tasks.length === 0) return null;
-    const completed = tasks.filter(t => t.status === 'Completed').length;
     const totalCount = tasks.length;
-    const progressPct = totalCount > 0 ? Math.round((completed / totalCount) * 100) : 0;
-    const open = tasks.filter(t => t.status === 'Not Started' || t.status === 'In Progress').length;
-    const today = new Date().toISOString().split('T')[0];
-    const late = tasks.filter(t => t.dueDate < today && t.status !== 'Completed').length;
-    const blocked = tasks.filter(t => t.status === 'Blocked').length;
-
-    // Determine what's missing: look for required task phases that have no tasks in progress or completed
-    const phases = new Set(tasks.map(t => t.phase));
-    const whatsMissing: string[] = [];
-    if (!phases.has('Pre-Close')) whatsMissing.push('Pre-Close');
-    if (!phases.has('Core Close')) whatsMissing.push('Core Close');
-    if (!phases.has('Post-Close')) whatsMissing.push('Post-Close');
-    if (!phases.has('Reporting')) whatsMissing.push('Reporting');
-
-    return { progressPct, open, late, blocked, whatsMissing };
+    if (totalCount === 0) return null;
+    const completed = tasks.filter((t) => t.status === "Completed").length;
+    const progressPct = Math.round((completed / totalCount) * 100);
+    const open = tasks.filter(
+      (t) => t.status === "Not Started" || t.status === "In Progress"
+    ).length;
+    const today = new Date().toISOString().split("T")[0];
+    const late = tasks.filter(
+      (t) => t.dueDate < today && t.status !== "Completed"
+    ).length;
+    const blocked = tasks.filter((t) => t.status === "Blocked").length;
+    return { progressPct, completed, open, late, blocked, totalCount };
   }, [tasks]);
 
-  const handleRowClick = (task: CloseTask) => {
+  const phaseCounts = useMemo(() => {
+    const counts: Record<string, { total: number; done: number }> = {};
+    for (const t of tasks) {
+      if (!counts[t.phase]) counts[t.phase] = { total: 0, done: 0 };
+      counts[t.phase].total++;
+      if (t.status === "Completed") counts[t.phase].done++;
+    }
+    return counts;
+  }, [tasks]);
+
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const t of tasks) {
+      counts[t.status] = (counts[t.status] || 0) + 1;
+    }
+    return counts;
+  }, [tasks]);
+
+  const filterCount = useMemo(() => {
+    let c = 0;
+    if (priorityFilter !== "ALL") c++;
+    if (assigneeFilter !== "ALL") c++;
+    if (entityFilter !== "Consolidated") c++;
+    return c;
+  }, [priorityFilter, assigneeFilter, entityFilter]);
+
+  const totalPages = Math.ceil(total / pageSize);
+
+  /* Handlers */
+  const handleRowClick = useCallback((task: CloseTask) => {
     setSelectedTask(task);
+    setDrawerTab("details");
     setDrawerOpen(true);
-  };
+  }, []);
 
-  const handleTaskAction = async (taskId: string, updates: Partial<CloseTask>) => {
-    try {
-      const updated = await updateTask(taskId, updates);
-      // If the drawer is showing this task, update the selected task state
-      if (selectedTask?.id === taskId && updated) {
-        setSelectedTask({ ...selectedTask, ...updates, updatedAt: new Date().toISOString() });
+  const handleTaskAction = useCallback(
+    async (taskId: string, updates: Partial<CloseTask>) => {
+      try {
+        const updated = await updateTask(taskId, updates);
+        if (selectedTask?.id === taskId && updated) {
+          setSelectedTask((prev) =>
+            prev ? { ...prev, ...updates, updatedAt: new Date().toISOString() } : prev
+          );
+        }
+        toast.success(`Task updated successfully`);
+      } catch {
+        toast.error("Failed to update task");
       }
-    } catch (err) {
-      console.error('Error updating task:', err);
-    }
-  };
+    },
+    [updateTask, selectedTask?.id]
+  );
 
-  const handleBulkAction = async (action: string) => {
-    if (selectedIds.size === 0) return;
+  const handleBulkAction = useCallback(
+    async (action: string) => {
+      if (selectedIds.size === 0) return;
+      const updates: Partial<CloseTask> =
+        action === "READY"
+          ? { status: "In Progress" }
+          : action === "CLOSED"
+            ? { status: "Completed" }
+            : {};
+      for (const id of Array.from(selectedIds)) {
+        await handleTaskAction(id, updates);
+      }
+      setSelectedIds(new Set());
+      toast.success(`${selectedIds.size} tasks updated`);
+    },
+    [selectedIds, handleTaskAction]
+  );
 
-    for (const id of Array.from(selectedIds)) {
-      let updates: Partial<CloseTask> = {};
-      if (action === 'READY') updates.status = 'In Progress';
-      else if (action === 'CLOSED') updates.status = 'Completed';
-      await handleTaskAction(id, updates);
-    }
-    setSelectedIds(new Set());
-  };
-
-  const handleBlockAction = async () => {
+  const handleBlock = useCallback(async () => {
     if (!selectedTask || !blockReason) return;
     await handleTaskAction(selectedTask.id, {
-      status: 'Blocked',
+      status: "Blocked",
       notes: blockReason,
     });
     setBlockDialogOpen(false);
-    setBlockReason('');
-  };
+    setBlockReason("");
+  }, [selectedTask, blockReason, handleTaskAction]);
 
-  const toggleSelection = (id: string) => {
-    const newSet = new Set(selectedIds);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
-    }
-    setSelectedIds(newSet);
-  };
+  const toggleSelection = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
-  const toggleSelectAll = () => {
-    if (selectedIds.size === tasks.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(tasks.map(t => t.id)));
-    }
-  };
+  const toggleSelectAll = useCallback(() => {
+    setSelectedIds((prev) =>
+      prev.size === tasks.length ? new Set() : new Set(tasks.map((t) => t.id))
+    );
+  }, [tasks]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Completed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Not Started': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'In Progress': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'Pending Review': return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'Blocked': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getPriorityBadge = (priority: string) => {
-    switch (priority) {
-      case 'Critical':
-      case 'High': return 'destructive';
-      case 'Medium': return 'default';
-      case 'Low': return 'secondary';
-      default: return 'default';
-    }
-  };
-
-  const calculateAging = (dueDate: string, status: string) => {
-    if (status === 'Completed') return '—';
-    const today = new Date();
-    const due = new Date(dueDate);
-    const diff = Math.floor((today.getTime() - due.getTime()) / (1000 * 60 * 60 * 24));
-    if (diff <= 0) return '—';
-    return `${diff}d late`;
-  };
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  };
-
-  const uniqueAssignees = Array.from(new Set(tasks.map(t => t.assignedTo).filter(Boolean)));
-
+  /* Error state */
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-6">
-        <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-        <h2 className="text-lg font-semibold text-slate-900 mb-2">Error loading close tasks</h2>
-        <p className="text-sm text-slate-600 mb-4">{error}</p>
+      <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 p-6">
+        <AlertCircle className="mb-4 h-12 w-12 text-red-500" />
+        <h2 className="mb-2 text-lg font-semibold text-slate-900">Error loading close tasks</h2>
+        <p className="mb-4 text-sm text-slate-600">{error}</p>
         <Button onClick={refetch}>Retry</Button>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col bg-white" style={{ height: '100%', minHeight: 0 }}>
-      {/* Page Header */}
-      <header className="sticky top-0 z-10 bg-white px-6 py-2 flex-shrink-0">
-        <Breadcrumb activeRoute="workbench/record-to-report/close" className="mb-1.5" />
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-2xl font-bold text-[#000000] mt-2">Close</h1>
-          <div className="flex items-center gap-3">
-            <PersonaSwitcher
-              currentPersona={currentPersona}
-              onPersonaChange={setCurrentPersona}
-            />
-            <Select value={entity} onValueChange={setEntity}>
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Consolidated">Consolidated</SelectItem>
-                <SelectItem value="US">US</SelectItem>
-                <SelectItem value="EU">EU</SelectItem>
-              </SelectContent>
-            </Select>
+    <div className="flex flex-1 flex-col bg-slate-50" style={{ height: "100%", minHeight: 0 }}>
+      {/* ── Title ─────────────────────────────────────────── */}
+      <div className="px-5 pt-3 pb-1">
+        <h1 className="text-sm font-semibold text-slate-900">Close Workbench</h1>
+        <p className="text-[11px] text-slate-500">Period-end close task management</p>
+      </div>
+
+      {/* ── Toolbar ───────────────────────────────────────── */}
+      <div className="space-y-2 px-5 py-2">
+        {/* Row 1: Phase tabs + KPI chips */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            {PHASES.map((p) => {
+              const active = phaseFilter === p;
+              const count =
+                p === "All"
+                  ? tasks.length
+                  : phaseCounts[p]?.total ?? 0;
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setPhaseFilter(active ? "All" : p)}
+                  className={cn(
+                    "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                    active
+                      ? "border bg-white text-primary shadow-sm"
+                      : "text-slate-600 hover:bg-white/60"
+                  )}
+                >
+                  {p}
+                  <span className="ml-1 text-[10px] text-slate-400">{count}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* KPI chips */}
+          {kpis && (
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] font-medium text-slate-700">
+                Progress
+                <span className="font-semibold text-primary">{kpis.progressPct}%</span>
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] font-medium text-slate-700">
+                <Clock className="h-3 w-3 text-slate-400" />
+                Open
+                <span className="font-semibold">{kpis.open}</span>
+              </span>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-md border bg-white px-2 py-1 text-[11px] font-medium",
+                  kpis.late > 0
+                    ? "border-red-200 text-red-700"
+                    : "border-slate-200 text-slate-700"
+                )}
+              >
+                <AlertCircle className="h-3 w-3" />
+                Late
+                <span className="font-semibold">{kpis.late}</span>
+              </span>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-md border bg-white px-2 py-1 text-[11px] font-medium",
+                  kpis.blocked > 0
+                    ? "border-orange-200 text-orange-700"
+                    : "border-slate-200 text-slate-700"
+                )}
+              >
+                <Ban className="h-3 w-3" />
+                Blocked
+                <span className="font-semibold">{kpis.blocked}</span>
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Row 2: Status chips + Search + Filters + Actions */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            {STATUSES.map((s) => {
+              const active = statusFilter === s;
+              const count =
+                s === "All" ? tasks.length : statusCounts[s] ?? 0;
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setStatusFilter(active ? "All" : s)}
+                  className={cn(
+                    "rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
+                    active
+                      ? "border bg-white text-primary shadow-sm"
+                      : "text-slate-500 hover:bg-white/60"
+                  )}
+                >
+                  {s !== "All" && (
+                    <span
+                      className={cn(
+                        "mr-1 inline-block h-1.5 w-1.5 rounded-full",
+                        STATUS_DOT[s]
+                      )}
+                    />
+                  )}
+                  {s}
+                  <span className="ml-1 text-[10px] text-slate-400">{count}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="relative ml-auto">
+            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
             <Input
-              type="month"
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              className="w-40"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Search tasks..."
+              className="h-8 w-52 pl-8 text-xs"
             />
           </div>
-        </div>
-        <div className="border-b border-[#B7B7B7] mt-4"></div>
-      </header>
-      <div className="flex-1 overflow-auto">
-        <div className="px-6 py-4">
 
-        {loading && !tasks.length ? (
+          {/* Filters Popover */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+                <ListFilter className="h-3.5 w-3.5" />
+                Filters
+                {filterCount > 0 && (
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+                    {filterCount}
+                  </span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-64 space-y-3 p-3">
+              <div className="space-y-1">
+                <Label className="text-xs font-semibold text-slate-700">Priority</Label>
+                <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                  <SelectTrigger className="h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All Priorities</SelectItem>
+                    <SelectItem value="Critical">Critical</SelectItem>
+                    <SelectItem value="High">High</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs font-semibold text-slate-700">Assignee</Label>
+                <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
+                  <SelectTrigger className="h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All Assignees</SelectItem>
+                    {uniqueAssignees.map((a) => (
+                      <SelectItem key={a} value={a}>
+                        {a}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs font-semibold text-slate-700">Entity</Label>
+                <Select value={entityFilter} onValueChange={setEntityFilter}>
+                  <SelectTrigger className="h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Consolidated">Consolidated</SelectItem>
+                    <SelectItem value="Meeru Inc">Meeru Inc</SelectItem>
+                    <SelectItem value="Meeru Europe">Meeru Europe</SelectItem>
+                    <SelectItem value="Meeru APAC">Meeru APAC</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {filterCount > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full text-xs"
+                  onClick={() => {
+                    setPriorityFilter("ALL");
+                    setAssigneeFilter("ALL");
+                    setEntityFilter("Consolidated");
+                  }}
+                >
+                  Clear filters
+                </Button>
+              )}
+            </PopoverContent>
+          </Popover>
+
+          <Button
+            size="sm"
+            className="h-8 gap-1.5 text-xs"
+            onClick={() => {
+              setQuickCreateType("");
+              setQuickCreateOpen(true);
+            }}
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Task
+          </Button>
+
+          <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+            <Download className="h-3.5 w-3.5" />
+            Export
+          </Button>
+        </div>
+      </div>
+
+      {/* ── Content ───────────────────────────────────────── */}
+      <div className="flex-1 overflow-auto px-5 pb-5">
+        {loading && tasks.length === 0 ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-sm text-slate-500">Loading close tasks...</div>
           </div>
         ) : (
           <>
-            {kpis && (
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-12 h-12 rounded-full border-4 border-blue-500 flex items-center justify-center font-semibold text-sm">
-                    {kpis.progressPct}%
-                  </div>
-                  <span className="text-sm text-slate-600">Progress</span>
-                </div>
-                <Badge
-                  variant="outline"
-                  className="flex items-center gap-1 cursor-pointer hover:bg-slate-50 transition-colors"
-                  onClick={() => setStatusFilter('Not Started')}
+            {/* Bulk action bar */}
+            {selectedIds.size > 0 && (
+              <div className="mb-3 flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2">
+                <span className="text-xs font-medium text-primary">
+                  {selectedIds.size} selected
+                </span>
+                <Button
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={() => handleBulkAction("READY")}
                 >
-                  <Clock className="w-3 h-3" />
-                  Open: {kpis.open}
-                </Badge>
-                <Badge
+                  Mark In Progress
+                </Button>
+                <Button
+                  size="sm"
                   variant="outline"
-                  className="flex items-center gap-1 text-red-600 border-red-200 cursor-pointer hover:bg-red-50 transition-colors"
-                  onClick={() => {
-                    setStatusFilter('ALL');
-                    const today = new Date().toISOString().split('T')[0];
-                    setFilteredTasks(tasks.filter(t => t.dueDate < today && t.status !== 'Completed'));
-                  }}
+                  className="h-7 text-xs"
+                  onClick={() => handleBulkAction("CLOSED")}
                 >
-                  <AlertCircle className="w-3 h-3" />
-                  Late: {kpis.late}
-                </Badge>
-                <Badge
-                  variant="outline"
-                  className="flex items-center gap-1 text-orange-600 border-orange-200 cursor-pointer hover:bg-orange-50 transition-colors"
-                  onClick={() => setStatusFilter('Blocked')}
+                  Complete
+                </Button>
+                <button
+                  type="button"
+                  className="ml-auto text-xs text-slate-500 hover:text-slate-700"
+                  onClick={() => setSelectedIds(new Set())}
                 >
-                  <Ban className="w-3 h-3" />
-                  Blocked: {kpis.blocked}
-                </Badge>
-                {kpis.whatsMissing.length > 0 && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-amber-700 font-medium">What's Missing:</span>
-                    {kpis.whatsMissing.map((item) => (
-                      <Badge
-                        key={item}
-                        variant="outline"
-                        className="cursor-pointer text-amber-700 border-amber-300 hover:bg-amber-50 transition-colors"
-                        onClick={() => {
-                          setQuickCreateType(item);
-                          setQuickCreateOpen(true);
-                        }}
-                      >
-                        + {item}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
+                  Clear
+                </button>
               </div>
             )}
 
-            <div className="bg-white border-b border-slate-200 -mx-6 px-6 py-3">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <SavedViewsDropdown
-                  workbenchType="close"
-                  currentFilters={{ statusFilter, assigneeFilter, searchQuery }}
-                  onApplyView={(filters) => {
-                    if (filters.status) setStatusFilter(filters.status);
-                    if (filters.assignee) setAssigneeFilter(filters.assignee);
-                    if (filters.q) setSearchQuery(filters.q);
-                  }}
-                />
-                <div className="relative">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                  <Input
-                    type="text"
-                    placeholder="Search tasks..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 w-64"
-                  />
-                </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-36">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ALL">All Status</SelectItem>
-                    <SelectItem value="Not Started">Not Started</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Pending Review">Pending Review</SelectItem>
-                    <SelectItem value="Blocked">Blocked</SelectItem>
-                    <SelectItem value="Completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Assignee" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ALL">All Assignees</SelectItem>
-                    {uniqueAssignees.map(a => (
-                      <SelectItem key={a} value={a}>{a}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => setExplainOpen(!explainOpen)}>
-                  Explain (E)
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Download className="w-4 h-4 mr-2" />
-                  Export CSV
-                </Button>
-              </div>
+            {/* Phase progress bars */}
+            <div className="mb-3 grid grid-cols-4 gap-3">
+              {(["Pre-Close", "Core Close", "Post-Close", "Reporting"] as const).map(
+                (phase) => {
+                  const c = phaseCounts[phase] || { total: 0, done: 0 };
+                  const pct = c.total > 0 ? Math.round((c.done / c.total) * 100) : 0;
+                  return (
+                    <div
+                      key={phase}
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-semibold text-slate-700">{phase}</span>
+                        <span className="text-[11px] text-slate-500">
+                          {c.done}/{c.total}
+                        </span>
+                      </div>
+                      <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-100">
+                        <div
+                          className={cn(
+                            "h-full rounded-full transition-all",
+                            pct === 100 ? "bg-emerald-500" : "bg-primary"
+                          )}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                }
+              )}
             </div>
 
-            {explainOpen && (
-              <Card className="p-4 mb-3 bg-blue-50 border-blue-200">
-                <h3 className="font-semibold text-sm mb-2">SLA & Due Date Rules</h3>
-                <ul className="text-sm text-slate-600 space-y-1">
-                  <li>* Tasks are marked <strong>Late</strong> when due_date is past and status is not CLOSED</li>
-                  <li>* <strong>What's Missing</strong> checks for required task types: BANK Recon, AP Recon, AR Recon, and at least 1 JE in READY/IN_REVIEW/CLOSED status</li>
-                  <li>* Progress is calculated as (closed_tasks / total_tasks) x 100</li>
-                </ul>
-              </Card>
-            )}
-
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={toggleSelectAll}>
-                {selectedIds.size === tasks.length && tasks.length > 0 ? 'Deselect All' : 'Select All'}
-              </Button>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span>
-                      <Button
-                        size="sm"
-                        onClick={() => handleBulkAction('READY')}
-                        disabled={selectedIds.size === 0}
-                      >
-                        Mark Ready ({selectedIds.size})
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  {selectedIds.size === 0 && (
-                    <TooltipContent>
-                      <p>Select at least one task to mark as ready</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span>
-                      <Button
-                        size="sm"
-                        onClick={() => handleBulkAction('CLOSED')}
-                        disabled={selectedIds.size === 0}
-                      >
-                        Close ({selectedIds.size})
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  {selectedIds.size === 0 && (
-                    <TooltipContent>
-                      <p>Select at least one task to close</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-auto p-6">
-            {currentPersona === 'ACCOUNTANT' && (
-              <AccountantDashboard tasks={dashboardTasks} kpis={kpis} />
-            )}
-            {currentPersona === 'CONTROLLER' && (
-              <ControllerDashboard tasks={dashboardTasks} kpis={kpis} />
-            )}
-            {currentPersona === 'CFO' && (
-              <CFODashboard tasks={dashboardTasks} kpis={kpis} />
-            )}
-
-            <Card>
+            {/* Table */}
+            <div className="rounded-lg border border-slate-200 bg-white">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-slate-50 border-b border-slate-200 sticky top-0">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-12"></th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Phase</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Name</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Subsidiary</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Assignee</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Due</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aging</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Priority</th>
+                  <thead>
+                    <tr className="border-b border-slate-200 bg-slate-50">
+                      <th className="w-10 px-3 py-2">
+                        <Checkbox
+                          checked={
+                            tasks.length > 0 && selectedIds.size === tasks.length
+                          }
+                          onCheckedChange={toggleSelectAll}
+                        />
+                      </th>
+                      <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Task
+                      </th>
+                      <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Phase
+                      </th>
+                      <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Assignee
+                      </th>
+                      <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Due
+                      </th>
+                      <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Status
+                      </th>
+                      <th className="px-3 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Checklist
+                      </th>
+                      <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Priority
+                      </th>
+                      <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Aging
+                      </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-slate-200">
-                    {tasks.map((task) => (
-                      <tr
-                        key={task.id}
-                        className="hover:bg-slate-50 cursor-pointer transition-colors"
-                        onClick={() => handleRowClick(task)}
-                      >
-                        <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                          <Checkbox
-                            checked={selectedIds.has(task.id)}
-                            onCheckedChange={() => toggleSelection(task.id)}
-                          />
-                        </td>
-                        <td className="px-4 py-3 text-sm text-slate-600">{task.phase}</td>
-                        <td className="px-4 py-3 text-sm font-medium text-slate-900">
-                          <span className="flex items-center gap-1.5">
-                            {task.name}
-                            {task.linkedJournalEntryIds && task.linkedJournalEntryIds.length > 0 && (
-                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
-                                <FileText className="w-3 h-3" />
-                                {task.linkedJournalEntryIds.length} JE
+                  <tbody>
+                    {tasks.map((task) => {
+                      const late = daysLate(task.dueDate, task.status);
+                      return (
+                        <tr
+                          key={task.id}
+                          className="cursor-pointer border-b border-slate-100 transition-colors hover:bg-slate-50"
+                          onClick={() => handleRowClick(task)}
+                        >
+                          <td
+                            className="px-3 py-2"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Checkbox
+                              checked={selectedIds.has(task.id)}
+                              onCheckedChange={() => toggleSelection(task.id)}
+                            />
+                          </td>
+                          <td className="px-3 py-2">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-medium text-slate-900">
+                                {task.name}
                               </span>
+                              {task.linkedJournalEntryIds &&
+                                task.linkedJournalEntryIds.length > 0 && (
+                                  <span className="inline-flex items-center gap-0.5 rounded border border-indigo-200 bg-indigo-50 px-1.5 py-0.5 text-[10px] font-medium text-indigo-700">
+                                    <FileText className="h-2.5 w-2.5" />
+                                    {task.linkedJournalEntryIds.length} JE
+                                  </span>
+                                )}
+                              {task.dependencies.length > 0 && (
+                                <span className="text-[10px] text-slate-400">
+                                  {task.dependencies.length} dep
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-3 py-2">
+                            <span
+                              className={cn(
+                                "inline-flex rounded border px-2 py-0.5 text-[11px] font-medium",
+                                PHASE_CLASS[task.phase] || "text-slate-600"
+                              )}
+                            >
+                              {task.phase}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 text-xs text-slate-600">
+                            {task.assignedTo || "Unassigned"}
+                          </td>
+                          <td className="px-3 py-2">
+                            <span
+                              className={cn(
+                                "text-xs",
+                                late > 0
+                                  ? "font-medium text-red-600"
+                                  : "text-slate-600"
+                              )}
+                            >
+                              {formatDate(task.dueDate)}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2">
+                            <span
+                              className={cn(
+                                "inline-flex items-center gap-1.5 rounded border px-2 py-0.5 text-[11px] font-medium",
+                                STATUS_CLASS[task.status]
+                              )}
+                            >
+                              <span
+                                className={cn(
+                                  "h-1.5 w-1.5 rounded-full",
+                                  STATUS_DOT[task.status]
+                                )}
+                              />
+                              {task.status}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 text-center text-xs text-slate-600">
+                            {checklistProgress(task.checklist)}
+                          </td>
+                          <td className="px-3 py-2">
+                            <span
+                              className={cn(
+                                "inline-flex rounded border px-2 py-0.5 text-[11px] font-medium",
+                                PRIORITY_CLASS[task.priority]
+                              )}
+                            >
+                              {task.priority}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 text-xs">
+                            {late > 0 ? (
+                              <span className="font-medium text-red-600">
+                                {late}d late
+                              </span>
+                            ) : (
+                              <span className="text-slate-400">—</span>
                             )}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-sm text-slate-600">{task.subsidiary || '—'}</td>
-                        <td className="px-4 py-3 text-sm text-slate-600">{task.assignedTo || 'Unassigned'}</td>
-                        <td className="px-4 py-3 text-sm text-slate-600">{task.dueDate ? formatDate(task.dueDate) : '—'}</td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium border ${getStatusColor(task.status)}`}>
-                            {task.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-sm text-slate-600">{calculateAging(task.dueDate, task.status)}</td>
-                        <td className="px-4 py-3">
-                          <Badge variant={getPriorityBadge(task.priority)}>{task.priority}</Badge>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {tasks.length === 0 && !loading && (
+                      <tr>
+                        <td
+                          colSpan={9}
+                          className="px-3 py-8 text-center text-sm text-slate-400"
+                        >
+                          No tasks found
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
-            </Card>
-          </div>
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-xs text-slate-500">
+                  Showing {(page - 1) * pageSize + 1}–
+                  {Math.min(page * pageSize, total)} of {total}
+                </span>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 w-7 p-0"
+                    disabled={page === 1}
+                    onClick={() => setPage((p) => p - 1)}
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                  </Button>
+                  <span className="px-2 text-xs text-slate-600">
+                    {page} / {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 w-7 p-0"
+                    disabled={page === totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                  >
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </>
         )}
+      </div>
 
+      {/* ── Detail Drawer ─────────────────────────────────── */}
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px] overflow-y-auto">
+        <SheetContent className="w-[560px] overflow-y-auto p-0 sm:w-[560px]">
           {selectedTask && (
             <>
-              <SheetHeader>
-                <SheetTitle>{selectedTask.name}</SheetTitle>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium border ${getStatusColor(selectedTask.status)}`}>
+              {/* Drawer header */}
+              <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
+                <SheetHeader className="space-y-0">
+                  <SheetTitle className="text-base font-semibold text-slate-900">
+                    {selectedTask.name}
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="mt-2 flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded border px-2 py-0.5 text-[11px] font-medium",
+                      STATUS_CLASS[selectedTask.status]
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "h-1.5 w-1.5 rounded-full",
+                        STATUS_DOT[selectedTask.status]
+                      )}
+                    />
                     {selectedTask.status}
                   </span>
-                  <Badge variant={getPriorityBadge(selectedTask.priority)}>{selectedTask.priority}</Badge>
+                  <span
+                    className={cn(
+                      "inline-flex rounded border px-2 py-0.5 text-[11px] font-medium",
+                      PHASE_CLASS[selectedTask.phase]
+                    )}
+                  >
+                    {selectedTask.phase}
+                  </span>
+                  <span
+                    className={cn(
+                      "inline-flex rounded border px-2 py-0.5 text-[11px] font-medium",
+                      PRIORITY_CLASS[selectedTask.priority]
+                    )}
+                  >
+                    {selectedTask.priority}
+                  </span>
                 </div>
-              </SheetHeader>
+              </div>
 
-              <Tabs defaultValue="details" className="mt-6">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="details">Details</TabsTrigger>
-                  <TabsTrigger value="activity">Activity</TabsTrigger>
-                  <TabsTrigger value="linked">Linked</TabsTrigger>
-                </TabsList>
+              {/* Drawer tabs */}
+              <div className="flex gap-1 border-b border-slate-200 px-5 py-2">
+                {(
+                  [
+                    ["details", "Details"],
+                    ["checklist", "Checklist"],
+                    ["linked", "Linked"],
+                  ] as const
+                ).map(([key, label]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setDrawerTab(key)}
+                    className={cn(
+                      "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                      drawerTab === key
+                        ? "bg-white text-primary shadow-sm border"
+                        : "text-slate-500 hover:text-slate-700"
+                    )}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
 
-                <TabsContent value="details" className="space-y-4 mt-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <div className="text-xs text-slate-500 mb-1">Phase</div>
-                      <div className="text-sm font-medium">{selectedTask.phase}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-slate-500 mb-1">Subsidiary</div>
-                      <div className="text-sm font-medium">{selectedTask.subsidiary || '—'}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-slate-500 mb-1">Assignee</div>
-                      <div className="text-sm font-medium">{selectedTask.assignedTo || 'Unassigned'}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-slate-500 mb-1">Due Date</div>
-                      <div className="text-sm font-medium">{selectedTask.dueDate ? formatDate(selectedTask.dueDate) : '—'}</div>
-                    </div>
-                  </div>
-                  {selectedTask.description && (
-                    <div>
-                      <div className="text-xs text-slate-500 mb-1">Description</div>
-                      <div className="text-sm text-slate-700">{selectedTask.description}</div>
-                    </div>
-                  )}
-                  {selectedTask.notes && (
-                    <div>
-                      <div className="text-xs text-slate-500 mb-1">Notes / Blocking Reason</div>
-                      <div className="text-sm text-red-600">{selectedTask.notes}</div>
-                    </div>
-                  )}
-                  {selectedTask.checklist && selectedTask.checklist.length > 0 && (
-                    <div>
-                      <div className="text-xs text-slate-500 mb-1">Checklist</div>
-                      <ul className="text-sm text-slate-600 space-y-1">
-                        {selectedTask.checklist.map((item, idx) => (
-                          <li key={idx} className="flex items-center gap-2">
-                            <Checkbox checked={item.checked} disabled />
-                            <span className={item.checked ? 'line-through text-slate-400' : ''}>{item.label}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  <div className="text-xs text-slate-500 italic mt-4">
-                    Data Template binding will appear here
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="activity" className="mt-4">
-                  <div className="space-y-3">
-                    <p className="text-sm text-slate-500">No activity yet</p>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="linked" className="mt-4">
+              {/* Drawer content */}
+              <div className="p-5">
+                {drawerTab === "details" && (
                   <div className="space-y-4">
-                    {/* Linked Journal Entries */}
-                    {selectedTask.linkedJournalEntryIds && selectedTask.linkedJournalEntryIds.length > 0 && (
+                    {selectedTask.description && (
                       <div>
-                        <div className="text-sm font-medium mb-2">Linked Journal Entries</div>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedTask.linkedJournalEntryIds.map((jeId) => (
-                            <Badge
-                              key={jeId}
-                              variant="outline"
-                              className="cursor-pointer bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 transition-colors"
-                              onClick={() => {
-                                router.push(`/reports/financials/account-activity?je=${jeId}&from=close&taskId=${selectedTask.id}`);
-                                setDrawerOpen(false);
-                              }}
-                            >
-                              <FileText className="w-3 h-3 mr-1" />
-                              {jeId}
-                            </Badge>
-                          ))}
+                        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                          Description
                         </div>
+                        <p className="mt-1 text-sm text-slate-700">
+                          {selectedTask.description}
+                        </p>
                       </div>
                     )}
-                    {/* Reconciliation Link */}
-                    <div className={selectedTask.linkedJournalEntryIds?.length ? 'border-t pt-4' : ''}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="text-sm font-medium">Reconciliation Link</div>
-                        <Button size="sm" variant="outline" onClick={() => setLinkReconOpen(true)}>
-                          <Link2 className="h-4 w-4 mr-1" />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                          Assignee
+                        </div>
+                        <div className="mt-1 text-sm font-medium text-slate-900">
+                          {selectedTask.assignedTo || "Unassigned"}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                          Due Date
+                        </div>
+                        <div className="mt-1 text-sm font-medium text-slate-900">
+                          {formatDate(selectedTask.dueDate)}
+                          {daysLate(selectedTask.dueDate, selectedTask.status) >
+                            0 && (
+                            <span className="ml-2 text-xs text-red-600">
+                              ({daysLate(selectedTask.dueDate, selectedTask.status)}d overdue)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                          Entity
+                        </div>
+                        <div className="mt-1 text-sm font-medium text-slate-900">
+                          {selectedTask.subsidiary || "—"}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                          Dependencies
+                        </div>
+                        <div className="mt-1 text-sm font-medium text-slate-900">
+                          {selectedTask.dependencies.length > 0
+                            ? selectedTask.dependencies.join(", ")
+                            : "None"}
+                        </div>
+                      </div>
+                    </div>
+                    {/* Effort */}
+                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                      <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Effort
+                      </div>
+                      <div className="mt-1.5 flex items-center gap-6">
+                        <div>
+                          <span className="text-xs text-slate-500">Estimated: </span>
+                          <span className="text-sm font-medium text-slate-900">
+                            {fmtMinutes(selectedTask.estimatedMinutes)}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-xs text-slate-500">Actual: </span>
+                          <span className="text-sm font-medium text-slate-900">
+                            {fmtMinutes(selectedTask.actualMinutes ?? 0)}
+                          </span>
+                        </div>
+                        {selectedTask.estimatedMinutes > 0 && (selectedTask.actualMinutes ?? 0) > 0 && (
+                          <div className="ml-auto">
+                            <span
+                              className={cn(
+                                "text-xs font-medium",
+                                (selectedTask.actualMinutes ?? 0) >
+                                  selectedTask.estimatedMinutes
+                                  ? "text-red-600"
+                                  : "text-emerald-600"
+                              )}
+                            >
+                              {Math.round(
+                                ((selectedTask.actualMinutes ?? 0) /
+                                  selectedTask.estimatedMinutes) *
+                                  100
+                              )}
+                              % of estimate
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {selectedTask.notes && (
+                      <div className="rounded-lg border border-red-200 bg-red-50 p-3">
+                        <div className="text-[11px] font-semibold text-red-700">
+                          Blocking Reason
+                        </div>
+                        <p className="mt-1 text-sm text-red-600">
+                          {selectedTask.notes}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {drawerTab === "checklist" && (
+                  <div className="space-y-3">
+                    {selectedTask.checklist && selectedTask.checklist.length > 0 ? (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                            Progress
+                          </span>
+                          <span className="text-xs font-medium text-slate-700">
+                            {checklistProgress(selectedTask.checklist)}
+                          </span>
+                        </div>
+                        <div className="h-1.5 w-full rounded-full bg-slate-100">
+                          <div
+                            className="h-full rounded-full bg-primary transition-all"
+                            style={{
+                              width: `${
+                                selectedTask.checklist.length > 0
+                                  ? Math.round(
+                                      (selectedTask.checklist.filter((c) => c.checked).length /
+                                        selectedTask.checklist.length) *
+                                        100
+                                    )
+                                  : 0
+                              }%`,
+                            }}
+                          />
+                        </div>
+                        <div className="space-y-2 pt-1">
+                          {selectedTask.checklist.map((item, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center gap-2.5 rounded-md border border-slate-100 px-3 py-2"
+                            >
+                              <Checkbox checked={item.checked} disabled />
+                              <span
+                                className={cn(
+                                  "text-sm",
+                                  item.checked
+                                    ? "text-slate-400 line-through"
+                                    : "text-slate-700"
+                                )}
+                              >
+                                {item.label}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <p className="py-4 text-center text-sm text-slate-400">
+                        No checklist items
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {drawerTab === "linked" && (
+                  <div className="space-y-4">
+                    {/* Linked Journal Entries */}
+                    <div>
+                      <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Journal Entries
+                      </div>
+                      {selectedTask.linkedJournalEntryIds &&
+                      selectedTask.linkedJournalEntryIds.length > 0 ? (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {selectedTask.linkedJournalEntryIds.map((jeId) => (
+                            <button
+                              key={jeId}
+                              type="button"
+                              onClick={() => {
+                                router.push(
+                                  `/reports/financials/account-activity?je=${jeId}&from=close&taskId=${selectedTask.id}`
+                                );
+                                setDrawerOpen(false);
+                              }}
+                              className="inline-flex items-center gap-1 rounded border border-indigo-200 bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 transition-colors hover:bg-indigo-100"
+                            >
+                              <FileText className="h-3 w-3" />
+                              {jeId}
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="mt-1 text-sm text-slate-400">No linked journal entries</p>
+                      )}
+                    </div>
+                    {/* Reconciliation link */}
+                    <div className="border-t border-slate-200 pt-4">
+                      <div className="flex items-center justify-between">
+                        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                          Reconciliation
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs"
+                          onClick={() => setLinkReconOpen(true)}
+                        >
+                          <Link2 className="mr-1 h-3 w-3" />
                           Link
                         </Button>
                       </div>
-                      <div className="text-sm text-slate-500 italic">
+                      <p className="mt-1 text-sm italic text-slate-400">
                         No reconciliation linked
-                      </div>
-                    </div>
-                    <div className="border-t pt-4">
-                      <div className="text-sm font-medium mb-3">Data Template Bindings</div>
-                      {selectedTask && (
-                        <BindingsSection
-                          scope="TASK"
-                          scopeId={selectedTask.id}
-                          autoRefreshOnMount={false}
-                        />
-                      )}
+                      </p>
                     </div>
                   </div>
-                </TabsContent>
-              </Tabs>
+                )}
+              </div>
 
-              <div className="grid grid-cols-2 gap-3 mt-6">
-                <Button
-                  onClick={() => handleTaskAction(selectedTask.id, { status: 'In Progress' })}
-                  disabled={selectedTask.status === 'In Progress'}
-                >
-                  Mark Ready (R)
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => handleTaskAction(selectedTask.id, { status: 'Pending Review' })}
-                  disabled={selectedTask.status === 'Pending Review'}
-                >
-                  Send for Review (V)
-                </Button>
-                <Button
-                  onClick={() => handleTaskAction(selectedTask.id, { status: 'Completed' })}
-                  disabled={selectedTask.status === 'Completed'}
-                >
-                  Close (C)
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => setBlockDialogOpen(true)}
-                  disabled={selectedTask.status === 'Blocked'}
-                >
-                  Block (B)
-                </Button>
+              {/* Drawer actions */}
+              <div className="border-t border-slate-200 px-5 py-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    size="sm"
+                    className="h-8 text-xs"
+                    disabled={selectedTask.status === "In Progress"}
+                    onClick={() =>
+                      handleTaskAction(selectedTask.id, {
+                        status: "In Progress",
+                      })
+                    }
+                  >
+                    Mark In Progress
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 text-xs"
+                    disabled={selectedTask.status === "Pending Review"}
+                    onClick={() =>
+                      handleTaskAction(selectedTask.id, {
+                        status: "Pending Review",
+                      })
+                    }
+                  >
+                    Send for Review
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-8 text-xs"
+                    disabled={selectedTask.status === "Completed"}
+                    onClick={() =>
+                      handleTaskAction(selectedTask.id, {
+                        status: "Completed",
+                      })
+                    }
+                  >
+                    <CheckCircle2 className="mr-1 h-3 w-3" />
+                    Complete
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 border-red-200 text-xs text-red-600 hover:bg-red-50"
+                    disabled={selectedTask.status === "Blocked"}
+                    onClick={() => setBlockDialogOpen(true)}
+                  >
+                    <Ban className="mr-1 h-3 w-3" />
+                    Block
+                  </Button>
+                </div>
               </div>
             </>
           )}
         </SheetContent>
       </Sheet>
 
+      {/* ── Block Dialog ──────────────────────────────────── */}
       <Dialog open={blockDialogOpen} onOpenChange={setBlockDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[420px]">
           <DialogHeader>
             <DialogTitle>Block Task</DialogTitle>
             <DialogDescription>
               Provide a reason for blocking this task
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <Label htmlFor="reason" className="text-sm font-medium mb-2 block">
+          <div className="py-3">
+            <Label htmlFor="block-reason" className="text-xs font-semibold">
               Blocking Reason
             </Label>
             <Textarea
-              id="reason"
+              id="block-reason"
               value={blockReason}
               onChange={(e) => setBlockReason(e.target.value)}
               placeholder="e.g., Waiting for vendor invoice..."
+              className="mt-1.5"
               rows={3}
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setBlockDialogOpen(false)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setBlockDialogOpen(false)}
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleBlockAction} disabled={!blockReason}>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={handleBlock}
+              disabled={!blockReason}
+            >
               Block Task
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
+      {/* ── Link Recon Modal ──────────────────────────────── */}
       {selectedTask && (
         <LinkReconModal
           open={linkReconOpen}
@@ -711,13 +1186,12 @@ export default function CloseWorkbenchPage() {
           currentReconId={null}
           onLinked={() => {
             refetch();
-            if (selectedTask) {
-              handleRowClick(selectedTask);
-            }
+            toast.success("Reconciliation linked");
           }}
         />
       )}
 
+      {/* ── Quick Create Task Modal ───────────────────────── */}
       <QuickCreateTaskModal
         open={quickCreateOpen}
         onClose={() => setQuickCreateOpen(false)}
@@ -725,10 +1199,9 @@ export default function CloseWorkbenchPage() {
         suggestedType={quickCreateType}
         onCreated={() => {
           refetch();
+          toast.success("Task created");
         }}
       />
-        </div>
-      </div>
     </div>
   );
 }

@@ -8,7 +8,7 @@ Meeru AI is an **enterprise financial operations platform** that automates and o
 
 ## Tech Stack
 
-Next.js 13 App Router, TypeScript, Tailwind CSS, Shadcn/UI, Lucide icons. Current page count: 92 (`find app -name page.tsx | wc -l`). No testing framework.
+Next.js 13 App Router, TypeScript, Tailwind CSS, Shadcn/UI, Lucide icons. Current page count: 91 (`find app -name page.tsx | wc -l`). No testing framework.
 
 ## Commands
 
@@ -423,3 +423,81 @@ Key routes in `app/api/`:
   - **Removed routes**: `/collections/dunning`, `/collections/promises`, `/collections/correspondence`, `/cash-collection`.
   - Page count decreased from 96 to 92.
   - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.
+
+### 2026-02-27 (f)
+- **Collections Workbench — UI Overhaul + Disputes Tab**: Reworked layout to match Cash Application Workbench pattern and added Disputes as 5th tab.
+  - **Layout overhaul**: Removed sticky header/breadcrumb/title, sidebar, large KPI cards. Adopted Cash App flat `bg-slate-50` layout with inline Popover filters, compact stat chips (`text-[11px]`), and native `<table>` elements.
+  - **Fixed Dunning crash**: Moved `dunningStatusCounts` useMemo from inside conditionally-called `renderSidebar()` to component top level (React Rules of Hooks violation).
+  - **Disputes tab** (5th tab): 10 mock dispute records with types/constants/badge maps. 4 compact KPI stats (Total/Open/Disputed Amount/Avg Aging). Filter popover with status/priority/reason selects. 10-column table (ID, Customer, Invoice, Disputed, Original, Reason, Status, Priority, Aging, Assignee). Detail Sheet with timeline, % disputed, action buttons (Approve/Reject/Escalate/Resolve).
+  - **Deleted**: `app/(main)/workbench/order-to-cash/disputes/page.tsx` (standalone 646-line page).
+  - **Navigation**: Removed `disputes` entry from `lib/navigation.ts` Order-to-Cash children.
+  - **Breadcrumb**: Removed disputes breadcrumb entry from `breadcrumb.tsx`.
+  - Page count decreased from 92 to 91.
+  - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.
+
+### 2026-02-27 (g)
+- **Cash Application Workbench — Match Collections UI/UX**: Updated toolbar layout to match Collections Workbench clean style.
+  - **Replaced SegmentedControl** with simple tab buttons (`px-3 py-1.5 text-xs rounded-md` with active state `bg-white text-primary shadow-sm border`). 6 tabs: All, Auto-Matched, Exceptions, Critical, Pending to Post, Settlement. Click active tab to deselect.
+  - **Added compact KPI stat chips** on right side of tab row: Total (count), Auto-Match (% green), Exceptions (red if >0), Pending (combined pendingToPost + settlementPending).
+  - **Removed DensityToggle** from toolbar (import removed, component removed from JSX; density state kept in hook — no breaking change).
+  - **Restructured toolbar**: Row 1 = tab buttons + KPI stats; Row 2 = Search input + Filters Popover. Previously everything was in a single row.
+  - **Removed imports**: `SegmentedControl`, `DensityToggle`. **Added import**: `cn` from `@/lib/utils`.
+  - **File modified**: `app/(main)/workbench/order-to-cash/cash-application/payments/page.tsx`.
+  - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.
+
+### 2026-02-27 (h)
+- **Cash App Workbench — Clean Layout Matching Collections**: Removed visual clutter from Cash Application layout and payments page.
+  - **Layout (`layout.tsx`)**: Removed title header (`<header>` with "Cash Application Workbench" title, Sync badge tooltip). Removed `border-b` from nav tabs section. Changed nav background from `bg-white` to `bg-slate-50` to blend with content area. Updated nav tab active state from `bg-slate-100 text-slate-900` to `bg-white text-primary shadow-sm border` (matching Collections pattern). Removed unused imports: `Tooltip`, `TooltipContent`, `TooltipProvider`, `TooltipTrigger`, `Badge`. Removed unused `dataHealth` variable.
+  - **Payments page (`payments/page.tsx`)**: Merged two rows (status tabs + KPI stats, Search + Filters) into a single row. Dropped Settlement tab (5→4 status segments: All, Auto-Matched, Exceptions, Critical, Pending to Post). Updated KPI stat chips to use Collections-style pill containers (`bg-white border border-slate-200 rounded-md`). Updated Filters button to use `text-primary`/`bg-primary` color scheme instead of hardcoded blue.
+  - **Sub-filter toggle fix (`usePaymentsQueue.ts`)**: `handleSubFilterClick` now toggles — clicking the active chip clears it (sets to `""`) instead of re-setting same value.
+  - No env/script/command changes. No breaking API changes. Build verified with zero TypeScript errors.
+
+### 2026-03-02
+- **One-Click Variance — Data/Type Fix**: Fixed critical type mismatch between `FluxVariance` interface and actual JSON data.
+  - **Root cause**: `FluxVariance` type defined `currentPeriod`/`priorPeriod` as `number` but JSON has them as strings (`"Q4 2024"`). Actual dollar amounts are in `currentValue`/`priorValue` fields (not in the type). Similarly `variancePct` → `variancePercent`, `materialityFlag` → `isSignificant`.
+  - **Type fix** (`lib/data/types/reports.ts`): Updated `FluxVariance` to match JSON: `currentPeriod`/`priorPeriod` as `string`, added `currentValue`/`priorValue` as `number`, `variancePercent`, `threshold`, `isSignificant`, `reviewedBy`/`reviewedAt`/`comments`. Added backward-compat optional `variancePct`/`materialityFlag`.
+  - **Transform fix** (`one-click-variance/page.tsx`): `transformFluxToGrouped` now reads `v.currentValue`/`v.priorValue` instead of `v.currentPeriod`/`v.priorPeriod`.
+  - **Display fixes**: Added `fmtCompact()` for large numbers (B/M/K). KPI cards use compact format. Table Current/Prior/$ Var columns use compact format. Top/Bottom mover badges show `effectiveGroups.length` instead of `analysis?.groups.length || 0`. Group column shows "account" when displaying flux data.
+  - No env/script/command changes. No breaking API changes. TypeScript typecheck passes with zero errors.
+
+### 2026-03-02 (b)
+- **One-Click Variance — UI/UX Overhaul to Match Cash App Style**: Redesigned page from sidebar+Card+header layout to flat Cash App workbench pattern.
+  - **Layout**: Replaced `bg-white` with `bg-slate-50`. Removed title header (`<header>` with breadcrumb, h1, description, border). Removed sidebar `<aside>` with Card controls. Now full-width flat layout like Cash App.
+  - **Toolbar row**: Mode tabs (MoM/QoQ/YoY) as simple rounded buttons with `text-primary` active state. Inline period selects (month + year). Search input. Filters Popover (Entity, Customer, Group by). Run button. Download button. KPI stat chips on right (`bg-white border border-slate-200 rounded-md` matching Collections/Cash App).
+  - **Data on load**: Changed `hasRun` default from `false` to `true` so synthetic analysis data shows immediately without clicking "Run Analysis". Added search filtering on account names.
+  - **Tables**: Replaced Shadcn `Table`/`Card` components with native `<table>` inside `bg-white rounded-lg border` containers (matching Cash App pattern). Removed "Group" column. Added "All Variances" table replacing the old "Details" section — shows all accounts sorted by absolute variance, with color-coded badges and directional icons. Top/Bottom tables show empty state message when no data matches.
+  - **Removed imports**: `Button`, `Label`, `Card`, `Badge`, `RadioGroup`, `RadioGroupItem`, `Table`/`TableBody`/`TableCell`/`TableHead`/`TableHeader`/`TableRow`, `Breadcrumb`, `useEffect`. Added: `Popover`/`PopoverContent`/`PopoverTrigger`, `Play`, `Search`, `ListFilter`.
+  - No env/script/command changes. No breaking API changes. TypeScript typecheck passes with zero errors.
+
+### 2026-03-02 (c)
+- **One-Click Variance — Demo-Ready Enhancements**: Added dynamic features and controls for demo purposes.
+  - **Data source toggle**: Switch between "Account Data" (flux API data from `useFluxAnalysis`) and "Synthetic" (randomly generated transactions). Toggle buttons in toolbar.
+  - **Significance filter tabs**: "All" / "Material" / "Below Threshold" filters based on `isSignificant` field. Active tab styled with `bg-white text-primary shadow-sm border`.
+  - **SVG Waterfall chart**: Top 8 accounts by absolute variance rendered as inline SVG bar chart with green (positive) and red (negative) bars, value labels, rotated account names.
+  - **StatusBadge component**: Color-coded badges for Reviewed (green), InReview (amber), AutoClosed (slate) statuses.
+  - **VarianceBar component**: Inline horizontal bar showing variance magnitude relative to max, colored green/red by direction.
+  - **Clickable rows → Sheet drawer**: Click any row to open detail drawer showing: account info grid, AI explanation section (Sparkles icon, italic text), variance bar visualization, status/reviewer/threshold info, action buttons (Mark Reviewed, Flag for Review, Add Comment).
+  - **Enhanced KPI chips**: Added Material count and Reviewed count chips alongside existing Total/Top/Bottom movers.
+  - **Toast notifications**: Mark Reviewed and Flag actions trigger sonner toasts.
+  - Added imports: `Sheet`/`SheetContent`/`SheetHeader`/`SheetTitle`, `AlertTriangle`, `CheckCircle2`, `Clock`, `Sparkles`, `X`, `Eye`, `FileText`, `toast` from sonner.
+  - No env/script/command changes. No breaking API changes. Build compiles successfully (pre-existing `styled-jsx` copy error unrelated).
+
+### 2026-03-02 (d)
+- **Flux Analysis — UI/UX Overhaul to Match Cash App Workbench Pattern**: Redesigned the Flux Analysis page (`app/(main)/reports/analysis/flux-analysis/page.tsx`) for visual consistency.
+  - **Removed header**: Removed sticky `<header>` block with Breadcrumb, icon, title ("Flux Analysis"), description, period/consolidation/currency badges, Export and Create Watch buttons.
+  - **Compact toolbar**: Single toolbar row with: view tab buttons (Income Statement / Balance Sheet / Cash Flow Bridge) as `bg-white text-primary shadow-sm` active state, inline Period/Consolidation/Currency selects, Filters Popover (Materiality, Owner, Status, Exclude Noise), Export button, +Watch button. Compact KPI stat chips on right (Revenue, Gross Margin, Op CF, WC Delta) matching Cash App/One-Click Variance pattern.
+  - **Filters Popover**: Moved Materiality, Owner, Status selects and Exclude Noise checkbox into a `Popover` component with active filter count badge.
+  - **Native tables**: Replaced all Shadcn `Table`/`TableHeader`/`TableRow`/`TableHead`/`TableBody`/`TableCell` with native `<table>`/`<thead>`/`<tr>`/`<th>`/`<tbody>`/`<td>` elements. Applied consistent `px-3 py-2 text-[11px]` header styling and `border-b border-slate-100` row separators.
+  - **Removed Card wrappers**: Replaced `<Card>` components with plain `<div className="bg-white rounded-lg border border-slate-200">` containers for tab tables, top drivers, AI sidebar sections (AI Analysis, AI Proposed Explanations, Sensitivity Analysis).
+  - **Removed Tabs component**: Replaced Shadcn `Tabs`/`TabsList`/`TabsTrigger`/`TabsContent` with plain buttons + conditional rendering using existing `activeView` state.
+  - **Removed imports**: `Card`, `Table`/`TableBody`/`TableCell`/`TableHead`/`TableHeader`/`TableRow`, `Tabs`/`TabsContent`/`TabsList`/`TabsTrigger`, `Breadcrumb`, `BarChart3`.
+  - **Added imports**: `Popover`/`PopoverContent`/`PopoverTrigger`, `ListFilter`.
+  - AI sidebar, detail drawer, evidence dialog, watch dialog, sensitivity sliders, and all business logic unchanged.
+  - **Mock data fix**: Updated 5 records in `public/data/reports/flux-analysis.json` to have negative variances (Accounts Receivable -$32M, Accounts Payable -$26M, Deferred Revenue -$24M, Cost of Product Revenue -$20M, R&D -$17M) so the One-Click Variance "Top Decreases" table shows data.
+  - No env/script/command changes. No breaking API changes. Build compiles successfully.
+
+### 2026-03-02 (e)
+- **Titles + One-Click Variance Cleanup**: Added compact title to Cash Application layout and removed synthetic data mode from One-Click Variance page.
+  - **Cash Application title** (`layout.tsx`): Added `<div className="px-5 pt-3 pb-1 bg-slate-50">` with `text-sm font-semibold` heading "Cash Application" and `text-[11px] text-slate-500` subtitle above the navigation tabs.
+  - **One-Click Variance cleanup** (`one-click-variance/page.tsx`): Removed synthetic data source entirely — deleted `Transaction` interface, `generateSyntheticData()` function, `rnd()`/`pick()` helpers, `ENTITIES`/`CUSTOMERS`/`MONTH_NAMES` constants, `facts`/`dataSource`/`mode`/`month`/`year`/`entity`/`customerFilter`/`groupBy`/`hasRun` state variables, `years` useMemo, `getPriorPeriod()` function, `analysis` useMemo, `handleRun()` function, data source toggle buttons, MoM/QoQ/YoY mode tabs, month/year selects, Run button, Filters popover (entity/customer/groupBy). Simplified `effectiveGroups` to always use `fluxGrouped`. Removed all `dataSource === 'flux'` conditionals (Status column and AI sparkle icon now always shown). Removed unused imports: `Select`/`SelectContent`/`SelectItem`/`SelectTrigger`/`SelectValue`, `Popover`/`PopoverContent`/`PopoverTrigger`, `ListFilter`, `Play`. Toolbar now has: Search + Download.
+  - No env/script/command changes. No breaking API changes. Build compiles successfully.

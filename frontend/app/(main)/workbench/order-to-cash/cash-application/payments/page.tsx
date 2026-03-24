@@ -1,16 +1,13 @@
 "use client";
 
-import { CashAppSubFilterChips } from "@/components/cash-app/cash-app-sub-filter-chips";
-import { CashAppContextualSubFilters } from "@/components/cash-app/cash-app-contextual-sub-filters";
 import { CashAppEmptyState } from "@/components/cash-app/cash-app-empty-state";
 import { WhyIndicator } from "@/components/cash-app/why-indicator";
 import { PaymentQueuePagination } from "@/components/cash-app/payment-queue-pagination";
-import { SegmentedControl } from "@/components/cash-app/segmented-control";
+import { cn } from "@/lib/utils";
 import { ConfidenceMeter } from "@/components/cash-app/confidence-meter";
 import { TableRowActions } from "@/components/cash-app/table-row-actions";
 import { BulkActionBar } from "@/components/cash-app/bulk-action-bar";
 import { TableSkeletonRows } from "@/components/cash-app/table-skeleton-rows";
-import { DensityToggle } from "@/components/cash-app/density-toggle";
 import { EmailComposerDialog } from "@/components/cash-app/email-composer-dialog";
 import { Payment } from "@/lib/cash-app-types";
 import { Badge } from "@/components/ui/badge";
@@ -39,7 +36,6 @@ import {
   Target,
   SlidersHorizontal,
   ArrowLeftRight,
-  BookOpen,
   Search,
   ListFilter,
 } from "lucide-react";
@@ -70,29 +66,102 @@ import { usePaymentsQueue } from "./hooks/usePaymentsQueue";
 export default function PaymentsQueuePage() {
   const q = usePaymentsQueue();
 
+  const queueStatusFilter = q.isCriticalFilterActive
+    ? "critical"
+    : q.filters.status !== "all"
+      ? q.filters.status
+      : "all";
+
   const activeFilterCount = [
-    q.filters.bankAccount,
-    q.filters.dateRange,
-    q.filters.amountRange,
-    q.filters.method,
-    q.filters.remittanceSource,
-    q.filters.assignedTo,
-  ].filter((v) => v !== "all").length;
+    q.filters.bankAccount !== "all",
+    q.filters.dateRange !== "all",
+    q.filters.amountRange !== "all",
+    q.filters.method !== "all",
+    q.filters.jeStatus !== "all",
+    q.filters.remittanceSource !== "all",
+    q.filters.assignedTo !== "all",
+    queueStatusFilter !== "all",
+    q.activeSubFilter !== "",
+    q.activeContextualFilter !== "",
+  ].filter(Boolean).length;
+
+  const queueStatusLabels: Record<string, string> = {
+    all: "All",
+    AutoMatched: "Auto-Matched",
+    Exception: "Exceptions",
+    critical: "Critical",
+    PendingToPost: "Pending to Post",
+    SettlementPending: "Settlement Pending",
+  };
+
+  const autoMatchedFilterLabels: Record<string, string> = {
+    exact: "Exact",
+    tolerance: "Tolerance",
+    intercompany: "Intercompany",
+    warnings: "Warnings",
+    bulkReady: "Bulk-Ready",
+  };
+
+  const contextualFilterLabels: Record<string, string> = {
+    MissingRemittance: "Missing Remittance",
+    InvoiceIssue: "Invoice Issue",
+    AmountMismatch: "Amount Mismatch",
+    MultiEntity: "Multi-Entity",
+    JERequired: "JE Required",
+    DuplicateSuspected: "Duplicate Suspected",
+    RemittanceParseError: "Remittance Parse Error",
+    ACHFailure: "ACH Failure",
+    UnappliedOnAccount: "Unapplied On Account",
+    HighValue: "High Value",
+    SLABreach: "SLA Breach",
+    NetSuiteSyncRisk: "NetSuite Sync Risk",
+    PostingBlocked: "Posting Blocked",
+    CustomerEscalation: "Customer Escalation",
+    SettlementRisk: "Settlement Risk",
+    READY: "Ready",
+    APPROVAL_NEEDED: "Approval Needed",
+    JE_APPROVAL_PENDING: "JE Approval Pending",
+    SYNC_PENDING: "Sync Pending",
+    FAILED: "Failed",
+    BANK_MATCH_PENDING: "Bank Match Pending",
+  };
 
   const getStatusBadge = (status: Payment["status"]) => {
-    const variants: Record<Payment["status"], any> = {
-      New: "outline",
-      AutoMatched: "default",
-      Exception: "destructive",
-      SettlementPending: "secondary",
-      PendingToPost: "secondary",
-      Posted: "default",
-      Reconciled: "default",
-      Void: "outline",
-      Failed: "destructive",
-      NonAR: "outline",
+    const styles: Record<Payment["status"], string> = {
+      New: "bg-slate-50 text-slate-700 border-slate-200",
+      AutoMatched: "bg-blue-50 text-blue-700 border-blue-200",
+      Exception: "bg-rose-50 text-rose-700 border-rose-200",
+      SettlementPending: "bg-amber-50 text-amber-700 border-amber-200",
+      PendingToPost: "bg-sky-50 text-sky-700 border-sky-200",
+      Posted: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      Reconciled: "bg-teal-50 text-teal-700 border-teal-200",
+      Void: "bg-slate-50 text-slate-600 border-slate-200",
+      Failed: "bg-red-50 text-red-700 border-red-200",
+      NonAR: "bg-zinc-50 text-zinc-700 border-zinc-200",
     };
-    return <Badge variant={variants[status]}>{status}</Badge>;
+    const labels: Record<Payment["status"], string> = {
+      New: "New",
+      AutoMatched: "Auto-Matched",
+      Exception: "Exception",
+      SettlementPending: "Settlement Pending",
+      PendingToPost: "Pending to Post",
+      Posted: "Posted",
+      Reconciled: "Reconciled",
+      Void: "Void",
+      Failed: "Failed",
+      NonAR: "Non-AR",
+    };
+    return (
+      <Badge
+        variant="outline"
+        className={cn(
+          "min-w-[104px] justify-center px-2 py-0.5 text-[11px] font-medium leading-4 whitespace-nowrap",
+          styles[status] || "bg-slate-50 text-slate-700 border-slate-200"
+        )}
+      >
+        {labels[status] || status}
+      </Badge>
+    );
   };
 
   const getMatchTypeBadge = (matchType?: string) => {
@@ -108,8 +177,11 @@ export default function PaymentsQueuePage() {
       INTERCOMPANY: "Intercompany",
     };
     return (
-      <Badge variant="outline" className={styles[matchType]}>
-        {labels[matchType]}
+      <Badge
+        variant="outline"
+        className={styles[matchType] || "bg-slate-100 text-slate-700 border-slate-300"}
+      >
+        {labels[matchType] || matchType}
       </Badge>
     );
   };
@@ -122,69 +194,273 @@ export default function PaymentsQueuePage() {
         : payment.bank_match_ready === false
           ? "RISK"
           : null);
-    if (!status) {
+    if (!status || status === "PENDING") {
       return <span className="text-xs text-slate-400">—</span>;
     }
     const styleMap: Record<string, string> = {
       READY: "bg-emerald-50 text-emerald-700 border-emerald-200",
       RISK: "bg-amber-50 text-amber-700 border-amber-200",
-      PENDING: "bg-slate-100 text-slate-700 border-slate-300",
     };
-    const label = status === "READY" ? "Ready" : status === "RISK" ? "Risk" : "Pending";
+    const label = status === "READY" ? "Ready" : "Risk";
     return (
-      <Badge variant="outline" className={`${styleMap[status] || styleMap.PENDING} text-xs`}>
+      <Badge variant="outline" className={`${styleMap[status]} text-xs`}>
         {label}
       </Badge>
     );
   };
 
-  const getExceptionReasonBadge = (payment: Payment) => {
-    const fallback = payment.exceptionType || payment.exception_core_type || null;
-    const label = payment.exception_reason_label || payment.exception_reason_code || fallback;
-    if (!label) return null;
-    return (
-      <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200">
-        {label}
-      </span>
-    );
-  };
+  const showBankMatchColumn = q.filteredPayments.some((payment) => {
+    const status =
+      payment.bank_match_status ||
+      (payment.bank_match_ready === true
+        ? "READY"
+        : payment.bank_match_ready === false
+          ? "RISK"
+          : null);
+    return status === "READY" || status === "RISK";
+  });
+
+  const visibleHeaders = [
+    "Payment #",
+    "Date",
+    "Amount",
+    "Payer Name",
+    "Customer",
+    "Remittance",
+    "Status",
+    "Match Type",
+    ...(showBankMatchColumn ? ["Bank Match"] : []),
+    "Confidence",
+  ];
+  const tableColumnCount = visibleHeaders.length + 1;
 
   return (
     <div className="h-full flex flex-col bg-slate-50">
       <div className="flex-1 overflow-auto">
         <div className="px-5 py-2">
           <div className="mb-2 space-y-1.5">
+            {/* Single row: Search + Filters + Status tabs + KPI stats */}
             <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Search */}
                 <div className="relative">
                   <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
                   <Input
                     placeholder="Search payments..."
                     value={q.filters.search}
                     onChange={(e) => q.setFilters({ ...q.filters, search: e.target.value })}
-                    className="pl-8 w-52 h-7 text-xs bg-white"
+                    className="pl-8 w-44 h-7 text-xs bg-white"
                   />
                 </div>
 
-                {/* More Filters popover */}
+                {/* Filters popover */}
                 <Popover>
                   <PopoverTrigger asChild>
-                    <button className={`flex items-center gap-1.5 h-7 px-2.5 rounded border text-xs font-medium transition-colors ${activeFilterCount > 0 ? "border-blue-400 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:bg-slate-100"}`}>
+                    <button
+                      className={cn(
+                        "flex items-center gap-1.5 h-7 px-2.5 rounded border text-xs font-medium transition-colors",
+                        activeFilterCount > 0
+                          ? "border-primary/40 bg-primary/5 text-primary"
+                          : "border-slate-200 text-slate-600 hover:bg-slate-100"
+                      )}
+                    >
                       <ListFilter className="w-3.5 h-3.5" />
                       Filters
                       {activeFilterCount > 0 && (
-                        <span className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-bold">{activeFilterCount}</span>
+                        <span className="flex items-center justify-center w-4 h-4 rounded-full bg-primary text-white text-[10px] font-bold">
+                          {activeFilterCount}
+                        </span>
                       )}
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent align="start" className="w-72 p-3">
+                  <PopoverContent align="start" className="w-80 p-3">
                     <div className="space-y-3">
-                      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Filters</div>
+                      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        Filters
+                      </div>
                       <div className="space-y-2.5">
                         <div>
-                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Bank Account</label>
-                          <Select value={q.filters.bankAccount} onValueChange={(v) => q.setFilters({ ...q.filters, bankAccount: v })}>
-                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All Accounts" /></SelectTrigger>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                            Queue Status
+                          </label>
+                          <Select value={queueStatusFilter} onValueChange={q.handleQueueStatusChange}>
+                            <SelectTrigger className="h-7 text-xs">
+                              <SelectValue placeholder="All" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All</SelectItem>
+                              <SelectItem value="AutoMatched">Auto-Matched</SelectItem>
+                              <SelectItem value="Exception">Exceptions</SelectItem>
+                              <SelectItem value="critical">Critical</SelectItem>
+                              <SelectItem value="PendingToPost">Pending to Post</SelectItem>
+                              <SelectItem value="SettlementPending">Settlement Pending</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {queueStatusFilter === "AutoMatched" && (
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                              Match Type
+                            </label>
+                            <Select
+                              value={q.activeSubFilter || "all"}
+                              onValueChange={q.handleAutoMatchedSubFilterChange}
+                            >
+                              <SelectTrigger className="h-7 text-xs">
+                                <SelectValue placeholder="All Match Types" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Match Types</SelectItem>
+                                <SelectItem value="exact">Exact ({q.subFilterCounts.exact})</SelectItem>
+                                <SelectItem value="tolerance">
+                                  Tolerance ({q.subFilterCounts.tolerance})
+                                </SelectItem>
+                                <SelectItem value="intercompany">
+                                  Intercompany ({q.subFilterCounts.intercompany})
+                                </SelectItem>
+                                <SelectItem value="warnings">
+                                  Warnings ({q.subFilterCounts.warnings})
+                                </SelectItem>
+                                <SelectItem value="bulkReady">
+                                  Bulk-Ready ({q.subFilterCounts.bulkReady})
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
+                        {queueStatusFilter === "Exception" && (
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                              Exception Type
+                            </label>
+                            <Select
+                              value={q.activeContextualFilter || "all"}
+                              onValueChange={q.handleContextualSubFilterChange}
+                            >
+                              <SelectTrigger className="h-7 text-xs">
+                                <SelectValue placeholder="All Exception Types" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Exception Types</SelectItem>
+                                <SelectItem value="MissingRemittance">
+                                  Missing Remittance ({q.contextualSubFilterCounts.missingRemittance})
+                                </SelectItem>
+                                <SelectItem value="InvoiceIssue">
+                                  Invoice Issue ({q.contextualSubFilterCounts.invoiceIssue})
+                                </SelectItem>
+                                <SelectItem value="AmountMismatch">
+                                  Amount Mismatch ({q.contextualSubFilterCounts.amountMismatch})
+                                </SelectItem>
+                                <SelectItem value="MultiEntity">
+                                  Multi-Entity ({q.contextualSubFilterCounts.multiEntity})
+                                </SelectItem>
+                                <SelectItem value="JERequired">
+                                  JE Required ({q.contextualSubFilterCounts.jeRequired})
+                                </SelectItem>
+                                <SelectItem value="DuplicateSuspected">
+                                  Duplicate Suspected ({q.contextualSubFilterCounts.duplicateSuspected})
+                                </SelectItem>
+                                <SelectItem value="RemittanceParseError">
+                                  Remittance Parse Error ({q.contextualSubFilterCounts.remittanceParseError})
+                                </SelectItem>
+                                <SelectItem value="ACHFailure">
+                                  ACH Failure ({q.contextualSubFilterCounts.achFailure})
+                                </SelectItem>
+                                <SelectItem value="UnappliedOnAccount">
+                                  Unapplied On Account ({q.contextualSubFilterCounts.unappliedOnAccount})
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
+                        {queueStatusFilter === "critical" && (
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                              Critical Type
+                            </label>
+                            <Select
+                              value={q.activeContextualFilter || "all"}
+                              onValueChange={q.handleContextualSubFilterChange}
+                            >
+                              <SelectTrigger className="h-7 text-xs">
+                                <SelectValue placeholder="All Critical Types" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Critical Types</SelectItem>
+                                <SelectItem value="HighValue">
+                                  High Value ({q.contextualSubFilterCounts.highValue})
+                                </SelectItem>
+                                <SelectItem value="SLABreach">
+                                  SLA Breach ({q.contextualSubFilterCounts.slaBreach})
+                                </SelectItem>
+                                <SelectItem value="NetSuiteSyncRisk">
+                                  NetSuite Sync Risk ({q.contextualSubFilterCounts.netSuiteSyncRisk})
+                                </SelectItem>
+                                <SelectItem value="PostingBlocked">
+                                  Posting Blocked ({q.contextualSubFilterCounts.postingBlocked})
+                                </SelectItem>
+                                <SelectItem value="CustomerEscalation">
+                                  Customer Escalation ({q.contextualSubFilterCounts.customerEscalation})
+                                </SelectItem>
+                                <SelectItem value="SettlementRisk">
+                                  Settlement Risk ({q.contextualSubFilterCounts.settlementRisk})
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
+                        {queueStatusFilter === "PendingToPost" && (
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                              Post Status
+                            </label>
+                            <Select
+                              value={q.activeContextualFilter || "all"}
+                              onValueChange={q.handleContextualSubFilterChange}
+                            >
+                              <SelectTrigger className="h-7 text-xs">
+                                <SelectValue placeholder="All Post Statuses" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Post Statuses</SelectItem>
+                                <SelectItem value="READY">
+                                  Ready ({q.contextualSubFilterCounts.readyToPost})
+                                </SelectItem>
+                                <SelectItem value="APPROVAL_NEEDED">
+                                  Approval Needed ({q.contextualSubFilterCounts.approvalNeeded})
+                                </SelectItem>
+                                <SelectItem value="JE_APPROVAL_PENDING">
+                                  JE Approval Pending ({q.contextualSubFilterCounts.jeApprovalPending})
+                                </SelectItem>
+                                <SelectItem value="SYNC_PENDING">
+                                  Sync Pending ({q.contextualSubFilterCounts.syncPending})
+                                </SelectItem>
+                                <SelectItem value="FAILED">
+                                  Failed ({q.contextualSubFilterCounts.postingFailed})
+                                </SelectItem>
+                                <SelectItem value="BANK_MATCH_PENDING">
+                                  Bank Match Pending ({q.contextualSubFilterCounts.bankMatchPending})
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
+                        <div>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                            Bank Account
+                          </label>
+                          <Select
+                            value={q.filters.bankAccount}
+                            onValueChange={(v) => q.setFilters({ ...q.filters, bankAccount: v })}
+                          >
+                            <SelectTrigger className="h-7 text-xs">
+                              <SelectValue placeholder="All Accounts" />
+                            </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="all">All Accounts</SelectItem>
                               <SelectItem value="us-bank">US Bank - *****4521</SelectItem>
@@ -195,9 +471,16 @@ export default function PaymentsQueuePage() {
                           </Select>
                         </div>
                         <div>
-                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Date Range</label>
-                          <Select value={q.filters.dateRange} onValueChange={(v) => q.setFilters({ ...q.filters, dateRange: v })}>
-                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All Time" /></SelectTrigger>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                            Date Range
+                          </label>
+                          <Select
+                            value={q.filters.dateRange}
+                            onValueChange={(v) => q.setFilters({ ...q.filters, dateRange: v })}
+                          >
+                            <SelectTrigger className="h-7 text-xs">
+                              <SelectValue placeholder="All Time" />
+                            </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="all">All Time</SelectItem>
                               <SelectItem value="today">Today</SelectItem>
@@ -208,9 +491,16 @@ export default function PaymentsQueuePage() {
                           </Select>
                         </div>
                         <div>
-                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Amount Range</label>
-                          <Select value={q.filters.amountRange} onValueChange={(v) => q.setFilters({ ...q.filters, amountRange: v })}>
-                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All Amounts" /></SelectTrigger>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                            Amount Range
+                          </label>
+                          <Select
+                            value={q.filters.amountRange}
+                            onValueChange={(v) => q.setFilters({ ...q.filters, amountRange: v })}
+                          >
+                            <SelectTrigger className="h-7 text-xs">
+                              <SelectValue placeholder="All Amounts" />
+                            </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="all">All Amounts</SelectItem>
                               <SelectItem value="0-10k">$0 - $10,000</SelectItem>
@@ -221,9 +511,16 @@ export default function PaymentsQueuePage() {
                           </Select>
                         </div>
                         <div>
-                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Payment Method</label>
-                          <Select value={q.filters.method} onValueChange={(v) => q.setFilters({ ...q.filters, method: v })}>
-                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All Methods" /></SelectTrigger>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                            Payment Method
+                          </label>
+                          <Select
+                            value={q.filters.method}
+                            onValueChange={(v) => q.setFilters({ ...q.filters, method: v })}
+                          >
+                            <SelectTrigger className="h-7 text-xs">
+                              <SelectValue placeholder="All Methods" />
+                            </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="all">All Methods</SelectItem>
                               <SelectItem value="ACH">ACH</SelectItem>
@@ -234,9 +531,35 @@ export default function PaymentsQueuePage() {
                           </Select>
                         </div>
                         <div>
-                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Remittance Source</label>
-                          <Select value={q.filters.remittanceSource} onValueChange={(v) => q.setFilters({ ...q.filters, remittanceSource: v })}>
-                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All Sources" /></SelectTrigger>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                            JE Status
+                          </label>
+                          <Select
+                            value={q.filters.jeStatus}
+                            onValueChange={(v) => q.setFilters({ ...q.filters, jeStatus: v })}
+                          >
+                            <SelectTrigger className="h-7 text-xs">
+                              <SelectValue placeholder="All" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All</SelectItem>
+                              <SelectItem value="required">JE Required</SelectItem>
+                              <SelectItem value="submitted">JE Submitted</SelectItem>
+                              <SelectItem value="none">No JE</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                            Remittance Source
+                          </label>
+                          <Select
+                            value={q.filters.remittanceSource}
+                            onValueChange={(v) => q.setFilters({ ...q.filters, remittanceSource: v })}
+                          >
+                            <SelectTrigger className="h-7 text-xs">
+                              <SelectValue placeholder="All Sources" />
+                            </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="all">All Sources</SelectItem>
                               <SelectItem value="Email">Email</SelectItem>
@@ -248,9 +571,16 @@ export default function PaymentsQueuePage() {
                           </Select>
                         </div>
                         <div>
-                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Assigned To</label>
-                          <Select value={q.filters.assignedTo} onValueChange={(v) => q.setFilters({ ...q.filters, assignedTo: v })}>
-                            <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Anyone" /></SelectTrigger>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">
+                            Assigned To
+                          </label>
+                          <Select
+                            value={q.filters.assignedTo}
+                            onValueChange={(v) => q.setFilters({ ...q.filters, assignedTo: v })}
+                          >
+                            <SelectTrigger className="h-7 text-xs">
+                              <SelectValue placeholder="Anyone" />
+                            </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="all">Anyone</SelectItem>
                               <SelectItem value="Sarah Chen">Sarah Chen</SelectItem>
@@ -264,7 +594,19 @@ export default function PaymentsQueuePage() {
                       </div>
                       {activeFilterCount > 0 && (
                         <button
-                          onClick={() => q.setFilters({ ...q.filters, bankAccount: "all", dateRange: "all", amountRange: "all", method: "all", remittanceSource: "all", assignedTo: "all" })}
+                          onClick={() => {
+                            q.handleQueueStatusChange("all");
+                            q.setFilters((prev) => ({
+                              ...prev,
+                              bankAccount: "all",
+                              dateRange: "all",
+                              amountRange: "all",
+                              method: "all",
+                              jeStatus: "all",
+                              remittanceSource: "all",
+                              assignedTo: "all",
+                            }));
+                          }}
                           className="w-full text-center text-[11px] text-slate-500 hover:text-red-600 py-1 border-t border-slate-100 mt-1"
                         >
                           Clear all filters
@@ -274,105 +616,132 @@ export default function PaymentsQueuePage() {
                   </PopoverContent>
                 </Popover>
 
-                <SegmentedControl
-                  stats={q.stats}
-                  activeSegment={q.activeSegment}
-                  onSegmentChange={q.handleSegmentChange}
-                  onClearFilter={q.handleClearSegmentFilter}
-                />
-              </div>
-              <DensityToggle density={q.density} onDensityChange={q.setDensity} />
-            </div>
-
-            {/* Sub-filters row */}
-            {(q.filters.status === "AutoMatched" ||
-              q.filters.status === "Exception" ||
-              q.isCriticalFilterActive ||
-              q.filters.status === "PendingToPost" ||
-              q.filters.status === "SettlementPending" ||
-              q.activeSignalFilter) && (
-              <div className="flex items-center gap-1.5 pl-0.5">
-                {q.activeSegment && (
-                  <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide mr-0.5">
-                    {q.activeSegment === "critical"
-                      ? "Critical"
-                      : q.filters.status === "AutoMatched"
-                        ? "Match Type"
-                        : q.filters.status === "Exception"
-                          ? "Exception Type"
-                          : q.filters.status === "SettlementPending"
-                            ? "Settlement Status"
-                            : "Post Status"}
-                    :
-                  </span>
-                )}
-                {q.filters.status === "AutoMatched" && (
-                  <CashAppSubFilterChips
-                    counts={q.subFilterCounts}
-                    activeFilter={q.activeSubFilter}
-                    onFilterClick={q.handleSubFilterClick}
-                  />
-                )}
-                {q.filters.status === "Exception" && (
-                  <CashAppContextualSubFilters
-                    context="exceptions"
-                    counts={q.contextualSubFilterCounts}
-                    activeFilter={q.activeContextualFilter}
-                    onFilterClick={q.handleContextualFilterClick}
-                    onClearFilter={q.handleClearContextualFilter}
-                  />
-                )}
-                {q.isCriticalFilterActive && (
-                  <CashAppContextualSubFilters
-                    context="critical"
-                    counts={q.contextualSubFilterCounts}
-                    activeFilter={q.activeContextualFilter}
-                    onFilterClick={q.handleContextualFilterClick}
-                    onClearFilter={q.handleClearContextualFilter}
-                  />
-                )}
-                {q.filters.status === "PendingToPost" && (
-                  <CashAppContextualSubFilters
-                    context="pendingToPost"
-                    counts={q.contextualSubFilterCounts}
-                    activeFilter={q.activeContextualFilter}
-                    onFilterClick={q.handleContextualFilterClick}
-                    onClearFilter={q.handleClearContextualFilter}
-                  />
-                )}
-                {q.filters.status === "SettlementPending" && (
-                  <CashAppContextualSubFilters
-                    context="settlementPending"
-                    counts={q.contextualSubFilterCounts}
-                    activeFilter={q.activeContextualFilter}
-                    onFilterClick={q.handleContextualFilterClick}
-                    onClearFilter={q.handleClearContextualFilter}
-                  />
-                )}
-                {q.activeSignalFilter && (
-                  <Badge
-                    variant="secondary"
-                    className="flex items-center gap-1 px-2 py-0.5 text-[11px]"
-                  >
-                    <span>Signal: {q.activeSignalFilter}</span>
-                    <button onClick={q.handleClearSignalFilter} className="ml-0.5 hover:text-red-600">
-                      <X className="w-2.5 h-2.5" />
+                {/* Status tabs */}
+                <div className="flex items-center gap-1">
+                  {[
+                    { id: "all", label: "All", count: q.payments.length },
+                    { id: "AutoMatched", label: "Auto-Matched", count: q.stats.autoMatched },
+                    { id: "Exception", label: "Exceptions", count: q.stats.exceptions },
+                    { id: "critical", label: "Critical", count: q.stats.critical },
+                    { id: "PendingToPost", label: "Pending to Post", count: q.stats.pendingToPost },
+                  ].map((seg) => (
+                    <button
+                      key={seg.id}
+                      onClick={() =>
+                        queueStatusFilter === seg.id
+                          ? q.handleQueueStatusChange("all")
+                          : q.handleQueueStatusChange(seg.id)
+                      }
+                      className={cn(
+                        "px-3 py-1.5 text-xs font-medium rounded-md transition-colors",
+                        queueStatusFilter === seg.id
+                          ? "bg-white text-primary shadow-sm border border-slate-200"
+                          : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                      )}
+                    >
+                      {seg.label}
+                      {seg.count !== undefined && (
+                        <span className="ml-1 text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 rounded-full">
+                          {seg.count}
+                        </span>
+                      )}
                     </button>
-                  </Badge>
-                )}
+                  ))}
+                </div>
               </div>
-            )}
+
+              {/* Compact KPI stat chips */}
+              <div className="flex items-center gap-2 text-[11px]">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                  <span className="text-slate-500">Total</span>
+                  <span className="font-semibold text-slate-900">{q.payments.length}</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                  <span className="text-slate-500">Auto-Match</span>
+                  <span className="font-semibold text-green-700">{q.payments.length > 0 ? Math.round((q.stats.autoMatched / q.payments.length) * 100) : 0}%</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                  <span className="text-slate-500">Exceptions</span>
+                  <span className={cn("font-semibold", q.stats.exceptions > 0 ? "text-red-600" : "text-slate-900")}>{q.stats.exceptions}</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                  <span className="text-slate-500">Pending</span>
+                  <span className="font-semibold text-slate-900">{q.stats.pendingToPost}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Active Filter Pills */}
-          {(q.filters.bankAccount !== "all" ||
+          {(queueStatusFilter !== "all" ||
+            q.activeSubFilter !== "" ||
+            q.activeContextualFilter !== "" ||
+            q.activeSignalFilter ||
+            q.filters.bankAccount !== "all" ||
             q.filters.dateRange !== "all" ||
             q.filters.amountRange !== "all" ||
             q.filters.method !== "all" ||
+            q.filters.jeStatus !== "all" ||
             q.filters.remittanceSource !== "all" ||
             q.filters.assignedTo !== "all") && (
             <div className="flex items-center gap-1.5 flex-wrap mb-2">
               <span className="text-[11px] font-medium text-slate-500">Filters:</span>
+              {queueStatusFilter !== "all" && (
+                <Badge
+                  variant="secondary"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
+                >
+                  Queue: {queueStatusLabels[queueStatusFilter] || queueStatusFilter}
+                  <button
+                    onClick={() => q.handleQueueStatusChange("all")}
+                    className="ml-0.5 hover:text-red-600"
+                  >
+                    <X className="w-2.5 h-2.5" />
+                  </button>
+                </Badge>
+              )}
+              {q.activeSubFilter !== "" && (
+                <Badge
+                  variant="secondary"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
+                >
+                  Match Type: {autoMatchedFilterLabels[q.activeSubFilter] || q.activeSubFilter}
+                  <button
+                    onClick={() => q.handleAutoMatchedSubFilterChange("all")}
+                    className="ml-0.5 hover:text-red-600"
+                  >
+                    <X className="w-2.5 h-2.5" />
+                  </button>
+                </Badge>
+              )}
+              {q.activeContextualFilter !== "" && (
+                <Badge
+                  variant="secondary"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
+                >
+                  Focus: {contextualFilterLabels[q.activeContextualFilter] || q.activeContextualFilter}
+                  <button
+                    onClick={() => q.handleContextualSubFilterChange("all")}
+                    className="ml-0.5 hover:text-red-600"
+                  >
+                    <X className="w-2.5 h-2.5" />
+                  </button>
+                </Badge>
+              )}
+              {q.activeSignalFilter && (
+                <Badge
+                  variant="secondary"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
+                >
+                  Signal: {q.activeSignalFilter}
+                  <button
+                    onClick={() => q.handleQueueStatusChange("all")}
+                    className="ml-0.5 hover:text-red-600"
+                  >
+                    <X className="w-2.5 h-2.5" />
+                  </button>
+                </Badge>
+              )}
               {q.filters.bankAccount !== "all" && (
                 <Badge
                   variant="secondary"
@@ -447,6 +816,27 @@ export default function PaymentsQueuePage() {
                   </button>
                 </Badge>
               )}
+              {q.filters.jeStatus !== "all" && (
+                <Badge
+                  variant="secondary"
+                  className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200"
+                >
+                  JE:{" "}
+                  {q.filters.jeStatus === "required"
+                    ? "Required"
+                    : q.filters.jeStatus === "submitted"
+                      ? "Submitted"
+                      : q.filters.jeStatus === "none"
+                        ? "No JE"
+                        : q.filters.jeStatus}
+                  <button
+                    onClick={() => q.setFilters({ ...q.filters, jeStatus: "all" })}
+                    className="ml-0.5 hover:text-red-600"
+                  >
+                    <X className="w-2.5 h-2.5" />
+                  </button>
+                </Badge>
+              )}
               {q.filters.remittanceSource !== "all" && (
                 <Badge
                   variant="secondary"
@@ -476,17 +866,19 @@ export default function PaymentsQueuePage() {
                 </Badge>
               )}
               <button
-                onClick={() =>
-                  q.setFilters({
-                    ...q.filters,
+                onClick={() => {
+                  q.handleQueueStatusChange("all");
+                  q.setFilters((prev) => ({
+                    ...prev,
                     bankAccount: "all",
                     dateRange: "all",
                     amountRange: "all",
                     method: "all",
+                    jeStatus: "all",
                     remittanceSource: "all",
                     assignedTo: "all",
-                  })
-                }
+                  }));
+                }}
                 className="text-[11px] text-slate-500 hover:text-red-600 underline ml-0.5"
               >
                 Clear all
@@ -550,7 +942,7 @@ export default function PaymentsQueuePage() {
                               className="border-slate-300"
                             />
                           </th>
-                          {["Payment #", "Date", "Amount", "Payer Name", "Customer", "Remittance", "Status", "Match Type", "JE", "Bank Match", "Confidence", "Actions"].map((header) => (
+                          {visibleHeaders.map((header) => (
                             <th
                               key={header}
                               className="px-3 py-2 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider"
@@ -562,13 +954,13 @@ export default function PaymentsQueuePage() {
                       </thead>
                       <tbody className="divide-y divide-slate-100 bg-white">
                         {q.isLoading ? (
-                          <TableSkeletonRows rowCount={q.pageSize} columnCount={13} />
+                          <TableSkeletonRows rowCount={q.pageSize} columnCount={tableColumnCount} />
                         ) : (
                           <>
                             {q.showSelectAllBanner && (
                               <tr className="bg-blue-50 border-b border-blue-200">
                                 <td
-                                  colSpan={13}
+                                  colSpan={tableColumnCount}
                                   className="px-3 py-1.5"
                                 >
                                   <div className="flex items-center justify-between">
@@ -594,15 +986,12 @@ export default function PaymentsQueuePage() {
                             {q.paginatedPayments.map((payment) => {
                               const isSelected = q.selectedIds.includes(payment.id);
                               const isHovered = q.hoveredRowId === payment.id;
-                              const isCritical =
-                                payment.tags?.includes("High Priority") || payment.amount > 100000;
                               return (
                                 <tr
                                   key={payment.id}
                                   className={`
                                     relative cursor-pointer transition-all duration-150 ease-out
                                     ${isSelected ? "bg-blue-50" : isHovered ? "bg-slate-50" : "bg-white"}
-                                    ${isCritical ? "border-l-2 border-l-red-500" : isSelected ? "border-l-2 border-l-blue-500" : ""}
                                   `}
                                   onMouseEnter={() => q.setHoveredRowId(payment.id)}
                                   onMouseLeave={() => q.setHoveredRowId(null)}
@@ -614,7 +1003,6 @@ export default function PaymentsQueuePage() {
                                 >
                                   <td className={`px-3 py-1.5`}>
                                     <div className="flex items-center gap-2">
-                                      {isCritical && <AlertCircle className="w-3.5 h-3.5 text-red-500" />}
                                       <Checkbox
                                         checked={isSelected}
                                         onCheckedChange={(checked) => q.handleSelectPayment(payment.id, checked as boolean)}
@@ -641,16 +1029,15 @@ export default function PaymentsQueuePage() {
                                   <td className={`px-3 py-1.5 text-xs text-slate-500`}>
                                     {payment.remittanceSource}
                                   </td>
-                                  <td className={`px-3 py-1.5`}>
+                                  <td className={`px-3 py-1.5 whitespace-nowrap`}>
                                     <div className="flex flex-col gap-1">
                                       {getStatusBadge(
                                         payment.je_workflow_state === "POSTED" ? "Posted" : payment.status
                                       )}
-                                      {payment.status === "Exception" && getExceptionReasonBadge(payment)}
                                     </div>
                                   </td>
-                                  <td className={`px-3 py-1.5`}>
-                                    {payment.status === "AutoMatched" ? (
+                                  <td className={`px-3 py-1.5 whitespace-nowrap`}>
+                                    {payment.match_type ? (
                                       <div className="flex items-center gap-1.5">
                                         {payment.match_type === "EXACT" && <Target className="w-3.5 h-3.5 text-emerald-600" />}
                                         {payment.match_type === "TOLERANCE" && <SlidersHorizontal className="w-3.5 h-3.5 text-blue-600" />}
@@ -661,42 +1048,30 @@ export default function PaymentsQueuePage() {
                                       <span className="text-xs text-slate-400">-</span>
                                     )}
                                   </td>
-                                  <td className={`px-3 py-1.5`}>
-                                    {payment.je_flow_state === "SUBMITTED" ? (
-                                      <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300 text-xs">
-                                        Pending
-                                      </Badge>
-                                    ) : payment.je_required ? (
-                                      <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300 text-xs">
-                                        <BookOpen className="w-3 h-3 mr-1" />
-                                        JE
-                                      </Badge>
-                                    ) : (
-                                      <span className="text-xs text-slate-400">-</span>
-                                    )}
-                                  </td>
-                                  <td className={`px-3 py-1.5`}>
-                                    {getBankMatchBadge(payment)}
-                                  </td>
+                                  {showBankMatchColumn && (
+                                    <td className={`px-3 py-1.5 whitespace-nowrap`}>
+                                      {getBankMatchBadge(payment)}
+                                    </td>
+                                  )}
                                   <td className={`px-3 py-1.5`}>
                                     <div className="flex items-center gap-2">
                                       <ConfidenceMeter confidence={payment.confidenceScore} />
                                       <WhyIndicator explainability={payment.explainability} />
+                                      {isSelected && (
+                                        <TableRowActions
+                                          payment={payment}
+                                          onViewDetails={q.handleRowClick}
+                                          onAssign={q.handleAssignPayment}
+                                          onSplit={q.handleSplitPayment}
+                                          onCreateJE={q.handleCreateJE}
+                                          onApprovePost={q.handleApprovePost}
+                                          showPrimaryAction={
+                                            payment.status === "AutoMatched" || payment.status === "PendingToPost"
+                                          }
+                                          isHovered={isSelected}
+                                        />
+                                      )}
                                     </div>
-                                  </td>
-                                  <td className={`px-3 py-1.5`}>
-                                    <TableRowActions
-                                      payment={payment}
-                                      onViewDetails={q.handleRowClick}
-                                      onAssign={q.handleAssignPayment}
-                                      onSplit={q.handleSplitPayment}
-                                      onCreateJE={q.handleCreateJE}
-                                      onApprovePost={q.handleApprovePost}
-                                      showPrimaryAction={
-                                        payment.status === "AutoMatched" || payment.status === "PendingToPost"
-                                      }
-                                      isHovered={isHovered}
-                                    />
                                   </td>
                                 </tr>
                               );

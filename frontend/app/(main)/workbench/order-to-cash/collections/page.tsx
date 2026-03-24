@@ -45,6 +45,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Download,
@@ -53,22 +54,16 @@ import {
   DollarSign,
   AlertTriangle,
   X,
-  Wallet,
   ExternalLink,
   Loader2,
   TrendingUp,
-  Users,
-  Clock,
-  HandCoins,
   CheckCircle,
-  CalendarClock,
   Search,
+  ListFilter,
   ArrowRight,
   Eye,
   FileText,
   MessageSquare,
-  Pause,
-  Play,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
@@ -77,13 +72,13 @@ import {
   Smartphone,
   Globe,
   Plus,
-  CreditCard,
   List,
   LayoutList,
+  AlertCircle,
+  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import Breadcrumb from "@/components/layout/breadcrumb";
 import {
   useCollections,
   usePromisesToPay,
@@ -111,7 +106,7 @@ import type {
 // Types
 // ===========================================================================
 
-type WorkbenchTab = "accounts" | "dunning" | "promises" | "correspondence";
+type WorkbenchTab = "accounts" | "dunning" | "promises" | "correspondence" | "disputes";
 type QuickView = "all" | "active" | "in-progress" | "resolved";
 
 // ===========================================================================
@@ -297,6 +292,7 @@ const PROMISE_STATUS_OPTIONS: { value: string; label: string }[] = [
 const PROMISE_METHOD_OPTIONS: { value: string; label: string }[] = [
   { value: "All", label: "All Methods" },
   { value: "ACH", label: "ACH" },
+  { value: "Check", label: "Check" },
   { value: "Credit Card", label: "Credit Card" },
   { value: "Wire", label: "Wire" },
 ];
@@ -375,6 +371,121 @@ const CHANNEL_COLORS: Record<CorrespondenceChannel, string> = {
   Letter: "#f59e0b",
   SMS: "#a855f7",
   Portal: "#6366f1",
+};
+
+// ===========================================================================
+// Disputes tab types, constants & mock data
+// ===========================================================================
+
+type DisputeReason = "Price Discrepancy" | "Damaged Goods" | "Service Issue" | "Billing Error" | "Warranty Claim";
+type DisputeStatus = "Open" | "Under Review" | "Escalated" | "Resolved" | "Closed";
+type DisputePriority = "High" | "Medium" | "Low";
+
+interface DisputeRecord {
+  id: string;
+  customerName: string;
+  invoiceNumber: string;
+  disputeAmount: number;
+  originalAmount: number;
+  reason: DisputeReason;
+  status: DisputeStatus;
+  priority: DisputePriority;
+  createdDate: string;
+  dueDate: string;
+  assignee: string;
+  aging: number;
+}
+
+const MOCK_DISPUTES: DisputeRecord[] = [
+  { id: "DSP-001", customerName: "Acme Corporation", invoiceNumber: "INV-2026-1042", disputeAmount: 45000, originalAmount: 120000, reason: "Price Discrepancy", status: "Open", priority: "High", createdDate: "2026-01-15", dueDate: "2026-02-28", assignee: "Sarah Chen", aging: 39 },
+  { id: "DSP-002", customerName: "Globex Industries", invoiceNumber: "INV-2026-1078", disputeAmount: 12500, originalAmount: 38000, reason: "Damaged Goods", status: "Under Review", priority: "Medium", createdDate: "2026-02-01", dueDate: "2026-03-15", assignee: "Mike Johnson", aging: 22 },
+  { id: "DSP-003", customerName: "Initech LLC", invoiceNumber: "INV-2026-0987", disputeAmount: 150000, originalAmount: 310000, reason: "Service Issue", status: "Escalated", priority: "High", createdDate: "2026-01-09", dueDate: "2026-02-20", assignee: "Lisa Wang", aging: 45 },
+  { id: "DSP-004", customerName: "Wayne Enterprises", invoiceNumber: "INV-2026-1105", disputeAmount: 8700, originalAmount: 25000, reason: "Billing Error", status: "Resolved", priority: "Low", createdDate: "2026-02-10", dueDate: "2026-03-10", assignee: "David Park", aging: 13 },
+  { id: "DSP-005", customerName: "Stark Solutions", invoiceNumber: "INV-2026-1120", disputeAmount: 67000, originalAmount: 185000, reason: "Warranty Claim", status: "Open", priority: "High", createdDate: "2026-02-05", dueDate: "2026-03-05", assignee: "Sarah Chen", aging: 18 },
+  { id: "DSP-006", customerName: "Umbrella Corp", invoiceNumber: "INV-2026-0945", disputeAmount: 3200, originalAmount: 9500, reason: "Price Discrepancy", status: "Closed", priority: "Low", createdDate: "2026-02-18", dueDate: "2026-03-18", assignee: "Emily Roberts", aging: 5 },
+  { id: "DSP-007", customerName: "Cyberdyne Systems", invoiceNumber: "INV-2026-1060", disputeAmount: 28900, originalAmount: 74000, reason: "Damaged Goods", status: "Under Review", priority: "Medium", createdDate: "2026-01-28", dueDate: "2026-03-01", assignee: "Mike Johnson", aging: 26 },
+  { id: "DSP-008", customerName: "Massive Dynamic", invoiceNumber: "INV-2026-1089", disputeAmount: 95000, originalAmount: 220000, reason: "Service Issue", status: "Escalated", priority: "High", createdDate: "2026-01-20", dueDate: "2026-02-25", assignee: "Lisa Wang", aging: 34 },
+  { id: "DSP-009", customerName: "Hooli Inc", invoiceNumber: "INV-2026-1130", disputeAmount: 5400, originalAmount: 16000, reason: "Billing Error", status: "Resolved", priority: "Low", createdDate: "2026-02-20", dueDate: "2026-03-20", assignee: "David Park", aging: 3 },
+  { id: "DSP-010", customerName: "Oscorp Technologies", invoiceNumber: "INV-2026-1098", disputeAmount: 41500, originalAmount: 98000, reason: "Warranty Claim", status: "Open", priority: "Medium", createdDate: "2026-02-08", dueDate: "2026-03-08", assignee: "Sarah Chen", aging: 15 },
+];
+
+const MOCK_TIMELINES: Record<string, { date: string; description: string }[]> = {
+  "DSP-001": [
+    { date: "2026-01-15", description: "Dispute filed by Acme Corporation citing pricing mismatch on contract terms." },
+    { date: "2026-01-18", description: "Assigned to Sarah Chen for initial review." },
+    { date: "2026-01-25", description: "Customer provided supporting purchase order documentation." },
+    { date: "2026-02-05", description: "Internal pricing audit initiated for contract INV-2026-1042." },
+  ],
+  "DSP-002": [
+    { date: "2026-02-01", description: "Dispute raised for damaged shipment received at Globex warehouse." },
+    { date: "2026-02-03", description: "Photographic evidence submitted by customer logistics team." },
+    { date: "2026-02-10", description: "Carrier claim filed; under review by Mike Johnson." },
+  ],
+  "DSP-003": [
+    { date: "2026-01-09", description: "Initech escalated SLA breach complaint covering Q4 service delivery." },
+    { date: "2026-01-14", description: "Service delivery logs pulled for analysis." },
+    { date: "2026-01-22", description: "Escalated to VP of Operations for resolution." },
+    { date: "2026-02-01", description: "Mediation meeting scheduled with Initech leadership." },
+  ],
+};
+
+const DEFAULT_TIMELINE = [
+  { date: "2026-02-01", description: "Dispute created and logged in the system." },
+  { date: "2026-02-05", description: "Assigned to analyst for initial review." },
+  { date: "2026-02-12", description: "Supporting documentation requested from customer." },
+];
+
+const DISPUTE_STATUS_OPTIONS: { value: string; label: string }[] = [
+  { value: "all", label: "All Statuses" },
+  { value: "Open", label: "Open" },
+  { value: "Under Review", label: "Under Review" },
+  { value: "Escalated", label: "Escalated" },
+  { value: "Resolved", label: "Resolved" },
+  { value: "Closed", label: "Closed" },
+];
+
+const DISPUTE_PRIORITY_OPTIONS: { value: string; label: string }[] = [
+  { value: "all", label: "All Priorities" },
+  { value: "High", label: "High" },
+  { value: "Medium", label: "Medium" },
+  { value: "Low", label: "Low" },
+];
+
+const DISPUTE_REASON_OPTIONS: { value: string; label: string }[] = [
+  { value: "all", label: "All Reasons" },
+  { value: "Price Discrepancy", label: "Price Discrepancy" },
+  { value: "Damaged Goods", label: "Damaged Goods" },
+  { value: "Service Issue", label: "Service Issue" },
+  { value: "Billing Error", label: "Billing Error" },
+  { value: "Warranty Claim", label: "Warranty Claim" },
+];
+
+const DISPUTE_STATUS_BADGE: Record<DisputeStatus, string> = {
+  Open: "bg-blue-50 text-blue-700 border-blue-200",
+  "Under Review": "bg-amber-50 text-amber-700 border-amber-200",
+  Escalated: "bg-red-50 text-red-700 border-red-200",
+  Resolved: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  Closed: "bg-slate-100 text-slate-500 border-slate-200",
+};
+
+const DISPUTE_PRIORITY_BADGE: Record<DisputePriority, string> = {
+  High: "bg-red-50 text-red-700 border-red-200",
+  Medium: "bg-amber-50 text-amber-700 border-amber-200",
+  Low: "bg-slate-100 text-slate-500 border-slate-200",
+};
+
+const DISPUTE_REASON_BADGE: Record<DisputeReason, string> = {
+  "Price Discrepancy": "bg-violet-50 text-violet-700 border-violet-200",
+  "Damaged Goods": "bg-orange-50 text-orange-700 border-orange-200",
+  "Service Issue": "bg-rose-50 text-rose-700 border-rose-200",
+  "Billing Error": "bg-cyan-50 text-cyan-700 border-cyan-200",
+  "Warranty Claim": "bg-teal-50 text-teal-700 border-teal-200",
+};
+
+const getAgingDisplay = (aging: number) => {
+  if (aging > 30) return "text-red-600";
+  if (aging > 15) return "text-amber-600";
+  return "text-emerald-600";
 };
 
 // ===========================================================================
@@ -515,7 +626,7 @@ function StepTimeline({
                   )}
                   {isCurrent && (
                     <div className="flex items-center gap-1 text-blue-600 font-medium">
-                      <Clock className="h-3 w-3" />
+                      <Loader2 className="h-3 w-3" />
                       In Progress
                     </div>
                   )}
@@ -602,6 +713,16 @@ export default function CollectionsWorkbenchPage() {
   const [formContact, setFormContact] = useState("");
   const [formOutcome, setFormOutcome] = useState("");
   const [formDuration, setFormDuration] = useState("");
+
+  // ========================================================================
+  // DISPUTES TAB STATE
+  // ========================================================================
+  const [disputeSearch, setDisputeSearch] = useState("");
+  const [disputeStatusFilter, setDisputeStatusFilter] = useState("all");
+  const [disputePriorityFilter, setDisputePriorityFilter] = useState("all");
+  const [disputeReasonFilter, setDisputeReasonFilter] = useState("all");
+  const [selectedDispute, setSelectedDispute] = useState<DisputeRecord | null>(null);
+  const [disputeSheetOpen, setDisputeSheetOpen] = useState(false);
 
   // ========================================================================
   // DATA HOOKS
@@ -704,6 +825,12 @@ export default function CollectionsWorkbenchPage() {
     return result;
   }, [dunningSequences, dunningStatusFilter, dunningSearch]);
 
+  const dunningStatusCounts = useMemo(() => {
+    const counts: Record<string, number> = { Active: 0, Paused: 0, Completed: 0, Cancelled: 0 };
+    dunningSequences.forEach((s) => { counts[s.status] = (counts[s.status] || 0) + 1; });
+    return counts;
+  }, [dunningSequences]);
+
   // ========================================================================
   // PROMISES COMPUTED
   // ========================================================================
@@ -796,6 +923,29 @@ export default function CollectionsWorkbenchPage() {
     all.sort();
     return all;
   }, [correspondence, allRecords]);
+
+  // ========================================================================
+  // DISPUTES COMPUTED
+  // ========================================================================
+
+  const filteredDisputes = useMemo(() => {
+    let result = [...MOCK_DISPUTES];
+    if (disputeSearch.trim()) {
+      const q = disputeSearch.toLowerCase();
+      result = result.filter((d) => d.customerName.toLowerCase().includes(q) || d.invoiceNumber.toLowerCase().includes(q) || d.id.toLowerCase().includes(q));
+    }
+    if (disputeStatusFilter !== "all") result = result.filter((d) => d.status === disputeStatusFilter);
+    if (disputePriorityFilter !== "all") result = result.filter((d) => d.priority === disputePriorityFilter);
+    if (disputeReasonFilter !== "all") result = result.filter((d) => d.reason === disputeReasonFilter);
+    return result;
+  }, [disputeSearch, disputeStatusFilter, disputePriorityFilter, disputeReasonFilter]);
+
+  const disputeKpis = useMemo(() => {
+    const open = MOCK_DISPUTES.filter((d) => d.status === "Open" || d.status === "Under Review" || d.status === "Escalated");
+    const totalDisputedAmount = MOCK_DISPUTES.reduce((s, d) => s + d.disputeAmount, 0);
+    const avgAging = MOCK_DISPUTES.length > 0 ? Math.round(MOCK_DISPUTES.reduce((s, d) => s + d.aging, 0) / MOCK_DISPUTES.length) : 0;
+    return { total: MOCK_DISPUTES.length, openCount: open.length, totalDisputedAmount, avgAging };
+  }, []);
 
   // ========================================================================
   // ACCOUNTS CALLBACKS
@@ -899,775 +1049,32 @@ export default function CollectionsWorkbenchPage() {
   };
 
   // ========================================================================
-  // KPI RENDERING (per tab)
+  // FILTER ACTIVE COUNT (for filter popover badge)
   // ========================================================================
 
-  const renderKpis = () => {
+  const activeFilterCount = useMemo(() => {
     if (activeTab === "accounts") {
-      return (
-        <div className="grid grid-cols-4 gap-3 mt-3">
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100">
-              <DollarSign className="h-4 w-4 text-blue-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Total Outstanding</div>
-              <div className="text-lg font-bold text-slate-900">{fmt(acctKpis.totalOutstanding)}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-100">
-              <Clock className="h-4 w-4 text-orange-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Past Due</div>
-              <div className="text-lg font-bold text-slate-900">{fmt(acctKpis.pastDue)}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
-              <Users className="h-4 w-4 text-indigo-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Active Records</div>
-              <div className="text-lg font-bold text-slate-900">{acctKpis.activeCount}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-100">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Critical / High</div>
-              <div className="text-lg font-bold text-slate-900">{acctKpis.critHigh}</div>
-            </div>
-          </div>
-        </div>
-      );
+      return [collectorFilter !== "all", severityFilter !== "all"].filter(Boolean).length;
     }
-
     if (activeTab === "dunning") {
-      return (
-        <div className="grid grid-cols-4 gap-3 mt-3">
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100">
-              <Mail className="h-4 w-4 text-blue-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Active Sequences</div>
-              <div className="text-lg font-bold text-slate-900">{dunningKpis.activeCount}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-100">
-              <DollarSign className="h-4 w-4 text-red-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Under Dunning</div>
-              <div className="text-lg font-bold text-red-700">{formatUsd(dunningKpis.totalAmount)}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
-              <TrendingUp className="h-4 w-4 text-indigo-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Avg Progress</div>
-              <div className="text-lg font-bold text-slate-900">{dunningKpis.avgProgress}%</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100">
-              <AlertTriangle className="h-4 w-4 text-amber-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Actions Due Today</div>
-              <div className={cn("text-lg font-bold", dunningKpis.actionsDueToday > 0 ? "text-amber-700" : "text-slate-900")}>{dunningKpis.actionsDueToday}</div>
-            </div>
-          </div>
-        </div>
-      );
+      return dunningStatusFilter !== "All" ? 1 : 0;
     }
-
     if (activeTab === "promises") {
-      return (
-        <div className="grid grid-cols-4 gap-3 mt-3">
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100">
-              <DollarSign className="h-4 w-4 text-blue-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Total Promised</div>
-              <div className="text-lg font-bold text-slate-900">{formatUsdCompact(promiseKpis.totalPromised)}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Total Received</div>
-              <div className="text-lg font-bold text-green-700">{formatUsdCompact(promiseKpis.totalReceived)}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100">
-              <TrendingUp className="h-4 w-4 text-green-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">Fulfillment Rate</div>
-              <div className="text-lg font-bold text-green-700">{promiseKpis.fulfillmentRate}%</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-100">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-            </div>
-            <div>
-              <div className="text-xs text-slate-500 font-medium">At Risk</div>
-              <div className="text-lg font-bold text-red-700">{promiseKpis.atRiskCount}</div>
-            </div>
-          </div>
-        </div>
-      );
+      return [promiseStatusFilter !== "All", promiseMethodFilter !== "All", promiseSortBy !== "dueAsc"].filter(Boolean).length;
     }
-
-    // correspondence
-    return (
-      <div className="grid grid-cols-4 gap-3 mt-3">
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
-            <MessageSquare className="h-4 w-4 text-indigo-600" />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500 font-medium">Total Correspondence</div>
-            <div className="text-lg font-bold text-slate-900">{corrKpis.total}</div>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100">
-            <Clock className="h-4 w-4 text-blue-600" />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500 font-medium">This Week</div>
-            <div className="text-lg font-bold text-slate-900">{corrKpis.thisWeek}</div>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100">
-            <ArrowUpRight className="h-4 w-4 text-green-600" />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500 font-medium">Outbound / Inbound</div>
-            <div className="text-lg font-bold text-slate-900">{corrKpis.outbound} <span className="text-sm font-normal text-slate-400">/</span> {corrKpis.inbound}</div>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100">
-            <Phone className="h-4 w-4 text-amber-600" />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500 font-medium">Channels Active</div>
-            <div className="text-lg font-bold text-slate-900">5</div>
-          </div>
-        </div>
-      </div>
-    );
-  };
+    if (activeTab === "disputes") {
+      return [disputeStatusFilter !== "all", disputePriorityFilter !== "all", disputeReasonFilter !== "all"].filter(Boolean).length;
+    }
+    return [corrTypeFilter !== "All", corrChannelFilter !== "All", corrDirectionFilter !== "All"].filter(Boolean).length;
+  }, [activeTab, collectorFilter, severityFilter, dunningStatusFilter, promiseStatusFilter, promiseMethodFilter, promiseSortBy, disputeStatusFilter, disputePriorityFilter, disputeReasonFilter, corrTypeFilter, corrChannelFilter, corrDirectionFilter]);
 
   // ========================================================================
-  // AGING WATERFALL SVG (Accounts only)
-  // ========================================================================
-
-  const renderAgingBar = () => {
-    if (activeTab !== "accounts" || agingData.total === 0) return null;
-    const segments = AGING_BUCKETS.map((bucket) => ({
-      bucket,
-      amount: agingData.buckets[bucket],
-      pct: (agingData.buckets[bucket] / agingData.total) * 100,
-      color: AGING_COLORS[bucket],
-    })).filter((s) => s.pct > 0);
-
-    let x = 0;
-    return (
-      <div className="mt-3">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-xs font-medium text-slate-500">AR Aging Distribution</span>
-          <div className="flex gap-3">
-            {segments.map((s) => (
-              <span key={s.bucket} className="flex items-center gap-1 text-[10px] text-slate-500">
-                <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: s.color }} />
-                {s.bucket}: {fmt(s.amount)}
-              </span>
-            ))}
-          </div>
-        </div>
-        <svg width="100%" height="32" className="rounded overflow-hidden">
-          {segments.map((s) => {
-            const rect = (
-              <rect key={s.bucket} x={`${x}%`} y="0" width={`${s.pct}%`} height="32" fill={s.color} opacity={0.85}>
-                <title>{s.bucket}: {fmt(s.amount)} ({s.pct.toFixed(1)}%)</title>
-              </rect>
-            );
-            x += s.pct;
-            return rect;
-          })}
-        </svg>
-      </div>
-    );
-  };
-
-  // ========================================================================
-  // SIDEBAR RENDERING (per tab)
-  // ========================================================================
-
-  const renderSidebar = () => {
-    if (activeTab === "accounts") {
-      return (
-        <aside className="space-y-4 overflow-auto">
-          <Card className="p-4">
-            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Filters</h3>
-            <div className="space-y-3">
-              <Input placeholder="Search customer, collector..." value={acctSearch} onChange={(e) => setAcctSearch(e.target.value)} />
-              <div className="grid grid-cols-2 gap-2">
-                <Select value={collectorFilter} onValueChange={setCollectorFilter}>
-                  <SelectTrigger className="text-xs"><SelectValue placeholder="All collectors" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All collectors</SelectItem>
-                    {collectors.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <Select value={severityFilter} onValueChange={setSeverityFilter}>
-                  <SelectTrigger className="text-xs"><SelectValue placeholder="All severities" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All severities</SelectItem>
-                    <SelectItem value="Critical">Critical (90+)</SelectItem>
-                    <SelectItem value="High">High (61-90)</SelectItem>
-                    <SelectItem value="Medium">Medium (31-60)</SelectItem>
-                    <SelectItem value="Low">Low (1-30)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </Card>
-          <Card className="p-4">
-            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Quick Views</h3>
-            <div className="flex gap-2 flex-wrap">
-              {QUICK_VIEWS.map((view) => (
-                <Button key={view.value} variant={quickView === view.value ? "default" : "outline"} size="sm"
-                  className={cn("rounded-full text-xs", quickView === view.value && "bg-primary hover:bg-primary/90")}
-                  onClick={() => { setQuickView(view.value); setActiveSignal(null); }}
-                >{view.label}</Button>
-              ))}
-            </div>
-          </Card>
-          <Card className="p-4">
-            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Signals</h3>
-            <div className="space-y-2">
-              {signals.map((signal) => (
-                <div key={signal.key}
-                  onClick={() => setActiveSignal(activeSignal === signal.key ? null : signal.key)}
-                  className={cn("p-3 rounded-lg border cursor-pointer transition-colors",
-                    activeSignal === signal.key ? "bg-blue-50 border-blue-200" : "bg-white border-slate-200 hover:bg-slate-50"
-                  )}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-semibold text-sm">{signal.name}</div>
-                      <div className="text-xs text-slate-500">{signal.meta}</div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline">{signal.count}</Badge>
-                      <Badge className={cn("text-xs", getSeverityColor(signal.severity))}>{signal.severity}</Badge>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </aside>
-      );
-    }
-
-    if (activeTab === "dunning") {
-      const statusCounts = useMemo(() => {
-        const counts: Record<string, number> = { Active: 0, Paused: 0, Completed: 0, Cancelled: 0 };
-        dunningSequences.forEach((s) => { counts[s.status] = (counts[s.status] || 0) + 1; });
-        return counts;
-      }, [dunningSequences]);
-      return (
-        <aside className="space-y-4 overflow-auto">
-          <Card className="p-4">
-            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Search</h3>
-            <Input placeholder="Search customer..." value={dunningSearch} onChange={(e) => setDunningSearch(e.target.value)} />
-          </Card>
-          <Card className="p-4">
-            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Status</h3>
-            <Select value={dunningStatusFilter} onValueChange={setDunningStatusFilter}>
-              <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {DUNNING_STATUS_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </Card>
-          <Card className="p-4">
-            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Summary</h3>
-            <div className="space-y-2">
-              {(["Active", "Paused", "Completed", "Cancelled"] as const).map((s) => (
-                <div key={s} className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600">{s}</span>
-                  <Badge className={cn("text-xs", DUNNING_STATUS_BADGE[s].className)}>{statusCounts[s]}</Badge>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </aside>
-      );
-    }
-
-    if (activeTab === "promises") {
-      return (
-        <aside className="space-y-4 overflow-auto">
-          <Card className="p-4">
-            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Search</h3>
-            <Input placeholder="Search customer..." value={promiseSearch} onChange={(e) => setPromiseSearch(e.target.value)} />
-          </Card>
-          <Card className="p-4">
-            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Filters</h3>
-            <div className="space-y-3">
-              <Select value={promiseStatusFilter} onValueChange={setPromiseStatusFilter}>
-                <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {PROMISE_STATUS_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <Select value={promiseMethodFilter} onValueChange={setPromiseMethodFilter}>
-                <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {PROMISE_METHOD_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <Select value={promiseSortBy} onValueChange={setPromiseSortBy}>
-                <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {PROMISE_SORT_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          </Card>
-          <Card className="p-4">
-            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Pipeline</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-slate-600">Active</span><span className="font-medium">{promises.filter((p) => p.status === "Active").length}</span></div>
-              <div className="flex justify-between"><span className="text-amber-600">Due Today</span><span className="font-medium">{promises.filter((p) => p.status === "Due Today").length}</span></div>
-              <div className="flex justify-between"><span className="text-red-600">Overdue</span><span className="font-medium">{promises.filter((p) => p.status === "Overdue").length}</span></div>
-              <div className="flex justify-between"><span className="text-green-600">Fulfilled</span><span className="font-medium">{promises.filter((p) => p.status === "Fulfilled").length}</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">Broken</span><span className="font-medium">{promises.filter((p) => p.status === "Broken").length}</span></div>
-            </div>
-          </Card>
-        </aside>
-      );
-    }
-
-    // correspondence
-    return (
-      <aside className="space-y-4 overflow-auto">
-        <Card className="p-4">
-          <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Search</h3>
-          <Input placeholder="Search correspondence..." value={corrSearch} onChange={(e) => setCorrSearch(e.target.value)} />
-        </Card>
-        <Card className="p-4">
-          <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Filters</h3>
-          <div className="space-y-3">
-            <Select value={corrTypeFilter} onValueChange={setCorrTypeFilter}>
-              <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {CORR_TYPE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Select value={corrChannelFilter} onValueChange={setCorrChannelFilter}>
-              <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {CORR_CHANNEL_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Select value={corrDirectionFilter} onValueChange={setCorrDirectionFilter}>
-              <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {CORR_DIRECTION_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-        </Card>
-        <Card className="p-4">
-          <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">View</h3>
-          <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden">
-            <button onClick={() => setCorrViewMode("table")}
-              className={cn("flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors",
-                corrViewMode === "table" ? "bg-primary text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}>
-              <List className="h-3.5 w-3.5" /> Table
-            </button>
-            <button onClick={() => setCorrViewMode("timeline")}
-              className={cn("flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors",
-                corrViewMode === "timeline" ? "bg-primary text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}>
-              <LayoutList className="h-3.5 w-3.5" /> Timeline
-            </button>
-          </div>
-        </Card>
-        <Card className="p-4">
-          <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Channels</h3>
-          <div className="space-y-2">
-            {(["Email", "Phone", "Letter", "SMS", "Portal"] as const).map((ch) => {
-              const count = correspondence.filter((c) => c.channel === ch).length;
-              const maxCount = Math.max(...(["Email", "Phone", "Letter", "SMS", "Portal"] as CorrespondenceChannel[]).map((c) => correspondence.filter((x) => x.channel === c).length), 1);
-              return (
-                <div key={ch} className="flex items-center gap-2">
-                  <span className="text-xs text-slate-600 w-12 text-right">{ch}</span>
-                  <div className="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: `${(count / maxCount) * 100}%`, backgroundColor: CHANNEL_COLORS[ch], minWidth: count > 0 ? "6px" : "0px" }} />
-                  </div>
-                  <span className="text-xs font-medium text-slate-700 w-6">{count}</span>
-                </div>
-              );
-            })}
-          </div>
-        </Card>
-      </aside>
-    );
-  };
-
-  // ========================================================================
-  // MAIN TABLE RENDERING (per tab)
-  // ========================================================================
-
-  const renderMainContent = () => {
-    // ------ ACCOUNTS ------
-    if (activeTab === "accounts") {
-      return (
-        <Card className="flex flex-col overflow-hidden">
-          <div className="flex items-center gap-2 p-3 border-b border-slate-200">
-            <Button variant="outline" size="sm" onClick={toggleSelectAll}>Select All</Button>
-            <Button variant="outline" size="sm" disabled={selection.size === 0} onClick={() => openModal("Dunning", selection)}>
-              <Mail className="h-3 w-3 mr-1" /> Send Dunning
-            </Button>
-            <Button variant="outline" size="sm" disabled={selection.size === 0} onClick={() => openModal("Schedule", selection)}>
-              <Phone className="h-3 w-3 mr-1" /> Schedule Call
-            </Button>
-            <Button variant="outline" size="sm" disabled={selection.size === 0} onClick={() => openModal("Promise", selection)}>
-              <DollarSign className="h-3 w-3 mr-1" /> Log Promise
-            </Button>
-            <Button variant="outline" size="sm" disabled={selection.size === 0} onClick={() => openModal("Escalate", selection)}>
-              <AlertTriangle className="h-3 w-3 mr-1" /> Escalate
-            </Button>
-            <div className="ml-auto flex items-center gap-2">
-              <span className="text-xs text-slate-500">{acctTotal} records</span>
-              <Button variant="outline" size="sm" onClick={handleExportCSV}><Download className="h-3 w-3 mr-1" /> Export CSV</Button>
-            </div>
-          </div>
-          <div className="flex-1 overflow-auto">
-            {acctLoading ? (
-              <div className="flex items-center justify-center h-full gap-2 text-slate-500">
-                <Loader2 className="h-5 w-5 animate-spin" /><span className="text-sm">Loading collections...</span>
-              </div>
-            ) : acctError ? (
-              <div className="flex items-center justify-center h-full text-red-500 text-sm">{acctError}</div>
-            ) : collections.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-slate-400 text-sm">No records match the current filters.</div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-8" />
-                    <TableHead className="text-xs">Customer</TableHead>
-                    <TableHead className="text-xs">Collector</TableHead>
-                    <TableHead className="text-xs text-right">AR Balance</TableHead>
-                    <TableHead className="text-xs text-right">Past Due</TableHead>
-                    <TableHead className="text-xs text-right">Days</TableHead>
-                    <TableHead className="text-xs">Severity</TableHead>
-                    <TableHead className="text-xs">Dunning</TableHead>
-                    <TableHead className="text-xs">AI Recommendation</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {collections.map((r) => (
-                    <TableRow key={r.id}
-                      onClick={(e) => { if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return; setCurrentRecord(r); setIsDrawerOpen(true); }}
-                      className={cn("cursor-pointer", currentRecord?.id === r.id && "bg-blue-50")}
-                    >
-                      <TableCell><Checkbox checked={selection.has(r.id)} onCheckedChange={(checked) => toggleSelect(r.id, checked === true)} /></TableCell>
-                      <TableCell className="font-medium text-sm">{r.customerName}</TableCell>
-                      <TableCell className="text-sm text-slate-600">{r.assignedTo || "\u2014"}</TableCell>
-                      <TableCell className="text-right text-sm font-medium">{fmt(r.totalOutstanding)}</TableCell>
-                      <TableCell className="text-right text-sm">
-                        {r.pastDueAmount > 0 ? <span className="text-red-600 font-medium">{fmt(r.pastDueAmount)}</span> : <span className="text-slate-400">\u2014</span>}
-                      </TableCell>
-                      <TableCell className="text-right text-sm">
-                        {r.daysPastDue > 0 ? (
-                          <span className={cn("font-medium", r.daysPastDue >= 90 ? "text-red-600" : r.daysPastDue >= 61 ? "text-orange-600" : r.daysPastDue >= 31 ? "text-yellow-600" : "text-slate-600")}>{r.daysPastDue}</span>
-                        ) : <span className="text-slate-400">\u2014</span>}
-                      </TableCell>
-                      <TableCell><Badge className={cn("text-xs", getSeverityColor(r.severity))}>{r.severity}</Badge></TableCell>
-                      <TableCell className="text-sm">
-                        {r.dunningSequenceId ? <Badge className="bg-purple-50 text-purple-700 border-purple-200 text-xs">Active</Badge> : <span className="text-slate-400">\u2014</span>}
-                      </TableCell>
-                      <TableCell className="text-sm max-w-[260px] truncate">{r.recommendation || "\u2014"}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </div>
-          <div className="p-3 border-t border-slate-200 flex items-center justify-between text-sm text-slate-600">
-            <span>{selection.size} selected</span>
-            {selection.size > 0 && (
-              <Button variant="ghost" size="sm" className="text-xs" onClick={() => setSelection(new Set())}>Clear selection</Button>
-            )}
-          </div>
-        </Card>
-      );
-    }
-
-    // ------ DUNNING ------
-    if (activeTab === "dunning") {
-      return (
-        <Card className="flex flex-col overflow-hidden">
-          <div className="flex items-center gap-2 p-3 border-b border-slate-200">
-            <span className="text-xs text-slate-500 ml-auto">{filteredDunning.length} sequence{filteredDunning.length !== 1 ? "s" : ""}</span>
-          </div>
-          <div className="flex-1 overflow-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-slate-50">
-                  <TableHead className="text-xs w-8" />
-                  <TableHead className="text-xs">Customer</TableHead>
-                  <TableHead className="text-xs text-center">Status</TableHead>
-                  <TableHead className="text-xs">Current Step</TableHead>
-                  <TableHead className="text-xs text-center">Progress</TableHead>
-                  <TableHead className="text-xs text-right">Amount</TableHead>
-                  <TableHead className="text-xs">Next Action</TableHead>
-                  <TableHead className="text-xs text-center">Invoices</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredDunning.length === 0 && (
-                  <TableRow><TableCell colSpan={8} className="text-center text-slate-400 py-8">No sequences match the current filters.</TableCell></TableRow>
-                )}
-                {filteredDunning.map((seq) => (
-                  <React.Fragment key={seq.id}>
-                    <TableRow
-                      className="cursor-pointer hover:bg-slate-50/50"
-                      onClick={() => setExpandedRow(expandedRow === seq.id ? null : seq.id)}
-                    >
-                      <TableCell>
-                        {expandedRow === seq.id ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
-                      </TableCell>
-                      <TableCell className="font-medium text-sm">{seq.customerName}</TableCell>
-                      <TableCell className="text-center">
-                        <Badge className={cn("text-xs", DUNNING_STATUS_BADGE[seq.status].className)}>{seq.status}</Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-slate-700">{seq.currentStep}</TableCell>
-                      <TableCell className="text-center">
-                        <StepProgressDots currentStepNumber={seq.currentStepNumber} totalSteps={seq.totalSteps} steps={seq.steps} />
-                      </TableCell>
-                      <TableCell className="text-right text-sm font-medium">{formatUsd(seq.totalAmount)}</TableCell>
-                      <TableCell className="text-sm text-slate-600">
-                        {seq.nextActionDate ? (
-                          <span className={cn(isPastOrToday(seq.nextActionDate) && seq.status === "Active" ? "text-amber-600 font-medium" : "")}>
-                            {formatDate(seq.nextActionDate)}
-                          </span>
-                        ) : "\u2014"}
-                      </TableCell>
-                      <TableCell className="text-center text-sm">{seq.invoiceIds.length}</TableCell>
-                    </TableRow>
-                    {expandedRow === seq.id && (
-                      <TableRow>
-                        <TableCell colSpan={8} className="p-0">
-                          <StepTimeline steps={seq.steps} currentStepNumber={seq.currentStepNumber} totalSteps={seq.totalSteps} templates={dunningTemplates} />
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </React.Fragment>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </Card>
-      );
-    }
-
-    // ------ PROMISES ------
-    if (activeTab === "promises") {
-      return (
-        <Card className="flex flex-col overflow-hidden">
-          <div className="flex items-center gap-2 p-3 border-b border-slate-200">
-            <span className="text-xs text-slate-500 ml-auto">{filteredPromises.length} of {promises.length} promises</span>
-          </div>
-          <div className="flex-1 overflow-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-slate-50">
-                  <TableHead className="text-xs">Customer</TableHead>
-                  <TableHead className="text-xs text-right">Promised</TableHead>
-                  <TableHead className="text-xs">Date</TableHead>
-                  <TableHead className="text-xs text-center">Method</TableHead>
-                  <TableHead className="text-xs text-center">Status</TableHead>
-                  <TableHead className="text-xs text-right">Received</TableHead>
-                  <TableHead className="text-xs text-center">Invoices</TableHead>
-                  <TableHead className="text-xs">Captured By</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredPromises.length === 0 && (
-                  <TableRow><TableCell colSpan={8} className="text-center text-slate-400 py-8">No promises match the current filters.</TableCell></TableRow>
-                )}
-                {filteredPromises.map((p) => {
-                  const dateIsPast = isPast(p.promisedDate) && p.status !== "Fulfilled" && p.status !== "Cancelled";
-                  return (
-                    <TableRow key={p.id} className="cursor-pointer hover:bg-slate-50/50" onClick={() => { setSelectedPromise(p); setPromiseSheetOpen(true); }}>
-                      <TableCell className="font-medium text-sm">{p.customerName}</TableCell>
-                      <TableCell className="text-right font-bold text-sm">{formatUsd(p.promisedAmount)}</TableCell>
-                      <TableCell>
-                        <span className={cn("text-sm", dateIsPast ? "text-red-600 font-medium" : "text-slate-700")}>{formatDate(p.promisedDate)}</span>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        {p.paymentMethod ? <Badge className={METHOD_BADGE_STYLES[p.paymentMethod] || "bg-slate-50 text-slate-600 border-slate-200"}>{p.paymentMethod}</Badge> : <span className="text-slate-400 text-sm">--</span>}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        {p.status === "Broken" ? <Badge variant="destructive">{p.status}</Badge>
-                          : p.status === "Cancelled" ? <Badge variant="outline">{p.status}</Badge>
-                          : <Badge className={PROMISE_STATUS_BADGE[p.status]}>{p.status}</Badge>}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {p.receivedAmount ? <span className="text-sm font-medium text-green-700">{formatUsd(p.receivedAmount)}</span> : <span className="text-slate-400">\u2014</span>}
-                      </TableCell>
-                      <TableCell className="text-center text-sm">{p.invoiceIds?.length || 0}</TableCell>
-                      <TableCell className="text-sm text-slate-600">{p.capturedBy}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </Card>
-      );
-    }
-
-    // ------ CORRESPONDENCE ------
-    return (
-      <Card className="flex flex-col overflow-hidden">
-        <div className="flex items-center gap-2 p-3 border-b border-slate-200">
-          <Select value={corrSortOrder} onValueChange={setCorrSortOrder}>
-            <SelectTrigger className="w-[140px] text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest First</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
-            </SelectContent>
-          </Select>
-          <span className="text-xs text-slate-500 ml-auto">{filteredCorr.length} entries</span>
-          <Button size="sm" onClick={handleOpenLog}><Plus className="h-4 w-4 mr-1" /> Log New</Button>
-        </div>
-        <div className="flex-1 overflow-auto">
-          {filteredCorr.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-slate-400 text-sm">No correspondence found.</div>
-          ) : corrViewMode === "table" ? (
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-slate-50">
-                  <TableHead className="text-xs">Date</TableHead>
-                  <TableHead className="text-xs">Customer</TableHead>
-                  <TableHead className="text-xs">Type</TableHead>
-                  <TableHead className="text-xs">Channel</TableHead>
-                  <TableHead className="text-xs">Direction</TableHead>
-                  <TableHead className="text-xs">Subject</TableHead>
-                  <TableHead className="text-xs">Sent By</TableHead>
-                  <TableHead className="text-xs w-[60px]" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCorr.map((entry) => (
-                  <TableRow key={entry.id} className="cursor-pointer hover:bg-slate-50/50" onClick={() => { setSelectedCorr(entry); setCorrDetailOpen(true); }}>
-                    <TableCell className="text-xs text-slate-600 whitespace-nowrap">{formatDateTime(entry.sentAt)}</TableCell>
-                    <TableCell>
-                      <Link href={`/workbench/order-to-cash/collections/customer/${entry.customerId}`}
-                        className="text-sm font-medium text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
-                        {entry.customerName}
-                      </Link>
-                    </TableCell>
-                    <TableCell><Badge variant="outline" className={cn("text-xs", TYPE_BADGE[entry.type])}>{entry.type}</Badge></TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1.5 text-xs text-slate-600">
-                        {CORR_CHANNEL_ICON[entry.channel]} {entry.channel}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-xs">
-                        {entry.direction === "Outbound" ? <ArrowUpRight className="h-3.5 w-3.5 text-green-600" /> : <ArrowDownLeft className="h-3.5 w-3.5 text-blue-600" />}
-                        <span className={entry.direction === "Outbound" ? "text-green-700" : "text-blue-700"}>{entry.direction}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-sm text-slate-700 max-w-[200px] truncate">{entry.subject || <span className="italic text-slate-400">(No subject)</span>}</TableCell>
-                    <TableCell className="text-xs text-slate-600">{entry.sentBy}</TableCell>
-                    <TableCell>
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={(e) => { e.stopPropagation(); setSelectedCorr(entry); setCorrDetailOpen(true); }}>
-                        <Eye className="h-3.5 w-3.5" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            /* Timeline View */
-            <div className="p-4 space-y-6">
-              {corrTimelineGroups.map((group) => (
-                <div key={group.label}>
-                  <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">{group.label}</h3>
-                  <div className="relative ml-4 border-l-2 border-slate-200 space-y-4 pl-6">
-                    {group.items.map((entry) => (
-                      <div key={entry.id} className="relative cursor-pointer" onClick={() => { setSelectedCorr(entry); setCorrDetailOpen(true); }}>
-                        <div className="absolute -left-[31px] top-3 h-3 w-3 rounded-full border-2 border-white" style={{ backgroundColor: CHANNEL_COLORS[entry.channel] }} />
-                        <Card className="p-3 hover:bg-slate-50 transition-colors">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <span className="text-xs text-slate-400">{formatDateTime(entry.sentAt)}</span>
-                            <Badge variant="outline" className={cn("text-xs", TYPE_BADGE[entry.type])}>{entry.type}</Badge>
-                            <span className="text-xs text-slate-500 flex items-center gap-1">{CORR_CHANNEL_ICON[entry.channel]} {entry.channel}</span>
-                            {entry.direction === "Outbound" ? <ArrowUpRight className="h-3 w-3 text-green-600" /> : <ArrowDownLeft className="h-3 w-3 text-blue-600" />}
-                          </div>
-                          <Link href={`/workbench/order-to-cash/collections/customer/${entry.customerId}`}
-                            className="text-sm font-semibold text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
-                            {entry.customerName}
-                          </Link>
-                          {entry.subject && <p className="text-sm text-slate-800 mt-0.5">{entry.subject}</p>}
-                          <p className="text-xs text-slate-500 line-clamp-2 mt-0.5">{entry.content}</p>
-                        </Card>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </Card>
-    );
-  };
-
-  // ========================================================================
-  // LOADING STATE
+  // RENDER
   // ========================================================================
 
   if (isLoading) {
     return (
-      <div className="flex flex-col bg-white" style={{ height: "100%", minHeight: 0 }}>
-        <header className="sticky top-0 z-10 bg-white px-6 py-2 flex-shrink-0">
-          <Breadcrumb activeRoute="workbench/order-to-cash/collections" className="mb-1.5" />
-          <div className="flex items-center gap-3 mb-1">
-            <Wallet className="h-6 w-6 text-slate-700" />
-            <h1 className="text-2xl font-bold text-slate-900 mt-2">Collections Workbench</h1>
-          </div>
-          <p className="text-sm text-slate-500">Unified collections management — accounts, dunning, promises, and correspondence</p>
-          <div className="border-b border-slate-200 mt-3" />
-        </header>
+      <div className="h-full flex flex-col bg-slate-50">
         <div className="flex-1 flex items-center justify-center">
           <div className="flex items-center gap-2 text-slate-400">
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -1678,63 +1085,755 @@ export default function CollectionsWorkbenchPage() {
     );
   }
 
-  // ========================================================================
-  // RENDER
-  // ========================================================================
+  // Aging bar segments (accounts only)
+  const agingSegments = AGING_BUCKETS.map((bucket) => ({
+    bucket,
+    amount: agingData.buckets[bucket],
+    pct: agingData.total > 0 ? (agingData.buckets[bucket] / agingData.total) * 100 : 0,
+    color: AGING_COLORS[bucket],
+  })).filter((s) => s.pct > 0);
 
   return (
-    <div className="flex flex-col bg-white" style={{ height: "100%", minHeight: 0 }}>
-      {/* ---- Header ---- */}
-      <header className="sticky top-0 z-10 bg-white px-6 py-2 flex-shrink-0">
-        <Breadcrumb activeRoute="workbench/order-to-cash/collections" className="mb-1.5" />
-        <div className="flex items-center justify-between gap-4 mt-1">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <Wallet className="h-6 w-6 text-slate-700" />
-              <h1 className="text-2xl font-bold text-slate-900 mt-2">Collections Workbench</h1>
+    <div className="h-full flex flex-col bg-slate-50">
+      <div className="flex-1 overflow-auto">
+        <div className="px-5 py-2">
+          {/* ── Row 1: Tabs + Compact KPI Stats ── */}
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-0.5">
+              {([
+                { id: "accounts" as const, label: "Accounts" },
+                { id: "dunning" as const, label: "Dunning" },
+                { id: "promises" as const, label: "Promises" },
+                { id: "correspondence" as const, label: "Correspondence" },
+                { id: "disputes" as const, label: "Disputes" },
+              ]).map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    "px-3 py-1.5 text-xs font-medium rounded-md transition-colors",
+                    activeTab === tab.id
+                      ? "bg-white text-primary shadow-sm border border-slate-200"
+                      : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                  )}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            <p className="text-sm text-slate-500">Unified collections management — accounts, dunning, promises, and correspondence</p>
-          </div>
-        </div>
-
-        {/* KPI Row */}
-        {renderKpis()}
-
-        {/* Aging waterfall (accounts only) */}
-        {renderAgingBar()}
-
-        {/* Tab bar */}
-        <div className="flex items-center gap-1 mt-3">
-          {(
-            [
-              { id: "accounts", label: "Accounts" },
-              { id: "dunning", label: "Dunning" },
-              { id: "promises", label: "Promises" },
-              { id: "correspondence", label: "Correspondence" },
-            ] as { id: WorkbenchTab; label: string }[]
-          ).map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                "px-4 py-2 text-sm font-medium rounded-t-lg transition-colors border-b-2",
-                activeTab === tab.id
-                  ? "bg-primary/5 text-primary border-primary"
-                  : "text-slate-500 border-transparent hover:text-slate-700 hover:bg-slate-50"
+            <div className="flex items-center gap-2 text-[11px]">
+              {activeTab === "accounts" && (
+                <>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Outstanding</span>
+                    <span className="font-semibold text-slate-900">{fmt(acctKpis.totalOutstanding)}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Past Due</span>
+                    <span className="font-semibold text-red-600">{fmt(acctKpis.pastDue)}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Active</span>
+                    <span className="font-semibold text-slate-900">{acctKpis.activeCount}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Critical</span>
+                    <span className="font-semibold text-red-600">{acctKpis.critHigh}</span>
+                  </div>
+                </>
               )}
-            >
-              {tab.label}
-            </button>
-          ))}
+              {activeTab === "dunning" && (
+                <>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Active</span>
+                    <span className="font-semibold text-slate-900">{dunningKpis.activeCount}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Under Dunning</span>
+                    <span className="font-semibold text-red-600">{formatUsdCompact(dunningKpis.totalAmount)}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Avg Progress</span>
+                    <span className="font-semibold text-slate-900">{dunningKpis.avgProgress}%</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Due Today</span>
+                    <span className={cn("font-semibold", dunningKpis.actionsDueToday > 0 ? "text-amber-600" : "text-slate-900")}>{dunningKpis.actionsDueToday}</span>
+                  </div>
+                </>
+              )}
+              {activeTab === "promises" && (
+                <>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Promised</span>
+                    <span className="font-semibold text-slate-900">{formatUsdCompact(promiseKpis.totalPromised)}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Received</span>
+                    <span className="font-semibold text-green-600">{formatUsdCompact(promiseKpis.totalReceived)}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Fulfillment</span>
+                    <span className="font-semibold text-green-600">{promiseKpis.fulfillmentRate}%</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">At Risk</span>
+                    <span className="font-semibold text-red-600">{promiseKpis.atRiskCount}</span>
+                  </div>
+                </>
+              )}
+              {activeTab === "correspondence" && (
+                <>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Total</span>
+                    <span className="font-semibold text-slate-900">{corrKpis.total}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">This Week</span>
+                    <span className="font-semibold text-slate-900">{corrKpis.thisWeek}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Out / In</span>
+                    <span className="font-semibold text-slate-900">{corrKpis.outbound} / {corrKpis.inbound}</span>
+                  </div>
+                </>
+              )}
+              {activeTab === "disputes" && (
+                <>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Total</span>
+                    <span className="font-semibold text-slate-900">{disputeKpis.total}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Open</span>
+                    <span className="font-semibold text-amber-600">{disputeKpis.openCount}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Disputed</span>
+                    <span className="font-semibold text-red-600">{formatUsdCompact(disputeKpis.totalDisputedAmount)}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
+                    <span className="text-slate-500">Avg Aging</span>
+                    <span className="font-semibold text-slate-900">{disputeKpis.avgAging}d</span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* ── Row 2: Search + Filters + Quick Views + Actions ── */}
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
+                <Input
+                  placeholder={activeTab === "accounts" ? "Search customers..." : activeTab === "dunning" ? "Search dunning..." : activeTab === "promises" ? "Search promises..." : activeTab === "disputes" ? "Search disputes..." : "Search correspondence..."}
+                  value={activeTab === "accounts" ? acctSearch : activeTab === "dunning" ? dunningSearch : activeTab === "promises" ? promiseSearch : activeTab === "disputes" ? disputeSearch : corrSearch}
+                  onChange={(e) => {
+                    if (activeTab === "accounts") setAcctSearch(e.target.value);
+                    else if (activeTab === "dunning") setDunningSearch(e.target.value);
+                    else if (activeTab === "promises") setPromiseSearch(e.target.value);
+                    else if (activeTab === "disputes") setDisputeSearch(e.target.value);
+                    else setCorrSearch(e.target.value);
+                  }}
+                  className="pl-8 w-52 h-7 text-xs bg-white"
+                />
+              </div>
+
+              {/* Filters Popover */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className={cn(
+                    "flex items-center gap-1.5 h-7 px-2.5 rounded border text-xs font-medium transition-colors",
+                    activeFilterCount > 0 ? "border-blue-400 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:bg-white"
+                  )}>
+                    <ListFilter className="w-3.5 h-3.5" />
+                    Filters
+                    {activeFilterCount > 0 && (
+                      <span className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-bold">{activeFilterCount}</span>
+                    )}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-72 p-3">
+                  <div className="space-y-3">
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Filters</div>
+                    <div className="space-y-2.5">
+                      {activeTab === "accounts" && (
+                        <>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Collector</label>
+                            <Select value={collectorFilter} onValueChange={setCollectorFilter}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All collectors" /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All collectors</SelectItem>
+                                {collectors.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Severity</label>
+                            <Select value={severityFilter} onValueChange={setSeverityFilter}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="All severities" /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All severities</SelectItem>
+                                <SelectItem value="Critical">Critical (90+)</SelectItem>
+                                <SelectItem value="High">High (61-90)</SelectItem>
+                                <SelectItem value="Medium">Medium (31-60)</SelectItem>
+                                <SelectItem value="Low">Low (1-30)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </>
+                      )}
+                      {activeTab === "dunning" && (
+                        <div>
+                          <label className="text-[11px] font-medium text-slate-500 mb-1 block">Status</label>
+                          <Select value={dunningStatusFilter} onValueChange={setDunningStatusFilter}>
+                            <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {DUNNING_STATUS_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                      {activeTab === "promises" && (
+                        <>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Status</label>
+                            <Select value={promiseStatusFilter} onValueChange={setPromiseStatusFilter}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {PROMISE_STATUS_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Method</label>
+                            <Select value={promiseMethodFilter} onValueChange={setPromiseMethodFilter}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {PROMISE_METHOD_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Sort</label>
+                            <Select value={promiseSortBy} onValueChange={setPromiseSortBy}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {PROMISE_SORT_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </>
+                      )}
+                      {activeTab === "correspondence" && (
+                        <>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Type</label>
+                            <Select value={corrTypeFilter} onValueChange={setCorrTypeFilter}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {CORR_TYPE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Channel</label>
+                            <Select value={corrChannelFilter} onValueChange={setCorrChannelFilter}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {CORR_CHANNEL_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Direction</label>
+                            <Select value={corrDirectionFilter} onValueChange={setCorrDirectionFilter}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {CORR_DIRECTION_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </>
+                      )}
+                      {activeTab === "disputes" && (
+                        <>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Status</label>
+                            <Select value={disputeStatusFilter} onValueChange={setDisputeStatusFilter}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {DISPUTE_STATUS_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Priority</label>
+                            <Select value={disputePriorityFilter} onValueChange={setDisputePriorityFilter}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {DISPUTE_PRIORITY_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <label className="text-[11px] font-medium text-slate-500 mb-1 block">Reason</label>
+                            <Select value={disputeReasonFilter} onValueChange={setDisputeReasonFilter}>
+                              <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {DISPUTE_REASON_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              {/* Accounts: Quick View chips */}
+              {activeTab === "accounts" && (
+                <div className="flex items-center gap-1">
+                  {QUICK_VIEWS.map((view) => (
+                    <button
+                      key={view.value}
+                      onClick={() => { setQuickView(view.value); setActiveSignal(null); }}
+                      className={cn(
+                        "px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors border",
+                        quickView === view.value
+                          ? "bg-primary text-white border-primary"
+                          : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                      )}
+                    >
+                      {view.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Correspondence: view mode toggle */}
+              {activeTab === "correspondence" && (
+                <div className="flex items-center rounded-md border border-slate-200 overflow-hidden">
+                  <button onClick={() => setCorrViewMode("table")}
+                    className={cn("flex items-center gap-1 px-2 py-1 text-[11px] font-medium transition-colors",
+                      corrViewMode === "table" ? "bg-primary text-white" : "bg-white text-slate-600 hover:bg-slate-50")}>
+                    <List className="h-3 w-3" /> Table
+                  </button>
+                  <button onClick={() => setCorrViewMode("timeline")}
+                    className={cn("flex items-center gap-1 px-2 py-1 text-[11px] font-medium transition-colors",
+                      corrViewMode === "timeline" ? "bg-primary text-white" : "bg-white text-slate-600 hover:bg-slate-50")}>
+                    <LayoutList className="h-3 w-3" /> Timeline
+                  </button>
+                </div>
+              )}
+
+              {/* Correspondence: sort order */}
+              {activeTab === "correspondence" && (
+                <Select value={corrSortOrder} onValueChange={setCorrSortOrder}>
+                  <SelectTrigger className="w-[120px] h-7 text-xs bg-white"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="oldest">Oldest First</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            {/* Right side: record count + actions */}
+            <div className="flex items-center gap-2">
+              {activeTab === "accounts" && (
+                <>
+                  <span className="text-[11px] text-slate-500">{acctTotal} records</span>
+                  <Button variant="outline" size="sm" className="h-7 text-xs px-2.5" onClick={handleExportCSV}><Download className="h-3 w-3 mr-1" /> Export</Button>
+                </>
+              )}
+              {activeTab === "dunning" && <span className="text-[11px] text-slate-500">{filteredDunning.length} sequences</span>}
+              {activeTab === "promises" && <span className="text-[11px] text-slate-500">{filteredPromises.length} of {promises.length}</span>}
+              {activeTab === "disputes" && <span className="text-[11px] text-slate-500">{filteredDisputes.length} of {MOCK_DISPUTES.length}</span>}
+              {activeTab === "correspondence" && (
+                <>
+                  <span className="text-[11px] text-slate-500">{filteredCorr.length} entries</span>
+                  <Button size="sm" className="h-7 text-xs px-2.5" onClick={handleOpenLog}><Plus className="h-3 w-3 mr-1" /> Log New</Button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* ── Accounts: Signal filter chips ── */}
+          {activeTab === "accounts" && (
+            <div className="flex items-center gap-1.5 mb-2">
+              {signals.map((signal) => (
+                <button
+                  key={signal.key}
+                  onClick={() => setActiveSignal(activeSignal === signal.key ? null : signal.key)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors",
+                    activeSignal === signal.key
+                      ? "bg-blue-50 text-blue-700 border-blue-300"
+                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                  )}
+                >
+                  <span className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: AGING_COLORS[signal.key] }} />
+                  {signal.name}
+                  <span className={cn("ml-0.5 px-1.5 py-0.5 rounded-full text-[10px]", getSeverityColor(signal.severity))}>
+                    {signal.count}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* ── Accounts: Aging distribution bar (compact) ── */}
+          {activeTab === "accounts" && agingData.total > 0 && (
+            <div className="mb-2">
+              <svg width="100%" height="6" className="rounded-full overflow-hidden">
+                {(() => {
+                  let x = 0;
+                  return agingSegments.map((s) => {
+                    const rect = (
+                      <rect key={s.bucket} x={`${x}%`} y="0" width={`${s.pct}%`} height="6" fill={s.color} opacity={0.85}>
+                        <title>{s.bucket}: {fmt(s.amount)} ({s.pct.toFixed(1)}%)</title>
+                      </rect>
+                    );
+                    x += s.pct;
+                    return rect;
+                  });
+                })()}
+              </svg>
+            </div>
+          )}
+
+          {/* ── Accounts: Bulk selection bar ── */}
+          {activeTab === "accounts" && selection.size > 0 && (
+            <Card className="mb-2 p-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium">{selection.size} selected</span>
+                <div className="flex items-center gap-1.5">
+                  <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => openModal("Dunning", selection)}>
+                    <Mail className="w-3.5 h-3.5 mr-1" /> Send Dunning
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => openModal("Schedule", selection)}>
+                    <Phone className="w-3.5 h-3.5 mr-1" /> Schedule Call
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => openModal("Promise", selection)}>
+                    <DollarSign className="w-3.5 h-3.5 mr-1" /> Log Promise
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-7 text-xs px-2.5" onClick={() => openModal("Escalate", selection)}>
+                    <AlertTriangle className="w-3.5 h-3.5 mr-1" /> Escalate
+                  </Button>
+                  <button onClick={() => setSelection(new Set())} className="text-[11px] text-slate-500 hover:text-red-600 ml-1">Clear</button>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* ============================================================ */}
+          {/*  ACCOUNTS TABLE                                              */}
+          {/* ============================================================ */}
+          {activeTab === "accounts" && (
+            <Card>
+              <div className="overflow-x-auto">
+                {acctLoading ? (
+                  <div className="flex items-center justify-center py-16 gap-2 text-slate-500">
+                    <Loader2 className="h-5 w-5 animate-spin" /><span className="text-sm">Loading collections...</span>
+                  </div>
+                ) : acctError ? (
+                  <div className="flex items-center justify-center py-16 text-red-500 text-sm">{acctError}</div>
+                ) : collections.length === 0 ? (
+                  <div className="flex items-center justify-center py-16 text-slate-400 text-sm">No records match the current filters.</div>
+                ) : (
+                  <table className="w-full">
+                    <thead className="border-b bg-slate-50 sticky top-0 z-10">
+                      <tr>
+                        <th className="px-3 py-2 text-left w-8">
+                          <Checkbox
+                            checked={selection.size === collections.length && collections.length > 0}
+                            onCheckedChange={() => {
+                              if (selection.size === collections.length) setSelection(new Set());
+                              else toggleSelectAll();
+                            }}
+                            className="border-slate-300"
+                          />
+                        </th>
+                        {["Customer", "Collector", "AR Balance", "Past Due", "Days", "Severity", "Dunning", "AI Recommendation"].map((header) => (
+                          <th key={header} className="px-3 py-2 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{header}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 bg-white">
+                      {collections.map((r) => (
+                        <tr
+                          key={r.id}
+                          onClick={(e) => { if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return; setCurrentRecord(r); setIsDrawerOpen(true); }}
+                          className={cn("cursor-pointer transition-colors hover:bg-slate-50", currentRecord?.id === r.id && "bg-blue-50")}
+                        >
+                          <td className="px-3 py-1.5">
+                            <Checkbox checked={selection.has(r.id)} onCheckedChange={(checked) => toggleSelect(r.id, checked === true)} onClick={(e) => e.stopPropagation()} className="border-slate-300" />
+                          </td>
+                          <td className="px-3 py-1.5 text-xs font-medium text-slate-800">{r.customerName}</td>
+                          <td className="px-3 py-1.5 text-xs text-slate-600">{r.assignedTo || "\u2014"}</td>
+                          <td className="px-3 py-1.5 text-xs font-semibold text-slate-900 text-right whitespace-nowrap">{fmt(r.totalOutstanding)}</td>
+                          <td className="px-3 py-1.5 text-xs text-right whitespace-nowrap">
+                            {r.pastDueAmount > 0 ? <span className="text-red-600 font-medium">{fmt(r.pastDueAmount)}</span> : <span className="text-slate-400">{"\u2014"}</span>}
+                          </td>
+                          <td className="px-3 py-1.5 text-xs text-right">
+                            {r.daysPastDue > 0 ? (
+                              <span className={cn("font-medium", r.daysPastDue >= 90 ? "text-red-600" : r.daysPastDue >= 61 ? "text-orange-600" : r.daysPastDue >= 31 ? "text-yellow-600" : "text-slate-600")}>{r.daysPastDue}</span>
+                            ) : <span className="text-slate-400">{"\u2014"}</span>}
+                          </td>
+                          <td className="px-3 py-1.5"><Badge className={cn("text-xs", getSeverityColor(r.severity))}>{r.severity}</Badge></td>
+                          <td className="px-3 py-1.5 text-xs">
+                            {r.dunningSequenceId ? <Badge className="bg-purple-50 text-purple-700 border-purple-200 text-xs">Active</Badge> : <span className="text-slate-400">{"\u2014"}</span>}
+                          </td>
+                          <td className="px-3 py-1.5 text-xs text-slate-700 max-w-[260px] truncate">{r.recommendation || "\u2014"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </Card>
+          )}
+
+          {/* ============================================================ */}
+          {/*  DUNNING TABLE                                               */}
+          {/* ============================================================ */}
+          {activeTab === "dunning" && (
+            <Card>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="border-b bg-slate-50 sticky top-0 z-10">
+                    <tr>
+                      <th className="px-3 py-2 text-left w-8" />
+                      {["Customer", "Status", "Current Step", "Progress", "Amount", "Next Action", "Invoices"].map((h) => (
+                        <th key={h} className="px-3 py-2 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 bg-white">
+                    {filteredDunning.length === 0 && (
+                      <tr><td colSpan={8} className="text-center text-slate-400 py-16 text-sm">No sequences match the current filters.</td></tr>
+                    )}
+                    {filteredDunning.map((seq) => (
+                      <React.Fragment key={seq.id}>
+                        <tr
+                          className="cursor-pointer transition-colors hover:bg-slate-50"
+                          onClick={() => setExpandedRow(expandedRow === seq.id ? null : seq.id)}
+                        >
+                          <td className="px-3 py-1.5">
+                            {expandedRow === seq.id ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
+                          </td>
+                          <td className="px-3 py-1.5 text-xs font-medium text-slate-800">{seq.customerName}</td>
+                          <td className="px-3 py-1.5">
+                            <Badge className={cn("text-xs", DUNNING_STATUS_BADGE[seq.status].className)}>{seq.status}</Badge>
+                          </td>
+                          <td className="px-3 py-1.5 text-xs text-slate-700">{seq.currentStep}</td>
+                          <td className="px-3 py-1.5">
+                            <StepProgressDots currentStepNumber={seq.currentStepNumber} totalSteps={seq.totalSteps} steps={seq.steps} />
+                          </td>
+                          <td className="px-3 py-1.5 text-xs font-semibold text-slate-900 text-right whitespace-nowrap">{formatUsd(seq.totalAmount)}</td>
+                          <td className="px-3 py-1.5 text-xs text-slate-600">
+                            {seq.nextActionDate ? (
+                              <span className={cn(isPastOrToday(seq.nextActionDate) && seq.status === "Active" ? "text-amber-600 font-medium" : "")}>
+                                {formatDate(seq.nextActionDate)}
+                              </span>
+                            ) : "\u2014"}
+                          </td>
+                          <td className="px-3 py-1.5 text-xs text-center">{seq.invoiceIds.length}</td>
+                        </tr>
+                        {expandedRow === seq.id && (
+                          <tr>
+                            <td colSpan={8} className="p-0">
+                              <StepTimeline steps={seq.steps} currentStepNumber={seq.currentStepNumber} totalSteps={seq.totalSteps} templates={dunningTemplates} />
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
+
+          {/* ============================================================ */}
+          {/*  PROMISES TABLE                                              */}
+          {/* ============================================================ */}
+          {activeTab === "promises" && (
+            <Card>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="border-b bg-slate-50 sticky top-0 z-10">
+                    <tr>
+                      {["Customer", "Promised", "Date", "Method", "Status", "Received", "Invoices", "Captured By"].map((h) => (
+                        <th key={h} className="px-3 py-2 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 bg-white">
+                    {filteredPromises.length === 0 && (
+                      <tr><td colSpan={8} className="text-center text-slate-400 py-16 text-sm">No promises match the current filters.</td></tr>
+                    )}
+                    {filteredPromises.map((p) => {
+                      const dateIsPast = isPast(p.promisedDate) && p.status !== "Fulfilled" && p.status !== "Cancelled";
+                      return (
+                        <tr key={p.id} className="cursor-pointer transition-colors hover:bg-slate-50" onClick={() => { setSelectedPromise(p); setPromiseSheetOpen(true); }}>
+                          <td className="px-3 py-1.5 text-xs font-medium text-slate-800">{p.customerName}</td>
+                          <td className="px-3 py-1.5 text-xs font-bold text-slate-900 text-right whitespace-nowrap">{formatUsd(p.promisedAmount)}</td>
+                          <td className="px-3 py-1.5">
+                            <span className={cn("text-xs", dateIsPast ? "text-red-600 font-medium" : "text-slate-700")}>{formatDate(p.promisedDate)}</span>
+                          </td>
+                          <td className="px-3 py-1.5">
+                            {p.paymentMethod ? <Badge className={cn("text-xs", METHOD_BADGE_STYLES[p.paymentMethod] || "bg-slate-50 text-slate-600 border-slate-200")}>{p.paymentMethod}</Badge> : <span className="text-slate-400 text-xs">--</span>}
+                          </td>
+                          <td className="px-3 py-1.5">
+                            {p.status === "Broken" ? <Badge variant="destructive" className="text-xs">{p.status}</Badge>
+                              : p.status === "Cancelled" ? <Badge variant="outline" className="text-xs">{p.status}</Badge>
+                              : <Badge className={cn("text-xs", PROMISE_STATUS_BADGE[p.status])}>{p.status}</Badge>}
+                          </td>
+                          <td className="px-3 py-1.5 text-right">
+                            {p.receivedAmount ? <span className="text-xs font-medium text-green-700">{formatUsd(p.receivedAmount)}</span> : <span className="text-slate-400">{"\u2014"}</span>}
+                          </td>
+                          <td className="px-3 py-1.5 text-xs text-center">{p.invoiceIds?.length || 0}</td>
+                          <td className="px-3 py-1.5 text-xs text-slate-600">{p.capturedBy}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
+
+          {/* ============================================================ */}
+          {/*  CORRESPONDENCE TABLE / TIMELINE                             */}
+          {/* ============================================================ */}
+          {activeTab === "correspondence" && (
+            <Card>
+              {filteredCorr.length === 0 ? (
+                <div className="flex items-center justify-center py-16 text-slate-400 text-sm">No correspondence found.</div>
+              ) : corrViewMode === "table" ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="border-b bg-slate-50 sticky top-0 z-10">
+                      <tr>
+                        {["Date", "Customer", "Type", "Channel", "Direction", "Subject", "Sent By", ""].map((h) => (
+                          <th key={h} className="px-3 py-2 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 bg-white">
+                      {filteredCorr.map((entry) => (
+                        <tr key={entry.id} className="cursor-pointer transition-colors hover:bg-slate-50" onClick={() => { setSelectedCorr(entry); setCorrDetailOpen(true); }}>
+                          <td className="px-3 py-1.5 text-xs text-slate-600 whitespace-nowrap">{formatDateTime(entry.sentAt)}</td>
+                          <td className="px-3 py-1.5">
+                            <Link href={`/workbench/order-to-cash/collections/customer/${entry.customerId}`}
+                              className="text-xs font-medium text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
+                              {entry.customerName}
+                            </Link>
+                          </td>
+                          <td className="px-3 py-1.5"><Badge variant="outline" className={cn("text-xs", TYPE_BADGE[entry.type])}>{entry.type}</Badge></td>
+                          <td className="px-3 py-1.5">
+                            <div className="flex items-center gap-1.5 text-xs text-slate-600">
+                              {CORR_CHANNEL_ICON[entry.channel]} {entry.channel}
+                            </div>
+                          </td>
+                          <td className="px-3 py-1.5">
+                            <div className="flex items-center gap-1 text-xs">
+                              {entry.direction === "Outbound" ? <ArrowUpRight className="h-3.5 w-3.5 text-green-600" /> : <ArrowDownLeft className="h-3.5 w-3.5 text-blue-600" />}
+                              <span className={entry.direction === "Outbound" ? "text-green-700" : "text-blue-700"}>{entry.direction}</span>
+                            </div>
+                          </td>
+                          <td className="px-3 py-1.5 text-xs text-slate-700 max-w-[200px] truncate">{entry.subject || <span className="italic text-slate-400">(No subject)</span>}</td>
+                          <td className="px-3 py-1.5 text-xs text-slate-600">{entry.sentBy}</td>
+                          <td className="px-3 py-1.5">
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={(e) => { e.stopPropagation(); setSelectedCorr(entry); setCorrDetailOpen(true); }}>
+                              <Eye className="h-3.5 w-3.5" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                /* Timeline View */
+                <div className="p-4 space-y-6">
+                  {corrTimelineGroups.map((group) => (
+                    <div key={group.label}>
+                      <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">{group.label}</h3>
+                      <div className="relative ml-4 border-l-2 border-slate-200 space-y-4 pl-6">
+                        {group.items.map((entry) => (
+                          <div key={entry.id} className="relative cursor-pointer" onClick={() => { setSelectedCorr(entry); setCorrDetailOpen(true); }}>
+                            <div className="absolute -left-[31px] top-3 h-3 w-3 rounded-full border-2 border-white" style={{ backgroundColor: CHANNEL_COLORS[entry.channel] }} />
+                            <Card className="p-3 hover:bg-slate-50 transition-colors">
+                              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                <span className="text-xs text-slate-400">{formatDateTime(entry.sentAt)}</span>
+                                <Badge variant="outline" className={cn("text-xs", TYPE_BADGE[entry.type])}>{entry.type}</Badge>
+                                <span className="text-xs text-slate-500 flex items-center gap-1">{CORR_CHANNEL_ICON[entry.channel]} {entry.channel}</span>
+                                {entry.direction === "Outbound" ? <ArrowUpRight className="h-3 w-3 text-green-600" /> : <ArrowDownLeft className="h-3 w-3 text-blue-600" />}
+                              </div>
+                              <Link href={`/workbench/order-to-cash/collections/customer/${entry.customerId}`}
+                                className="text-sm font-semibold text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
+                                {entry.customerName}
+                              </Link>
+                              {entry.subject && <p className="text-sm text-slate-800 mt-0.5">{entry.subject}</p>}
+                              <p className="text-xs text-slate-500 line-clamp-2 mt-0.5">{entry.content}</p>
+                            </Card>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          )}
+
+          {/* ============================================================ */}
+          {/*  DISPUTES TABLE                                              */}
+          {/* ============================================================ */}
+          {activeTab === "disputes" && (
+            <Card>
+              <div className="overflow-x-auto">
+                {filteredDisputes.length === 0 ? (
+                  <div className="flex items-center justify-center py-16 text-slate-400 text-sm">No disputes match the current filters.</div>
+                ) : (
+                  <table className="w-full">
+                    <thead className="border-b bg-slate-50 sticky top-0 z-10">
+                      <tr>
+                        {["ID", "Customer", "Invoice", "Disputed", "Original", "Reason", "Status", "Priority", "Aging", "Assignee"].map((h) => (
+                          <th key={h} className="px-3 py-2 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 bg-white">
+                      {filteredDisputes.map((d) => (
+                        <tr key={d.id} className="cursor-pointer transition-colors hover:bg-slate-50" onClick={() => { setSelectedDispute(d); setDisputeSheetOpen(true); }}>
+                          <td className="px-3 py-1.5 text-xs font-mono text-slate-500">{d.id}</td>
+                          <td className="px-3 py-1.5 text-xs font-medium text-slate-800">{d.customerName}</td>
+                          <td className="px-3 py-1.5 text-xs text-slate-600">{d.invoiceNumber}</td>
+                          <td className="px-3 py-1.5 text-xs font-semibold text-red-600 text-right whitespace-nowrap">{formatUsd(d.disputeAmount)}</td>
+                          <td className="px-3 py-1.5 text-xs text-slate-600 text-right whitespace-nowrap">{formatUsd(d.originalAmount)}</td>
+                          <td className="px-3 py-1.5"><Badge variant="outline" className={cn("text-xs", DISPUTE_REASON_BADGE[d.reason])}>{d.reason}</Badge></td>
+                          <td className="px-3 py-1.5"><Badge className={cn("text-xs", DISPUTE_STATUS_BADGE[d.status])}>{d.status}</Badge></td>
+                          <td className="px-3 py-1.5"><Badge className={cn("text-xs", DISPUTE_PRIORITY_BADGE[d.priority])}>{d.priority}</Badge></td>
+                          <td className="px-3 py-1.5">
+                            <span className={cn("text-xs font-medium", getAgingDisplay(d.aging))}>{d.aging}d</span>
+                          </td>
+                          <td className="px-3 py-1.5 text-xs text-slate-600">{d.assignee}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </Card>
+          )}
         </div>
-
-        <div className="border-b border-slate-200" />
-      </header>
-
-      {/* ---- Body ---- */}
-      <div className="flex-1 grid grid-cols-[320px_1fr] gap-4 p-4 overflow-hidden">
-        {renderSidebar()}
-        {renderMainContent()}
       </div>
 
       {/* ======= Accounts Detail Drawer ======= */}
@@ -1989,6 +2088,78 @@ export default function CollectionsWorkbenchPage() {
               <Button variant="outline" onClick={() => setCorrLogOpen(false)}>Cancel</Button>
             </div>
           </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* ======= Disputes Detail Sheet ======= */}
+      <Sheet open={disputeSheetOpen} onOpenChange={setDisputeSheetOpen}>
+        <SheetContent className="sm:max-w-[480px] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="text-base">Dispute Details</SheetTitle>
+            <SheetDescription className="text-xs text-slate-500">Review and manage the selected dispute</SheetDescription>
+          </SheetHeader>
+          {selectedDispute && (
+            <div className="mt-4 space-y-4">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge className={cn("text-xs", DISPUTE_STATUS_BADGE[selectedDispute.status])}>{selectedDispute.status}</Badge>
+                <Badge className={cn("text-xs", DISPUTE_PRIORITY_BADGE[selectedDispute.priority])}>{selectedDispute.priority} Priority</Badge>
+                <Badge variant="outline" className={cn("text-xs", DISPUTE_REASON_BADGE[selectedDispute.reason])}>{selectedDispute.reason}</Badge>
+              </div>
+              <div className="grid grid-cols-[120px_1fr] gap-y-3 gap-x-2 text-sm">
+                <div className="text-slate-500">Dispute ID</div><div className="font-mono">{selectedDispute.id}</div>
+                <div className="text-slate-500">Customer</div><div className="font-medium">{selectedDispute.customerName}</div>
+                <div className="text-slate-500">Invoice</div><div className="font-mono">{selectedDispute.invoiceNumber}</div>
+                <div className="text-slate-500">Disputed Amt</div><div className="font-bold text-red-600">{formatUsd(selectedDispute.disputeAmount)}</div>
+                <div className="text-slate-500">Original Amt</div><div>{formatUsd(selectedDispute.originalAmount)}</div>
+                <div className="text-slate-500">% Disputed</div><div>{Math.round((selectedDispute.disputeAmount / selectedDispute.originalAmount) * 100)}%</div>
+                <div className="text-slate-500">Created</div><div>{formatDate(selectedDispute.createdDate)}</div>
+                <div className="text-slate-500">Due Date</div><div className={cn(isPast(selectedDispute.dueDate) ? "text-red-600 font-medium" : "")}>{formatDate(selectedDispute.dueDate)}</div>
+                <div className="text-slate-500">Aging</div><div><span className={cn("font-medium", getAgingDisplay(selectedDispute.aging))}>{selectedDispute.aging} days</span></div>
+                <div className="text-slate-500">Assignee</div><div>{selectedDispute.assignee}</div>
+              </div>
+
+              {/* Activity Timeline */}
+              <div className="pt-2">
+                <h4 className="text-sm font-semibold text-slate-700 mb-3">Activity Timeline</h4>
+                <div className="relative ml-3 border-l-2 border-slate-200 space-y-3 pl-5">
+                  {(MOCK_TIMELINES[selectedDispute.id] || DEFAULT_TIMELINE).map((event, idx) => (
+                    <div key={idx} className="relative">
+                      <div className="absolute -left-[25px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary border-2 border-white" />
+                      <p className="text-[11px] text-slate-400 mb-0.5">{formatDate(event.date)}</p>
+                      <p className="text-sm text-slate-700">{event.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-2 flex-wrap">
+                {(selectedDispute.status === "Open" || selectedDispute.status === "Under Review") && (
+                  <>
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => { toast.success(`Dispute ${selectedDispute.id} approved for credit`); setDisputeSheetOpen(false); }}>
+                      <CheckCircle className="h-3 w-3 mr-1" /> Approve
+                    </Button>
+                    <Button variant="destructive" size="sm" onClick={() => { toast.error(`Dispute ${selectedDispute.id} rejected`); setDisputeSheetOpen(false); }}>
+                      <XCircle className="h-3 w-3 mr-1" /> Reject
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => { toast.info(`Dispute ${selectedDispute.id} escalated`); setDisputeSheetOpen(false); }}>
+                      <AlertCircle className="h-3 w-3 mr-1" /> Escalate
+                    </Button>
+                  </>
+                )}
+                {selectedDispute.status === "Escalated" && (
+                  <>
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => { toast.success(`Dispute ${selectedDispute.id} resolved`); setDisputeSheetOpen(false); }}>
+                      <CheckCircle className="h-3 w-3 mr-1" /> Resolve
+                    </Button>
+                    <Button variant="destructive" size="sm" onClick={() => { toast.error(`Dispute ${selectedDispute.id} rejected`); setDisputeSheetOpen(false); }}>
+                      <XCircle className="h-3 w-3 mr-1" /> Reject
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </SheetContent>
       </Sheet>
 

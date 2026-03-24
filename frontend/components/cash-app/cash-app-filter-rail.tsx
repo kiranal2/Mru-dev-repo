@@ -16,6 +16,7 @@ interface FilterState {
   dateRange: string;
   amountRange: string;
   method: string;
+  jeStatus: string;
   status: string;
   remittanceSource: string;
   assignedTo: string;
@@ -99,6 +100,21 @@ export function CashAppFilterRail({ filters, onFilterChange }: CashAppFilterRail
         </div>
 
         <div>
+          <Label className="text-sm font-medium mb-2 block">JE Status</Label>
+          <Select value={filters.jeStatus} onValueChange={(v) => updateFilter("jeStatus", v)}>
+            <SelectTrigger>
+              <SelectValue placeholder="All" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="required">JE Required</SelectItem>
+              <SelectItem value="submitted">JE Submitted</SelectItem>
+              <SelectItem value="none">No JE</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
           <Label className="text-sm font-medium mb-2 block">Remittance Source</Label>
           <Select
             value={filters.remittanceSource}
@@ -145,6 +161,7 @@ export function CashAppFilterRail({ filters, onFilterChange }: CashAppFilterRail
               dateRange: "all",
               amountRange: "all",
               method: "all",
+              jeStatus: "all",
               status: filters.status,
               remittanceSource: "all",
               assignedTo: "all",

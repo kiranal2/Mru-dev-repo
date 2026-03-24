@@ -643,6 +643,7 @@ export function useCommandCenter({
             nextSteps: streamingResult.next_steps || [],
             dataAnalysis: finalDataAnalysis,
             followUpPrompts: streamingResult.follow_up_prompts || [],
+            richCards: streamingResult.rich_cards || [],
             streamingEvents: [...currentStreamingEvents],
           };
         } else {
@@ -660,6 +661,7 @@ export function useCommandCenter({
             nextSteps: streamingResult.next_steps || [],
             dataAnalysis: newMessageContent,
             followUpPrompts: streamingResult.follow_up_prompts || [],
+            richCards: streamingResult.rich_cards || [],
             streamingEvents: [...currentStreamingEvents],
           });
         }
@@ -851,6 +853,10 @@ export function useCommandCenter({
         followUpPrompts:
           apiResponse.follow_up_prompts && Array.isArray(apiResponse.follow_up_prompts)
             ? apiResponse.follow_up_prompts
+            : [],
+        richCards:
+          apiResponse.rich_cards && Array.isArray(apiResponse.rich_cards)
+            ? apiResponse.rich_cards
             : [],
       };
 

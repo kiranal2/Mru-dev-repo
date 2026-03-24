@@ -121,7 +121,9 @@ export function useStreamingQuery(options: UseStreamingQueryOptions = {}): UseSt
           data_analysis: data.data_analysis || data.synthesized_results || "",
           recommendations: data.recommendations || [],
           next_steps: data.next_steps || [],
+          follow_up_prompts: data.follow_up_prompts || [],
           tool_results: toolResults,
+          rich_cards: data.rich_cards || [],
         };
       } catch (err) {
         console.error("❌ Failed to fetch result:", err);
@@ -218,7 +220,9 @@ export function useStreamingQuery(options: UseStreamingQueryOptions = {}): UseSt
                   data_analysis: sseDataAnalysis || queryResult?.data_analysis || "",
                   recommendations: queryResult?.recommendations || [],
                   next_steps: queryResult?.next_steps || [],
+                  follow_up_prompts: queryResult?.follow_up_prompts || [],
                   tool_results: queryResult?.tool_results || [],
+                  rich_cards: queryResult?.rich_cards || [],
                 };
 
                 const hasTableData =

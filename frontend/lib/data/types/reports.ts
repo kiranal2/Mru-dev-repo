@@ -154,22 +154,38 @@ export interface FluxVariance {
   accountName: string;
   /** Chart-of-accounts number. */
   accountNumber: string;
-  /** Balance in the current (latest) period. */
-  currentPeriod: number;
-  /** Balance in the prior (comparison) period. */
-  priorPeriod: number;
-  /** Absolute variance (currentPeriod - priorPeriod). */
+  /** Period label for the current period (e.g. "Q4 2024"). */
+  currentPeriod: string;
+  /** Period label for the prior period (e.g. "Q3 2024"). */
+  priorPeriod: string;
+  /** Monetary value in the current period. */
+  currentValue: number;
+  /** Monetary value in the prior period. */
+  priorValue: number;
+  /** Absolute variance (currentValue - priorValue). */
   varianceAmount: number;
-  /** Percentage variance ((variance / priorPeriod) * 100). */
-  variancePct: number;
+  /** Percentage variance ((variance / priorValue) * 100). */
+  variancePercent: number;
+  /** Materiality threshold for this account. */
+  threshold: number;
+  /** Whether the variance exceeds the materiality threshold. */
+  isSignificant: boolean;
   /** Whether the variance has been explained. */
-  status: "Explained" | "Unexplained" | "In Progress";
+  status: "Reviewed" | "InReview" | "AutoClosed";
   /** AI-generated explanation for the variance, if available. */
   aiExplanation?: string;
-  /** User assigned to explain or review this variance. */
-  assignedTo?: string;
+  /** User who reviewed this variance. */
+  reviewedBy?: string | null;
+  /** Timestamp of the review. */
+  reviewedAt?: string | null;
+  /** Review comments. */
+  comments?: string | null;
+  /** Backward-compat alias for variancePercent (variancePercent / 100). */
+  variancePct?: number;
+  /** Backward-compat alias for isSignificant. */
+  materialityFlag?: boolean;
   /** Optional variance category for grouping. */
   category?: string;
-  /** Whether the variance exceeds the materiality threshold. */
-  materialityFlag: boolean;
+  /** User assigned to explain or review this variance. */
+  assignedTo?: string;
 }

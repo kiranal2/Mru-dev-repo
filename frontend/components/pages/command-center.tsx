@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import GridTable from "@/components/ui/grid-table";
 import AgingSummaryCards from "@/components/ui/aging-summary-cards";
+import type { RichCard, RichCardItem, RichCardKpi, RichCardLink } from "@/app/(main)/home/command-center/types";
 import {
   Bot,
   FileText,
@@ -25,6 +26,10 @@ import {
   Users,
   PieChart,
   Receipt,
+  Shield,
+  AlertTriangle,
+  CheckCircle2,
+  GitBranch,
   type LucideIcon,
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -47,12 +52,12 @@ type SuggestedPrompt = {
 };
 
 const SUGGESTED_PROMPTS: SuggestedPrompt[] = [
-  { id: "sp-1", icon: TrendingUp, text: "Show me AR aging summary for all customers", category: "AR Aging" },
-  { id: "sp-2", icon: Receipt, text: "List all open invoices over $100,000", category: "Invoices" },
-  { id: "sp-3", icon: DollarSign, text: "Give me payment history for the last 30 days", category: "Payments" },
-  { id: "sp-4", icon: Users, text: "Show top 10 customers by outstanding balance", category: "Customers" },
-  { id: "sp-5", icon: AlertCircle, text: "What invoices are overdue by more than 60 days?", category: "Collections" },
-  { id: "sp-6", icon: PieChart, text: "Break down AR balance by business unit", category: "Analysis" },
+  { id: "sp-1", icon: Shield, text: "Show close health status", category: "Close" },
+  { id: "sp-2", icon: AlertCircle, text: "What exceptions are blocking the close?", category: "Exceptions" },
+  { id: "sp-3", icon: RefreshCw, text: "Show reconciliation issues", category: "Recon" },
+  { id: "sp-4", icon: GitBranch, text: "Show intercompany imbalance details", category: "Intercompany" },
+  { id: "sp-5", icon: TrendingUp, text: "Show flux analysis impact from both stories", category: "Variance" },
+  { id: "sp-6", icon: DollarSign, text: "Show cash application status", category: "Cash App" },
 ];
 
 const FAVORITE_PROMPTS: SuggestedPrompt[] = [
@@ -74,6 +79,7 @@ type Message = {
   nextSteps?: string[];
   dataAnalysis?: string;
   followUpPrompts?: string[];
+  richCards?: RichCard[];
 };
 
 // Streaming event type for display
@@ -203,6 +209,151 @@ function generateClientFollowUpPrompts(userMessage: string): string[] {
   ];
 }
 
+// ─── Rich Card Renderer ──────────────────────────────────────────────
+
+function ItemIcon({ type }: { type?: string }) {
+  switch (type) {
+    case "reconciliation": return <RefreshCw className="h-3.5 w-3.5" />;
+    case "variance": return <TrendingUp className="h-3.5 w-3.5" />;
+    case "close-task": return <GitBranch className="h-3.5 w-3.5" />;
+    case "cash-app": return <DollarSign className="h-3.5 w-3.5" />;
+    case "collections": return <Users className="h-3.5 w-3.5" />;
+    case "statement": return <FileText className="h-3.5 w-3.5" />;
+    case "exception": return <AlertCircle className="h-3.5 w-3.5" />;
+    default: return <AlertTriangle className="h-3.5 w-3.5" />;
+  }
+}
+
+const KPI_COLORS: Record<string, { text: string; bg: string }> = {
+  red: { text: "text-red-600", bg: "bg-red-50" },
+  amber: { text: "text-amber-600", bg: "bg-amber-50" },
+  emerald: { text: "text-emerald-600", bg: "bg-emerald-50" },
+  blue: { text: "text-blue-600", bg: "bg-blue-50" },
+  slate: { text: "text-slate-600", bg: "bg-slate-50" },
+  purple: { text: "text-purple-600", bg: "bg-purple-50" },
+};
+
+const STATUS_STYLES: Record<string, { badge: string; label: string }> = {
+  "at-risk": { badge: "bg-red-50 text-red-700 border-red-200", label: "At Risk" },
+  amber: { badge: "bg-amber-50 text-amber-700 border-amber-200", label: "Needs Attention" },
+  "on-track": { badge: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "On Track" },
+};
+
+const SEVERITY_STYLES: Record<string, { icon: string; border: string }> = {
+  High: { icon: "bg-red-100 text-red-600", border: "border-red-200 bg-red-50/30" },
+  Medium: { icon: "bg-amber-100 text-amber-600", border: "border-amber-200 bg-amber-50/30" },
+  Low: { icon: "bg-blue-100 text-blue-600", border: "border-blue-200 bg-blue-50/30" },
+};
+
+function RichCardRenderer({ card, onNavigate }: { card: RichCard; onNavigate: (route: string) => void }) {
+  const statusStyle = card.status ? STATUS_STYLES[card.status] : null;
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
+      {/* Card Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex items-center gap-2">
+          <Shield className="h-4 w-4 text-slate-600" />
+          <h3 className="text-[13px] font-semibold text-slate-800">{card.title}</h3>
+        </div>
+        {statusStyle && (
+          <span className={cn("rounded-full px-2.5 py-0.5 text-[11px] font-semibold border", statusStyle.badge)}>
+            {statusStyle.label}
+          </span>
+        )}
+      </div>
+
+      {/* KPI Strip */}
+      {card.kpis && card.kpis.length > 0 && (
+        <div className={cn(
+          "grid gap-2 px-4 py-3 border-b border-slate-100",
+          card.kpis.length <= 2 ? "grid-cols-2" : card.kpis.length === 3 ? "grid-cols-3" : "grid-cols-4"
+        )}>
+          {card.kpis.map((kpi, i) => {
+            const colors = KPI_COLORS[kpi.color || "slate"];
+            return (
+              <div key={i} className="rounded-lg border border-slate-200 bg-white p-2.5">
+                <div className="text-[10px] uppercase tracking-wider text-slate-400">{kpi.label}</div>
+                <div className={cn("mt-0.5 text-base font-bold", colors.text)}>{kpi.value}</div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Progress Bar */}
+      {card.progress && (
+        <div className="flex items-center gap-3 px-4 py-2.5 border-b border-slate-100">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+            {card.progress.label || "Progress"}
+          </span>
+          <div className="flex-1 h-1.5 rounded-full bg-slate-100">
+            <div
+              className="h-full rounded-full bg-primary transition-all"
+              style={{ width: `${card.progress.total ? (card.progress.completed / card.progress.total) * 100 : 0}%` }}
+            />
+          </div>
+          <span className="text-[11px] font-semibold text-slate-600">
+            {card.progress.completed}/{card.progress.total}
+          </span>
+        </div>
+      )}
+
+      {/* Action Items */}
+      {card.items && card.items.length > 0 && (
+        <div className="px-4 py-3 space-y-2">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+            {card.type === "exceptions" ? "Exceptions" : card.type === "close-health" ? "Critical Blockers" : "Items"}
+          </div>
+          {card.items.map((item) => {
+            const severity = SEVERITY_STYLES[item.severity || "Medium"];
+            return (
+              <button
+                key={item.id}
+                onClick={() => item.route && onNavigate(item.route)}
+                className={cn(
+                  "flex w-full items-start gap-3 rounded-lg border p-2.5 text-left transition-all hover:shadow-sm",
+                  item.route ? "cursor-pointer hover:border-slate-300" : "cursor-default",
+                  severity.border
+                )}
+              >
+                <div className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full mt-0.5", severity.icon)}>
+                  <ItemIcon type={item.type} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-medium text-slate-800">{item.label}</div>
+                  {item.description && (
+                    <p className="mt-0.5 text-[11px] text-slate-500 line-clamp-2">{item.description}</p>
+                  )}
+                </div>
+                {item.route && <ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-400 mt-1" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Navigation Links */}
+      {card.links && card.links.length > 0 && (
+        <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/30">
+          <div className="flex items-center gap-2 flex-wrap">
+            {card.links.map((link) => (
+              <button
+                key={link.route}
+                onClick={() => onNavigate(link.route)}
+                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 shadow-sm transition-all hover:bg-primary hover:text-white hover:border-primary"
+              >
+                {link.label}
+                <ArrowRight className="h-3 w-3" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Memoize message item component to prevent re-renders
 const MessageItem = memo(
   ({
@@ -217,6 +368,7 @@ const MessageItem = memo(
     onOpenCreateTemplateModal,
     onExpandTable,
     onPromptSuggestionClick,
+    onNavigate,
     isLastAssistantMessage,
   }: {
     message: Message;
@@ -230,6 +382,7 @@ const MessageItem = memo(
     onOpenCreateTemplateModal?: () => void;
     onExpandTable: (tableId: string) => void;
     onPromptSuggestionClick?: (text: string) => void;
+    onNavigate?: (route: string) => void;
     isLastAssistantMessage: boolean;
   }) => {
     const [chartVisibleForTable, setChartVisibleForTable] = useState<Record<string, boolean>>({});
@@ -414,6 +567,19 @@ const MessageItem = memo(
                     }}
                   />
                 </div>
+              </div>
+            )}
+
+            {/* Rich Cards — cross-module navigation */}
+            {message.richCards && message.richCards.length > 0 && (
+              <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
+                {message.richCards.map((card) => (
+                  <RichCardRenderer
+                    key={card.id}
+                    card={card}
+                    onNavigate={(route) => onNavigate?.(route)}
+                  />
+                ))}
               </div>
             )}
 
@@ -1202,6 +1368,7 @@ export default function CommandCenter({
                       onOpenCreateTemplateModal={onOpenCreateTemplateModal}
                       onExpandTable={handleExpandTable}
                       onPromptSuggestionClick={onPromptSuggestionClick}
+                      onNavigate={(route) => router.push(route)}
                       isLastAssistantMessage={index === lastAssistantIndex}
                     />
                   ));

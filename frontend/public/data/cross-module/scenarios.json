@@ -1,0 +1,158 @@
+[
+  {
+    "id": "SCENARIO-001",
+    "title": "AR Understatement — Unapplied Cash & Missing Revenue Posting",
+    "severity": "High",
+    "status": "In Progress",
+    "detectedAt": "2024-12-14T08:00:00Z",
+    "owner": "Mike Johnson",
+    "impactSummary": "AR overstated by $250K due to 2 unreconciled items. Revenue potentially understated. Close certification blocked.",
+    "modules": {
+      "commandCenter": {
+        "closeHealth": "At Risk",
+        "criticalExceptions": 2,
+        "impactedStatementLines": ["Accounts Receivable", "Revenue"],
+        "alerts": [
+          {
+            "id": "ALERT-001",
+            "type": "reconciliation",
+            "severity": "High",
+            "message": "AR Reconciliation unresolved: $250,000 (2 items)",
+            "route": "/workbench/record-to-report/reconciliations",
+            "linkedId": "RECON-003"
+          },
+          {
+            "id": "ALERT-002",
+            "type": "variance",
+            "severity": "Medium",
+            "message": "Revenue variance -$185K below threshold — posting timing issue",
+            "route": "/workbench/record-to-report/standard-flux",
+            "linkedId": null
+          },
+          {
+            "id": "ALERT-003",
+            "type": "close-task",
+            "severity": "High",
+            "message": "Close task CLT-007 blocked — AR reconciliation incomplete",
+            "route": "/workbench/record-to-report/close",
+            "linkedId": "CLT-007"
+          },
+          {
+            "id": "ALERT-004",
+            "type": "statement",
+            "severity": "Medium",
+            "message": "Balance Sheet: AR line pending adjustment. P&L: Revenue line impacted.",
+            "route": "/reports/sec/balance-sheet",
+            "linkedId": null
+          }
+        ]
+      },
+      "closeWorkbench": {
+        "taskId": "CLT-007",
+        "blockerReason": "AR reconciliation has 2 unmatched exceptions totaling $250,000. Cash application (CLT-002) must resolve exception payments before AR can be certified.",
+        "certificationGate": true,
+        "dependencyChain": ["CLT-001", "CLT-002", "CLT-007", "CLT-008", "CLT-011", "CLT-012"]
+      },
+      "reconciliations": {
+        "reconId": "RECON-003",
+        "exceptions": [
+          {
+            "id": "EXC-001",
+            "type": "Unapplied Cash",
+            "customer": "Acme Corp",
+            "invoiceNumber": "INV-2024-4872",
+            "invoiceDate": "2024-11-15",
+            "invoiceDueDate": "2024-12-15",
+            "receiptAmount": 175000,
+            "glAmount": 0,
+            "subledgerAmount": 175000,
+            "receiptDate": "2024-12-10",
+            "receiptRef": "ACH-20241210-ACME",
+            "exceptionReason": "Customer payment received via ACH on Dec 10 but not applied to invoice. Cash sits in unapplied cash clearing account (1050). Remittance reference does not match invoice number due to customer PO format mismatch.",
+            "suggestedAction": "Apply receipt ACH-20241210-ACME to INV-2024-4872 in cash application. Update remittance mapping rule for Acme Corp PO format.",
+            "confidence": 94,
+            "supportingDocs": ["Bank statement Dec 10", "Remittance advice — Acme Corp", "AR aging report"],
+            "auditTrail": [
+              { "timestamp": "2024-12-10T14:22:00Z", "action": "Payment received", "actor": "System", "detail": "ACH $175,000 from Acme Corp deposited to Chase 4521" },
+              { "timestamp": "2024-12-11T09:00:00Z", "action": "Auto-match attempted", "actor": "System", "detail": "No match found — PO reference format mismatch" },
+              { "timestamp": "2024-12-13T16:00:00Z", "action": "Flagged as exception", "actor": "Reconciliation Engine", "detail": "Moved to AR exception queue" },
+              { "timestamp": "2024-12-14T08:00:00Z", "action": "Assigned to owner", "actor": "Sarah Chen", "detail": "Assigned to Mike Johnson for investigation" }
+            ]
+          },
+          {
+            "id": "EXC-002",
+            "type": "Revenue Posting Error",
+            "customer": "GlobalTech Solutions",
+            "invoiceNumber": "INV-2024-5103",
+            "invoiceDate": "2024-12-01",
+            "invoiceDueDate": "2024-12-31",
+            "receiptAmount": 0,
+            "glAmount": 75000,
+            "subledgerAmount": 0,
+            "receiptDate": null,
+            "receiptRef": null,
+            "exceptionReason": "Revenue journal entry JE-ARV-412 posted $75,000 to account 4100 (Product Revenue) instead of 1200 (Accounts Receivable). Debit should be AR, credit should be Revenue. Currently only GL side shows the amount; subledger has no corresponding entry.",
+            "suggestedAction": "Post adjusting journal entry: Debit 1200 AR $75,000, Credit 4100 Revenue $75,000 to correct the original misposting. Then re-run subledger sync.",
+            "confidence": 88,
+            "supportingDocs": ["Journal entry JE-ARV-412", "GL detail for 4100", "Subledger extract for GlobalTech"],
+            "auditTrail": [
+              { "timestamp": "2024-12-01T10:00:00Z", "action": "Invoice created", "actor": "Billing System", "detail": "INV-2024-5103 for GlobalTech Solutions — $75,000" },
+              { "timestamp": "2024-12-02T08:30:00Z", "action": "Revenue journal posted", "actor": "Mike Johnson", "detail": "JE-ARV-412 posted — incorrect account mapping" },
+              { "timestamp": "2024-12-13T16:00:00Z", "action": "Reconciliation mismatch detected", "actor": "Reconciliation Engine", "detail": "GL shows $75K in 4100 with no AR subledger entry" },
+              { "timestamp": "2024-12-14T08:00:00Z", "action": "Flagged as exception", "actor": "System", "detail": "Exception created — requires adjusting journal" }
+            ]
+          }
+        ]
+      },
+      "standardFlux": {
+        "impactedAccounts": [
+          {
+            "acct": "1200",
+            "name": "Accounts Receivable",
+            "varianceDriver": "Unapplied cash ($175K) and missing subledger posting ($75K) inflating AR balance",
+            "priorPeriodImpact": "+$250K vs expected",
+            "resolution": "One item resolved via cash application, one via adjusting journal entry"
+          },
+          {
+            "acct": "4100",
+            "name": "Product Revenue",
+            "varianceDriver": "Revenue posting hit wrong account — $75K recognized in Revenue but no AR offset created",
+            "priorPeriodImpact": "-$75K net revenue impact after correction",
+            "resolution": "Adjusting journal to correct account mapping"
+          }
+        ],
+        "commentary": "AR variance was driven by two unreconciled items totaling $250,000, primarily due to unapplied customer cash ($175K from Acme Corp) and a timing-related revenue posting issue ($75K for GlobalTech Solutions). One item was operationally resolved via cash application and one required an accounting adjustment. Final balances are now aligned."
+      },
+      "financialStatements": {
+        "balanceSheet": {
+          "impactedLine": "Accounts Receivable",
+          "preAdjustment": "Overstated by $250,000",
+          "postAdjustment": "Aligned to subledger",
+          "signOffStatus": "Pending"
+        },
+        "incomeStatement": {
+          "impactedLine": "Product Revenue (4100)",
+          "preAdjustment": "Overstated by $75,000 (debit/credit reversal)",
+          "postAdjustment": "Correct after adjusting journal",
+          "signOffStatus": "Pending"
+        },
+        "cashFlow": {
+          "impactedLine": "Cash from Operations — AR Change",
+          "note": "Classification timing issue — resolved. No net cash impact."
+        }
+      }
+    },
+    "resolution": {
+      "status": "In Progress",
+      "steps": [
+        { "id": 1, "label": "Detect exceptions in reconciliation", "status": "Completed", "completedAt": "2024-12-13T16:00:00Z" },
+        { "id": 2, "label": "Assign owner and investigate root cause", "status": "Completed", "completedAt": "2024-12-14T08:00:00Z" },
+        { "id": 3, "label": "Apply unapplied cash (Acme Corp $175K)", "status": "In Progress", "completedAt": null },
+        { "id": 4, "label": "Post adjusting journal for GlobalTech $75K", "status": "Not Started", "completedAt": null },
+        { "id": 5, "label": "Re-run reconciliation and verify match", "status": "Not Started", "completedAt": null },
+        { "id": 6, "label": "Update flux commentary and attach evidence", "status": "Not Started", "completedAt": null },
+        { "id": 7, "label": "Certify AR reconciliation and unblock close", "status": "Not Started", "completedAt": null }
+      ]
+    }
+  }
+]

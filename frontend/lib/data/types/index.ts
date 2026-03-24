@@ -11,3 +11,4 @@ export * from './mrp';
 export * from './common';
 export * from './merchant';
 export * from './filters';
+export * from './flux-analysis';

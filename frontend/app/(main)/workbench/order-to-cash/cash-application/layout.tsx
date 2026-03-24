@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   LayoutGrid,
   AlertCircle,
@@ -37,7 +35,6 @@ export default function CashApplicationLayout({ children }: { children: React.Re
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const dataHealth = cashAppStore.getDataHealth();
   const [isKpiExpanded, setIsKpiExpanded] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const stats = cashAppStore.getStats();
@@ -155,80 +152,14 @@ export default function CashApplicationLayout({ children }: { children: React.Re
 
   return (
     <div className="h-full flex flex-col">
-      {/* Page Header with Breadcrumb */}
-      <header className="sticky top-0 z-10 bg-white border-b flex-shrink-0">
-        <div className="px-6 pt-2.5 pb-1">
-          {/* Breadcrumb hidden for cleaner layout */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <LayoutGrid className="w-4.5 h-4.5 text-slate-700" />
-              <h1 className="text-base font-bold text-slate-900">Cash Application Workbench</h1>
-            </div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    className={`flex items-center gap-1 px-2 py-0.5 rounded border text-[11px] transition-colors ${
-                      dataHealth.guard.overallState === "Healthy"
-                        ? "bg-green-50 border-green-200 hover:bg-green-100"
-                        : dataHealth.guard.overallState === "Degraded"
-                          ? "bg-orange-50 border-orange-200 hover:bg-orange-100"
-                          : "bg-red-50 border-red-200 hover:bg-red-100"
-                    }`}
-                  >
-                    <span className="font-medium text-gray-500">Sync</span>
-                    <Badge
-                      variant={
-                        dataHealth.guard.overallState === "Healthy"
-                          ? "default"
-                          : dataHealth.guard.overallState === "Degraded"
-                            ? "secondary"
-                            : "destructive"
-                      }
-                      className="text-[10px] px-1.5 py-0"
-                    >
-                      {dataHealth.guard.overallState === "BlockPosting"
-                        ? "Blocked"
-                        : dataHealth.guard.overallState}
-                    </Badge>
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-sm p-3">
-                  <div className="space-y-2">
-                    <div className="font-semibold text-xs border-b pb-1.5">Data Freshness</div>
-                    {dataHealth.freshness.map((fresh) => (
-                      <div key={fresh.entityType} className="text-xs space-y-0.5">
-                        <div className="font-medium">{fresh.entityType}</div>
-                        <div className="text-gray-600">
-                          Last sync: {fresh.ageMinutes} min ago
-                          {fresh.ageMinutes && fresh.ageMinutes > 30 && (
-                            <span className="text-orange-600 ml-1">(stale)</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    {dataHealth.guard.reasons.length > 0 && (
-                      <>
-                        <div className="font-semibold text-xs border-b pb-1.5 pt-1">Issues</div>
-                        {dataHealth.guard.reasons.map((reason, idx) => (
-                          <div key={idx} className="text-xs text-red-600 flex items-start gap-1">
-                            <AlertCircle className="w-3 h-3 flex-shrink-0 mt-0.5" />
-                            <span>{reason.message}</span>
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-      </header>
-
+      {/* Title */}
+      <div className="px-5 pt-3 pb-1 bg-slate-50">
+        <h1 className="text-sm font-semibold text-slate-900">Cash Application</h1>
+        <p className="text-[11px] text-slate-500">AI-powered payment matching, remittance processing &amp; exception management</p>
+      </div>
       {/* Navigation Tabs */}
-      <div className="border-b bg-white">
-        <div className="px-6 pb-1.5 pt-1">
+      <div className="bg-slate-50">
+        <div className="px-5 pb-1.5 pt-2">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-1">
               <button
@@ -250,8 +181,8 @@ export default function CashApplicationLayout({ children }: { children: React.Re
                     onClick={() => router.push(item.path)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
                       active
-                        ? "bg-slate-100 text-slate-900 border border-slate-200"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                        ? "bg-white text-primary shadow-sm border border-slate-200"
+                        : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -266,8 +197,8 @@ export default function CashApplicationLayout({ children }: { children: React.Re
                   <button
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
                       activeOverflowItem
-                        ? "bg-slate-100 text-slate-900 border border-slate-200"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                        ? "bg-white text-primary shadow-sm border border-slate-200"
+                        : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                     }`}
                   >
                     {activeOverflowItem ? (

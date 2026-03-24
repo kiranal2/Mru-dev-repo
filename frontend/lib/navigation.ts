@@ -227,12 +227,6 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
           route: "/workbench/order-to-cash/cash-application",
         },
         {
-          id: "disputes",
-          label: "Disputes",
-          icon: React.createElement(FileText, { size: 16 }),
-          route: "/workbench/order-to-cash/disputes",
-        },
-        {
           id: "merchant-portal",
           label: "Merchant Portal",
           icon: React.createElement(Store, { size: 16 }),
@@ -284,6 +278,12 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
           icon: React.createElement(Calculator, { size: 16 }),
           route: "/workbench/record-to-report/reconciliations",
         },
+        {
+          id: "standard-flux",
+          label: "Standard Flux",
+          icon: React.createElement(TrendingUp, { size: 16 }),
+          route: "/workbench/record-to-report/standard-flux",
+        },
       ],
     },
     {
@@ -297,6 +297,26 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
           label: "MRP Workbench",
           icon: React.createElement(Package, { size: 16 }),
           route: "/workbench/supply-chain-finance/mrp",
+        },
+      ],
+    },
+    {
+      id: "custom-workbench",
+      label: "Custom Workbench",
+      icon: React.createElement(Layers, { size: 18 }),
+      route: "/workbench/custom-workbench",
+      children: [
+        {
+          id: "uberflux",
+          label: "Uber Flux",
+          icon: React.createElement(Activity, { size: 16 }),
+          route: "/workbench/custom-workbench/uberflux",
+        },
+        {
+          id: "form-factor",
+          label: "Form Factor",
+          icon: React.createElement(Abacus, { size: 16 }),
+          route: "/workbench/custom-workbench/form-factor",
         },
       ],
     },

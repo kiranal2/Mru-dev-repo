@@ -30,6 +30,7 @@ export default function Breadcrumb({ activeRoute, className }: BreadcrumbProps) 
       if (parts[1] === "revenue-ops") breadcrumbs.push("Revenue Ops");
       if (parts[1] === "revenue-leakage") breadcrumbs.push("Revenue Leakage");
       if (parts[1] === "treasury") breadcrumbs.push("Treasury");
+      if (parts[1] === "custom-workbench") breadcrumbs.push("Custom Workbench");
     }
 
     // Handle reports sub-categories
@@ -44,7 +45,7 @@ export default function Breadcrumb({ activeRoute, className }: BreadcrumbProps) 
       if (parts[2] === "variance-drivers") breadcrumbs.push("Variance Drivers");
       if (parts[2] === "ap-exceptions") breadcrumbs.push("AP Exceptions");
       if (parts[2] === "saas-renewal") breadcrumbs.push("SaaS Renewal");
-      if (parts[2] === "disputes") breadcrumbs.push("Disputes");
+      // disputes is now a tab in collections workbench
       if (parts[2] === "cash-application") breadcrumbs.push("Cash Application");
       if (parts[2] === "cash-collection") {
         breadcrumbs.push("Cash Collection");
@@ -79,6 +80,8 @@ export default function Breadcrumb({ activeRoute, className }: BreadcrumbProps) 
       if (parts[2] === "settings" && parts[1] === "revenue-leakage") breadcrumbs.push("Settings");
       if (parts[2] === "admin" && parts[1] === "revenue-leakage") breadcrumbs.push("Admin");
       if (parts[2] === "liquidity") breadcrumbs.push("Liquidity");
+      if (parts[2] === "uberflux") breadcrumbs.push("Uber Flux");
+      if (parts[2] === "form-factor") breadcrumbs.push("Form Factor");
     }
 
     // Handle reports page names
