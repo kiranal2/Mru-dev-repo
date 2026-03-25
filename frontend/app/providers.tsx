@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/lib/theme-context";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   // Create a client instance inside the component to avoid sharing between requests
@@ -20,6 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
+    <ThemeProvider>
     <QueryClientProvider client={queryClient}>
       {children}
       <Toaster
@@ -41,5 +43,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
         }}
       />
     </QueryClientProvider>
+    </ThemeProvider>
   );
 }

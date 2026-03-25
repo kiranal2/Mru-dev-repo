@@ -7,8 +7,12 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Meeru AI Chat',
+  title: 'Meeru AI',
   description: 'AI-powered financial analysis and chat assistant',
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

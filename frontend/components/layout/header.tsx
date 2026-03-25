@@ -2,15 +2,20 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import { CircleHelp, Bell } from "lucide-react";
+import { CircleHelp, Bell, Menu, PanelLeftClose } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserMenu } from "./user-menu";
+import { ThemeSwitcher } from "./theme-switcher";
+import { useTheme } from "@/lib/theme-context";
 
 interface HeaderProps {
   loadingState: "loading" | "loaded";
+  isSidebarHidden?: boolean;
+  onToggleSidebar?: () => void;
 }
 
-export default function Header({ loadingState }: HeaderProps) {
+export default function Header({ loadingState, isSidebarHidden, onToggleSidebar }: HeaderProps) {
+  const { theme } = useTheme();
   const pathname = usePathname();
   const isIGRSModule = pathname?.startsWith("/igrs/");
   const isCashAppWorkbench = pathname?.startsWith("/workbench/order-to-cash/cash-application");
@@ -28,40 +33,65 @@ export default function Header({ loadingState }: HeaderProps) {
   return (
     <>
       {/* Top gradient accent line */}
-      <div className="h-[2px] w-full" style={{ background: 'var(--gradient-primary)' }} />
+      <div className="h-[2px] w-full" style={{ background: 'var(--theme-gradient-accent)' }} />
 
       {/* Top App Bar */}
       <header
         className={cn(
-          "h-14 flex items-center justify-between px-6 border-b border-slate-200 bg-white",
+          "h-14 flex items-center justify-between px-6",
           loadingState === "loading"
             ? "transition-all duration-300 ease-out opacity-0 -translate-y-4"
             : "transition-none opacity-100 translate-y-0"
         )}
+        style={{
+          background: 'var(--theme-header-bg)',
+          borderBottom: '1px solid var(--theme-header-border)',
+        }}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <img src="/meeru-logo.png" alt="Meeru AI Logo" className="h-8 w-auto object-contain" />
+          {/* Sidebar toggle */}
+          {onToggleSidebar && (
+            <button
+              onClick={onToggleSidebar}
+              className="p-2 rounded-lg transition-all duration-200"
+              style={{ color: 'var(--theme-text-secondary)', outline: 'none', border: 'none', cursor: 'pointer' }}
+              aria-label={isSidebarHidden ? "Show sidebar" : "Hide sidebar"}
+            >
+              {isSidebarHidden ? <Menu size={20} /> : <PanelLeftClose size={20} />}
+            </button>
+          )}
+          {/* Logo */}
+          {theme === "default" ? (
+            <img src="/meeru-logo.png" alt="Meeru AI Logo" className="h-8 w-auto object-contain" />
+          ) : (
+            <span style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF', letterSpacing: -0.3 }}>
+              Meeru<span style={{ color: 'var(--theme-accent)' }}>AI</span>
+            </span>
+          )}
           {headerTitle && (
-            <span className="hidden lg:inline text-sm font-semibold text-slate-900 truncate">
+            <span className="hidden lg:inline text-sm font-semibold truncate" style={{ color: 'var(--theme-text)' }}>
               {headerTitle}
             </span>
           )}
         </div>
         <div className="flex items-center gap-3">
           <button
-            className="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-2 rounded-lg transition-all duration-200 ease-out-expo"
+            className="p-2 rounded-lg transition-all duration-200 ease-out-expo"
+            style={{ color: 'var(--theme-text-secondary)' }}
             aria-label="Help"
           >
             <CircleHelp size={20} />
           </button>
           <button
-            className="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-2 rounded-lg transition-all duration-200 ease-out-expo relative"
+            className="p-2 rounded-lg transition-all duration-200 ease-out-expo relative"
+            style={{ color: 'var(--theme-text-secondary)' }}
             aria-label="Notifications"
           >
             <Bell size={20} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gradient-to-r from-red-500 to-rose-400 animate-breathing" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full animate-breathing" style={{ background: 'var(--theme-notification-dot)' }} />
           </button>
-          <div className="w-px h-6 bg-slate-200 mx-1" />
+          <ThemeSwitcher />
+          <div className="w-px h-6 mx-1" style={{ background: 'var(--theme-border)' }} />
           <UserMenu />
         </div>
       </header>

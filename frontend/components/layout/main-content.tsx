@@ -25,7 +25,7 @@ export default function MainContent({
       className
     )}
     style={{
-      background: '#F8FAFC',
+      background: 'var(--theme-bg)',
     }}
     >
       {/* Content Area */}

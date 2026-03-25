@@ -50,12 +50,16 @@ export default function Sidebar({
 
   return (
     <aside className={cn(
-        "flex flex-col pt-5 relative border-r border-slate-200 bg-white",
+        "flex flex-col pt-5 relative border-r",
         isCollapsed ? "w-20" : "w-20",
         loadingState === 'loading'
           ? "transition-all duration-300 ease-out opacity-0 -translate-x-4"
           : "transition-none opacity-100 translate-x-0"
       )}
+      style={{
+        background: 'var(--theme-sidebar-bg)',
+        borderColor: 'var(--theme-border)',
+      }}
     >
         <nav className="flex flex-col gap-0.5 px-1.5" role="navigation" aria-label="Main navigation">
           <Tooltip delayDuration={150}>
@@ -178,8 +182,8 @@ export default function Sidebar({
           <Tooltip delayDuration={150}>
             <TooltipTrigger asChild>
               <button
-                className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200 p-2 rounded-lg relative group"
-                style={{ outline: 'none', border: 'none' }}
+                className="transition-all duration-200 p-2 rounded-lg relative group"
+                style={{ outline: 'none', border: 'none', color: 'var(--theme-sidebar-text)' }}
                 aria-label="User profile"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -189,20 +193,26 @@ export default function Sidebar({
                 <UserCircle2 size={22} className="transition-transform duration-200 group-hover:scale-105" />
                 {showUserMenu && (
                   <div
-                    className="absolute left-full top-auto bottom-0 ml-2 w-52 rounded-xl py-2 z-50 shadow-elevation-3 border border-white/60 animate-scale-in"
+                    className="fixed w-52 rounded-xl py-2 shadow-elevation-3 animate-scale-in"
                     style={{
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(242,253,255,0.95) 100%)',
+                      left: '84px',
+                      bottom: '16px',
+                      zIndex: 9999,
+                      background: 'var(--theme-user-menu-bg)',
                       backdropFilter: 'blur(12px)',
+                      border: '1px solid var(--theme-border)',
                     }}
                   >
-                    <div className="px-4 py-2.5 border-b border-slate-200">
-                      <p className="text-sm font-semibold text-slate-900">{user?.name || 'User'}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{user?.email}</p>
+                    <div className="px-4 py-2.5" style={{ borderBottom: '1px solid var(--theme-border)' }}>
+                      <p className="text-sm font-semibold" style={{ color: 'var(--theme-text)' }}>{user?.name || 'User'}</p>
+                      <p className="text-xs mt-0.5" style={{ color: 'var(--theme-text-muted)' }}>{user?.email}</p>
                     </div>
                     <div className="py-1">
                       <button
-                        className="w-full px-4 py-2 text-left text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 flex items-center transition-all duration-150 rounded-md mx-1"
-                        style={{ outline: 'none', border: 'none', width: 'calc(100% - 8px)' }}
+                        className="w-full px-4 py-2 text-left text-sm flex items-center transition-all duration-150 rounded-md mx-1"
+                        style={{ outline: 'none', border: 'none', width: 'calc(100% - 8px)', color: 'var(--theme-text-secondary)' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--theme-sidebar-active-bg)'; e.currentTarget.style.color = 'var(--theme-text)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--theme-text-secondary)'; }}
                         onClick={(e) => {
                           e.stopPropagation();
                           onUserMenuClose();
@@ -212,8 +222,10 @@ export default function Sidebar({
                         Settings
                       </button>
                       <button
-                        className="w-full px-4 py-2 text-left text-sm text-red-600/80 hover:text-red-600 hover:bg-red-50 flex items-center transition-all duration-150 rounded-md mx-1"
-                        style={{ outline: 'none', border: 'none', width: 'calc(100% - 8px)' }}
+                        className="w-full px-4 py-2 text-left text-sm flex items-center transition-all duration-150 rounded-md mx-1"
+                        style={{ outline: 'none', border: 'none', width: 'calc(100% - 8px)', color: '#ef4444cc' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; e.currentTarget.style.color = '#ef4444'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ef4444cc'; }}
                         onClick={(e) => {
                           e.stopPropagation();
                           logout();
@@ -253,34 +265,33 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={cn(
-        "flex flex-col items-center justify-center w-full py-3 relative group",
-        "transition-all duration-200 ease-out rounded-md",
-        isSelected
-          ? "text-primary bg-blue-50/80"
-          : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
-      )}
-      style={{ outline: 'none', border: 'none' }}
+      className="flex flex-col items-center justify-center w-full py-3 relative group transition-all duration-200 ease-out rounded-md"
+      style={{
+        color: isSelected ? 'var(--theme-sidebar-text-active)' : 'var(--theme-sidebar-text)',
+        background: isSelected ? 'var(--theme-sidebar-active-bg)' : 'transparent',
+        outline: 'none',
+        border: 'none',
+      }}
+      onMouseOver={(e) => { if (!isSelected) { e.currentTarget.style.background = 'var(--theme-sidebar-active-bg)'; e.currentTarget.style.color = 'var(--theme-sidebar-text-active)'; } }}
+      onMouseOut={(e) => { if (!isSelected) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--theme-sidebar-text)'; } }}
       aria-label={label}
       aria-current={isSelected ? "page" : undefined}
     >
       {/* Active indicator bar */}
       <span
         className={cn(
-          "absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] rounded-r-full transition-all duration-300 bg-primary",
+          "absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] rounded-r-full transition-all duration-300",
           isSelected
             ? "h-7 opacity-100"
             : "h-0 opacity-0 group-hover:h-4 group-hover:opacity-40"
         )}
+        style={{ background: 'var(--theme-sidebar-indicator)' }}
       />
       <span className="transition-transform duration-200">
         {icon}
       </span>
       {!isCollapsed && (
-        <span className={cn(
-          "text-[10px] font-medium mt-1 transition-colors duration-200",
-          isSelected ? "text-primary" : "text-slate-400 group-hover:text-slate-600"
-        )}>
+        <span className="text-[10px] font-medium mt-1 transition-colors duration-200" style={{ color: 'inherit' }}>
           {label}
         </span>
       )}

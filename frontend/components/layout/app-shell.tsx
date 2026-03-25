@@ -38,6 +38,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   const [isLivePinModalOpen, setIsLivePinModalOpen] = useState(false);
   const [isCreateWatchModalOpen, setIsCreateWatchModalOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isSidebarHidden, setIsSidebarHidden] = useState(false);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
   const hoverClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -287,22 +288,28 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-slate-50 font-[Inter,system-ui,sans-serif]">
-        <Header loadingState={hasInitiallyLoaded ? "loaded" : loadingState} />
+      <div className="min-h-screen font-[Inter,system-ui,sans-serif]" style={{ background: 'var(--theme-bg)' }}>
+        <Header
+          loadingState={hasInitiallyLoaded ? "loaded" : loadingState}
+          isSidebarHidden={isSidebarHidden}
+          onToggleSidebar={() => setIsSidebarHidden(!isSidebarHidden)}
+        />
 
         <div className="flex min-h-[calc(100vh-57px)]">
-          <Sidebar
-            loadingState={hasInitiallyLoaded ? "loaded" : loadingState}
-            isCollapsed={isCollapsed}
-            selectedRailItem={selectedRailItem}
-            hoveredRailItem={hoveredRailItem}
-            showUserMenu={showUserMenu}
-            onRailItemClick={handleRailItemClick}
-            onRailItemHover={handleRailItemHover}
-            onUserMenuToggle={() => setShowUserMenu(!showUserMenu)}
-            onUserMenuClose={() => setShowUserMenu(false)}
-            getRailItemSelectedState={getRailItemSelectedState}
-          />
+          {!isSidebarHidden && (
+            <Sidebar
+              loadingState={hasInitiallyLoaded ? "loaded" : loadingState}
+              isCollapsed={isCollapsed}
+              selectedRailItem={selectedRailItem}
+              hoveredRailItem={hoveredRailItem}
+              showUserMenu={showUserMenu}
+              onRailItemClick={handleRailItemClick}
+              onRailItemHover={handleRailItemHover}
+              onUserMenuToggle={() => setShowUserMenu(!showUserMenu)}
+              onUserMenuClose={() => setShowUserMenu(false)}
+              getRailItemSelectedState={getRailItemSelectedState}
+            />
+          )}
 
           <MainContent
             loadingState={hasInitiallyLoaded ? "loaded" : loadingState}
@@ -313,17 +320,19 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
         </div>
 
         {/* Navigation Panel Overlay */}
-        <NavigationPanel
-          hoveredRailItem={hoveredRailItem}
-          selectedRailItem={selectedRailItem}
-          isPanelHovered={isPanelHovered}
-          activeRoute={activeRoute}
-          navigationStructure={NAVIGATION_STRUCTURE}
-          onPanelMouseEnter={handlePanelMouseEnter}
-          onPanelMouseLeave={handlePanelMouseLeave}
-          onToggleMenu={handleToggleMenu}
-          onNavigationItemClick={handleNavigationItemClick}
-        />
+        {!isSidebarHidden && (
+          <NavigationPanel
+            hoveredRailItem={hoveredRailItem}
+            selectedRailItem={selectedRailItem}
+            isPanelHovered={isPanelHovered}
+            activeRoute={activeRoute}
+            navigationStructure={NAVIGATION_STRUCTURE}
+            onPanelMouseEnter={handlePanelMouseEnter}
+            onPanelMouseLeave={handlePanelMouseLeave}
+            onToggleMenu={handleToggleMenu}
+            onNavigationItemClick={handleNavigationItemClick}
+          />
+        )}
 
         {/* Live Pin Modal */}
         <LivePinModal

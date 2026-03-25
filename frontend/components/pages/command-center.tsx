@@ -412,8 +412,8 @@ const MessageItem = memo(
                       minute: "2-digit",
                     })}
                   </span>
-                  <div className="bg-[#D1ECFF] rounded-xl rounded-tr-none px-3 py-4 max-w-md">
-                    <p className="text-sm text-[#191919] leading-relaxed">{message.content}</p>
+                  <div className="bg-primary/20 rounded-xl rounded-tr-none px-3 py-4 max-w-md">
+                    <p className="text-sm text-slate-900 leading-relaxed">{message.content}</p>
                   </div>
                 </div>
               </div>
@@ -507,14 +507,14 @@ const MessageItem = memo(
                         minute: "2-digit",
                       })}
                     </span>
-                    <div className="bg-[#EFEFEF] rounded-xl rounded-tl-none px-6 py-4">
+                    <div className="bg-slate-100 rounded-xl rounded-tl-none px-6 py-4">
                       <div className="flex items-center space-x-2">
                         <FileText className="w-6 h-6 text-slate-900" />
-                        <h3 className="text-sm font-bold text-[#191919]">Meeru Analytics</h3>
+                        <h3 className="text-sm font-bold text-slate-900">Meeru Analytics</h3>
                       </div>
                     </div>
                     <div className="mt-2">
-                      <p className="text-sm text-[#191919] leading-[22px]">
+                      <p className="text-sm text-slate-900 leading-[22px]">
                         {message.dataAnalysis}
                       </p>
                     </div>
@@ -531,14 +531,14 @@ const MessageItem = memo(
                         minute: "2-digit",
                       })}
                     </span>
-                    <div className="bg-[#EFEFEF] rounded-xl rounded-tl-none px-6 py-4">
+                    <div className="bg-slate-100 rounded-xl rounded-tl-none px-6 py-4">
                       <div className="flex items-center space-x-2">
                         <FileText className="w-6 h-6 text-slate-900" />
-                        <h3 className="text-sm font-bold text-[#191919]">Meeru Analytics</h3>
+                        <h3 className="text-sm font-bold text-slate-900">Meeru Analytics</h3>
                       </div>
                     </div>
                     <div className="mt-2">
-                      <p className="text-sm text-[#191919] leading-[22px]">
+                      <p className="text-sm text-slate-900 leading-[22px]">
                         No data analysis available
                       </p>
                     </div>
@@ -611,7 +611,7 @@ const MessageItem = memo(
                       <div className="bg-white pl-4 py-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
-                            <h3 className="text-sm text-[#191919]">
+                            <h3 className="text-sm text-slate-900">
                               Total {table.rows.length} records
                             </h3>
                           </div>
@@ -621,7 +621,7 @@ const MessageItem = memo(
                             <div className="flex items-center space-x-2">
                               <button
                                 onClick={() => toggleChart(tableId)}
-                                className="bg-white hover:bg-[#D1ECFF] text-[#000000] px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-[#D2D2D2]"
+                                className="bg-white hover:bg-primary/15 text-slate-900 px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-slate-300"
                               >
                                 <BarChart3 size={18} className="text-slate-900" />
                                 <span>{chartVisibleForTable[tableId] ? "Hide Chart" : "Visualize"}</span>
@@ -632,7 +632,7 @@ const MessageItem = memo(
                                   e.stopPropagation();
                                   onExpandTable(tableId);
                                 }}
-                                className="bg-white hover:bg-[#D1ECFF] text-[#000000] px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-[#D2D2D2]"
+                                className="bg-white hover:bg-primary/15 text-slate-900 px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-slate-300"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -653,7 +653,7 @@ const MessageItem = memo(
                               </button>
                               <button
                                 onClick={onOpenCreateTemplateModal}
-                                className="bg-white hover:bg-[#D1ECFF] text-[#000000] px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-[#D2D2D2]"
+                                className="bg-white hover:bg-primary/15 text-slate-900 px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-slate-300"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -674,7 +674,7 @@ const MessageItem = memo(
                               </button>
                               <button
                                 onClick={onOpenCreateWatchModal}
-                                className="bg-white hover:bg-[#D1ECFF] text-[#000000] px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-[#D2D2D2]"
+                                className="bg-white hover:bg-primary/15 text-slate-900 px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-slate-300"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -694,7 +694,7 @@ const MessageItem = memo(
                               </button>
                               <button
                                 onClick={onOpenLivePinModal}
-                                className="bg-white hover:bg-[#D1ECFF] text-[#000000] px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-[#D2D2D2]"
+                                className="bg-white hover:bg-primary/15 text-slate-900 px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-slate-300"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -713,7 +713,7 @@ const MessageItem = memo(
                                 </svg>
                                 <span>Pin</span>
                               </button>
-                              <button className="bg-white hover:bg-[#D1ECFF] text-[#000000] px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-[#D2D2D2]">
+                              <button className="bg-white hover:bg-primary/15 text-slate-900 px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-slate-300">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="18"
@@ -731,7 +731,7 @@ const MessageItem = memo(
                                 </svg>
                                 <span>Favorite</span>
                               </button>
-                              <button className="bg-white hover:bg-[#D1ECFF] text-[#000000] px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-[#D2D2D2]">
+                              <button className="bg-white hover:bg-primary/15 text-slate-900 px-2 py-1.5 rounded-[8px] text-sm font-normal flex items-center space-x-2 transition-colors border border-slate-300">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="18"
@@ -781,10 +781,10 @@ const MessageItem = memo(
                         const barAreaWidth = 400;
 
                         return (
-                          <div className="mt-4 p-4 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] animate-in slide-in-from-top-2 duration-300">
+                          <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200 animate-in slide-in-from-top-2 duration-300">
                             <div className="flex items-center gap-2 mb-3">
-                              <BarChart3 size={16} className="text-[#6B7EF3]" />
-                              <span className="text-sm font-medium text-[#1E293B]">
+                              <BarChart3 size={16} className="text-primary" />
+                              <span className="text-sm font-medium text-slate-800">
                                 {table.columns[valueIdx]?.title || "Value"} by {table.columns[labelIdx]?.title || "Category"}
                               </span>
                             </div>
@@ -808,7 +808,7 @@ const MessageItem = memo(
                                       y={y + barHeight / 2}
                                       textAnchor="end"
                                       dominantBaseline="central"
-                                      className="text-xs fill-[#475569]"
+                                      className="text-xs fill-slate-600"
                                     >
                                       {truncatedLabel}
                                     </text>
@@ -848,7 +848,7 @@ const MessageItem = memo(
                                       y={y + barHeight / 2}
                                       textAnchor="start"
                                       dominantBaseline="central"
-                                      className="text-xs fill-[#334155] font-medium"
+                                      className="text-xs fill-slate-700 font-medium"
                                     >
                                       {item.display}
                                     </text>
@@ -876,11 +876,11 @@ const MessageItem = memo(
                     <button
                       key={i}
                       onClick={() => onPromptSuggestionClick?.(text)}
-                      className="group inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#E2E8F0] bg-white text-sm text-[#334155] hover:border-[#6B7EF3] hover:bg-[#F5F8FF] hover:text-slate-900 transition-all duration-200 active:scale-[0.97]"
+                      className="group inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-slate-200 bg-white text-sm text-slate-700 hover:border-primary hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 active:scale-[0.97]"
                     >
-                      <Lightbulb size={14} className="text-[#94A3B8] group-hover:text-[#6B7EF3] transition-colors" />
+                      <Lightbulb size={14} className="text-slate-400 group-hover:text-primary transition-colors" />
                       <span className="leading-snug">{text}</span>
-                      <ArrowRight size={12} className="text-[#CBD5E1] group-hover:text-[#6B7EF3] group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight size={12} className="text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                     </button>
                   ))}
                 </div>
@@ -916,15 +916,15 @@ const MessageItem = memo(
                   className="flex justify-start animate-in slide-in-from-bottom-4 duration-500"
                 >
                   <div className="max-w-4xl w-full">
-                    <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
-                      <div className="bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9] px-6 py-4 border-b border-[#E2E8F0]">
+                    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+                      <div className="bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9] px-6 py-4 border-b border-slate-200">
                         <div className="flex items-center space-x-4">
                           <div className="w-10 h-10 bg-gradient-to-br from-[#8B5CF6] to-[#7C3AED] rounded-xl flex items-center justify-center">
                             <BarChart3 className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <h3 className="text-xl font-bold text-[#1E293B]">{chartTitle}</h3>
-                            <p className="text-sm text-[#64748B] mt-1">Pie Chart Visualization</p>
+                            <h3 className="text-xl font-bold text-slate-800">{chartTitle}</h3>
+                            <p className="text-sm text-slate-500 mt-1">Pie Chart Visualization</p>
                           </div>
                         </div>
                       </div>
@@ -961,7 +961,7 @@ const MessageItem = memo(
                                       className="w-4 h-4 rounded-full"
                                       style={{ backgroundColor: segment.color }}
                                     />
-                                    <span className="text-sm text-[#475569] font-medium">
+                                    <span className="text-sm text-slate-600 font-medium">
                                       {segment.label} ({segment.value})
                                     </span>
                                   </div>
@@ -1328,8 +1328,8 @@ export default function CommandCenter({
               <div className="flex items-center justify-between my-2">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2">
-                    <Bot size={20} className="text-[#6B7EF3]" />
-                    <span className="text-lg font-semibold text-[#0F172A]">Finance AI</span>
+                    <Bot size={20} className="text-primary" />
+                    <span className="text-lg font-semibold text-slate-900">Finance AI</span>
                   </div>
                 </div>
                 {/* New Chat button in header */}
@@ -1404,10 +1404,10 @@ export default function CommandCenter({
               </div>
 
               {/* Chat Input at Bottom */}
-              <div className="flex items-end gap-4 bg-[#F2FDFF] rounded-[24px] p-2">
+              <div className="flex items-end gap-4 bg-slate-50 rounded-[24px] p-2">
                 <div className="flex-1">
                   <div
-                    className="min-h-[128px] border border-[#656565] bg-white rounded-[24px] p-4 relative hover:border-[#6B7EF3] hover:shadow-lg transition-all duration-300 ease-out focus-within:border-[#6B7EF3] focus-within:shadow-lg focus-within:ring-2 focus-within:ring-[#6B7EF3]/20"
+                    className="min-h-[128px] border border-slate-400 bg-white rounded-[24px] p-4 relative hover:border-primary hover:shadow-lg transition-all duration-300 ease-out focus-within:border-primary focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/20"
                     style={{
                       boxShadow: "0 4px 8px 0 rgba(14, 42, 82, 0.06)",
                     }}
@@ -1444,7 +1444,7 @@ export default function CommandCenter({
                       onChange={onComposerChange}
                       onFocus={onComposerFocus}
                       onBlur={onComposerBlur}
-                      className="w-full h-full flex-1 resize-none border-none outline-none text-[#0F172A] text-sm transition-all duration-200 placeholder:text-[#7C8A9A] pl-8"
+                      className="w-full h-full flex-1 resize-none border-none outline-none text-slate-900 text-sm transition-all duration-200 placeholder:text-slate-400 pl-8"
                       aria-label="Enter your prompt"
                       rows={4}
                     />
@@ -1455,10 +1455,10 @@ export default function CommandCenter({
                         type="button"
                         onClick={() => togglePanel("history")}
                         className={cn(
-                          "w-10 h-8 rounded-full border bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#EEF8FF] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#6B7EF3] focus:ring-offset-1",
+                          "w-10 h-8 rounded-full border bg-white flex items-center justify-center hover:border-primary hover:bg-primary/10 hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                           activePanel === "history"
                             ? "border-primary text-primary bg-primary/5"
-                            : "border-[#E5E7EB] text-[#7C8A9A]"
+                            : "border-slate-200 text-slate-400"
                         )}
                         aria-label="History"
                       >
@@ -1468,10 +1468,10 @@ export default function CommandCenter({
                         type="button"
                         onClick={() => togglePanel("favorites")}
                         className={cn(
-                          "w-10 h-8 rounded-full border bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#EEF8FF] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#6B7EF3] focus:ring-offset-1",
+                          "w-10 h-8 rounded-full border bg-white flex items-center justify-center hover:border-primary hover:bg-primary/10 hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                           activePanel === "favorites"
                             ? "border-primary text-primary bg-primary/5"
-                            : "border-[#E5E7EB] text-[#7C8A9A]"
+                            : "border-slate-200 text-slate-400"
                         )}
                         aria-label="Favorites"
                       >
@@ -1481,10 +1481,10 @@ export default function CommandCenter({
                         type="button"
                         onClick={() => togglePanel("suggestions")}
                         className={cn(
-                          "w-10 h-8 rounded-full border bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#EEF8FF] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#6B7EF3] focus:ring-offset-1",
+                          "w-10 h-8 rounded-full border bg-white flex items-center justify-center hover:border-primary hover:bg-primary/10 hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                           activePanel === "suggestions"
                             ? "border-primary text-primary bg-primary/5"
-                            : "border-[#E5E7EB] text-[#7C8A9A]"
+                            : "border-slate-200 text-slate-400"
                         )}
                         aria-label="Suggestions"
                       >
@@ -1508,7 +1508,7 @@ export default function CommandCenter({
                           onClick={onSendClick}
                           disabled={!composerValue.trim() || !isConnected}
                           className={cn(
-                            "w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-[#D2D2D2] flex items-center justify-center hover:border-primary hover:bg-primary hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
+                            "w-[38px] h-[38px] rounded-full border border-slate-200 bg-slate-300 flex items-center justify-center hover:border-primary hover:bg-primary hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
                             (!composerValue.trim() || !isConnected) &&
                               "opacity-50 cursor-not-allowed"
                           )}
@@ -1548,25 +1548,25 @@ export default function CommandCenter({
                 >
                   <div
                     className={cn(
-                      "text-[28px] text-[#0F172A] leading-tight transition-all duration-1000 ease-out delay-300",
+                      "text-[28px] text-slate-900 leading-tight transition-all duration-1000 ease-out delay-300",
                       loadingState === "loading"
                         ? "opacity-0 translate-y-4"
                         : "opacity-100 translate-y-0"
                     )}
                   ></div>
-                  <div className="text-[28px] text-[#0F172A] leading-tight">
-                    {greeting} Officer Sir,
+                  <div className="text-[28px] text-slate-900 leading-tight">
+                    Welcome Mai Lane,
                   </div>
                   <div
                     className={cn(
-                      "text-[28px] text-[#0F172A] leading-tight transition-all duration-1000 ease-out delay-500",
+                      "text-[28px] text-slate-900 leading-tight transition-all duration-1000 ease-out delay-500",
                       loadingState === "loading"
                         ? "opacity-0 translate-y-4"
                         : "opacity-100 translate-y-0"
                     )}
                   >
                     How can I{" "}
-                    <span className="text-[#6B7EF3] hover:underline cursor-pointer">
+                    <span className="text-primary hover:underline cursor-pointer">
                       help you today?
                     </span>
                   </div>
@@ -1575,13 +1575,13 @@ export default function CommandCenter({
                 {/* Prompt Composer */}
                 <div
                   className={cn(
-                    "w-full max-w-[821px] rounded-[24px] mx-auto mb-4 transition-all duration-1000 ease-out delay-700 bg-[#F2FDFF] p-2",
+                    "w-full max-w-[821px] rounded-[24px] mx-auto mb-4 transition-all duration-1000 ease-out delay-700 bg-slate-50 p-2",
                     loadingState === "loading"
                       ? "opacity-0 translate-y-8 scale-95"
                       : "opacity-100 translate-y-0 scale-100"
                   )}
                 >
-                  <div className="h-[207px] border border-[#656565] bg-white rounded-[24px] p-4 relative hover:border-[#6B7EF3] hover:shadow-lg transition-all duration-300 ease-out focus-within:border-[#6B7EF3] focus-within:shadow-lg focus-within:ring-2 focus-within:ring-[#6B7EF3]/20">
+                  <div className="h-[207px] border border-slate-400 bg-white rounded-[24px] p-4 relative hover:border-primary hover:shadow-lg transition-all duration-300 ease-out focus-within:border-primary focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/20">
                     {/* Textarea */}
                     <textarea
                       placeholder="Sample prompt: Give me 60 days and above aging details for Walmart"
@@ -1589,7 +1589,7 @@ export default function CommandCenter({
                       onChange={onComposerChange}
                       onFocus={onComposerFocus}
                       onBlur={onComposerBlur}
-                      className="w-full h-full flex-1 resize-none border-none outline-none text-[#0F172A] text-sm transition-all duration-200"
+                      className="w-full h-full flex-1 resize-none border-none outline-none text-slate-900 bg-transparent text-sm transition-all duration-200"
                       aria-label="Enter your prompt"
                     />
 
@@ -1688,7 +1688,7 @@ export default function CommandCenter({
                               {/* Dropdown */}
                               {openDropdownId === chip.id && (
                                 <div
-                                  className="fixed bg-white border border-[#E5E7EB] rounded-lg shadow-lg z-50"
+                                  className="fixed bg-white border border-slate-200 rounded-lg shadow-lg z-50"
                                   style={{
                                     left: "50%",
                                     transform: "translateX(-50%)",
@@ -1712,9 +1712,9 @@ export default function CommandCenter({
                                             onDropdownToggle(chip.id);
                                             onPromptSuggestionClick(suggestion);
                                           }}
-                                          className="w-full text-left px-3 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] rounded-md transition-colors duration-150 flex items-center gap-2"
+                                          className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-150 flex items-center gap-2"
                                         >
-                                          <ChevronRight size={12} className="text-[#9CA3AF]" />
+                                          <ChevronRight size={12} className="text-gray-400" />
                                           {suggestion}
                                         </button>
                                       ))}
@@ -1732,7 +1732,7 @@ export default function CommandCenter({
                           onClick={onSendClick}
                           disabled={!composerValue.trim() || !isConnected || isLoading}
                           className={cn(
-                            "w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-[#D2D2D2] flex items-center justify-center hover:border-indigo-400 hover:bg-primary hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
+                            "w-[38px] h-[38px] rounded-full border border-slate-200 bg-slate-300 flex items-center justify-center hover:border-indigo-400 hover:bg-primary hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 group",
                             (!composerValue.trim() || !isConnected || isLoading) &&
                               "opacity-50 cursor-not-allowed"
                           )}
@@ -1743,7 +1743,7 @@ export default function CommandCenter({
                           ) : (
                             <ArrowRight
                               size={24}
-                              className="text-[#6B7280] group-hover:text-white transition-colors duration-200"
+                              className="text-gray-500 group-hover:text-white transition-colors duration-200"
                             />
                           )}
                         </button>
@@ -1767,19 +1767,19 @@ export default function CommandCenter({
                       <button
                         key={prompt.id}
                         onClick={() => onPromptSuggestionClick(prompt.text)}
-                        className="group flex items-start gap-3 text-left px-4 py-3.5 rounded-2xl border border-[#E5E7EB] bg-white hover:border-[#6B7EF3]/40 hover:bg-[#F5F8FF] hover:shadow-md transition-all duration-200 ease-out active:scale-[0.98]"
+                        className="group flex items-start gap-3 text-left px-4 py-3.5 rounded-2xl border border-slate-200 bg-white hover:border-primary/40 hover:bg-slate-50 hover:shadow-md transition-all duration-200 ease-out active:scale-[0.98]"
                         style={{ animationDelay: `${900 + idx * 80}ms` }}
                       >
-                        <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-[#EEF2FF] flex items-center justify-center group-hover:bg-[#6B7EF3]/15 transition-colors duration-200">
-                          <Icon size={16} className="text-[#6B7EF3]" />
+                        <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-primary/15 transition-colors duration-200">
+                          <Icon size={16} className="text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm text-[#1E293B] leading-snug group-hover:text-slate-900 transition-colors duration-200">
+                          <p className="text-sm text-slate-800 leading-snug group-hover:text-slate-900 transition-colors duration-200">
                             {prompt.text}
                           </p>
-                          <span className="text-[11px] text-[#94A3B8] mt-1 inline-block">{prompt.category}</span>
+                          <span className="text-[11px] text-slate-400 mt-1 inline-block">{prompt.category}</span>
                         </div>
-                        <ArrowRight size={14} className="mt-1 flex-shrink-0 text-[#CBD5E1] group-hover:text-[#6B7EF3] group-hover:translate-x-0.5 transition-all duration-200" />
+                        <ArrowRight size={14} className="mt-1 flex-shrink-0 text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
                       </button>
                     );
                   })}
@@ -1802,7 +1802,7 @@ export default function CommandCenter({
                         "h-8 px-[14px] border rounded-full text-sm hover:shadow-md hover:scale-105 transition-all duration-200 ease-out active:scale-95",
                         activeChips.some((activeChip) => activeChip.text === chip)
                           ? "bg-primary text-white border-primary"
-                          : "bg-[#F7FAFC] text-[#6B7280] border-[#E5E7EB] hover:border-slate-300 hover:bg-white hover:text-slate-900"
+                          : "bg-slate-50 text-gray-500 border-slate-200 hover:border-slate-300 hover:bg-white hover:text-slate-900"
                       )}
                       aria-label={`Quick action: ${chip}`}
                     >
@@ -1827,18 +1827,18 @@ export default function CommandCenter({
       )}
       <div
         className={cn(
-          "fixed top-0 right-0 bottom-0 w-[400px] max-w-[85vw] bg-white border-l border-[#E5E7EB] shadow-xl flex flex-col z-40 transition-transform duration-300 ease-out",
+          "fixed top-0 right-0 bottom-0 w-[400px] max-w-[85vw] bg-white border-l border-slate-200 shadow-xl flex flex-col z-40 transition-transform duration-300 ease-out",
           activePanel ? "translate-x-0" : "translate-x-full"
         )}
         aria-hidden={!activePanel}
       >
         {/* Drawer header */}
-        <div className="border-b border-[#E5E7EB] px-4 py-3 flex items-center justify-between shrink-0">
+        <div className="border-b border-slate-200 px-4 py-3 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
             {activePanel === "history" && <Clock className="w-5 h-5 text-slate-900" />}
             {activePanel === "favorites" && <Star className="w-5 h-5 text-amber-500" />}
             {activePanel === "suggestions" && <Lightbulb className="w-5 h-5 text-amber-500" />}
-            <h2 className="text-lg font-semibold text-[#191919]">
+            <h2 className="text-lg font-semibold text-slate-900">
               {activePanel === "history" && "Chat History"}
               {activePanel === "favorites" && "Favorites"}
               {activePanel === "suggestions" && "Suggestions"}
@@ -1848,7 +1848,7 @@ export default function CommandCenter({
             type="button"
             aria-label="Close"
             onClick={closePanel}
-            className="p-1.5 rounded-md hover:bg-[#F1F5F9] text-[#64748B]"
+            className="p-1.5 rounded-md hover:bg-slate-100 text-slate-500"
           >
             <X className="w-4 h-4" />
           </button>
@@ -1857,7 +1857,7 @@ export default function CommandCenter({
         {/* ── History content ── */}
         {activePanel === "history" && (
           <>
-            <p className="text-sm text-[#64748B] p-4 shrink-0">
+            <p className="text-sm text-slate-500 p-4 shrink-0">
               {isLoadingSessions
                 ? "Loading\u2026"
                 : sessionsLoadFailed
@@ -1868,13 +1868,13 @@ export default function CommandCenter({
               {isLoadingSessions ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
-                  <p className="text-sm text-[#64748B]">Loading sessions\u2026</p>
+                  <p className="text-sm text-slate-500">Loading sessions\u2026</p>
                 </div>
               ) : sessionsLoadFailed ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <WifiOff className="w-12 h-12 text-[#F59E0B] mb-3" />
                   <p className="text-sm font-medium text-[#92400E]">Connection issue</p>
-                  <p className="text-xs text-[#94A3B8] mt-1">
+                  <p className="text-xs text-slate-400 mt-1">
                     We couldn&apos;t load your sessions right now. Please check your connection and try
                     again.
                   </p>
@@ -1891,9 +1891,9 @@ export default function CommandCenter({
                 </div>
               ) : chatSessions.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Clock className="w-12 h-12 text-[#CBD5E1] mb-3" />
-                  <p className="text-sm text-[#64748B]">No chat history yet</p>
-                  <p className="text-xs text-[#94A3B8] mt-1">Your sessions will appear here</p>
+                  <Clock className="w-12 h-12 text-slate-300 mb-3" />
+                  <p className="text-sm text-slate-500">No chat history yet</p>
+                  <p className="text-xs text-slate-400 mt-1">Your sessions will appear here</p>
                 </div>
               ) : (
                 <ul className="space-y-3">
@@ -1914,7 +1914,7 @@ export default function CommandCenter({
                         }
                       }}
                       className={cn(
-                        "rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-left transition-colors hover:border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
+                        "rounded-xl border border-slate-200 bg-slate-50 p-3 text-left transition-colors hover:border-slate-300 hover:bg-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
                         activeSessionId === s.session_id && "border-blue-500 bg-blue-50"
                       )}
                     >
@@ -1922,12 +1922,12 @@ export default function CommandCenter({
                         <span className="text-xs font-medium text-slate-900 truncate">
                           {s.title || "Untitled"}
                         </span>
-                        <span className="text-xs text-[#64748B] shrink-0">
+                        <span className="text-xs text-slate-500 shrink-0">
                           {s.message_count} msg{s.message_count !== 1 ? "s" : ""}
                         </span>
                       </div>
                       {s.updated_at && (
-                        <p className="text-[10px] text-[#94A3B8] mt-1">
+                        <p className="text-[10px] text-slate-400 mt-1">
                           {formatRelativeTime(s.updated_at)}
                         </p>
                       )}
@@ -1942,15 +1942,15 @@ export default function CommandCenter({
         {/* ── Favorites content ── */}
         {activePanel === "favorites" && (
           <>
-            <p className="text-sm text-[#64748B] p-4 shrink-0">
+            <p className="text-sm text-slate-500 p-4 shrink-0">
               {allFavorites.length} saved prompt{allFavorites.length !== 1 ? "s" : ""}
             </p>
             <div className="flex-1 overflow-y-auto px-4 pb-4">
               {allFavorites.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Star className="w-12 h-12 text-[#CBD5E1] mb-3" />
-                  <p className="text-sm text-[#64748B]">No favorites yet</p>
-                  <p className="text-xs text-[#94A3B8] mt-1">Save prompts you use often</p>
+                  <Star className="w-12 h-12 text-slate-300 mb-3" />
+                  <p className="text-sm text-slate-500">No favorites yet</p>
+                  <p className="text-xs text-slate-400 mt-1">Save prompts you use often</p>
                 </div>
               ) : (
                 <ul className="space-y-2">
@@ -1968,14 +1968,14 @@ export default function CommandCenter({
                             handlePopulate(fav.text);
                           }
                         }}
-                        className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-left transition-colors hover:border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-start gap-3"
+                        className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-left transition-colors hover:border-slate-300 hover:bg-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-start gap-3"
                       >
-                        <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-[#EEF2FF] flex items-center justify-center">
+                        <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
                           <Icon size={14} className="text-primary" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-sm text-slate-700 leading-snug">{fav.text}</p>
-                          <span className="text-[11px] text-[#94A3B8] mt-0.5 inline-block">{fav.category}</span>
+                          <span className="text-[11px] text-slate-400 mt-0.5 inline-block">{fav.category}</span>
                         </div>
                       </li>
                     );
@@ -1984,7 +1984,7 @@ export default function CommandCenter({
               )}
             </div>
             {composerValue.trim() && (
-              <div className="border-t border-[#E5E7EB] px-4 py-3 shrink-0">
+              <div className="border-t border-slate-200 px-4 py-3 shrink-0">
                 <button
                   type="button"
                   onClick={handleSaveFavorite}
@@ -2001,7 +2001,7 @@ export default function CommandCenter({
         {/* ── Suggestions content ── */}
         {activePanel === "suggestions" && (
           <>
-            <p className="text-sm text-[#64748B] p-4 shrink-0">
+            <p className="text-sm text-slate-500 p-4 shrink-0">
               {SUGGESTED_PROMPTS.length} suggested prompt{SUGGESTED_PROMPTS.length !== 1 ? "s" : ""}
             </p>
             <div className="flex-1 overflow-y-auto px-4 pb-4">
@@ -2020,14 +2020,14 @@ export default function CommandCenter({
                           handlePopulate(sug.text);
                         }
                       }}
-                      className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-left transition-colors hover:border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-start gap-3"
+                      className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-left transition-colors hover:border-slate-300 hover:bg-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-start gap-3"
                     >
-                      <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-[#EEF2FF] flex items-center justify-center">
+                      <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
                         <Icon size={14} className="text-primary" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm text-slate-700 leading-snug">{sug.text}</p>
-                        <span className="text-[11px] text-[#94A3B8] mt-0.5 inline-block">{sug.category}</span>
+                        <span className="text-[11px] text-slate-400 mt-0.5 inline-block">{sug.category}</span>
                       </div>
                     </li>
                   );
@@ -2051,10 +2051,10 @@ function CircularButton({ icon, "aria-label": ariaLabel, onClick }: CircularButt
   return (
     <button
       onClick={onClick}
-      className="w-7 h-7 rounded-full border border-[#E5E7EB] bg-white flex items-center justify-center hover:border-[#6B7EF3] hover:bg-[#EEF8FF] hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#6B7EF3] focus:ring-offset-1"
+      className="w-7 h-7 rounded-full border border-slate-200 bg-white flex items-center justify-center hover:border-primary hover:bg-primary/10 hover:scale-110 hover:shadow-md transition-all duration-200 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
       aria-label={ariaLabel}
     >
-      <span className="text-[#7C8A9A]">{icon}</span>
+      <span className="text-slate-400">{icon}</span>
     </button>
   );
 }

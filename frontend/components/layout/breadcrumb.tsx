@@ -80,7 +80,7 @@ export default function Breadcrumb({ activeRoute, className }: BreadcrumbProps) 
       if (parts[2] === "settings" && parts[1] === "revenue-leakage") breadcrumbs.push("Settings");
       if (parts[2] === "admin" && parts[1] === "revenue-leakage") breadcrumbs.push("Admin");
       if (parts[2] === "liquidity") breadcrumbs.push("Liquidity");
-      if (parts[2] === "uberflux") breadcrumbs.push("Uber Flux");
+      if (parts[2] === "uberflux") breadcrumbs.push("FluxPlus");
       if (parts[2] === "form-factor") breadcrumbs.push("Form Factor");
     }
 

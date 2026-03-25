@@ -308,7 +308,7 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       children: [
         {
           id: "uberflux",
-          label: "Uber Flux",
+          label: "FluxPlus",
           icon: React.createElement(Activity, { size: 16 }),
           route: "/workbench/custom-workbench/uberflux",
         },

@@ -39,27 +39,29 @@ export default function NavigationPanel({
   return (
     <aside
       className={cn(
-        "fixed left-20 top-[57px] bottom-0 flex flex-col transition-all duration-300 ease-out z-30 border-r border-slate-200 bg-white",
+        "fixed left-20 top-[57px] bottom-0 flex flex-col transition-all duration-300 ease-out z-30",
         (hoveredRailItem || isPanelHovered)
           ? "w-60 opacity-100"
           : "w-0 opacity-0 overflow-hidden"
       )}
       style={{
         outline: 'none',
-        boxShadow: (hoveredRailItem || isPanelHovered) ? '4px 0 24px rgba(15,23,42,0.08), 1px 0 4px rgba(15,23,42,0.04)' : 'none',
+        background: 'var(--theme-navpanel-bg)',
+        borderRight: '1px solid var(--theme-navpanel-border)',
+        boxShadow: (hoveredRailItem || isPanelHovered) ? 'var(--theme-navpanel-shadow)' : 'none',
       }}
       onMouseEnter={onPanelMouseEnter}
       onMouseLeave={onPanelMouseLeave}
     >
       {/* Panel Header */}
-      <div className="h-14 flex items-center justify-between px-4 border-b border-slate-200">
-        <h2 className="font-semibold text-slate-900 capitalize text-sm tracking-wide">
+      <div className="h-14 flex items-center justify-between px-4" style={{ borderBottom: '1px solid var(--theme-navpanel-border)' }}>
+        <h2 className="font-semibold capitalize text-sm tracking-wide" style={{ color: 'var(--theme-text)' }}>
           {hoveredRailItem || selectedRailItem}
         </h2>
         <button
           onClick={onToggleMenu}
-          className="w-6 h-6 rounded-md flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all duration-150"
-          style={{ outline: 'none', border: 'none' }}
+          className="w-6 h-6 rounded-md flex items-center justify-center transition-all duration-150"
+          style={{ outline: 'none', border: 'none', color: 'var(--theme-text-muted)' }}
           aria-label="Close menu"
         >
           <X size={14} />
@@ -103,8 +105,8 @@ function NavigationItemComponent({ item, activeRoute, onItemClick, level = 0 }: 
     return (
       <div className={cn(level === 0 && "mt-4 first:mt-0")}>
         <div className="flex items-center gap-2.5 px-3 py-2 mb-1">
-          <span className="flex-shrink-0 text-slate-400">{item.icon}</span>
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{item.label}</span>
+          <span className="flex-shrink-0" style={{ color: 'var(--theme-navpanel-group-text)' }}>{item.icon}</span>
+          <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--theme-navpanel-group-text)' }}>{item.label}</span>
         </div>
         <div className="space-y-0.5">
           {item.children!.map((child) => (
@@ -129,22 +131,21 @@ function NavigationItemComponent({ item, activeRoute, onItemClick, level = 0 }: 
         className={cn(
           "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 relative",
           level > 0 && "pl-7",
-          "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
-          isExactActive
-            ? "bg-blue-50 text-blue-700 font-medium"
-            : ""
         )}
-        style={{ outline: 'none', border: 'none' }}
+        style={{
+          outline: 'none',
+          border: 'none',
+          color: isExactActive ? 'var(--theme-navpanel-text-active)' : 'var(--theme-navpanel-text)',
+          background: isExactActive ? 'var(--theme-navpanel-active-bg)' : 'transparent',
+          fontWeight: isExactActive ? 500 : 400,
+        }}
         role="menuitem"
         aria-current={isExactActive ? "page" : undefined}
       >
         {isExactActive && (
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[65%] rounded-r-full bg-blue-500" />
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[65%] rounded-r-full" style={{ background: 'var(--theme-navpanel-indicator)' }} />
         )}
-        <span className={cn(
-          "flex-shrink-0 transition-colors duration-200",
-          isExactActive ? "text-blue-700" : "text-slate-400"
-        )}>{item.icon}</span>
+        <span className="flex-shrink-0 transition-colors duration-200" style={{ color: isExactActive ? 'var(--theme-navpanel-text-active)' : 'var(--theme-navpanel-group-text)' }}>{item.icon}</span>
         <span className="flex-1 text-left">{item.label}</span>
       </button>
     </div>

@@ -584,6 +584,69 @@ const STYLES = `
 .ff-root ::-webkit-scrollbar { width: 4px; }
 .ff-root ::-webkit-scrollbar-track { background: transparent; }
 .ff-root ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+/* AI CHAT PANEL */
+.ff-ai-panel {
+  width: 280px; flex-shrink: 0; background: var(--navy-dark);
+  border-left: 1px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column; min-height: 0;
+}
+.ff-ai-header {
+  padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.ff-ai-icon { font-size: 16px; }
+.ff-ai-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.ff-ai-subtitle { font-size: 10px; color: var(--text-muted); }
+.ff-ai-messages {
+  flex: 1; overflow-y: auto; padding: 14px;
+  display: flex; flex-direction: column; gap: 10px; min-height: 0;
+}
+.ff-ai-msg { display: flex; flex-direction: column; gap: 3px; }
+.ff-ai-msg-role {
+  font-size: 9px; font-family: var(--mono); color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.ff-ai-msg-bubble {
+  border-radius: 8px; padding: 9px 12px;
+  font-size: 11px; line-height: 1.55;
+}
+.ff-ai-msg.user .ff-ai-msg-bubble { background: rgba(0,212,170,0.12); color: var(--text-primary); }
+.ff-ai-msg.ai .ff-ai-msg-bubble { background: var(--bg-white); border: 1px solid var(--border); color: var(--text-secondary); }
+.ff-ai-msg.ai .ff-ai-msg-bubble strong { color: var(--teal); }
+.ff-ai-msg.typing .ff-ai-msg-bubble { color: var(--text-muted); font-style: italic; }
+.ff-ai-input-area {
+  padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
+}
+.ff-ai-suggestions { display: flex; flex-direction: column; gap: 5px; }
+.ff-ai-sug {
+  background: rgba(0,212,170,0.05); border: 1px solid rgba(0,212,170,0.15);
+  border-radius: 5px; padding: 5px 10px;
+  font-size: 10px; color: var(--text-muted); cursor: pointer;
+  font-family: var(--mono); transition: all 0.15s; user-select: none;
+  text-align: left; width: 100%;
+}
+.ff-ai-sug:hover { border-color: var(--teal); color: var(--teal); background: rgba(0,212,170,0.08); }
+.ff-ai-input-row {
+  display: flex; gap: 6px; align-items: center;
+}
+.ff-ai-input {
+  flex: 1; background: var(--bg-white); border: 1px solid var(--border);
+  border-radius: 7px; padding: 8px 12px;
+  font-size: 11px; color: var(--text-primary); font-family: var(--sans);
+  outline: none; transition: border-color 0.2s;
+}
+.ff-ai-input:focus { border-color: var(--teal); }
+.ff-ai-input::placeholder { color: var(--text-muted); }
+.ff-ai-send {
+  width: 30px; height: 30px; border-radius: 6px;
+  background: var(--teal); color: var(--navy); border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; transition: opacity 0.15s; flex-shrink: 0;
+}
+.ff-ai-send:hover { opacity: 0.85; }
+.ff-ai-send:disabled { opacity: 0.4; cursor: not-allowed; }
 `
 
 // ═══════════════════════════════════════════════════════
@@ -813,6 +876,15 @@ export default function FormFactorPage() {
   const [selB, setSelB] = useState(6)
   const [selC, setSelC] = useState(7)
 
+  // AI Chat state
+  const [aiMessages, setAiMessages] = useState<{role: "user"|"ai"; text: string}[]>([
+    { role: "ai", text: "<strong>Margin Intelligence AI</strong> — ready to assist.<br><br>I have context on W8 margin data across all segments and drivers. Ask me about variances, forecasts, or drill into specific segments." },
+  ])
+  const [aiInput, setAiInput] = useState("")
+  const [isAiTyping, setIsAiTyping] = useState(false)
+  const aiRef = useRef<HTMLDivElement>(null)
+  const aiTypingRef = useRef<ReturnType<typeof setTimeout>>()
+
   const WEEKS = WD_ALL.map((d) => d.w)
   const SEGMENTS: TrendSeg[] = ["All Segments", "North America", "APAC", "EMEA", "LatAm"]
 
@@ -848,6 +920,120 @@ export default function FormFactorPage() {
     if (v === 0) return { cls: "num", text: "0.0" }
     return { cls: v > 0 ? "up" : "dn", text: `${v > 0 ? "+" : ""}${v.toFixed(1)}` }
   }
+
+  // ── AI Chat logic ──
+  const generateAiResponse = useCallback((query: string): string => {
+    const q = query.toLowerCase()
+
+    if (q.includes("margin") && (q.includes("compress") || q.includes("w8") || q.includes("drop") || q.includes("dip"))) {
+      return "W8 blended standard margin compressed <strong>130bps</strong> to <strong>31.3%</strong> from W7's 32.6%. The primary driver is an unfavorable <strong>mix shift of –$1.8M</strong> — APAC volume grew disproportionately this week, pulling the blended margin down. Volume was strong at +$2.3M, but it skewed toward lower-margin Infrastructure SKUs. A secondary <strong>cost headwind of –$0.6M</strong> persists, largely proxy-estimated for Product Group B. Price realization held flat at +$0.1M."
+    }
+
+    if (q.includes("apac")) {
+      return "APAC is the <strong>lowest-margin segment</strong> in the portfolio at <strong>26.1%</strong> in W8 (vs 28.5% forecast — a <strong>240bps miss</strong>). It recovered slightly from the W7 trough of 24.4%, but remains volatile. Revenue grew strongly (+26% W1→W8) to <strong>$18.4M</strong>, but cost data for <strong>6 SKUs is proxy-estimated</strong> via v2.3 — actual cost may be worse than reported. APAC's outsized volume growth is the primary reason blended margin compressed in W8."
+    }
+
+    if (q.includes("na") || q.includes("north america")) {
+      return "North America delivered its <strong>strongest revenue week at $22.1M</strong> in W8, but margin pulled back <strong>120bps</strong> from W7's peak of 37.4% to <strong>36.2%</strong>. The dip is primarily cost-driven — a one-time <strong>freight accrual adjustment</strong> inflated cost by ~$0.7M. Excluding the accrual, underlying margin would be ~<strong>37.1%</strong>, which is above forecast of 37.8%. NA has the <strong>highest confidence</strong> data quality across all segments."
+    }
+
+    if (q.includes("emea")) {
+      return "EMEA posted a steady improvement arc through W6 (quarter high: <strong>35.4%</strong>), then softened in W7–W8. The W8 margin of <strong>33.8%</strong> is almost entirely explained by one large Professional Services deal at <strong>~28% margin</strong> that closed late in the week. Excluding that deal, EMEA underlying margin was <strong>35.1%</strong> — above the 34.2% forecast. EMEA is the <strong>most consistent performer</strong> with margin held in the 33–35% band all quarter."
+    }
+
+    if (q.includes("forecast") || q.includes("plan") || q.includes("track")) {
+      return "Q2 QTD standard margin stands at <strong>31.4%</strong>, tracking <strong>90bps below Q2 plan</strong>. Revenue growth has been consistent W1–W8 (+18.7% cumulative) but cost is growing faster. The forward forecast projects: <strong>Q2 remaining: 32.1%</strong> (High confidence, range 30.8–33.4%), <strong>Q3: 33.6%</strong> (Medium, range 31.2–36.0%), <strong>Q4: 34.8%</strong> (Low, range 30.1–39.5%). The Q2 exit rate needs to recover ~90bps to hit plan, which requires APAC cost confirmation and mix normalization."
+    }
+
+    if (q.includes("cost") || q.includes("driver")) {
+      return "The four margin drivers in W8 vs W7: <strong>Volume +$2.3M</strong> (positive — total shipments grew), <strong>Mix –$1.8M</strong> (negative — shift toward lower-margin APAC and Infrastructure SKUs), <strong>Price +$0.1M</strong> (flat), <strong>Cost –$0.6M</strong> (negative — proxy-estimated for Group B). The <strong>mix shift is the dominant headwind</strong>. Group B Infrastructure missed revenue by $1.4M and margin by 270bps vs plan, with 4 SKUs on proxy cost."
+    }
+
+    if (q.includes("risk") || q.includes("concern") || q.includes("watch")) {
+      return "Key risks to monitor for W9:<br><br>1. <strong>APAC proxy data</strong> — 6 SKUs still on Proxy v2.3. Actual costs may be worse than the 26.1% margin reported. Wait for EDW confirmation.<br>2. <strong>Group B cost uncertainty</strong> — 4 SKUs lack standard cost data. The –270bps miss could widen.<br>3. <strong>Mix normalization</strong> — If APAC volume stays elevated, blended margin will stay compressed. Need NA/EMEA to grow proportionally.<br>4. <strong>LatAm proxy dependency</strong> — ~60% of cost base is estimated. Treat margin data as directional only."
+    }
+
+    if (q.includes("proxy")) {
+      return "Proxy v2.3 is the cost estimation model used when standard cost data is unavailable. Current coverage:<br><br>• <strong>APAC</strong>: 6 SKUs on proxy (38% of APAC volume) — 84% historical accuracy<br>• <strong>LatAm</strong>: ~60% of cost base is proxy-estimated — 76% accuracy<br>• <strong>Group B Infrastructure</strong>: 4 SKUs lack standard cost — Medium confidence<br>• <strong>Group D Managed Svcs</strong>: No W8 actuals, forward-fill applied — Low confidence<br><br>Proxy limitations: Cannot capture one-time cost events (e.g., freight accruals). Tends to understate cost in volatile periods."
+    }
+
+    if (q.includes("group b") || q.includes("infrastructure")) {
+      return "Group B — Infrastructure is the <strong>primary forecast miss</strong> in W8: <strong>–$1.4M revenue</strong> and <strong>–270bps margin</strong> vs plan. Margin came in at 27.4% vs 30.1% forecast. 4 SKUs lack standard cost data and use Proxy v2.3 estimates, limiting confidence. The mix shift toward Infrastructure SKUs in APAC is compounding the issue — this is the <strong>single largest drag</strong> on blended margin this week."
+    }
+
+    if (q.includes("best") || q.includes("peak") || q.includes("high")) {
+      return "The quarter margin peak was <strong>W6 at 32.8%</strong> for All Segments. By segment: NA peaked at <strong>37.7% in W6</strong>, APAC at <strong>27.5% in W5</strong>, EMEA at <strong>35.4% in W6</strong>, and LatAm at <strong>30.9% in W6</strong>. W6 was broadly the best week across segments before the W7–W8 deterioration driven by mix shift and cost pressures."
+    }
+
+    if (q.includes("recover") || q.includes("gap") || q.includes("scenario")) {
+      return "To recover the <strong>90bps gap</strong> to Q2 plan, three scenarios:<br><br>1. <strong>Base case</strong> (60% probability): Mix normalizes as NA/EMEA grow. Exit Q2 at ~32.1%. Gap narrows to ~50bps.<br>2. <strong>Bull case</strong> (25%): APAC proxy costs confirmed lower than estimated + Group B actuals beat. Could exit at ~33.0%, closing the gap.<br>3. <strong>Bear case</strong> (15%): APAC proxy underestimates persist + LatAm data stays unreliable. Exit at ~31.0%, widening the gap to ~150bps.<br><br>Key lever: <strong>Confirm APAC standard costs</strong> — this alone could shift the base case by ±60bps."
+    }
+
+    // Default contextual summary
+    return `Here is the current W8 snapshot for <strong>${PAGE_TITLES[page]}</strong>:<br><br>• Blended margin: <strong>31.3%</strong> (–130bps WoW, –90bps vs plan)<br>• Revenue: <strong>$57.2M</strong> (+4.2% WoW)<br>• Standard cost: <strong>$39.3M</strong> (+6.1% WoW — unfavorable)<br>• Forecast gap: <strong>–$1.2M</strong><br><br>The dominant story is mix shift — APAC and Infrastructure volume grew faster than higher-margin segments. Ask me about any specific segment, driver, or the forward outlook.`
+  }, [page])
+
+  const handleAiSend = useCallback(() => {
+    const text = aiInput.trim()
+    if (!text || isAiTyping) return
+
+    setAiMessages((prev) => [...prev, { role: "user", text }])
+    setAiInput("")
+    setIsAiTyping(true)
+
+    if (aiTypingRef.current) clearTimeout(aiTypingRef.current)
+    aiTypingRef.current = setTimeout(() => {
+      const response = generateAiResponse(text)
+      setAiMessages((prev) => [...prev, { role: "ai", text: response }])
+      setIsAiTyping(false)
+    }, 800)
+  }, [aiInput, isAiTyping, generateAiResponse])
+
+  const handleAiKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleAiSend()
+    }
+  }, [handleAiSend])
+
+  const handleSuggestionClick = useCallback((s: string) => {
+    if (isAiTyping) return
+    setAiMessages((prev) => [...prev, { role: "user", text: s }])
+    setIsAiTyping(true)
+
+    if (aiTypingRef.current) clearTimeout(aiTypingRef.current)
+    aiTypingRef.current = setTimeout(() => {
+      const response = generateAiResponse(s)
+      setAiMessages((prev) => [...prev, { role: "ai", text: response }])
+      setIsAiTyping(false)
+    }, 800)
+  }, [isAiTyping, generateAiResponse])
+
+  const suggestions = useMemo(() => {
+    const map: Record<PageId, string[]> = {
+      exec: ["Why did margin compress in W8?", "Which segment is most at risk?", "What should we watch for W9?"],
+      trend: ["Show APAC trend analysis", "When was margin peak this quarter?", "Is the compression accelerating?"],
+      actfcst: ["Which product group missed forecast most?", "Why is Group B underperforming?", "Is Group D data reliable?"],
+      drivers: ["What is the biggest margin headwind?", "Explain the mix shift impact", "Is the cost pressure structural?"],
+      compare: ["How did margin change W7 to W8?", "Which week was best this quarter?"],
+      forward: ["What is the Q2 exit rate forecast?", "Can we recover the margin gap?", "What scenarios should we plan for?"],
+    }
+    return map[page]
+  }, [page])
+
+  // Scroll AI messages to bottom on new messages
+  useEffect(() => {
+    if (aiRef.current) {
+      aiRef.current.scrollTop = aiRef.current.scrollHeight
+    }
+  }, [aiMessages, isAiTyping])
+
+  // Cleanup typing timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (aiTypingRef.current) clearTimeout(aiTypingRef.current)
+    }
+  }, [])
 
   // ── Waterfall component ──
   const Waterfall = ({ items }: { items: BridgeItem[] }) => {
@@ -1493,6 +1679,48 @@ export default function FormFactorPage() {
           {page === "forward" && renderForward()}
         </div>
       </main>
+
+      {/* AI CHAT PANEL */}
+      <aside className="ff-ai-panel">
+        <div className="ff-ai-header">
+          <span className="ff-ai-icon">✦</span>
+          <div>
+            <div className="ff-ai-title">Margin AI</div>
+            <div className="ff-ai-subtitle">Context: {PAGE_TITLES[page]} · {PERIODS[periodIdx]}</div>
+          </div>
+        </div>
+        <div className="ff-ai-messages" ref={aiRef}>
+          {aiMessages.map((msg, i) => (
+            <div key={i} className={`ff-ai-msg ${msg.role}`}>
+              <div className="ff-ai-msg-role">{msg.role === "user" ? "You" : "Margin AI"}</div>
+              <div className="ff-ai-msg-bubble" dangerouslySetInnerHTML={{ __html: msg.role === "ai" ? msg.text : msg.text.replace(/</g, '&lt;') }} />
+            </div>
+          ))}
+          {isAiTyping && (
+            <div className="ff-ai-msg typing">
+              <div className="ff-ai-msg-role">Margin AI</div>
+              <div className="ff-ai-msg-bubble">Analyzing…</div>
+            </div>
+          )}
+        </div>
+        <div className="ff-ai-input-area">
+          <div className="ff-ai-suggestions">
+            {suggestions.map((s, i) => (
+              <button key={i} className="ff-ai-sug" onClick={() => handleSuggestionClick(s)}>{s}</button>
+            ))}
+          </div>
+          <div className="ff-ai-input-row">
+            <input
+              className="ff-ai-input"
+              placeholder="Ask about margins…"
+              value={aiInput}
+              onChange={(e) => setAiInput(e.target.value)}
+              onKeyDown={handleAiKeyDown}
+            />
+            <button className="ff-ai-send" onClick={handleAiSend} disabled={!aiInput.trim() || isAiTyping}>→</button>
+          </div>
+        </div>
+      </aside>
     </div>
   )
 }
