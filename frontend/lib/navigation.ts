@@ -40,12 +40,11 @@ import {
   Workflow,
   RefreshCw,
   Landmark,
-  Building2,
   Store,
   PhoneCall,
 } from "lucide-react";
 
-type RailItem = "home" | "automation" | "reports" | "workbench" | "igrs" | "admin";
+type RailItem = "home" | "automation" | "reports" | "workbench" | "admin";
 
 type NavigationItem = {
   id: string;
@@ -367,114 +366,6 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
           route: "/workbench/treasury/liquidity",
         },
       ],
-    },
-    {
-      id: "revenue-leakage",
-      label: "Revenue Leakage",
-      icon: React.createElement(Shield, { size: 18 }),
-      route: "/workbench/revenue-leakage",
-      children: [
-        {
-          id: "rl-ai-chat",
-          label: "AI Chat",
-          icon: React.createElement(MessageCircle, { size: 16 }),
-          route: "/workbench/revenue-leakage/ai-chat",
-        },
-        {
-          id: "rl-overview",
-          label: "Overview",
-          icon: React.createElement(BarChart3, { size: 16 }),
-          route: "/workbench/revenue-leakage/overview",
-        },
-        {
-          id: "rl-cases",
-          label: "Cases",
-          icon: React.createElement(FileCheck, { size: 16 }),
-          route: "/workbench/revenue-leakage/cases",
-        },
-        {
-          id: "rl-rules",
-          label: "Rules",
-          icon: React.createElement(Shield, { size: 16 }),
-          route: "/workbench/revenue-leakage/rules",
-        },
-        {
-          id: "rl-insights",
-          label: "Insights",
-          icon: React.createElement(Brain, { size: 16 }),
-          route: "/workbench/revenue-leakage/insights",
-        },
-        {
-          id: "rl-mv-trends",
-          label: "MV Trends",
-          icon: React.createElement(Map, { size: 16 }),
-          route: "/workbench/revenue-leakage/mv-trends",
-        },
-        {
-          id: "rl-exports",
-          label: "Exports",
-          icon: React.createElement(Download, { size: 16 }),
-          route: "/workbench/revenue-leakage/exports",
-        },
-      ],
-    },
-  ],
-
-  // ─── IGRS ───────────────────────────────────────────────
-  igrs: [
-    {
-      id: "igrs-ai-chat",
-      label: "AI Chat",
-      icon: React.createElement(MessageCircle, { size: 18 }),
-      route: "/igrs/revenue-assurance/ai-chat",
-    },
-    {
-      id: "igrs-overview",
-      label: "Overview",
-      icon: React.createElement(BarChart3, { size: 18 }),
-      route: "/igrs/revenue-assurance/overview",
-    },
-    {
-      id: "igrs-cases",
-      label: "Cases",
-      icon: React.createElement(FileCheck, { size: 18 }),
-      route: "/igrs/revenue-assurance/cases",
-    },
-{
-      id: "igrs-insights",
-      label: "Insights",
-      icon: React.createElement(Brain, { size: 18 }),
-      route: "/igrs/revenue-assurance/insights",
-    },
-    {
-      id: "igrs-patterns",
-      label: "Patterns",
-      icon: React.createElement(Map, { size: 18 }),
-      route: "/igrs/revenue-assurance/patterns",
-    },
-    {
-      id: "igrs-mv-trends",
-      label: "MV Trends",
-      icon: React.createElement(Map, { size: 18 }),
-      route: "/igrs/revenue-assurance/mv-trends",
-    },
-{
-      id: "igrs-governance",
-      label: "Governance",
-      icon: React.createElement(Building2, { size: 18 }),
-      route: "/igrs/revenue-assurance/governance",
-    },
-    {
-      id: "igrs-ai-intelligence",
-      label: "AI Intelligence",
-      icon: React.createElement(Brain, { size: 18 }),
-      route: "/igrs/revenue-assurance/ai-intelligence",
-    },
-{
-      id: "igrs-admin",
-      label: "Admin",
-      icon: React.createElement(Users, { size: 18 }),
-      route: "/igrs/revenue-assurance/admin",
     },
   ],
 

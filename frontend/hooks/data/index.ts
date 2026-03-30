@@ -1,30 +1,6 @@
 // Data hooks — barrel file
 // Re-exports every hook from the data layer for convenient single-import usage.
 
-// IGRS Revenue Assurance
-export { useIGRSCases, useIGRSCase, useIGRSCaseMutation } from "./use-igrs-cases";
-export { useIGRSRules, useIGRSRuleMutation } from "./use-igrs-rules";
-export { useIGRSDashboard } from "./use-igrs-dashboard";
-export { useIGRSSignals } from "./use-igrs-signals";
-export { useIGRSOffices } from "./use-igrs-offices";
-export { useIGRSTrends } from "./use-igrs-trends";
-export { useIGRSPatterns } from "./use-igrs-patterns";
-export { useIGRSMVHotspots } from "./use-igrs-mv-hotspots";
-export { useIGRSExports } from "./use-igrs-exports";
-export { useIGRSSettings } from "./use-igrs-settings";
-export { useIGRSCashReconciliation } from "./use-igrs-cash-reconciliation";
-export { useIGRSStampInventory } from "./use-igrs-stamp-inventory";
-export { useIGRSStampIntelligence } from "./use-igrs-stamp-intelligence";
-export { useIGRSMVGrowthAttribution } from "./use-igrs-mv-growth-attribution";
-export { useIGRSMVRevisionComparison } from "./use-igrs-mv-revision-comparison";
-export { useIGRSMVAnomalies } from "./use-igrs-mv-anomalies";
-export { useIGRSWeblandVerification } from "./use-igrs-webland-verification";
-export { useIGRSGovernance } from "./use-igrs-governance";
-export { useAIIntelligence } from "./use-igrs-ai-intelligence";
-export { useAIChat } from "./use-igrs-ai-chat";
-export { useIGRSEscalations } from "./use-igrs-escalations";
-export { useJurisdictionFilteredCases } from "./use-jurisdiction-filtered-cases";
-
 // Enterprise Revenue Assurance
 export { useRevenueCases, useRevenueCase, useRevenueCaseMutation } from "./use-revenue-cases";
 export { useRevenueRules, useRevenueRuleMutation } from "./use-revenue-rules";

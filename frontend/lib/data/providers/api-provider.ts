@@ -9,36 +9,6 @@ function notConfigured(): never {
   throw new Error(API_NOT_CONFIGURED);
 }
 
-export const igrsRevenue = {
-  getCases: notConfigured,
-  getCase: notConfigured,
-  createCase: notConfigured,
-  updateCase: notConfigured,
-  deleteCase: notConfigured,
-  getRules: notConfigured,
-  toggleRule: notConfigured,
-  getSignals: notConfigured,
-  getOffices: notConfigured,
-  getDashboardKPIs: notConfigured,
-  getTrends: notConfigured,
-  getPatterns: notConfigured,
-  getMvHotspots: notConfigured,
-  getExports: notConfigured,
-  getSettings: notConfigured,
-  getCashReconciliation: notConfigured,
-  getStampInventory: notConfigured,
-  getStampVendorAnalysis: notConfigured,
-  getMVGrowthAttribution: notConfigured,
-  getMVRevisionComparison: notConfigured,
-  getMVAnomalies: notConfigured,
-  getGovernanceData: notConfigured,
-  getAIPredictiveForecasting: notConfigured,
-  getAIRiskScoring: notConfigured,
-  getAISROIntegrity: notConfigured,
-  getAIPromptEngine: notConfigured,
-  getWeblandVerification: notConfigured,
-};
-
 export const revenueAssurance = {
   getCases: notConfigured,
   getCase: notConfigured,

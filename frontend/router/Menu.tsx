@@ -204,38 +204,6 @@ export const Menu: MenuItem[] = [
     ],
   },
   {
-    path: "workbench/revenue-leakage",
-    permission: "revenue_leakage",
-    tabsList: [
-      { path: "workbench/revenue-leakage/ai-chat", permission: "revenue_leakage" },
-      { path: "workbench/revenue-leakage/overview", permission: "overview" },
-      { path: "workbench/revenue-leakage/cases", permission: "cases" },
-      { path: "workbench/revenue-leakage/rules", permission: "rules" },
-      { path: "workbench/revenue-leakage/insights", permission: "insights" },
-      { path: "workbench/revenue-leakage/patterns", permission: "patterns" },
-      { path: "workbench/revenue-leakage/mv-trends", permission: "mv_trends" },
-      { path: "workbench/revenue-leakage/exports", permission: "exports" },
-      { path: "workbench/revenue-leakage/settings", permission: "settings" },
-      { path: "workbench/revenue-leakage/admin", permission: "revenue_leakage" },
-    ],
-  },
-  {
-    path: "igrs/revenue-assurance",
-    permission: "igrs_revenue_assurance",
-    tabsList: [
-      { path: "igrs/revenue-assurance/overview", permission: "igrs_overview" },
-      { path: "igrs/revenue-assurance/cases", permission: "igrs_cases" },
-      { path: "igrs/revenue-assurance/insights", permission: "igrs_insights" },
-      { path: "igrs/revenue-assurance/ai-chat", permission: "igrs_ai_chat" },
-      { path: "igrs/revenue-assurance/mv-trends", permission: "igrs_mv_trends" },
-      { path: "igrs/revenue-assurance/patterns", permission: "igrs_patterns" },
-      { path: "igrs/revenue-assurance/admin", permission: "igrs_admin" },
-      { path: "igrs/revenue-assurance/governance", permission: "igrs_governance" },
-      { path: "igrs/revenue-assurance/ai-intelligence", permission: "igrs_ai_intelligence" },
-      { path: "igrs/revenue-assurance/escalations", permission: "igrs_escalations" },
-    ],
-  },
-  {
     path: "revenue-assurance",
     permission: "revenue_assurance",
     tabsList: [

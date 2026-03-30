@@ -18,7 +18,6 @@ export type NotificationType = "info" | "warning" | "error" | "success";
  * Module that originated or is associated with a notification.
  */
 export type NotificationModule =
-  | "igrs"
   | "revenue"
   | "cash"
   | "reports"

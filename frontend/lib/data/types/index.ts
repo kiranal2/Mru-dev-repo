@@ -1,5 +1,4 @@
 // Data layer type definitions - barrel file
-export * from './igrs';
 export * from './revenue';
 export * from './cash';
 export * from './reports';

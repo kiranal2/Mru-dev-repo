@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Home, BarChart3, RefreshCw, UserCircle2, Settings, LogOut, LayoutGrid, Shield, Landmark } from 'lucide-react';
+import { Home, BarChart3, RefreshCw, UserCircle2, Settings, LogOut, LayoutGrid, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RailItem } from '@/lib/navigation';
 
@@ -134,25 +134,6 @@ export default function Sidebar({
             {isCollapsed && (
               <TooltipContent side="right" align="center" sideOffset={8}>
                 Workbench
-              </TooltipContent>
-            )}
-          </Tooltip>
-
-          <Tooltip delayDuration={150}>
-            <TooltipTrigger asChild>
-              <RailButton
-                icon={<Landmark size={22} />}
-                label="IGRS"
-                isSelected={getRailItemSelectedState('igrs')}
-                isCollapsed={isCollapsed}
-                onClick={() => onRailItemClick('igrs')}
-                onMouseEnter={() => onRailItemHover('igrs')}
-                onMouseLeave={() => onRailItemHover(null)}
-              />
-            </TooltipTrigger>
-            {isCollapsed && (
-              <TooltipContent side="right" align="center" sideOffset={8}>
-                IGRS
               </TooltipContent>
             )}
           </Tooltip>

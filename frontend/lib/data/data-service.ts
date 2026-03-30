@@ -7,7 +7,7 @@
  *
  * Usage:
  *   import { dataService } from '@/lib/data';
- *   const cases = await dataService.igrsRevenue.getCases({ status: ['New'] });
+ *   const cases = await dataService.revenueAssurance.getCases({ status: ['New'] });
  */
 
 import * as jsonProvider from './providers/json-provider';
@@ -25,8 +25,6 @@ function getProvider() {
 const provider = getProvider();
 
 export const dataService = {
-  /** IGRS Revenue Assurance (Indian government registration) */
-  igrsRevenue: provider.igrsRevenue,
   /** Enterprise Revenue Assurance (corporate billing/pricing) */
   revenueAssurance: provider.revenueAssurance,
   /** Cash Application */

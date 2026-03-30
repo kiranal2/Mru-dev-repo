@@ -92,7 +92,7 @@ export function SignalDetailSheet({ signal, open, onClose }: SignalDetailSheetPr
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
       <SheetContent className="w-[720px] sm:max-w-[720px] p-0 flex flex-col">
-        {/* Dark gradient header — IGRS style */}
+        {/* Dark gradient header */}
         <SheetHeader className="px-6 pt-5 pb-4 border-b bg-gradient-to-r from-slate-800 to-slate-700 text-left">
           <div className="flex items-start justify-between gap-3">
             <div>

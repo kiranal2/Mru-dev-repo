@@ -17,14 +17,11 @@ interface HeaderProps {
 export default function Header({ loadingState, isSidebarHidden, onToggleSidebar }: HeaderProps) {
   const { theme } = useTheme();
   const pathname = usePathname();
-  const isIGRSModule = pathname?.startsWith("/igrs/");
   const isCashAppWorkbench = pathname?.startsWith("/workbench/order-to-cash/cash-application");
   const isCollectionsWorkbench = pathname?.startsWith("/workbench/order-to-cash/collections");
 
   let headerTitle: string | null = null;
-  if (isIGRSModule) {
-    headerTitle = "Revenue Intelligence & Leakage Detection System";
-  } else if (isCashAppWorkbench) {
+  if (isCashAppWorkbench) {
     headerTitle = "Cash App Workbench";
   } else if (isCollectionsWorkbench) {
     headerTitle = "Collections Workbench";

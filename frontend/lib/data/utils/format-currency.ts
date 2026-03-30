@@ -41,12 +41,9 @@ export function formatUSD(value: number, compact = false): string {
 /** Auto-detect currency format based on module context */
 export function formatCurrency(
   value: number,
-  module: 'igrs' | 'revenue' | 'cash' | 'reports',
+  module: 'revenue' | 'cash' | 'reports',
   compact = false
 ): string {
-  if (module === 'igrs') {
-    return formatINR(value, compact);
-  }
   return formatUSD(value, compact);
 }
 

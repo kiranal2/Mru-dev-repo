@@ -56,7 +56,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   // Load persisted rail selection from localStorage
   useEffect(() => {
     const savedRailItem = localStorage.getItem("meeru-selected-rail");
-    if (savedRailItem && ["home", "automation", "reports", "workbench", "igrs", "admin"].includes(savedRailItem)) {
+    if (savedRailItem && ["home", "automation", "reports", "workbench", "admin"].includes(savedRailItem)) {
       setSelectedRailItem(savedRailItem as RailItem);
     }
   }, []);
@@ -90,26 +90,9 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
         setSelectedRailItem("reports");
       } else if (pathname.startsWith("/workbench/")) {
         setSelectedRailItem("workbench");
-      } else if (pathname.startsWith("/igrs/")) {
-        setSelectedRailItem("igrs");
       } else if (pathname.startsWith("/admin/")) {
         setSelectedRailItem("admin");
       }
-    }
-  }, [pathname]);
-
-  // One-time panel open for IGRS login redirect flow.
-  useEffect(() => {
-    if (!pathname?.startsWith("/igrs/")) return;
-    try {
-      const shouldOpenPanel = localStorage.getItem("igrs-open-panel-default");
-      if (shouldOpenPanel === "1") {
-        setSelectedRailItem("igrs");
-        setHoveredRailItem("igrs");
-        localStorage.removeItem("igrs-open-panel-default");
-      }
-    } catch {
-      // no-op
     }
   }, [pathname]);
 
@@ -131,7 +114,6 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
       automation: "/automation/data-templates",
       reports: "/reports/sec/balance-sheet",
       workbench: "/workbench/order-to-cash/cash-application",
-      igrs: "/igrs/revenue-assurance/overview",
       admin: "/admin/users",
     };
     const route = defaultRoutes[item];
@@ -161,9 +143,6 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     } else if (route.startsWith("/workbench/")) {
       railItem = "workbench";
       setSelectedRailItem("workbench");
-    } else if (route.startsWith("/igrs/")) {
-      railItem = "igrs";
-      setSelectedRailItem("igrs");
     } else if (route.startsWith("/admin/")) {
       railItem = "admin";
       setSelectedRailItem("admin");

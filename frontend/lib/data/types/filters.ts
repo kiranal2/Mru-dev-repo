@@ -36,32 +36,6 @@ export interface BaseFilters extends Partial<PaginationParams>, Partial<SortPara
 }
 
 /**
- * Filters for querying IGRS (Inspector General of Registration & Stamps) cases.
- */
-export interface IGRSCaseFilters extends BaseFilters {
-  /** Filter by one or more case statuses */
-  status?: string[];
-  /** Filter by one or more risk levels */
-  riskLevel?: string[];
-  /** Filter by detected signal types */
-  signals?: string[];
-  /** Filter by registration office */
-  office?: string[];
-  /** Filter by district */
-  district?: string[];
-  /** Start of the date range (ISO-8601) */
-  dateFrom?: string;
-  /** End of the date range (ISO-8601) */
-  dateTo?: string;
-  /** Filter by assigned analyst identifier */
-  assignedTo?: string;
-  /** Minimum gap value for gap-based filtering */
-  minGap?: number;
-  /** Maximum gap value for gap-based filtering */
-  maxGap?: number;
-}
-
-/**
  * Filters for querying revenue leakage cases.
  */
 export interface RevenueCaseFilters extends BaseFilters {
