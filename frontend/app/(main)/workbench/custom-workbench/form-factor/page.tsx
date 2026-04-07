@@ -451,6 +451,18 @@ const STYLES = `
 .ff-narr-head { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 7px; line-height: 1.5; }
 .ff-narr-body { font-size: 13px; color: var(--text-secondary); line-height: 1.75; }
 .ff-narr-body strong { color: var(--text-primary); font-weight: 600; }
+.ff-narr-toggle {
+  display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none;
+}
+.ff-narr-toggle-btn {
+  display: flex; align-items: center; gap: 5px; background: none; border: 1px solid var(--teal-mid);
+  border-radius: 5px; padding: 3px 9px; font-size: 10px; font-family: var(--mono);
+  color: var(--teal); cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+}
+.ff-narr-toggle-btn:hover { background: var(--teal-light); }
+.ff-narr-content { overflow: hidden; transition: max-height 0.3s ease, opacity 0.2s ease; }
+.ff-narr-content.collapsed { max-height: 0; opacity: 0; margin-top: 0; }
+.ff-narr-content.expanded { max-height: 500px; opacity: 1; margin-top: 9px; }
 
 /* WATERFALL */
 .ff-wf { display: flex; flex-direction: column; gap: 7px; }
@@ -647,6 +659,161 @@ const STYLES = `
 }
 .ff-ai-send:hover { opacity: 0.85; }
 .ff-ai-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE TOGGLE CONTROLS
+   ═══════════════════════════════════════════════ */
+.ff-sidebar-toggle,
+.ff-ai-toggle { display: none; }
+.ff-ai-close { display: none; }
+.ff-sidebar-overlay { display: none; }
+
+/* ═══════════════════════════════════════════════
+   TABLET (768px – 1279px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 1279px) {
+  .ff-root { flex-direction: column; display: flex; }
+
+  /* Sidebar: slide-over drawer */
+  .ff-sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 200;
+    width: 260px; transform: translateX(-100%);
+    transition: transform 0.25s ease; box-shadow: 8px 0 30px rgba(0,0,0,0.5);
+  }
+  .ff-sidebar.open { transform: translateX(0); }
+  .ff-sidebar-overlay {
+    position: fixed; inset: 0; z-index: 199;
+    background: rgba(0,0,0,0.5); display: none;
+  }
+  .ff-sidebar-overlay.open { display: block; }
+
+  /* AI Panel: slide-over from right */
+  .ff-ai-panel {
+    position: fixed; right: 0; top: 0; bottom: 0; z-index: 200;
+    width: 320px; transform: translateX(100%);
+    transition: transform 0.25s ease; box-shadow: -8px 0 30px rgba(0,0,0,0.5);
+  }
+  .ff-ai-panel.open { transform: translateX(0); }
+
+  /* Show toggle buttons */
+  .ff-sidebar-toggle,
+  .ff-ai-toggle {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 7px;
+    background: var(--bg-white); border: 1px solid var(--border);
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .ff-sidebar-toggle:hover,
+  .ff-ai-toggle:hover { border-color: var(--teal); color: var(--teal); }
+
+  .ff-ai-close {
+    display: flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 5px; margin-left: auto;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-muted); cursor: pointer; font-size: 12px;
+  }
+  .ff-ai-close:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* Topbar: compact */
+  .ff-topbar { padding: 10px 16px; }
+  .ff-tb-title { font-size: 15px; }
+
+  /* Page content: tighter padding */
+  .ff-page { padding: 16px; }
+
+  /* Stat grid: 2x2 */
+  .ff-sg { grid-template-columns: 1fr 1fr; }
+  .ff-sc-val { font-size: 22px; }
+
+  /* 2-col grids: stay 2-col on tablet */
+  .ff-g2 { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .ff-g6040 { grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Forecast row: 2x2 instead of 4 */
+  .ff-frow { flex-wrap: wrap; gap: 10px; }
+  .ff-fc { flex: 1 1 calc(50% - 5px); min-width: calc(50% - 5px); }
+
+  /* Tables: horizontal scroll */
+  .ff-card { overflow-x: auto; }
+  .ff-dt { min-width: 600px; }
+
+  /* Accuracy rings: wrap */
+  .ff-acc-grid { gap: 16px; }
+}
+
+/* ═══════════════════════════════════════════════
+   PHONE (< 768px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  /* Topbar: minimal */
+  .ff-topbar { padding: 8px 12px; flex-wrap: wrap; gap: 8px; }
+  .ff-tb-title { font-size: 13px; }
+  .ff-tb-right { gap: 6px; }
+  .ff-btn { padding: 5px 10px; font-size: 11px; }
+
+  /* Page: tight */
+  .ff-page { padding: 12px; }
+
+  /* Stat grid: 2x1 */
+  .ff-sg { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ff-sc { padding: 12px 14px; }
+  .ff-sc-val { font-size: 20px; }
+  .ff-sc-label { font-size: 9px; }
+
+  /* Grids: single column */
+  .ff-g2 { grid-template-columns: 1fr; }
+  .ff-g6040 { grid-template-columns: 1fr; }
+
+  /* Forecast row: single column */
+  .ff-frow { flex-direction: column; }
+  .ff-fc { flex: none; min-width: 0; }
+  .ff-fc-v { font-size: 22px; }
+
+  /* Narrative: compact */
+  .ff-narr { padding: 12px 14px; }
+  .ff-narr-head { font-size: 14px; }
+  .ff-narr-body { font-size: 12px; }
+
+  /* Cards: tighter */
+  .ff-card { padding: 14px 16px; }
+  .ff-card-title { font-size: 9.5px; }
+
+  /* Tables: smaller min-width */
+  .ff-dt { min-width: 500px; }
+  .ff-dt td { padding: 8px 10px; font-size: 12px; }
+  .ff-dt th { padding: 7px 10px; font-size: 9.5px; }
+
+  /* Filter chips: smaller */
+  .ff-fchip { padding: 4px 10px; font-size: 11px; }
+  .ff-tabs { overflow-x: auto; }
+  .ff-tab { padding: 5px 12px; font-size: 12px; white-space: nowrap; }
+
+  /* Info banner: compact */
+  .ff-ibanner { padding: 8px 12px; font-size: 11px; }
+
+  /* Section header */
+  .ff-sh { flex-wrap: wrap; gap: 4px; }
+  .ff-sh-t { font-size: 15px; }
+
+  /* Sidebar: full-width on phone */
+  .ff-sidebar { width: 100%; }
+  /* AI panel: full-width on phone */
+  .ff-ai-panel { width: 100%; }
+
+  /* Accuracy rings: compact */
+  .ff-acc-grid { gap: 12px; }
+  .ff-ring-wrap { width: 50px; height: 50px; }
+  .ff-ring-val { font-size: 11px; }
+
+  /* Week chips */
+  .ff-wg { gap: 4px; }
+  .ff-wchip { padding: 4px 10px; font-size: 11px; }
+
+  /* Waterfall: tighter */
+  .ff-wf-lbl { width: 55px; font-size: 10px; }
+  .ff-wf-bar { font-size: 10px; padding: 0 6px; }
+}
 `
 
 // ═══════════════════════════════════════════════════════
@@ -882,6 +1049,9 @@ export default function FormFactorPage() {
   ])
   const [aiInput, setAiInput] = useState("")
   const [isAiTyping, setIsAiTyping] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [aiPanelOpen, setAiPanelOpen] = useState(false)
+  const [insightCollapsed, setInsightCollapsed] = useState(false)
   const aiRef = useRef<HTMLDivElement>(null)
   const aiTypingRef = useRef<ReturnType<typeof setTimeout>>()
 
@@ -1071,7 +1241,13 @@ export default function FormFactorPage() {
           Outputs optimized for directional insight. Proxy-derived figures carry confidence labels. Not for audit or statutory reporting.
         </div>
         <div className="ff-narr">
-          <div className="ff-narr-chip">✦ AI Insight</div>
+          <div className="ff-narr-toggle" onClick={() => setInsightCollapsed(!insightCollapsed)}>
+            <div className="ff-narr-chip">✦ AI Insight</div>
+            <button className="ff-narr-toggle-btn" type="button">
+              {insightCollapsed ? "Show ▾" : "Hide ▴"}
+            </button>
+          </div>
+          <div className={`ff-narr-content ${insightCollapsed ? "collapsed" : "expanded"}`}>
           <div className="ff-narr-head">
             Revenue grew +4.2% week-over-week, but standard margin compressed 130bps — driven by an unfavorable mix shift toward lower-margin APAC accounts.
           </div>
@@ -1080,6 +1256,7 @@ export default function FormFactorPage() {
             high-margin North America products underperformed their forecast share. <strong>Price realization</strong> held flat. A{" "}
             <strong>Cost headwind of –$0.6M</strong> persists, largely proxy-estimated for Product Group B. Q2 QTD standard margin stands at{" "}
             <strong>31.4%</strong>, tracking 90bps below Q2 plan.
+          </div>
           </div>
         </div>
 
@@ -1180,9 +1357,16 @@ export default function FormFactorPage() {
           ))}
         </div>
         <div className="ff-narr">
-          <div className="ff-narr-chip">✦ AI Insight</div>
+          <div className="ff-narr-toggle" onClick={() => setInsightCollapsed(!insightCollapsed)}>
+            <div className="ff-narr-chip">✦ AI Insight</div>
+            <button className="ff-narr-toggle-btn" type="button">
+              {insightCollapsed ? "Show ▾" : "Hide ▴"}
+            </button>
+          </div>
+          <div className={`ff-narr-content ${insightCollapsed ? "collapsed" : "expanded"}`}>
           <div className="ff-narr-head">{narr.head}</div>
           <div className="ff-narr-body" dangerouslySetInnerHTML={{ __html: narr.body }} />
+          </div>
         </div>
         <div className="ff-card ff-mb">
           <div className="ff-card-title">Revenue vs Standard Cost — {trendSeg} — Q2 Weekly ($M)</div>
@@ -1272,9 +1456,16 @@ export default function FormFactorPage() {
           ))}
         </div>
         <div className="ff-narr">
-          <div className="ff-narr-chip">✦ AI Insight</div>
+          <div className="ff-narr-toggle" onClick={() => setInsightCollapsed(!insightCollapsed)}>
+            <div className="ff-narr-chip">✦ AI Insight</div>
+            <button className="ff-narr-toggle-btn" type="button">
+              {insightCollapsed ? "Show ▾" : "Hide ▴"}
+            </button>
+          </div>
+          <div className={`ff-narr-content ${insightCollapsed ? "collapsed" : "expanded"}`}>
           <div className="ff-narr-head">{narr.head}</div>
           <div className="ff-narr-body" dangerouslySetInnerHTML={{ __html: narr.body }} />
+          </div>
         </div>
         <div className="ff-g2">
           <div className="ff-card">
@@ -1352,9 +1543,16 @@ export default function FormFactorPage() {
           ))}
         </div>
         <div className="ff-narr">
-          <div className="ff-narr-chip">✦ AI Insight</div>
+          <div className="ff-narr-toggle" onClick={() => setInsightCollapsed(!insightCollapsed)}>
+            <div className="ff-narr-chip">✦ AI Insight</div>
+            <button className="ff-narr-toggle-btn" type="button">
+              {insightCollapsed ? "Show ▾" : "Hide ▴"}
+            </button>
+          </div>
+          <div className={`ff-narr-content ${insightCollapsed ? "collapsed" : "expanded"}`}>
           <div className="ff-narr-head">{DRV_HEADS[drvSeg]}</div>
           <div className="ff-narr-body" dangerouslySetInnerHTML={{ __html: ds.narr }} />
+          </div>
         </div>
         <div className="ff-g2">
           <div className="ff-card">
@@ -1619,8 +1817,11 @@ export default function FormFactorPage() {
     <div className="ff-root">
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
+      {/* SIDEBAR OVERLAY */}
+      <div className={`ff-sidebar-overlay ${sidebarOpen ? "open" : ""}`} onClick={() => setSidebarOpen(false)} />
+
       {/* SIDEBAR */}
-      <nav className="ff-sidebar">
+      <nav className={`ff-sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="ff-sb-logo">
           <div className="ff-sb-wordmark">MeeruAI</div>
           <div className="ff-sb-sub">Margin Intelligence</div>
@@ -1633,7 +1834,7 @@ export default function FormFactorPage() {
               <button
                 key={item.id}
                 className={`ff-sb-item ${page === item.id ? "active" : ""}`}
-                onClick={() => setPage(item.id)}
+                onClick={() => { setPage(item.id); setSidebarOpen(false); }}
               >
                 <span className="ff-sb-icon">{item.icon}</span>
                 {item.label}
@@ -1655,9 +1856,12 @@ export default function FormFactorPage() {
       <main className="ff-main">
         {/* TOPBAR */}
         <div className="ff-topbar">
-          <div className="ff-tb-title">
-            {PAGE_TITLES[page].split(" ").slice(0, -1).join(" ")}{" "}
-            <em>{PAGE_TITLES[page].split(" ").pop()}</em>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <button className="ff-sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} title="Navigation">☰</button>
+            <div className="ff-tb-title">
+              {PAGE_TITLES[page].split(" ").slice(0, -1).join(" ")}{" "}
+              <em>{PAGE_TITLES[page].split(" ").pop()}</em>
+            </div>
           </div>
           <div className="ff-tb-right">
             <button className="ff-btn" onClick={() => setPeriodIdx((i) => (i + 1) % PERIODS.length)}>
@@ -1666,6 +1870,7 @@ export default function FormFactorPage() {
             <button className="ff-btn primary" onClick={() => setPage("compare")}>
               ⇄ Period Comparison
             </button>
+            <button className="ff-ai-toggle" onClick={() => setAiPanelOpen(!aiPanelOpen)} title="AI Assistant">✦</button>
           </div>
         </div>
 
@@ -1681,13 +1886,14 @@ export default function FormFactorPage() {
       </main>
 
       {/* AI CHAT PANEL */}
-      <aside className="ff-ai-panel">
+      <aside className={`ff-ai-panel ${aiPanelOpen ? "open" : ""}`}>
         <div className="ff-ai-header">
           <span className="ff-ai-icon">✦</span>
           <div>
             <div className="ff-ai-title">Margin AI</div>
             <div className="ff-ai-subtitle">Context: {PAGE_TITLES[page]} · {PERIODS[periodIdx]}</div>
           </div>
+          <button className="ff-ai-close" onClick={() => setAiPanelOpen(false)}>✕</button>
         </div>
         <div className="ff-ai-messages" ref={aiRef}>
           {aiMessages.map((msg, i) => (
