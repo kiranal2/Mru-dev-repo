@@ -562,7 +562,7 @@ export default function RemittancesListPage() {
       </div>
 
       <div className="p-8">
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -1260,8 +1260,8 @@ export default function RemittancesListPage() {
               value={linkSearch}
               onChange={(event) => setLinkSearch(event.target.value)}
             />
-            <div className="border rounded-md overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="border rounded-md overflow-hidden overflow-x-auto">
+              <table className="w-full text-sm min-w-[800px]">
                 <thead className="bg-slate-50 border-b">
                   <tr>
                     <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase">

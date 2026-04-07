@@ -237,10 +237,10 @@ export default function PaymentsQueuePage() {
   return (
     <div className="h-full flex flex-col bg-slate-50">
       <div className="flex-1 overflow-auto">
-        <div className="px-5 py-2">
+        <div className="px-3 sm:px-5 py-2">
           <div className="mb-2 space-y-1.5">
             {/* Single row: Search + Filters + Status tabs + KPI stats */}
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2 flex-wrap">
                 {/* Search */}
                 <div className="relative">
@@ -651,7 +651,7 @@ export default function PaymentsQueuePage() {
               </div>
 
               {/* Compact KPI stat chips */}
-              <div className="flex items-center gap-2 text-[11px]">
+              <div className="hidden md:flex items-center gap-2 text-[11px]">
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
                   <span className="text-slate-500">Total</span>
                   <span className="font-semibold text-slate-900">{q.payments.length}</span>

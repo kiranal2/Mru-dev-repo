@@ -171,7 +171,7 @@ const ENTERPRISE_PATTERNS = [
 
 function LoadingSkeleton() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
       <div className="h-8 w-64 bg-slate-200 rounded animate-pulse" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -201,7 +201,7 @@ export default function RevenueAssuranceInsightsPage() {
   if (error) return <ErrorState error={error} />;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-xl font-bold text-slate-900">AI-Powered Revenue Insights</h1>

@@ -1143,8 +1143,8 @@ export default function FormFactorPage() {
           </div>
           <div className="ff-sh-a" onClick={() => setPage("actfcst")}>Full breakdown →</div>
         </div>
-        <div className="ff-card">
-          <table className="ff-dt">
+        <div className="ff-card overflow-x-auto">
+          <table className="ff-dt" style={{ minWidth: 700 }}>
             <thead>
               <tr><th>Segment</th><th>Revenue WTD</th><th>Std. Margin %</th><th>vs Prior Week</th><th>vs Forecast</th><th>Confidence</th></tr>
             </thead>
@@ -1212,8 +1212,8 @@ export default function FormFactorPage() {
             yFmt={(v) => v + "%"}
           />
         </div>
-        <div className="ff-card">
-          <table className="ff-dt">
+        <div className="ff-card overflow-x-auto">
+          <table className="ff-dt" style={{ minWidth: 800 }}>
             <thead><tr><th>Week</th><th>Revenue ($M)</th><th>Std Cost ($M)</th><th>Std Margin ($M)</th><th>Margin %</th><th>WoW Δ pp</th><th>Fcst Margin %</th><th>Gap pp</th></tr></thead>
             <tbody>
               {d.map((x, i) => {
@@ -1306,8 +1306,8 @@ export default function FormFactorPage() {
             />
           </div>
         </div>
-        <div className="ff-card">
-          <table className="ff-dt">
+        <div className="ff-card overflow-x-auto">
+          <table className="ff-dt" style={{ minWidth: 800 }}>
             <thead><tr><th>{AVFH[avfKey]}</th><th>Rev Actual</th><th>Rev Fcst</th><th>Rev Gap</th><th>Margin Act.</th><th>Margin Fcst</th><th>Margin Gap</th><th>Confidence</th></tr></thead>
             <tbody>
               {data.map((d) => {
@@ -1375,9 +1375,9 @@ export default function FormFactorPage() {
             />
           </div>
         </div>
-        <div className="ff-card">
+        <div className="ff-card overflow-x-auto">
           <div className="ff-card-title">{drvSeg === "All Segments" ? "Driver Detail — Product Group Breakdown" : `Driver Detail — ${drvSeg} by Product Line`}</div>
-          <table className="ff-dt">
+          <table className="ff-dt" style={{ minWidth: 800 }}>
             <thead><tr><th>Product Group</th><th>Price Δ ($M)</th><th>Mix Δ ($M)</th><th>Volume Δ ($M)</th><th>Cost Δ ($M)</th><th>Net Margin Δ ($M)</th><th>Confidence</th></tr></thead>
             <tbody>
               {rows.map((r) => {
@@ -1500,8 +1500,8 @@ export default function FormFactorPage() {
           </div>
         </div>
 
-        <div className="ff-card">
-          <table className="ff-dt">
+        <div className="ff-card overflow-x-auto">
+          <table className="ff-dt" style={{ minWidth: 600 }}>
             <thead><tr><th>Metric</th><th>{B.w} (Base)</th><th>{C.w} (Compare)</th><th>Change</th><th>Change %</th></tr></thead>
             <tbody>
               {cmpRows.map((r) => {

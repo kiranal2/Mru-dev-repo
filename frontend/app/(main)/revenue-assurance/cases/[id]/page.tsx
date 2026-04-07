@@ -56,7 +56,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 function LoadingSkeleton() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
       <div className="h-8 w-48 bg-slate-200 rounded animate-pulse" />
       <div className="h-32 bg-slate-200 rounded-lg animate-pulse" />
       <div className="grid grid-cols-2 gap-4">
@@ -148,7 +148,7 @@ export default function RevenueAssuranceCaseDetailPage() {
       : 0;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
       {/* Back + Header */}
       <div>
         <Button

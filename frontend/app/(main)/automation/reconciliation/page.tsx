@@ -195,7 +195,7 @@ export default function ReconciliationPage() {
   const totalExceptions = MOCK_RECONS.reduce((s, r) => s + r.totalExceptions, 0);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Reconciliation Automation</h1>
@@ -205,7 +205,7 @@ export default function ReconciliationPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-4 stagger-children">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
         <Card className="card-interactive">
           <CardContent className="pt-5 pb-4">
             <div className="flex items-center gap-3">

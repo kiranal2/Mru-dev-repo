@@ -86,7 +86,7 @@ const CATEGORY_CHIP_STYLES: Record<string, { active: string; idle: string }> = {
 
 function LoadingSkeleton() {
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-3 sm:p-6 space-y-4">
       <div className="h-8 w-48 bg-slate-200 rounded animate-pulse" />
       <div className="grid grid-cols-6 gap-2">
         {Array.from({ length: 6 }).map((_, i) => (
@@ -163,7 +163,7 @@ export default function RevenueAssuranceRulesPage() {
   if (error) return <ErrorState error={error} />;
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-3 sm:p-6 space-y-4">
       {/* Header */}
       <div>
         <h1 className="text-xl font-bold text-slate-900">Business Rules Engine</h1>

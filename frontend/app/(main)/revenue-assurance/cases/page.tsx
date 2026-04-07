@@ -52,7 +52,7 @@ const TIER_BADGE: Record<string, string> = {
 
 function LoadingSkeleton() {
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-3 sm:p-6 space-y-4">
       <div className="h-8 w-48 bg-slate-200 rounded animate-pulse" />
       <div className="h-10 w-full bg-slate-200 rounded animate-pulse" />
       <div className="h-96 bg-slate-200 rounded-lg animate-pulse" />
@@ -112,7 +112,7 @@ export default function RevenueAssuranceCasesPage() {
   if (error) return <ErrorState error={error} />;
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-3 sm:p-6 space-y-4">
       {/* Header */}
       <div>
         <h1 className="text-xl font-bold text-slate-900">Revenue Leakage Cases</h1>

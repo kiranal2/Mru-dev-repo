@@ -115,14 +115,14 @@ function MyWorkspacePageContent() {
   return (
     <div className="flex flex-col bg-white" style={{ height: '100%', minHeight: 0 }}>
       {/* Header with Breadcrumb and Title */}
-      <header className="sticky top-0 z-10 bg-white  px-6 py-2 flex-shrink-0">
+      <header className="sticky top-0 z-10 bg-white px-3 sm:px-6 py-2 flex-shrink-0">
         <Breadcrumb activeRoute="home/workspace/my-workspace" className="mb-1.5" />
         <h1 className="text-2xl font-bold text-[#000000] mt-2 mb-1">My Workspace</h1>
         <p className="text-sm text-[#606060]">Your personalized dashboard and activity overview</p>
       <div className="border-b border-[#B7B7B7] mt-4"></div></header>
 
       <div className="flex-1 overflow-auto">
-        <div className="w-full max-w-[1363px] mx-auto p-6">
+        <div className="w-full max-w-[1363px] mx-auto p-3 sm:p-6">
 
       <div className="space-y-6">
          {/* Top Band - Counters */}

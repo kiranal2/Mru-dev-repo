@@ -560,7 +560,7 @@ export default function CloseWorkbenchPage() {
             )}
 
             {/* Phase progress bars */}
-            <div className="mb-3 grid grid-cols-4 gap-3">
+            <div className="mb-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {(["Pre-Close", "Core Close", "Post-Close", "Reporting"] as const).map(
                 (phase) => {
                   const c = phaseCounts[phase] || { total: 0, done: 0 };

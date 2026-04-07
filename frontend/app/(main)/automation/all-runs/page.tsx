@@ -222,13 +222,13 @@ export default function AllRunsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">All Runs</h1>
         <p className="text-sm text-gray-500 mt-1">Execution history across all automation types</p>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 stagger-children">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
         <Card className="card-interactive">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">

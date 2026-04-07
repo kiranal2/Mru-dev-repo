@@ -50,8 +50,7 @@ export default function Sidebar({
 
   return (
     <aside className={cn(
-        "flex flex-col pt-5 relative border-r",
-        isCollapsed ? "w-20" : "w-20",
+        "flex flex-col pt-3 xl:pt-5 relative border-r w-14 xl:w-20",
         loadingState === 'loading'
           ? "transition-all duration-300 ease-out opacity-0 -translate-x-4"
           : "transition-none opacity-100 translate-x-0"

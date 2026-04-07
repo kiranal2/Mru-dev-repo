@@ -320,7 +320,7 @@ export default function RevenueRecognitionWorkbenchPage() {
       style={{ height: "100%", minHeight: 0 }}
     >
       {/* Page Header */}
-      <header className="sticky top-0 z-10 bg-white px-6 py-2 flex-shrink-0">
+      <header className="sticky top-0 z-10 bg-white px-3 sm:px-6 py-2 flex-shrink-0">
         <Breadcrumb
           activeRoute="workbench/revenue-ops/revenue-recognition"
           className="mb-1.5"
@@ -339,9 +339,9 @@ export default function RevenueRecognitionWorkbenchPage() {
 
       {/* Scrollable body */}
       <div className="flex-1 overflow-auto">
-        <div className="w-full max-w-[1363px] mx-auto px-6 py-6 space-y-6">
+        <div className="w-full max-w-[1363px] mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-6">
           {/* KPI Cards */}
-          <div className="grid grid-cols-4 gap-4 stagger-children">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
             <Card className="card-interactive">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">

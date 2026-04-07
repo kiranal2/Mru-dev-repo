@@ -233,7 +233,7 @@ export default function DataTemplatesPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Data Templates</h1>
@@ -245,7 +245,7 @@ export default function DataTemplatesPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 stagger-children">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
         <Card className="card-interactive">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -421,8 +421,8 @@ export default function DataTemplatesPage() {
 
                 <div>
                   <h3 className="text-sm font-semibold text-gray-900 mb-3">Field Mappings</h3>
-                  <div className="border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm">
+                  <div className="border rounded-lg overflow-hidden overflow-x-auto">
+                    <table className="w-full text-sm min-w-[600px]">
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Source</th>

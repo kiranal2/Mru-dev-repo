@@ -199,9 +199,9 @@ export default function OneClickVariancePage() {
         <p className="text-[11px] text-slate-500">AI auto-identifies material variances and generates narrative explanations</p>
       </div>
       <div className="flex-1 overflow-auto">
-        <div className="px-5 py-2">
+        <div className="px-3 sm:px-5 py-2">
           {/* Toolbar: Search + Filter tabs + KPI chips + Download */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
@@ -229,7 +229,7 @@ export default function OneClickVariancePage() {
             </div>
 
             {/* KPI stat chips */}
-            <div className="flex items-center gap-2 text-[11px] ml-auto">
+            <div className="hidden md:flex items-center gap-2 text-[11px] ml-auto">
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
                 <span className="text-slate-500">Current</span>
                 <span className="font-semibold text-slate-900">${fmtCompact(totals.current)}</span>

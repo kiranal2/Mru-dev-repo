@@ -153,15 +153,15 @@ export default function CashApplicationLayout({ children }: { children: React.Re
   return (
     <div className="h-full flex flex-col">
       {/* Title */}
-      <div className="px-5 pt-3 pb-1 bg-slate-50">
+      <div className="px-3 sm:px-5 pt-3 pb-1 bg-slate-50">
         <h1 className="text-sm font-semibold text-slate-900">Cash Application</h1>
-        <p className="text-[11px] text-slate-500">AI-powered payment matching, remittance processing &amp; exception management</p>
+        <p className="text-[11px] text-slate-500 hidden sm:block">AI-powered payment matching, remittance processing &amp; exception management</p>
       </div>
       {/* Navigation Tabs */}
       <div className="bg-slate-50">
-        <div className="px-5 pb-1.5 pt-2">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-1">
+        <div className="px-3 sm:px-5 pb-1.5 pt-2">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <div className="flex items-center gap-1 overflow-x-auto">
               <button
                 onClick={() => setShowSidebar(!showSidebar)}
                 className="flex items-center justify-center h-7 w-7 rounded border border-slate-200 hover:bg-slate-100 transition-colors mr-1"
@@ -255,7 +255,7 @@ export default function CashApplicationLayout({ children }: { children: React.Re
 
           {/* KPI tiles — expanded below tabs */}
           {isPaymentsPage && isKpiExpanded && (
-            <div className="flex items-center gap-1 mt-1">
+            <div className="flex items-center gap-1 mt-1 flex-wrap">
               {kpiTiles.map((tile) => (
                 <div
                   key={tile.label}

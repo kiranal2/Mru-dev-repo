@@ -274,7 +274,7 @@ export default function SaaSRenewalWorkbenchPage() {
   return (
     <div className="flex flex-col bg-white" style={{ height: '100%', minHeight: 0 }}>
       {/* ── Header ── */}
-      <header className="sticky top-0 z-10 bg-white px-6 py-2 flex-shrink-0">
+      <header className="sticky top-0 z-10 bg-white px-3 sm:px-6 py-2 flex-shrink-0">
         <Breadcrumb activeRoute="workbench/procure-to-pay/saas-renewal" className="mb-1.5" />
         <div className="flex items-center justify-between mt-2">
           <div>
@@ -298,7 +298,7 @@ export default function SaaSRenewalWorkbenchPage() {
       </header>
 
       <div className="flex-1 overflow-auto">
-        <div className="w-full max-w-[1363px] mx-auto px-6 py-6 space-y-5">
+        <div className="w-full max-w-[1363px] mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-5">
 
           {/* ── KPI Cards ── */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
@@ -984,8 +984,8 @@ export default function SaaSRenewalWorkbenchPage() {
                         {srWasteSeats} users have not accessed {sr.app} in the last 90 days. De-provisioning these would save approximately {formatCurrency(Math.round(srWasteSpend))}/year.
                       </p>
 
-                      <div className="rounded-lg border border-slate-200 overflow-hidden">
-                        <table className="w-full text-xs">
+                      <div className="rounded-lg border border-slate-200 overflow-hidden overflow-x-auto">
+                        <table className="w-full text-xs min-w-[600px]">
                           <thead>
                             <tr className="bg-slate-50 text-left text-slate-500 border-b">
                               <th className="py-2 px-3 font-semibold">User</th>

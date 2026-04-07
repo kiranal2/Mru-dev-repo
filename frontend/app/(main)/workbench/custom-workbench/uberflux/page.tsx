@@ -934,6 +934,162 @@ const STYLES = `
 /* Animation */
 @keyframes ufFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 .uf-fade-in { animation: ufFadeIn 0.25s ease forwards; }
+
+/* ═══════════════════════════════════════════════
+   MOBILE/TABLET TOGGLE CONTROLS
+   ═══════════════════════════════════════════════ */
+.uf-mobile-controls { display: none; }
+.uf-sidebar-toggle,
+.uf-ai-toggle { display: none; }
+.uf-ai-close { display: none; }
+.uf-sidebar-overlay { display: none; }
+
+/* ═══════════════════════════════════════════════
+   TABLET (768px – 1279px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 1279px) {
+  .uf-app { margin: 4px; border-radius: 10px; }
+
+  /* 2-column grid: hide sidebar, AI toggleable */
+  .uf-main { grid-template-columns: 1fr; }
+
+  /* Sidebar: hidden by default, slide-over */
+  .uf-sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 200;
+    width: 240px; transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+  .uf-sidebar.open { transform: translateX(0); }
+  .uf-sidebar-overlay {
+    position: fixed; inset: 0; z-index: 199;
+    background: rgba(0,0,0,0.5); display: none;
+  }
+  .uf-sidebar-overlay.open { display: block; }
+
+  /* AI Panel: hidden by default, slide-over from right */
+  .uf-ai-panel {
+    position: fixed; right: 0; top: 0; bottom: 0; z-index: 200;
+    width: 320px; transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+  .uf-ai-panel.open { transform: translateX(0); }
+
+  /* Show toggle buttons */
+  .uf-mobile-controls { display: flex; }
+  .uf-sidebar-toggle,
+  .uf-ai-toggle {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer; transition: all 0.15s;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .uf-sidebar-toggle:hover,
+  .uf-ai-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+  .uf-ai-close {
+    display: flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 4px; margin-left: auto;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer; font-size: 12px;
+  }
+
+  /* Topbar: more compact */
+  .uf-topbar { padding: 8px 12px; }
+  .uf-week-badge { display: none; }
+  .uf-status-text { display: none; }
+
+  /* Stat cards: 2x2 grid */
+  .uf-stat-row { grid-template-columns: 1fr 1fr; }
+  .uf-stat-card { padding: 10px 12px; }
+  .uf-stat-value { font-size: 17px; }
+
+  /* Drill grid: stays 2-col */
+  .uf-drill-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Tabs: scroll if needed */
+  .uf-tabs { overflow-x: auto; padding: 0 12px; }
+  .uf-tab { white-space: nowrap; padding: 8px 14px; font-size: 11px; }
+
+  /* Centre: tighter padding */
+  .uf-centre { padding: 12px; gap: 10px; }
+
+  /* Bottom bar: compact */
+  .uf-bottombar { padding: 6px 12px; }
+  .uf-bottom-left { gap: 10px; }
+
+  /* Metric strip: compact */
+  .uf-metric-strip { padding: 4px 12px; }
+
+  /* Commentary meta: hide on smaller */
+  .uf-commentary-header { flex-wrap: wrap; gap: 4px; }
+}
+
+/* ═══════════════════════════════════════════════
+   PHONE (< 768px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .uf-app { margin: 2px; border-radius: 8px; }
+
+  /* Topbar: minimal */
+  .uf-topbar { padding: 8px 10px; }
+  .uf-logo { font-size: 14px; }
+  .uf-metric-toggle { display: none; }
+  .uf-avatar { width: 24px; height: 24px; font-size: 9px; }
+
+  /* Tabs: compact, scrollable */
+  .uf-tabs { padding: 0 8px; gap: 0; }
+  .uf-tab { padding: 7px 10px; font-size: 10px; }
+
+  /* Metric strip: hide on phone */
+  .uf-metric-strip { display: none; }
+
+  /* Stat cards: 2x1 grid (stacked 2 columns) */
+  .uf-stat-row { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .uf-stat-card { padding: 8px 10px; }
+  .uf-stat-value { font-size: 15px; }
+  .uf-stat-label { font-size: 8px; letter-spacing: 0.5px; }
+
+  /* Centre: tight padding */
+  .uf-centre { padding: 8px; gap: 8px; }
+
+  /* Signal banners: compact */
+  .uf-signal-banner { padding: 8px 10px; gap: 8px; }
+  .uf-signal-icon { font-size: 14px; }
+  .uf-signal-text { font-size: 10.5px; }
+  .uf-signal-text strong { font-size: 11px; }
+
+  /* Commentary: tighter */
+  .uf-commentary-header { padding: 8px 10px; }
+  .uf-commentary-meta { display: none; }
+  .uf-commentary-body { padding: 8px; gap: 8px; }
+  .uf-segment-row { padding: 6px; gap: 8px; }
+  .uf-seg-text { font-size: 10px; }
+  .uf-seg-name { font-size: 11px; }
+
+  /* Drill grid: single column */
+  .uf-drill-grid { grid-template-columns: 1fr; }
+
+  /* Exception cards: stack */
+  .uf-exc-card { flex-wrap: wrap; gap: 8px; padding: 10px; }
+  .uf-exc-right { text-align: left; }
+
+  /* History: compact */
+  .uf-history-row { padding: 8px 10px; flex-wrap: wrap; gap: 6px; }
+  .uf-history-tags { flex-wrap: wrap; }
+
+  /* Bottom bar: hide */
+  .uf-bottombar { display: none; }
+
+  /* Chart: smaller */
+  .uf-bars { height: 60px; }
+  .uf-bar { width: 8px; }
+  .uf-chart-area { padding: 10px; }
+
+  /* Sidebar: narrower on phone */
+  .uf-sidebar { width: 200px; }
+  .uf-ai-panel { width: 100%; }
+}
 `
 
 // ═══════════════════════════════════════════════════════
@@ -955,6 +1111,8 @@ export default function FluxPlusPage() {
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [isTyping, setIsTyping] = useState(false)
   const [chatInput, setChatInput] = useState("")
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [aiPanelOpen, setAiPanelOpen] = useState(false)
 
   const aiMessagesRef = useRef<HTMLDivElement>(null)
   const typingRef = useRef<ReturnType<typeof setTimeout>>()
@@ -1051,6 +1209,7 @@ export default function FluxPlusPage() {
     if (r === region) return
     setRegion(r)
     setSelectedSegment(-1)
+    setSidebarOpen(false)
   }
 
   const handleComparisonClick = (c: Comparison) => {
@@ -1288,6 +1447,7 @@ export default function FluxPlusPage() {
         {/* ── Top Bar ── */}
         <div className="uf-topbar">
           <div className="uf-topbar-left">
+            <button className="uf-sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} title="Navigation">☰</button>
             <div className="uf-logo">
               Flux<span>Plus</span>
             </div>
@@ -1303,6 +1463,7 @@ export default function FluxPlusPage() {
             </div>
             <div className="uf-status-dot" />
             <div className="uf-status-text">All sources reconciled · 9/9</div>
+            <button className="uf-ai-toggle" onClick={() => setAiPanelOpen(!aiPanelOpen)} title="AI Assistant">✦</button>
             <div className="uf-avatar">JO</div>
           </div>
         </div>
@@ -1328,8 +1489,11 @@ export default function FluxPlusPage() {
 
         {/* ── Main ── */}
         <div className="uf-main">
+          {/* Sidebar overlay for mobile/tablet */}
+          <div className={`uf-sidebar-overlay ${sidebarOpen ? "open" : ""}`} onClick={() => setSidebarOpen(false)} />
+
           {/* ── Left Sidebar ── */}
-          <div className="uf-sidebar">
+          <div className={`uf-sidebar ${sidebarOpen ? "open" : ""}`}>
             <div className="uf-nav-section">
               <div className="uf-nav-label">Regions</div>
               {regionItems.map((r) => (
@@ -1625,13 +1789,14 @@ export default function FluxPlusPage() {
           </div>
 
           {/* ── Right AI Panel ── */}
-          <div className="uf-ai-panel">
+          <div className={`uf-ai-panel ${aiPanelOpen ? "open" : ""}`}>
             <div className="uf-ai-header">
               <div className="uf-ai-icon">✦</div>
               <div>
                 <div className="uf-ai-title">AI Query</div>
                 <div className="uf-ai-subtitle">{tabHints[tab]}</div>
               </div>
+              <button className="uf-ai-close" onClick={() => setAiPanelOpen(false)}>✕</button>
             </div>
 
             <div className="uf-ai-messages" ref={aiMessagesRef}>

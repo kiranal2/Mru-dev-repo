@@ -258,7 +258,7 @@ export default function ReconciliationWorkbenchPage() {
 
       {/* ─── Toolbar ─── */}
       <div className="px-5 py-2 bg-slate-50">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
           {/* Left: Status tabs + Search + Filters */}
           <div className="flex items-center gap-2">
             {STATUS_TABS.map((tab) => (

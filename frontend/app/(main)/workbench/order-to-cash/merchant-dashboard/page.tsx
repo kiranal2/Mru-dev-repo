@@ -298,7 +298,7 @@ export default function MerchantDashboardPage() {
   return (
     <div className="flex flex-col bg-white" style={{ height: "100%", minHeight: 0 }}>
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-white px-6 py-2 flex-shrink-0">
+      <header className="sticky top-0 z-10 bg-white px-3 sm:px-6 py-2 flex-shrink-0">
         <Breadcrumb
           activeRoute="workbench/order-to-cash/merchant-dashboard"
           className="mb-1.5"
@@ -333,7 +333,7 @@ export default function MerchantDashboardPage() {
 
       {/* KPI Cards */}
       <div className="px-6 pt-4 pb-2 flex-shrink-0">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">

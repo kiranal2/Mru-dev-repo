@@ -722,7 +722,7 @@ export default function DataTemplatePage() {
   return (
     <div className="flex flex-col h-full bg-white" style={{ height: '100%', minHeight: 0 }}>
       {/* Header with Breadcrumb and Title */}
-      <header className="sticky top-0 z-10 bg-white  px-6 py-2 flex-shrink-0">
+      <header className="sticky top-0 z-10 bg-white px-3 sm:px-6 py-2 flex-shrink-0">
         <Breadcrumb activeRoute="home/workspace/data-template" className="mb-1.5" />
         <h1 className="text-2xl font-bold text-[#000000] mt-2">Data Template</h1>
       <div className="border-b border-[#B7B7B7] mt-4"></div></header>

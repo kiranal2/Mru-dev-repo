@@ -10,6 +10,10 @@ interface WorkbenchHeaderProps {
   exceptionCount: number;
 }
 
+/**
+ * Desktop-only KPI header (4-column grid).
+ * Mobile/tablet KPIs are rendered inline in the page component.
+ */
 export function WorkbenchHeader({
   totalVariance,
   topDrivers,
@@ -28,12 +32,7 @@ export function WorkbenchHeader({
           Total Net Variance
         </div>
         <div className="mt-1 flex items-center gap-2">
-          <span
-            className={cn(
-              "text-2xl font-bold",
-              totalVariance >= 0 ? "text-emerald-600" : "text-red-600"
-            )}
-          >
+          <span className={cn("text-2xl font-bold", totalVariance >= 0 ? "text-emerald-600" : "text-red-600")}>
             {totalVariance >= 0 ? "+" : ""}${Math.abs(totalVariance).toFixed(1)}M
           </span>
           {totalVariance >= 0 ? (
@@ -47,9 +46,7 @@ export function WorkbenchHeader({
 
       {/* Top Drivers */}
       <div className="rounded-lg border border-slate-200 bg-white p-4">
-        <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
-          Top Drivers
-        </div>
+        <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">Top Drivers</div>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {topDrivers.map((d) => (
             <span
@@ -62,9 +59,7 @@ export function WorkbenchHeader({
               )}
             >
               {d.driver}
-              <span className="font-bold">
-                {d.impact >= 0 ? "+" : ""}${d.impact.toFixed(1)}M
-              </span>
+              <span className="font-bold">{d.impact >= 0 ? "+" : ""}${d.impact.toFixed(1)}M</span>
             </span>
           ))}
         </div>
@@ -72,31 +67,14 @@ export function WorkbenchHeader({
 
       {/* Review Progress */}
       <div className="rounded-lg border border-slate-200 bg-white p-4">
-        <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
-          Review Progress
-        </div>
+        <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">Review Progress</div>
         <div className="mt-2">
           <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
-            {closedPct > 0 && (
-              <div
-                className="bg-emerald-500 transition-all"
-                style={{ width: `${closedPct}%` }}
-              />
-            )}
-            {inReviewPct > 0 && (
-              <div
-                className="bg-amber-400 transition-all"
-                style={{ width: `${inReviewPct}%` }}
-              />
-            )}
-            {openPct > 0 && (
-              <div
-                className="bg-blue-400 transition-all"
-                style={{ width: `${openPct}%` }}
-              />
-            )}
+            {closedPct > 0 && <div className="bg-emerald-500 transition-all" style={{ width: `${closedPct}%` }} />}
+            {inReviewPct > 0 && <div className="bg-amber-400 transition-all" style={{ width: `${inReviewPct}%` }} />}
+            {openPct > 0 && <div className="bg-blue-400 transition-all" style={{ width: `${openPct}%` }} />}
           </div>
-          <div className="mt-2 flex items-center gap-3 text-[11px]">
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               <span className="text-slate-600">Closed {reviewStats.closed}</span>
@@ -114,32 +92,16 @@ export function WorkbenchHeader({
       </div>
 
       {/* Needs Attention */}
-      <div
-        className={cn(
-          "rounded-lg border bg-white p-4",
-          exceptionCount > 0 ? "border-amber-200" : "border-slate-200"
-        )}
-      >
-        <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
-          Needs Attention
-        </div>
+      <div className={cn("rounded-lg border bg-white p-4", exceptionCount > 0 ? "border-amber-200" : "border-slate-200")}>
+        <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">Needs Attention</div>
         <div className="mt-1 flex items-center gap-2">
-          <span
-            className={cn(
-              "text-2xl font-bold",
-              exceptionCount > 0 ? "text-amber-600" : "text-emerald-600"
-            )}
-          >
+          <span className={cn("text-2xl font-bold", exceptionCount > 0 ? "text-amber-600" : "text-emerald-600")}>
             {exceptionCount}
           </span>
-          {exceptionCount > 0 && (
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
-          )}
+          {exceptionCount > 0 && <AlertTriangle className="h-5 w-5 text-amber-500" />}
         </div>
         <div className="mt-1 text-[11px] text-slate-400">
-          {exceptionCount > 0
-            ? "Open items missing evidence"
-            : "All items addressed"}
+          {exceptionCount > 0 ? "Open items missing evidence" : "All items addressed"}
         </div>
       </div>
     </div>

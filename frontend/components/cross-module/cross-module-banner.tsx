@@ -46,7 +46,7 @@ export function CrossModuleBanner({
   };
 
   return (
-    <div className={cn("mx-5 rounded-lg border p-3", colors[severity])}>
+    <div className={cn("mx-3 sm:mx-5 rounded-lg border p-3", colors[severity])}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2.5 flex-1 min-w-0">
           <AlertTriangle className={cn("h-4 w-4 mt-0.5 shrink-0", iconColors[severity])} />

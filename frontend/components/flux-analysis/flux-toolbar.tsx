@@ -64,10 +64,10 @@ export function FluxToolbar({
   onOpenWatch,
 }: FluxToolbarProps) {
   return (
-    <div className="px-5 py-2 bg-slate-50">
-      <div className="flex items-center justify-between gap-3">
+    <div className="px-3 sm:px-5 py-2 bg-slate-50">
+      <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
         {/* Left: View tabs + Period selects */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {(["is", "bs", "cf"] as const).map((view) => {
             const labels = { is: "Income Statement", bs: "Balance Sheet", cf: "Cash Flow Bridge" };
             return (
@@ -86,7 +86,7 @@ export function FluxToolbar({
             );
           })}
 
-          <div className="h-4 w-px bg-slate-200 mx-1" />
+          <div className="hidden sm:block h-4 w-px bg-slate-200 mx-1" />
 
           <Select defaultValue="q3-current">
             <SelectTrigger className="h-7 w-[150px] rounded-md border-slate-200 bg-white text-xs">
@@ -195,7 +195,7 @@ export function FluxToolbar({
         </div>
 
         {/* Right: Compact KPI stat chips -- change per active tab */}
-        <div className="flex items-center gap-1.5">
+        <div className="hidden lg:flex items-center gap-1.5">
           {viewKpis.map((kpi) => (
             <div key={kpi.label} className="flex items-center gap-1.5 rounded-md bg-white border border-slate-200 px-2.5 py-1">
               <span className="text-[11px] text-slate-500">{kpi.label}</span>

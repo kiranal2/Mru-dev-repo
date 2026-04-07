@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FluxPlus — Weekly Variance Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+.uf-root {
+  --navy: #112736;
+  --navyMd: #1C3A4A;
+  --navyLt: #2D5570;
+  --gold: #FEA400;
+  --green: #2ECC71;
+  --red: #E74C3C;
+  --amber: #F39C12;
+  --blue: #3498DB;
+  --text: #E8EFF4;
+  --muted: #7A99AA;
+  --border: #243D4D;
+  --surface: #1A3345;
+  --surfaceLt: #213C50;
+  background: #0C1E2A;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.uf-app {
+  flex: 1; display: flex; flex-direction: column;
+  background: var(--navy); border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--border); box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  margin: 8px; min-height: 0;
+}
+
+/* Top Bar */
+.uf-topbar {
+  background: #0C1E2A; padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.uf-topbar-left { display: flex; align-items: center; gap: 14px; }
+.uf-logo { font-size: 16px; font-weight: 700; }
+.uf-logo span { color: var(--gold); }
+.uf-week-badge {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 5px; padding: 4px 10px; font-size: 11px;
+  font-family: 'DM Mono', monospace; color: var(--muted);
+}
+.uf-topbar-right { display: flex; align-items: center; gap: 10px; }
+.uf-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+.uf-status-text { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.uf-avatar {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--navyLt);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: var(--gold);
+}
+
+/* Metric Toggle */
+.uf-metric-toggle {
+  display: flex; align-items: center; gap: 2px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 3px;
+}
+.uf-metric-btn {
+  padding: 4px 11px; border-radius: 4px; font-size: 11px; font-weight: 600;
+  cursor: pointer; font-family: 'DM Mono', monospace; letter-spacing: 0.5px;
+  color: var(--muted); transition: all 0.15s; border: none; background: transparent;
+}
+.uf-metric-btn.active { background: var(--gold); color: #0C1E2A; }
+
+/* Tabs */
+.uf-tabs {
+  display: flex; gap: 0; background: #0C1E2A;
+  border-bottom: 1px solid var(--border); padding: 0 20px; flex-shrink: 0;
+}
+.uf-tab {
+  padding: 10px 18px; font-size: 12px; font-weight: 500;
+  color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all 0.15s; user-select: none;
+  background: none; border-top: none; border-left: none; border-right: none;
+  font-family: 'Inter', sans-serif;
+}
+.uf-tab:hover { color: var(--text); }
+.uf-tab.active { color: var(--text); border-bottom-color: var(--gold); }
+
+/* Metric Strip */
+.uf-metric-strip {
+  background: rgba(254,164,0,0.05); border-bottom: 1px solid rgba(254,164,0,0.15);
+  padding: 5px 20px; display: flex; align-items: center; gap: 7px;
+  font-size: 10.5px; font-family: 'DM Mono', monospace; flex-shrink: 0;
+}
+.uf-metric-strip-label { color: var(--muted); }
+.uf-metric-strip-value { color: var(--gold); font-weight: 600; letter-spacing: 0.5px; }
+.uf-metric-strip-sep { color: var(--border); }
+.uf-metric-strip-sub { color: var(--muted); font-size: 9.5px; }
+
+/* Main Layout */
+.uf-main {
+  display: grid; grid-template-columns: 220px 1fr 280px;
+  flex: 1; min-height: 0; overflow: hidden;
+}
+
+/* Sidebar */
+.uf-sidebar {
+  background: #0F2533; border-right: 1px solid var(--border);
+  padding: 16px 0; overflow-y: auto;
+}
+.uf-nav-section { margin-bottom: 20px; }
+.uf-nav-label {
+  font-size: 9px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted);
+  padding: 0 16px; margin-bottom: 6px;
+  font-family: 'DM Mono', monospace;
+}
+.uf-nav-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 16px; font-size: 12px; cursor: pointer;
+  color: var(--muted); transition: all 0.1s; user-select: none;
+  border: none; background: none; width: 100%; text-align: left;
+  font-family: 'Inter', sans-serif;
+}
+.uf-nav-item:hover { background: var(--surface); color: var(--text); }
+.uf-nav-item.active { background: var(--surface); color: var(--text); border-left: 2px solid var(--gold); }
+.uf-nav-pill {
+  font-size: 9px; border-radius: 3px; padding: 2px 6px;
+  font-family: 'DM Mono', monospace; font-weight: 500;
+}
+.pill-red { background: rgba(231,76,60,0.2); color: #E74C3C; }
+.pill-amber { background: rgba(243,156,18,0.2); color: #F39C12; }
+.pill-green { background: rgba(46,204,113,0.2); color: #2ECC71; }
+.pill-blue { background: rgba(52,152,219,0.2); color: #3498DB; }
+
+/* Centre */
+.uf-centre {
+  overflow-y: auto; padding: 18px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+/* Signal Banner */
+.uf-signal-banner {
+  background: rgba(254,164,0,0.08); border: 1px solid rgba(254,164,0,0.25);
+  border-radius: 8px; padding: 11px 14px;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.uf-signal-banner.positive { background: rgba(46,204,113,0.08); border-color: rgba(46,204,113,0.25); }
+.uf-signal-banner.info { background: rgba(52,152,219,0.08); border-color: rgba(52,152,219,0.3); }
+.uf-signal-banner.critical { background: rgba(231,76,60,0.08); border-color: rgba(231,76,60,0.3); }
+.uf-signal-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+.uf-signal-text { font-size: 11.5px; line-height: 1.55; }
+.uf-signal-text strong { color: var(--gold); display: block; margin-bottom: 2px; font-size: 12px; }
+.uf-signal-banner.positive .uf-signal-text strong { color: var(--green); }
+.uf-signal-banner.info .uf-signal-text strong { color: var(--blue); }
+.uf-signal-banner.critical .uf-signal-text strong { color: var(--red); }
+
+/* Stat Cards */
+.uf-stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+.uf-stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px; cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.uf-stat-card:hover { border-color: var(--gold); transform: translateY(-1px); }
+.uf-stat-label {
+  font-size: 9.5px; color: var(--muted); font-family: 'DM Mono', monospace;
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;
+}
+.uf-stat-value { font-size: 20px; font-weight: 700; line-height: 1; margin-bottom: 3px; }
+.uf-stat-delta { font-size: 10px; font-family: 'DM Mono', monospace; }
+.uf-up { color: var(--green); }
+.uf-down { color: var(--red); }
+.uf-warn { color: var(--amber); }
+
+/* Commentary */
+.uf-commentary {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.uf-commentary-header {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.uf-commentary-title { font-size: 12px; font-weight: 600; }
+.uf-commentary-meta { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.uf-commentary-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.uf-segment-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  cursor: pointer; border-radius: 4px; padding: 8px;
+  transition: background 0.15s; border-bottom: 1px solid var(--border);
+}
+.uf-segment-row:last-child { border-bottom: none; }
+.uf-segment-row:hover { background: rgba(254,164,0,0.04); }
+.uf-segment-row.selected { background: rgba(254,164,0,0.07); border-left: 2px solid var(--gold); padding-left: 10px; }
+.uf-seg-rank {
+  width: 20px; height: 20px; border-radius: 4px;
+  background: var(--navyLt); display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: var(--gold); flex-shrink: 0; margin-top: 1px;
+}
+.uf-seg-content { flex: 1; }
+.uf-seg-name { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+.uf-seg-text { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.uf-seg-tags { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+.uf-seg-tag {
+  font-size: 9.5px; border-radius: 3px; padding: 2px 7px;
+  font-family: 'DM Mono', monospace;
+}
+
+/* Chart */
+.uf-chart-area {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px;
+}
+.uf-chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.uf-chart-title { font-size: 12px; font-weight: 600; }
+.uf-chart-legend { display: flex; gap: 12px; }
+.uf-legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); }
+.uf-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+.uf-bars { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+.uf-bar-group { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; cursor: pointer; position: relative; }
+.uf-bar-pair { display: flex; align-items: flex-end; gap: 2px; }
+.uf-bar { border-radius: 2px 2px 0 0; width: 10px; transition: height 0.4s ease; }
+.uf-bar-label { font-size: 8.5px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.uf-bar-tooltip {
+  position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  background: #0C1E2A; border: 1px solid var(--gold);
+  border-radius: 5px; padding: 5px 9px; font-size: 10px; font-family: 'DM Mono', monospace;
+  color: var(--text); pointer-events: none; z-index: 100; white-space: nowrap;
+  opacity: 0; transition: opacity 0.15s;
+}
+.uf-bar-group:hover .uf-bar-tooltip { opacity: 1; }
+
+/* Drill Down */
+.uf-drill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.uf-drill-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px; cursor: pointer; transition: all 0.15s;
+}
+.uf-drill-card:hover { border-color: var(--gold); transform: translateY(-1px); }
+.uf-drill-card.selected { border-color: var(--gold); }
+.uf-drill-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.uf-drill-card-name { font-size: 12px; font-weight: 600; }
+.uf-drill-card-region { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.uf-drill-spark { display: flex; align-items: flex-end; gap: 3px; height: 36px; margin-bottom: 8px; }
+.uf-spark-bar { width: 8px; border-radius: 1px 1px 0 0; transition: height 0.3s; }
+.uf-drill-stats { display: flex; justify-content: space-between; }
+.uf-drill-stat-item { text-align: center; }
+.uf-drill-stat-val { font-size: 13px; font-weight: 700; }
+.uf-drill-stat-lbl { font-size: 9px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 1px; }
+
+/* Exceptions */
+.uf-exc-list { display: flex; flex-direction: column; gap: 8px; }
+.uf-exc-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px; cursor: pointer;
+  transition: all 0.15s; display: flex; align-items: center; gap: 12px;
+}
+.uf-exc-card:hover { border-color: rgba(254,164,0,0.4); transform: translateX(2px); }
+.uf-exc-card.critical { border-left: 3px solid var(--red); }
+.uf-exc-card.warning { border-left: 3px solid var(--amber); }
+.uf-exc-card.positive { border-left: 3px solid var(--green); }
+.uf-exc-card.selected { background: rgba(254,164,0,0.06); border-color: var(--gold); }
+.uf-exc-icon { font-size: 18px; flex-shrink: 0; }
+.uf-exc-body { flex: 1; }
+.uf-exc-name { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+.uf-exc-detail { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.uf-exc-meta { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+.uf-exc-right { text-align: right; flex-shrink: 0; }
+.uf-exc-val { font-size: 16px; font-weight: 700; }
+.uf-exc-week { font-size: 9px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+/* Signals */
+.uf-signals-list { display: flex; flex-direction: column; gap: 8px; }
+.uf-signal-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px; cursor: pointer; transition: all 0.15s;
+}
+.uf-signal-card:hover { border-color: rgba(254,164,0,0.4); }
+.uf-signal-card.selected { border-color: var(--gold); }
+.uf-signal-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.uf-signal-card-name { font-size: 12px; font-weight: 600; }
+.uf-signal-card-type { font-size: 9px; border-radius: 3px; padding: 2px 7px; font-family: 'DM Mono', monospace; }
+.uf-signal-card-body { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.uf-signal-card-footer { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
+.uf-signal-conf { font-size: 9px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.uf-signal-conf-bar { height: 3px; border-radius: 2px; background: var(--border); flex: 1; }
+.uf-signal-conf-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+
+/* History */
+.uf-history-list { display: flex; flex-direction: column; gap: 6px; }
+.uf-history-row {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 10px 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; transition: all 0.15s;
+}
+.uf-history-row:hover { border-color: rgba(254,164,0,0.4); }
+.uf-history-row.current { border-color: var(--gold); background: rgba(254,164,0,0.06); }
+.uf-history-row.selected { border-color: var(--gold); }
+.uf-history-week { font-size: 12px; font-weight: 600; font-family: 'DM Mono', monospace; }
+.uf-history-dates { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.uf-history-tags { display: flex; gap: 5px; }
+
+/* AI Panel */
+.uf-ai-panel {
+  background: #0F2533; border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; min-height: 0;
+}
+.uf-ai-header {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.uf-ai-icon { font-size: 14px; }
+.uf-ai-title { font-size: 12px; font-weight: 600; }
+.uf-ai-subtitle { font-size: 10px; color: var(--muted); }
+.uf-ai-messages {
+  flex: 1; overflow-y: auto; padding: 14px;
+  display: flex; flex-direction: column; gap: 12px; min-height: 0;
+}
+.uf-msg { display: flex; flex-direction: column; gap: 3px; }
+.uf-msg-role {
+  font-size: 9px; font-family: 'DM Mono', monospace; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.uf-msg-bubble { border-radius: 8px; padding: 9px 12px; font-size: 11px; line-height: 1.55; }
+.uf-msg.user .uf-msg-bubble { background: var(--navyLt); color: var(--text); }
+.uf-msg.ai .uf-msg-bubble { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+.uf-msg.ai .uf-msg-bubble strong { color: var(--gold); }
+.uf-msg.typing .uf-msg-bubble { color: var(--muted); font-style: italic; }
+
+.uf-sig-list { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+.uf-sig-item { display: flex; align-items: center; gap: 7px; font-size: 10.5px; }
+.uf-sig-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+.uf-ai-input-area {
+  padding: 12px; border-top: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
+}
+.uf-ai-input-wrap {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 7px; display: flex; align-items: center; overflow: hidden;
+  transition: border-color 0.2s;
+}
+.uf-ai-input-wrap:hover { border-color: rgba(254,164,0,0.4); }
+.uf-ai-input-wrap input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--text); font-size: 11px; font-family: 'Inter', sans-serif;
+  padding: 8px 12px; width: 100%;
+}
+.uf-ai-input-wrap input::placeholder { color: var(--muted); }
+.uf-ai-send {
+  font-size: 12px; cursor: pointer; background: var(--gold); color: #0C1E2A;
+  border-radius: 4px; width: 22px; height: 22px; display: flex; align-items: center;
+  justify-content: center; font-weight: 700; transition: opacity 0.15s; border: none; margin: 4px;
+}
+.uf-ai-send:hover { opacity: 0.8; }
+
+.uf-ai-suggestions { display: flex; flex-direction: column; gap: 5px; }
+.uf-suggestion {
+  background: rgba(254,164,0,0.05); border: 1px solid rgba(254,164,0,0.15);
+  border-radius: 5px; padding: 5px 10px;
+  font-size: 10px; color: var(--muted); cursor: pointer;
+  font-family: 'DM Mono', monospace; transition: all 0.15s; user-select: none;
+  text-align: left; width: 100%;
+}
+.uf-suggestion:hover { border-color: var(--gold); color: var(--gold); background: rgba(254,164,0,0.08); }
+
+/* Bottom Bar */
+.uf-bottombar {
+  background: #0C1E2A; border-top: 1px solid var(--border);
+  padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.uf-bottom-left { display: flex; gap: 16px; }
+.uf-bottom-stat { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); }
+.uf-bottom-stat span { color: var(--text); font-weight: 600; }
+.uf-bottom-right { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+/* Animation */
+@keyframes ufFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.uf-fade-in { animation: ufFadeIn 0.25s ease forwards; }
+
+/* Hide tab content by default */
+.tab-content { display: none; flex-direction: column; gap: 14px; }
+.tab-content.active { display: flex; }
+</style>
+</head>
+<body>
+<div class="uf-root" id="app"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA STORE (complete)
+// ═══════════════════════════════════════════════════════
+
+const DATA = {
+  regions: {
+    national: {
+      label: "National", week: "Week 10 · Mar 3–9 2026",
+      revenue: { variance: "−$3.8M", delta: "▼ vs Plan", color: "down", flagged: "8", flaggedDetail: "3 critical", driver: "Labor", driverDetail: "CA wage surge ↑" },
+      orders: { variance: "−$5.1M", delta: "▼ vs Plan", color: "down", flagged: "10", flaggedDetail: "4 critical", driver: "Demand", driverDetail: "Consumer softness" },
+      signal: { icon: "⚡", title: "Predictive Signal — Watch Next Week", body: "California Retail labor costs surging post minimum-wage hike — LA and SF markets 12% above budget. Margin compression accelerating for 3rd consecutive week. ML model projects continued −2% to −4% margin erosion if staffing model not adjusted before Thursday.", positive: false },
+      segments: [
+        { rank: 1, name: "California Retail", variance: "−$1.6M vs Plan", text: "Labor cost surge in LA/SF markets following minimum wage increase. Overtime hours 18% above plan. Margin compression accelerating — similar pattern to 2024 Q1 NY wage adjustment. Partial offset from productivity automation rollout.", tags: [{ cls: "pill-red", label: "Labor cost surge" }, { cls: "pill-amber", label: "Historical match NY Q1 2024" }, { cls: "pill-blue", label: "Predictive flag" }] },
+        { rank: 2, name: "Texas Energy", variance: "−$0.8M vs Plan", text: "Natural gas spot price drop 18% WoW. Revenue per unit compressed across Permian Basin operations. Hedging program covered 60% of exposure — unhedged portion driving miss.", tags: [{ cls: "pill-amber", label: "Commodity exposure" }, { cls: "pill-blue", label: "Hedge partial cover" }] },
+        { rank: 3, name: "New York Financial Svcs", variance: "+$0.7M vs Plan", text: "Strong Q1 trading revenue. Equity desk +22% vs plan on volatility. Fixed income steady. Advisory pipeline converting ahead of schedule.", tags: [{ cls: "pill-green", label: "Positive variance" }, { cls: "pill-green", label: "Trading outperformance" }] },
+      ],
+      chart: { title: "Weekly Revenue Variance — California Retail", bars: [
+        { week: "W6", actual: 58, plan: 62, color: "#FEA400" }, { week: "W7", actual: 56, plan: 62, color: "#FEA400" },
+        { week: "W8", actual: 52, plan: 62, color: "#FEA400" }, { week: "W9", actual: 46, plan: 62, color: "#E74C3C" },
+        { week: "W10", actual: 42, plan: 62, color: "#E74C3C" }, { week: "W11▸", actual: 39, plan: 62, color: "#E74C3C", forecast: true },
+      ]},
+      ai: {
+        messages: [
+          { role: "user", name: "Josh", text: "What are the most significant exceptions this week?" },
+          { role: "ai", name: "FluxPlus AI", html: '<strong>3 exceptions ranked by significance:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>California Retail labor cost surge — 3rd consecutive week, accelerating margin compression</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Texas Energy natural gas price drop — 18% spot decline, unhedged exposure</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#2ECC71"></div>NY Financial Svcs positive — Q1 trading outperformance, no action needed</div></div>' },
+          { role: "user", name: "Josh", text: "What should we watch before Thursday?" },
+          { role: "ai", name: "FluxPlus AI", html: '<strong>California staffing model.</strong> Labor costs have exceeded budget for 3 weeks running. If the current overtime trajectory holds, ML model projects −2% to −4% additional margin erosion in W11. Recommend reviewing shift scheduling and automation deployment with West region ops before earnings prep.' },
+        ],
+        suggestions: ["Why did the West underperform?", "Compare W10 to Q1 2024 NY wage event", "Which signals need action?"],
+      },
+    },
+    northeast: {
+      label: "Northeast", week: "Week 10 · Mar 3–9 2026",
+      revenue: { variance: "+$0.4M", delta: "▲ vs Plan", color: "up", flagged: "2", flaggedDetail: "0 critical", driver: "Trading", driverDetail: "Q1 vol uplift" },
+      orders: { variance: "+$0.6M", delta: "▲ vs Plan", color: "up", flagged: "1", flaggedDetail: "0 critical", driver: "Demand", driverDetail: "Advisory pipeline" },
+      signal: { icon: "✅", title: "Positive: Northeast Financial Services Outperforming", body: "NY trading desks beating plan on elevated market volatility. Q1 advisory pipeline converting 3 weeks ahead of schedule. MA Healthcare insurance delays are a watch item but non-critical.", positive: true },
+      segments: [
+        { rank: 1, name: "New York Financial Svcs", variance: "+$0.7M vs Plan", text: "Strong Q1 trading revenue driven by equity desk volatility capture. Fixed income on plan. Advisory pipeline converting ahead of schedule — 3 deals closed early in W9–W10.", tags: [{ cls: "pill-green", label: "Trading outperformance" }, { cls: "pill-green", label: "Pipeline acceleration" }] },
+        { rank: 2, name: "Massachusetts Healthcare", variance: "−$0.2M vs Plan", text: "Insurance reimbursement processing delays from 2 major carriers. Claims backlog building — 14-day average turnaround vs 9-day target. Carrier escalation in progress.", tags: [{ cls: "pill-amber", label: "Reimbursement delays" }, { cls: "pill-blue", label: "Carrier escalation" }] },
+        { rank: 3, name: "Connecticut Insurance", variance: "−$0.1M vs Plan", text: "Winter storm claims backlog from February events still processing. Adjuster capacity at 92% utilization. Expected clearance by W12.", tags: [{ cls: "pill-amber", label: "Claims backlog" }, { cls: "pill-blue", label: "W12 clearance" }] },
+      ],
+      chart: { title: "Weekly Revenue Variance — NY Financial Svcs", bars: [
+        { week: "W6", actual: 54, plan: 52, color: "#2ECC71" }, { week: "W7", actual: 55, plan: 52, color: "#2ECC71" },
+        { week: "W8", actual: 56, plan: 52, color: "#2ECC71" }, { week: "W9", actual: 58, plan: 52, color: "#2ECC71" },
+        { week: "W10", actual: 60, plan: 52, color: "#2ECC71" }, { week: "W11▸", actual: 57, plan: 52, color: "#2ECC71", forecast: true },
+      ]},
+      ai: {
+        messages: [
+          { role: "user", name: "Josh", text: "What is driving the Northeast outperformance?" },
+          { role: "ai", name: "FluxPlus AI", html: '<strong>New York Financial Services is the engine</strong> at +$0.7M vs Plan. Equity trading desks captured elevated volatility in W9–W10 — VIX averaged 22 vs modeled 18. Advisory pipeline also contributing with 3 deals closing ahead of Q1 schedule.<br><br>MA Healthcare (−$0.2M) and CT Insurance (−$0.1M) are minor headwinds that partially offset the trading gains.' },
+        ],
+        suggestions: ["NY trading desk breakdown", "MA carrier escalation status", "Northeast vs Prior Year"],
+      },
+    },
+    southeast: {
+      label: "Southeast", week: "Week 10 · Mar 3–9 2026",
+      revenue: { variance: "−$0.6M", delta: "▼ vs Plan", color: "down", flagged: "3", flaggedDetail: "1 critical", driver: "Demand", driverDetail: "Tourism shift" },
+      orders: { variance: "−$0.8M", delta: "▼ vs Plan", color: "down", flagged: "3", flaggedDetail: "1 critical", driver: "Logistics", driverDetail: "Port congestion" },
+      signal: { icon: "⚠️", title: "Watch: Florida Tourism Calendar Shift Impact", body: "Spring break timing shifted to W11 this year (W10 in 2025). Florida tourism revenue timing mismatch of −$0.4M. Expected full recovery in W11. Savannah port congestion adding logistics headwind.", positive: false },
+      segments: [
+        { rank: 1, name: "Florida Tourism", variance: "−$0.4M vs Plan", text: "Spring break calendar shift — peak week moved from W10 to W11 this year. Hotel occupancy 71% vs 84% plan. Bookings for W11 are strong, suggesting timing shift not demand loss.", tags: [{ cls: "pill-amber", label: "Calendar shift" }, { cls: "pill-blue", label: "W11 recovery expected" }] },
+        { rank: 2, name: "Georgia Logistics", variance: "−$0.3M vs Plan", text: "Port of Savannah congestion — vessel queue at 8 ships vs normal 3. Container dwell time 6.2 days vs 3.8 target. Revenue recognition delayed on shipments stuck at port.", tags: [{ cls: "pill-amber", label: "Port congestion" }, { cls: "pill-amber", label: "Revenue timing" }] },
+        { rank: 3, name: "North Carolina Tech", variance: "+$0.1M vs Plan", text: "Research Triangle hiring momentum continuing. Enterprise software deals closing ahead of schedule. Talent pipeline healthy.", tags: [{ cls: "pill-green", label: "Hiring momentum" }, { cls: "pill-green", label: "Pipeline strong" }] },
+      ],
+      chart: { title: "Weekly Revenue Variance — Florida Tourism", bars: [
+        { week: "W6", actual: 60, plan: 62, color: "#FEA400" }, { week: "W7", actual: 61, plan: 62, color: "#FEA400" },
+        { week: "W8", actual: 62, plan: 62, color: "#2ECC71" }, { week: "W9", actual: 59, plan: 62, color: "#F39C12" },
+        { week: "W10", actual: 54, plan: 62, color: "#E74C3C" }, { week: "W11▸", actual: 65, plan: 62, color: "#2ECC71", forecast: true },
+      ]},
+      ai: {
+        messages: [
+          { role: "user", name: "Josh", text: "What drove the Southeast miss this week?" },
+          { role: "ai", name: "FluxPlus AI", html: '<strong>Two timing-related issues:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Florida Tourism — spring break calendar shift from W10 to W11 (−$0.4M timing)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Georgia Logistics — Savannah port congestion delaying revenue recognition (−$0.3M)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#2ECC71"></div>NC Tech partially offset with early deal closures (+$0.1M)</div></div>' },
+        ],
+        suggestions: ["Florida W11 booking data", "Savannah port queue trend", "NC Tech pipeline detail"],
+      },
+    },
+    midwest: {
+      label: "Midwest", week: "Week 10 · Mar 3–9 2026",
+      revenue: { variance: "−$0.9M", delta: "▼ vs Plan", color: "down", flagged: "3", flaggedDetail: "1 critical", driver: "Supply Chain", driverDetail: "Chicago hub" },
+      orders: { variance: "−$1.3M", delta: "▼ vs Plan", color: "down", flagged: "4", flaggedDetail: "2 critical", driver: "Production", driverDetail: "EV transition" },
+      signal: { icon: "🔧", title: "Watch: Illinois Manufacturing Supply Chain Bottleneck", body: "Chicago distribution hub operating at 94% capacity — above 90% stress threshold for 2nd week. Rail car shortage compounding. Michigan EV transition production pause adding to regional miss.", positive: false },
+      segments: [
+        { rank: 1, name: "Illinois Manufacturing", variance: "−$0.5M vs Plan", text: "Chicago distribution hub bottleneck — rail car shortage limiting outbound shipments. Hub capacity at 94%, above 90% stress threshold. Order fulfillment cycle time 8.2 days vs 5.5 target.", tags: [{ cls: "pill-red", label: "Supply chain bottleneck" }, { cls: "pill-amber", label: "Rail shortage" }] },
+        { rank: 2, name: "Michigan Auto", variance: "−$0.3M vs Plan", text: "EV transition production pause at 2 plants. ICE-to-EV line retooling on schedule but output gap in W9–W11. Supplier qualification for battery components 85% complete.", tags: [{ cls: "pill-amber", label: "EV transition" }, { cls: "pill-blue", label: "Retooling on schedule" }] },
+        { rank: 3, name: "Ohio Agriculture", variance: "−$0.1M vs Plan", text: "Early frost in W8 delayed planting across 12% of contracted acreage. Crop insurance claims filed. Revenue impact minor — bulk of agricultural revenue is Q3/Q4 weighted.", tags: [{ cls: "pill-amber", label: "Frost delay" }, { cls: "pill-blue", label: "Insurance filed" }] },
+      ],
+      chart: { title: "Weekly Revenue Variance — Illinois Manufacturing", bars: [
+        { week: "W6", actual: 61, plan: 62, color: "#FEA400" }, { week: "W7", actual: 60, plan: 62, color: "#FEA400" },
+        { week: "W8", actual: 57, plan: 62, color: "#F39C12" }, { week: "W9", actual: 53, plan: 62, color: "#E74C3C" },
+        { week: "W10", actual: 50, plan: 62, color: "#E74C3C" }, { week: "W11▸", actual: 54, plan: 62, color: "#F39C12", forecast: true },
+      ]},
+      ai: {
+        messages: [
+          { role: "user", name: "Josh", text: "What is driving the Midwest miss?" },
+          { role: "ai", name: "FluxPlus AI", html: '<strong>Two structural issues:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>Illinois Manufacturing — Chicago hub bottleneck at 94% capacity, rail car shortage limiting outbound (−$0.5M)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Michigan Auto — EV transition production pause during retooling (−$0.3M)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Ohio Agriculture — early frost crop delay, minor impact (−$0.1M)</div></div>' },
+        ],
+        suggestions: ["Chicago hub capacity detail", "Michigan EV retooling timeline", "Ohio crop insurance status"],
+      },
+    },
+    west: {
+      label: "West", week: "Week 10 · Mar 3–9 2026",
+      revenue: { variance: "−$1.6M", delta: "▼ vs Plan", color: "down", flagged: "4", flaggedDetail: "2 critical", driver: "Labor", driverDetail: "CA min wage ↑" },
+      orders: { variance: "−$2.1M", delta: "▼ vs Plan", color: "down", flagged: "5", flaggedDetail: "3 critical", driver: "Demand", driverDetail: "Enterprise deferrals" },
+      signal: { icon: "🚨", title: "Critical: West Region Labor + Demand Squeeze", body: "California Retail driving 75% of West miss with labor cost surge post minimum-wage hike. Washington Tech adding −$0.6M on enterprise contract deferrals. Combined W11 risk: −$2.0M if CA staffing model not adjusted.", positive: false },
+      segments: [
+        { rank: 1, name: "California Retail", variance: "−$1.2M vs Plan", text: "Minimum wage hike effective W8 driving overtime costs 18% above plan. LA and SF markets hardest hit — store-level margin compression accelerating. Automation rollout in progress but not fully deployed.", tags: [{ cls: "pill-red", label: "Labor cost surge" }, { cls: "pill-red", label: "3 weeks escalating" }, { cls: "pill-blue", label: "Automation in progress" }] },
+        { rank: 2, name: "Washington Tech", variance: "−$0.6M vs Plan", text: "Enterprise contract deferrals — 4 deals worth $2.1M pushed from W10 to W12–W13. Macro uncertainty cited by 3 of 4 customers. Pipeline not lost, timing shift.", tags: [{ cls: "pill-amber", label: "Contract deferrals" }, { cls: "pill-blue", label: "Pipeline intact" }] },
+        { rank: 3, name: "Oregon Clean Energy", variance: "+$0.2M vs Plan", text: "Federal subsidy tranche released in W9, recognized in W10. Solar installation revenue accelerating. Pipeline for Q2 strong on IRA incentive pull-forward.", tags: [{ cls: "pill-green", label: "Subsidy release" }, { cls: "pill-green", label: "Pipeline strong" }] },
+      ],
+      chart: { title: "Weekly Revenue Variance — California Retail", bars: [
+        { week: "W6", actual: 60, plan: 64, color: "#FEA400" }, { week: "W7", actual: 58, plan: 64, color: "#FEA400" },
+        { week: "W8", actual: 54, plan: 64, color: "#F39C12" }, { week: "W9", actual: 48, plan: 64, color: "#E74C3C" },
+        { week: "W10", actual: 44, plan: 64, color: "#E74C3C" }, { week: "W11▸", actual: 42, plan: 64, color: "#E74C3C", forecast: true },
+      ]},
+      ai: {
+        messages: [
+          { role: "user", name: "Josh", text: "Why is the West the worst performing region?" },
+          { role: "ai", name: "FluxPlus AI", html: '<strong>California Retail is the primary driver</strong> at −$1.2M, representing 75% of the West miss. Root cause is the minimum wage increase effective W8 — labor costs in LA and SF are 12% above budget with overtime at 18% above plan.<br><br>Washington Tech adds −$0.6M from enterprise deal deferrals. Oregon Clean Energy is the sole bright spot at +$0.2M on federal subsidy release.' },
+        ],
+        suggestions: ["California automation timeline", "Washington deal deferral details", "West vs prior year"],
+      },
+    },
+    southwest: {
+      label: "Southwest", week: "Week 10 · Mar 3–9 2026",
+      revenue: { variance: "−$1.1M", delta: "▼ vs Plan", color: "down", flagged: "3", flaggedDetail: "1 critical", driver: "Commodity", driverDetail: "Nat gas ↓ 18%" },
+      orders: { variance: "−$1.5M", delta: "▼ vs Plan", color: "down", flagged: "4", flaggedDetail: "2 critical", driver: "Market", driverDetail: "Rate cooling" },
+      signal: { icon: "📉", title: "Watch: Texas Energy Natural Gas Price Decline", body: "Henry Hub natural gas spot price down 18% WoW. Permian Basin revenue per unit compressed. Hedging covers 60% — unhedged exposure driving −$0.8M miss. Arizona real estate cooling adds −$0.2M.", positive: false },
+      segments: [
+        { rank: 1, name: "Texas Energy", variance: "−$0.8M vs Plan", text: "Natural gas spot price drop 18% WoW at Henry Hub. Permian Basin operations revenue per unit compressed. Hedging program covered 60% of volume — unhedged 40% fully exposed. Pricing expected to stabilize W12.", tags: [{ cls: "pill-red", label: "Commodity exposure" }, { cls: "pill-amber", label: "Partial hedge" }, { cls: "pill-blue", label: "W12 stabilization" }] },
+        { rank: 2, name: "Arizona Real Estate", variance: "−$0.2M vs Plan", text: "Mortgage rate cooling effect — 30yr fixed at 6.9% dampening transaction velocity. Phoenix metro listings up 14% but closings down 8%. Seasonal spring market should provide W12–W14 uplift.", tags: [{ cls: "pill-amber", label: "Rate cooling" }, { cls: "pill-blue", label: "Spring market ahead" }] },
+        { rank: 3, name: "Colorado Tourism", variance: "−$0.1M vs Plan", text: "Below-average snowpack reducing ski resort revenue. Season bookings down 6% vs plan. Summer pivot planning in progress — mountain biking season pre-bookings up 11%.", tags: [{ cls: "pill-amber", label: "Low snowpack" }, { cls: "pill-blue", label: "Summer pivot" }] },
+      ],
+      chart: { title: "Weekly Revenue Variance — Texas Energy", bars: [
+        { week: "W6", actual: 62, plan: 64, color: "#FEA400" }, { week: "W7", actual: 61, plan: 64, color: "#FEA400" },
+        { week: "W8", actual: 58, plan: 64, color: "#F39C12" }, { week: "W9", actual: 52, plan: 64, color: "#E74C3C" },
+        { week: "W10", actual: 48, plan: 64, color: "#E74C3C" }, { week: "W11▸", actual: 50, plan: 64, color: "#E74C3C", forecast: true },
+      ]},
+      ai: {
+        messages: [
+          { role: "user", name: "Josh", text: "What is driving the Southwest miss?" },
+          { role: "ai", name: "FluxPlus AI", html: '<strong>Texas Energy is the dominant driver</strong> at −$0.8M, representing 73% of the Southwest miss. Natural gas spot price dropped 18% WoW — the hedging program covers 60% of volume but the unhedged 40% is fully exposed to the decline.<br><br>Arizona Real Estate adds −$0.2M from mortgage rate cooling, and Colorado Tourism contributes −$0.1M on below-average snowpack.' },
+        ],
+        suggestions: ["Texas hedge position detail", "Arizona spring market forecast", "Colorado summer pivot plan"],
+      },
+    },
+  },
+
+  comparisons: {
+    plan: {
+      label: "vs Plan",
+      stats: { national: "−$3.8M", ne: "+$0.4M", se: "−$0.6M", mw: "−$0.9M", w: "−$1.6M", sw: "−$1.1M" },
+      pillColors: { national: "pill-red", ne: "pill-green", se: "pill-amber", mw: "pill-amber", w: "pill-red", sw: "pill-red" },
+      totalVariance: "−$3.8M", totalColor: "down",
+      signal: "California Retail labor cost surge is the largest miss vs Plan — minimum wage hike driving overtime 18% above budget. Texas Energy natural gas price drop adds −$0.8M. Northeast is the sole positive region at +$0.4M on strong Q1 trading.",
+      aiA: '<strong>−$3.8M vs Plan this week.</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>West −$1.6M: California Retail labor cost surge driving 42% of total miss</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>Southwest −$1.1M: Texas Energy natural gas spot price decline</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Midwest −$0.9M: Illinois Manufacturing supply chain bottleneck + Michigan EV transition</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Southeast −$0.6M: Florida tourism calendar shift + Georgia port congestion</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#2ECC71"></div>Northeast +$0.4M: NY Financial Services Q1 trading outperformance, only region beating Plan</div></div>',
+      segmentOverrides: { national: [
+        { rank: 1, name: "California Retail", variance: "−$1.6M vs Plan", text: "Labor costs surging post minimum-wage hike. Overtime 18% above plan in LA/SF. Margin compression accelerating for 3rd week. Automation rollout in progress but not yet at scale.", tags: [{ cls: "pill-red", label: "Labor surge" }, { cls: "pill-red", label: "3 wks escalating" }] },
+        { rank: 2, name: "Texas Energy", variance: "−$0.8M vs Plan", text: "Natural gas spot price down 18% WoW. Hedging covers 60% — unhedged exposure driving the miss. Forward curve suggests stabilization W12.", tags: [{ cls: "pill-red", label: "Commodity exposure" }, { cls: "pill-amber", label: "Partial hedge" }] },
+        { rank: 3, name: "New York Financial Svcs", variance: "+$0.7M vs Plan", text: "Q1 trading revenue beating plan on elevated volatility. Advisory pipeline converting 3 weeks ahead of schedule. Sole national bright spot.", tags: [{ cls: "pill-green", label: "Above plan" }, { cls: "pill-green", label: "Trading outperformance" }] },
+      ]},
+    },
+    priorweek: {
+      label: "vs Prior Week",
+      stats: { national: "+$0.6M", ne: "+$0.2M", se: "+$0.3M", mw: "+$0.1M", w: "−$0.2M", sw: "+$0.2M" },
+      pillColors: { national: "pill-green", ne: "pill-green", se: "pill-green", mw: "pill-green", w: "pill-amber", sw: "pill-green" },
+      totalVariance: "+$0.6M", totalColor: "up",
+      signal: "Most regions improved week-on-week. Southeast spring break bookings building. West is the only region still deteriorating WoW as California labor costs compound.",
+      aiA: '<strong>+$0.6M improvement week-on-week.</strong>',
+      segmentOverrides: { national: [
+        { rank: 1, name: "Florida Tourism", variance: "+$0.4M vs Prior Week", text: "Spring break advance bookings accelerating. W11 hotel occupancy forecast 91% vs 71% in W10.", tags: [{ cls: "pill-green", label: "WoW acceleration" }, { cls: "pill-green", label: "Bookings building" }] },
+        { rank: 2, name: "New York Financial Svcs", variance: "+$0.2M vs Prior Week", text: "Trading desk momentum continuing post-FOMC. Advisory deal #4 of Q1 closed in W10.", tags: [{ cls: "pill-green", label: "Momentum" }, { cls: "pill-blue", label: "Pipeline strong" }] },
+        { rank: 3, name: "California Retail", variance: "−$0.3M vs Prior Week", text: "Labor cost deterioration continues WoW. Overtime hours increased another 4% vs W9. Only segment worsening WoW.", tags: [{ cls: "pill-red", label: "Still deteriorating" }, { cls: "pill-red", label: "WoW decline" }] },
+      ]},
+    },
+    prioryear: {
+      label: "vs Prior Year",
+      stats: { national: "+$8.4M", ne: "+$2.1M", se: "+$1.8M", mw: "+$1.6M", w: "+$1.9M", sw: "+$1.0M" },
+      pillColors: { national: "pill-green", ne: "pill-green", se: "pill-green", mw: "pill-green", w: "pill-green", sw: "pill-green" },
+      totalVariance: "+$8.4M", totalColor: "up",
+      signal: "Strong year-on-year growth across all regions. Northeast showing the largest YoY gain (+$2.1M) on financial services expansion.",
+      aiA: '<strong>+$8.4M vs same week in 2025.</strong>',
+      segmentOverrides: { national: [
+        { rank: 1, name: "New York Financial Svcs", variance: "+$2.3M vs Prior Year", text: "3 new advisory verticals launched Q4 2025 contributing incremental revenue.", tags: [{ cls: "pill-green", label: "Structural growth" }, { cls: "pill-green", label: "New verticals" }] },
+        { rank: 2, name: "California Retail", variance: "+$1.4M vs Prior Year", text: "W10 2025 had a more severe labor disruption — pre-automation. Current week is bad vs Plan but better vs last year.", tags: [{ cls: "pill-green", label: "YoY recovery" }, { cls: "pill-amber", label: "Weak comp effect" }] },
+        { rank: 3, name: "Florida Tourism", variance: "+$1.2M vs Prior Year", text: "Capacity expansion of +22% since W10 2025 driving structural revenue growth.", tags: [{ cls: "pill-green", label: "Capacity expansion" }, { cls: "pill-green", label: "Structural growth" }] },
+      ]},
+    },
+    forecast: {
+      label: "vs Forecast",
+      stats: { national: "−$1.6M", ne: "+$0.1M", se: "−$0.3M", mw: "−$0.4M", w: "−$0.7M", sw: "−$0.3M" },
+      pillColors: { national: "pill-amber", ne: "pill-green", se: "pill-amber", mw: "pill-amber", w: "pill-red", sw: "pill-amber" },
+      totalVariance: "−$1.6M", totalColor: "warn",
+      signal: "We missed the internal W10 forecast by −$1.6M. Texas energy price drop exceeded model and Georgia port congestion was unforeseen.",
+      aiA: '<strong>−$1.6M vs internal W10 forecast.</strong>',
+      segmentOverrides: { national: [
+        { rank: 1, name: "California Retail", variance: "−$0.5M vs Forecast", text: "Forecast had embedded −$1.1M labor risk assumption. Actual came in −$1.6M vs Plan — a −$0.5M incremental miss.", tags: [{ cls: "pill-red", label: "Worse than risk model" }, { cls: "pill-amber", label: "Forecast miss" }] },
+        { rank: 2, name: "Texas Energy", variance: "−$0.3M vs Forecast", text: "Forecast modeled a 10% natural gas price decline — actual was 18%.", tags: [{ cls: "pill-amber", label: "Price exceeded model" }, { cls: "pill-blue", label: "Forecast updated" }] },
+        { rank: 3, name: "New York Financial Svcs", variance: "+$0.1M vs Forecast", text: "Trading revenue slightly exceeded forecast assumptions.", tags: [{ cls: "pill-green", label: "Positive surprise" }, { cls: "pill-green", label: "Forecast beat" }] },
+      ]},
+    },
+    runrate: {
+      label: "vs Run Rate",
+      stats: { national: "−$2.4M", ne: "+$0.2M", se: "−$0.4M", mw: "−$0.6M", w: "−$1.1M", sw: "−$0.5M" },
+      pillColors: { national: "pill-red", ne: "pill-green", se: "pill-amber", mw: "pill-amber", w: "pill-red", sw: "pill-amber" },
+      totalVariance: "−$2.4M", totalColor: "down",
+      signal: "W10 is tracking −$2.4M below the 8-week run rate. West is the structural drag.",
+      aiA: '<strong>−$2.4M below 8-week run rate.</strong>',
+      segmentOverrides: { national: [
+        { rank: 1, name: "California Retail", variance: "−$0.9M vs Run Rate", text: "The 8-week run rate itself has been declining 2.8% per week as labor costs compound.", tags: [{ cls: "pill-red", label: "Accelerating decline" }, { cls: "pill-red", label: "Run rate falling" }] },
+        { rank: 2, name: "Texas Energy", variance: "−$0.5M vs Run Rate", text: "Natural gas price drop is a step-change below recent steady run rate.", tags: [{ cls: "pill-amber", label: "Temporary step-down" }, { cls: "pill-blue", label: "Run rate recovery likely" }] },
+        { rank: 3, name: "New York Financial Svcs", variance: "+$0.3M vs Run Rate", text: "Q1 trading volatility pushing NY above its recent run rate.", tags: [{ cls: "pill-green", label: "Above run rate" }, { cls: "pill-green", label: "Structural improvement" }] },
+      ]},
+    },
+  },
+
+  drillSegments: [
+    { id: "caretail", name: "California Retail", region: "West", variance: "−$1.2M", varColor: "down", spark: [58,54,50,46,42], util: "92%", utilColor: "#E74C3C", trips: "4.8", tripsVsPlan: "−12.1%" },
+    { id: "txenergy", name: "Texas Energy", region: "Southwest", variance: "−$0.8M", varColor: "down", spark: [64,62,58,52,48], util: "78%", utilColor: "#F39C12", trips: "3.2", tripsVsPlan: "−8.6%" },
+    { id: "nyfinance", name: "New York Financial Svcs", region: "Northeast", variance: "+$0.7M", varColor: "up", spark: [52,54,56,58,60], util: "71%", utilColor: "#2ECC71", trips: "8.1", tripsVsPlan: "+4.8%" },
+    { id: "fltourism", name: "Florida Tourism", region: "Southeast", variance: "−$0.4M", varColor: "down", spark: [62,61,62,59,54], util: "68%", utilColor: "#3498DB", trips: "2.9", tripsVsPlan: "−7.2%" },
+    { id: "ilmfg", name: "Illinois Manufacturing", region: "Midwest", variance: "−$0.5M", varColor: "down", spark: [61,60,57,53,50], util: "94%", utilColor: "#E74C3C", trips: "5.4", tripsVsPlan: "−6.8%" },
+    { id: "watech", name: "Washington Tech", region: "West", variance: "−$0.6M", varColor: "down", spark: [58,57,55,52,49], util: "65%", utilColor: "#F39C12", trips: "6.2", tripsVsPlan: "−5.4%" },
+  ],
+
+  drillAI: {
+    caretail: { q: "Tell me more about California Retail", a: '<strong>California Retail deep-dive:</strong><br><br>Root cause is labor-cost driven. Minimum wage hike effective W8 pushed LA/SF store labor costs 12% above budget. Overtime hours running 18% above plan.<br><br>Impact: −12.1% revenue vs plan. Store-level margin compressed by 340bps. Self-checkout automation covers 22% of stores — target 60% by W14.' },
+    txenergy: { q: "Explain the Texas Energy situation", a: '<strong>Texas Energy — commodity price shock.</strong><br><br>Henry Hub natural gas spot price dropped 18% WoW. Hedging covers 60% at $3.10/MMBtu floor — unhedged 40% exposed at $2.62 spot.' },
+    nyfinance: { q: "What is driving NY Financial Services?", a: '<strong>Q1 trading revenue outperformance confirmed.</strong><br><br>Equity desk capturing elevated VIX (avg 22 vs modeled 18). Advisory pipeline converting 3 weeks ahead of schedule.' },
+    fltourism: { q: "What caused the Florida Tourism miss?", a: '<strong>Calendar-driven timing shift.</strong><br><br>Spring break peak moved from W10 to W11. Hotel occupancy 71% vs 84% plan. W11 bookings +18% above W10. No action required.' },
+    ilmfg: { q: "How serious is Illinois Manufacturing?", a: '<strong>Supply chain constraint — action required.</strong><br><br>Chicago hub at 94% capacity. Rail car shortage from Union Pacific. Order fulfillment 8.2 days vs 5.5 target. Resolution: UP confirmed +15% rail allocation W11.' },
+    watech: { q: "What about Washington Tech?", a: '<strong>Enterprise contract deferrals — pipeline intact.</strong><br><br>4 deals worth $2.1M pushed to W12–W13. Macro uncertainty cited. No cancellations. Executive touchpoints scheduled for W11.' },
+  },
+
+  exceptions: [
+    { id: "ca-labor", severity: "critical", icon: "🔴", name: "California Retail — Labor Cost Surge", detail: "Minimum wage hike driving overtime 18% above plan in LA/SF. Store-level margin compressed 340bps. 3rd consecutive week of escalation.", tags: [{ cls: "pill-red", label: "Critical" }, { cls: "pill-red", label: "3 weeks" }], value: "−$1.2M", week: "W8–W10", aiQ: "Diagnose California labor cost surge", aiA: '<strong>Labor cost breach — critical.</strong><br><br>Minimum wage increase W8 pushed LA/SF labor costs 12% above budget. Overtime 18% above plan. W8 −$0.3M, W9 −$0.7M, W10 −$1.2M (cumulative). Automation covers 22% of stores.<br><br><strong>Required:</strong> Accelerate automation rollout from W14 to W11. $0.4M/week savings at scale.' },
+    { id: "tx-natgas", severity: "warning", icon: "🟡", name: "Texas Energy — Natural Gas Price Drop", detail: "Henry Hub spot price down 18% WoW. Hedging covers 60% — unhedged 40% fully exposed.", tags: [{ cls: "pill-amber", label: "Warning" }, { cls: "pill-amber", label: "Commodity" }], value: "−$0.8M", week: "W10", aiQ: "Explain Texas gas impact", aiA: '<strong>Commodity price shock — hedge gap exposed.</strong><br><br>Spot dropped from $3.20 to $2.62/MMBtu (−18%). Hedging covers 60% at $3.10 floor. Forward curve: stabilization ~$2.80 by W12. Option: Increase hedge to 80%, cost ~$120K premium.' },
+    { id: "il-supply", severity: "warning", icon: "🟡", name: "Illinois Manufacturing — Supply Chain", detail: "Chicago hub at 94% capacity. Rail car shortage. Order fulfillment 8.2 days vs 5.5 target.", tags: [{ cls: "pill-amber", label: "Watch" }, { cls: "pill-amber", label: "Rail shortage" }], value: "−$0.5M", week: "W9–W10", aiQ: "Illinois supply chain urgency?", aiA: '<strong>Resolution in sight.</strong><br><br>Above 90% stress threshold for 2 weeks. 340 orders ($2.1M) deferred. UP confirmed +15% rail allocation W11. Hub returns to 85% by W12.' },
+    { id: "fl-calendar", severity: "warning", icon: "🟡", name: "Florida Tourism — Calendar Shift", detail: "Spring break peak moved W10→W11. Hotel occupancy 71% vs 84% plan. W11 bookings +18%.", tags: [{ cls: "pill-amber", label: "Calendar shift" }, { cls: "pill-blue", label: "Auto-recovering" }], value: "−$0.4M", week: "W10", aiQ: "Florida tourism action?", aiA: '<strong>No action required — timing shift.</strong><br><br>School calendar realignment shifted spring break from W10 to W11. W11 bookings strong: Orlando +22%, Miami +16%. Auto-recovery model incorporated.' },
+    { id: "ny-trading", severity: "positive", icon: "🟢", name: "NY Financial Svcs — Q1 Trading", detail: "Equity desk +22% vs plan on elevated VIX. Advisory pipeline 3 weeks ahead. Infrastructure upgrades paying off.", tags: [{ cls: "pill-green", label: "Positive" }, { cls: "pill-green", label: "Q1 momentum" }], value: "+$0.7M", week: "W10", aiQ: "Sustain NY trading?", aiA: '<strong>Partially sustainable.</strong><br><br>Elevated VIX (cyclical, fades W11) + trading infrastructure upgrade (structural, 15bps permanent). Advisory $2.4M pipeline in W11–W13. W11 projection: +$0.4M vs plan.' },
+    { id: "or-subsidy", severity: "positive", icon: "🟢", name: "Oregon Clean Energy — Subsidy Release", detail: "IRA subsidy tranche released W9. Solar revenue accelerating. Q2 pipeline strong.", tags: [{ cls: "pill-green", label: "Subsidy release" }, { cls: "pill-green", label: "Growing" }], value: "+$0.2M", week: "W9–W10", aiQ: "Oregon strategy implication?", aiA: '<strong>Federal subsidy pipeline ahead of model.</strong><br><br>$4.2M IRA tranche 6 weeks ahead of projections. Q2 pipeline $1.8M. Customer demand 30% above pre-IRA baseline. Recommend expanding team by 4 FTEs — 8-month payback.' },
+  ],
+
+  signals: [
+    { name: "California Retail Margin Erosion Risk W11", type: "Labor", typeCls: "pill-red", confidence: 92, body: "Overtime trajectory projects continued margin compression through W11. Automation deployment is the key lever. Model based on 12 comparable wage-event scenarios.", confColor: "#E74C3C" },
+    { name: "Texas Natural Gas Price Stabilization W12", type: "Commodity", typeCls: "pill-amber", confidence: 76, body: "Henry Hub forward curve projects stabilization at $2.80/MMBtu by W12. Historical accuracy: 74%. Hedge increase recommended.", confColor: "#F39C12" },
+    { name: "NY Financial Svcs Q1 Close Strong", type: "Revenue", typeCls: "pill-green", confidence: 94, body: "Advisory pipeline has $2.4M in W11–W13 committed closings. Trading infrastructure providing structural 15bps capture improvement.", confColor: "#2ECC71" },
+    { name: "Florida Tourism Spring Break Rebound W11", type: "Seasonal", typeCls: "pill-blue", confidence: 89, body: "W11 advance bookings +18% above W10. 4 of 5 historical spring break timing shifts showed full recovery.", confColor: "#3498DB" },
+    { name: "Illinois Hub Rail Car Resolution W11", type: "Supply Chain", typeCls: "pill-blue", confidence: 81, body: "Union Pacific confirmed +15% rail car allocation starting W11. Historical UP delivery accuracy: 79%.", confColor: "#3498DB" },
+    { name: "Oregon Clean Energy: Q2 Pipeline Acceleration", type: "Growth", typeCls: "pill-green", confidence: 73, body: "IRA subsidy ahead of schedule suggests Q2 $1.8M pipeline could pull forward 4–6 weeks. Team expansion recommended.", confColor: "#2ECC71" },
+  ],
+
+  history: [
+    { week: "W10", dates: "Mar 3–9 2026", variance: "−$3.8M", varColor: "down", tags: [{ cls: "pill-red", label: "Labor" }, { cls: "pill-amber", label: "Commodity" }], current: true },
+    { week: "W9", dates: "Feb 24–Mar 2", variance: "−$2.6M", varColor: "down", tags: [{ cls: "pill-red", label: "Labor" }] },
+    { week: "W8", dates: "Feb 17–23", variance: "−$1.4M", varColor: "down", tags: [{ cls: "pill-amber", label: "Wage hike start" }] },
+    { week: "W7", dates: "Feb 10–16", variance: "+$0.8M", varColor: "up", tags: [{ cls: "pill-green", label: "On plan" }] },
+    { week: "W6", dates: "Feb 3–9", variance: "+$1.5M", varColor: "up", tags: [{ cls: "pill-green", label: "Super Bowl uplift" }] },
+    { week: "W5", dates: "Jan 27–Feb 2", variance: "−$0.3M", varColor: "warn", tags: [{ cls: "pill-amber", label: "Minor miss" }] },
+    { week: "W4", dates: "Jan 20–26", variance: "+$1.8M", varColor: "up", tags: [{ cls: "pill-green", label: "Deal closures" }] },
+    { week: "W3", dates: "Jan 13–19", variance: "+$0.7M", varColor: "up", tags: [{ cls: "pill-green", label: "On plan" }] },
+    { week: "W2", dates: "Jan 6–12", variance: "−$0.9M", varColor: "down", tags: [{ cls: "pill-amber", label: "Post-holiday" }] },
+    { week: "W1", dates: "Dec 30–Jan 5", variance: "+$3.2M", varColor: "up", tags: [{ cls: "pill-green", label: "New Year surge" }] },
+    { week: "W52", dates: "Dec 23–29 2025", variance: "+$4.8M", varColor: "up", tags: [{ cls: "pill-green", label: "Christmas peak" }] },
+    { week: "W51", dates: "Dec 16–22 2025", variance: "+$1.6M", varColor: "up", tags: [{ cls: "pill-green", label: "Pre-holiday" }] },
+  ],
+
+  historyAI: {
+    W9: { q: "How does W9 compare?", a: '<strong>W9 showed California escalating.</strong><br><br>−$2.6M in W9 vs −$3.8M in W10 — 46% WoW deterioration. Texas energy was not flagged in W9 — that\'s a W10 development.' },
+    W8: { q: "What was different about W8?", a: '<strong>W8 was the inflection point.</strong><br><br>−$1.4M — first week after CA minimum wage hike. Flagged as "watch" not "critical". Compounding nature: each week adds ~$0.6M to gap.' },
+    W7: { q: "What drove W7?", a: '<strong>W7 was a clean week.</strong><br><br>+$0.8M driven by NY Financial Services momentum and Texas at plan. Last week before California wage hike impact.' },
+    W4: { q: "W4 deal closures?", a: '<strong>Strong enterprise closures.</strong><br><br>+$1.8M from 2 NY advisory deals (+$1.1M) and a Washington Tech contract (+$0.7M).' },
+  },
+
+  segmentNav: {
+    retail: { aiQ: "Retail segment deep-dive", aiA: '<strong>Retail — W10:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>California Retail −$1.2M: Labor cost surge, 3rd week</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#2ECC71"></div>Southeast Retail +$0.1M: NC e-commerce</div></div><br>Net Retail: <strong class="uf-down">−$1.6M</strong> vs Plan.' },
+    energy: { aiQ: "Energy segment performance", aiA: '<strong>Energy — W10:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>Texas Energy −$0.8M: Nat gas spot drop 18%</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#2ECC71"></div>Oregon Clean Energy +$0.2M: Federal subsidy</div></div><br>Net Energy: <strong class="uf-warn">−$0.8M</strong>.' },
+    financial: { aiQ: "Financial Services?", aiA: '<strong>Financial Services — W10: +$0.7M vs Plan.</strong><br><br>NY trading desk capturing elevated VIX. Advisory pipeline converting ahead of Q1 schedule. Standout positive.' },
+    healthcare: { aiQ: "Healthcare this week?", aiA: '<strong>Healthcare — W10: −$0.3M vs Plan.</strong><br><br>MA Healthcare reimbursement delays from 2 carriers. 14-day turnaround vs 9-day target. Carrier escalation in progress.' },
+  },
+};
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+
+let state = {
+  region: "national",
+  comparison: "plan",
+  metric: "Revenue",
+  tab: "analysis",
+  selectedSegment: -1,
+  selectedExc: null,
+  selectedDrill: null,
+  selectedSignal: null,
+  selectedHistory: null,
+  aiMessages: [],
+  suggestions: [],
+  isTyping: false,
+};
+
+let typingTimeout = null;
+
+function getRegionData() { return DATA.regions[state.region]; }
+function getCompData() { return DATA.comparisons[state.comparison]; }
+function getMetricData() { return state.metric === "Revenue" ? getRegionData().revenue : getRegionData().orders; }
+function getSegments() {
+  const comp = getCompData();
+  const overrides = comp.segmentOverrides[state.region];
+  if (overrides) return overrides;
+  return getRegionData().segments.map(s => ({
+    ...s, variance: s.variance.replace(/vs \w+(\s+\w+)?/, comp.label)
+  }));
+}
+
+// ═══════════════════════════════════════════════════════
+//  AI HELPERS
+// ═══════════════════════════════════════════════════════
+
+function scrollAI() {
+  setTimeout(() => {
+    const el = document.getElementById("ai-messages");
+    if (el) el.scrollTop = el.scrollHeight;
+  }, 50);
+}
+
+function addUserMsg(text) {
+  state.aiMessages.push({ role: "user", name: "Josh", text });
+  state.isTyping = true;
+  renderAIPanel();
+  scrollAI();
+}
+
+function addAIMsg(html, delay) {
+  delay = delay || 800;
+  if (typingTimeout) clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    state.isTyping = false;
+    state.aiMessages.push({ role: "ai", name: "FluxPlus AI", html });
+    renderAIPanel();
+    scrollAI();
+  }, delay);
+}
+
+function seedAI() {
+  const r = getRegionData();
+  state.aiMessages = [...r.ai.messages];
+  state.suggestions = [...r.ai.suggestions];
+  state.isTyping = false;
+  if (typingTimeout) clearTimeout(typingTimeout);
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════
+
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+function renderTags(tags) {
+  return tags.map(t => `<span class="uf-seg-tag ${t.cls}">${esc(t.label)}</span>`).join("");
+}
+
+function render() {
+  const reg = getRegionData();
+  const comp = getCompData();
+  const met = getMetricData();
+  const segments = getSegments();
+  const totalVariance = state.metric === "Revenue" ? (comp.totalVariance || met.variance) : met.variance;
+  const totalColor = comp.totalColor || met.color;
+
+  const regionPillMap = { national: comp.stats.national, northeast: comp.stats.ne, southeast: comp.stats.se, midwest: comp.stats.mw, west: comp.stats.w, southwest: comp.stats.sw };
+  const regionPillColorMap = { national: comp.pillColors.national, northeast: comp.pillColors.ne, southeast: comp.pillColors.se, midwest: comp.pillColors.mw, west: comp.pillColors.w, southwest: comp.pillColors.sw };
+
+  const regionItems = [
+    { key: "national", label: "National" }, { key: "northeast", label: "Northeast" },
+    { key: "southeast", label: "Southeast" }, { key: "midwest", label: "Midwest" },
+    { key: "west", label: "West" }, { key: "southwest", label: "Southwest" },
+  ];
+  const compItems = [
+    { key: "plan", label: "vs Plan" }, { key: "priorweek", label: "vs Prior Week" },
+    { key: "prioryear", label: "vs Prior Year" }, { key: "forecast", label: "vs Forecast" },
+    { key: "runrate", label: "vs Run Rate" },
+  ];
+  const segNavItems = [
+    { key: "retail", label: "Retail", pillCls: "pill-red", pill: "−$1.6M" },
+    { key: "energy", label: "Energy", pillCls: "pill-amber", pill: "−$0.8M" },
+    { key: "financial", label: "Financial Svcs", pillCls: "pill-green", pill: "+$0.7M" },
+    { key: "healthcare", label: "Healthcare", pillCls: "pill-blue", pill: "−$0.3M" },
+  ];
+  const tabs = [
+    { key: "analysis", label: "Analysis" }, { key: "drilldown", label: "Drill-Down" },
+    { key: "exceptions", label: "Exceptions" }, { key: "signals", label: "Signals" },
+    { key: "history", label: "History" },
+  ];
+  const tabHints = { analysis: "Ask anything about this week", drilldown: "Click a segment card for deep-dive", exceptions: "Click an exception to diagnose", signals: "Click a signal for full analysis", history: "Click any week to compare" };
+
+  // Build chart HTML
+  const chartTitle = reg.chart.title + (state.metric === "Orders" ? " (Orders)" : " (Revenue)");
+  const chartBars = reg.chart.bars.map(b => {
+    const mult = state.metric === "Orders" ? 1.6 : 1;
+    const actual = Math.round(b.actual * mult);
+    const plan = Math.round(b.plan * mult);
+    const maxH = 74;
+    const aH = Math.max(3, Math.round((actual / (plan * 1.15)) * maxH));
+    const pH = Math.round((plan / (plan * 1.15)) * maxH);
+    const unit = state.metric === "Orders" ? "K orders" : "M rev";
+    return `<div class="uf-bar-group">
+      <div class="uf-bar-tooltip">${esc(b.week)}: ${actual}${unit} actual / ${plan}${unit} plan</div>
+      <div class="uf-bar-pair">
+        <div class="uf-bar" style="height:${aH}px;background:${b.color};opacity:${b.forecast ? 0.5 : 0.85};${b.forecast ? `border:1px dashed ${b.color};border-bottom:none;` : ''}"></div>
+        <div class="uf-bar" style="height:${pH}px;background:#4A7A9B;opacity:${b.forecast ? 0.3 : 0.55}"></div>
+      </div>
+      <div class="uf-bar-label" ${b.forecast ? `style="color:${b.color}"` : ''}>${esc(b.week)}</div>
+    </div>`;
+  }).join("");
+
+  // Analysis tab content
+  const analysisHTML = `
+    <div class="uf-signal-banner ${reg.signal.positive ? 'positive' : ''}">
+      <div class="uf-signal-icon">${reg.signal.icon}</div>
+      <div class="uf-signal-text">
+        <strong>${esc(comp.label)} · ${esc(state.metric)} · ${esc(reg.label)}</strong>
+        ${comp.signal || reg.signal.body}
+      </div>
+    </div>
+    <div class="uf-stat-row">
+      <div class="uf-stat-card" onclick="handleStatClick('variance')">
+        <div class="uf-stat-label">Total Variance</div>
+        <div class="uf-stat-value uf-${totalColor}">${totalVariance}</div>
+        <div class="uf-stat-delta uf-${totalColor}">${totalColor === 'up' ? '▲' : '▼'} ${esc(comp.label)}</div>
+      </div>
+      <div class="uf-stat-card" onclick="handleStatClick('flagged')">
+        <div class="uf-stat-label">Segments Flagged</div>
+        <div class="uf-stat-value uf-warn">${met.flagged}</div>
+        <div class="uf-stat-delta uf-warn">${esc(met.flaggedDetail)}</div>
+      </div>
+      <div class="uf-stat-card" onclick="handleStatClick('driver')">
+        <div class="uf-stat-label">Top Driver</div>
+        <div class="uf-stat-value" style="font-size:13px;padding-top:3px">${esc(met.driver)}</div>
+        <div class="uf-stat-delta uf-down">${esc(met.driverDetail)}</div>
+      </div>
+      <div class="uf-stat-card">
+        <div class="uf-stat-label">Commentary</div>
+        <div class="uf-stat-value uf-up" style="font-size:14px;padding-top:3px">Ready</div>
+        <div class="uf-stat-delta" style="color:var(--muted)">08:38 AM ✓</div>
+      </div>
+    </div>
+    <div class="uf-commentary">
+      <div class="uf-commentary-header">
+        <div class="uf-commentary-title">AI-Generated Commentary — Ranked by Revenue Impact</div>
+        <div class="uf-commentary-meta">${esc(state.metric)} · ${esc(comp.label)} · Validated · 12 segments · 5 comparison types</div>
+      </div>
+      <div class="uf-commentary-body">
+        ${segments.map((seg, i) => `
+          <div class="uf-segment-row ${state.selectedSegment === i ? 'selected' : ''}" onclick="handleSegmentClick(${i})">
+            <div class="uf-seg-rank">${seg.rank}</div>
+            <div class="uf-seg-content">
+              <div class="uf-seg-name">${esc(seg.name)} <span style="color:var(--muted);font-weight:400">— ${esc(seg.variance)}</span></div>
+              <div class="uf-seg-text">${esc(seg.text)}</div>
+              <div class="uf-seg-tags">${renderTags(seg.tags)}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+    <div class="uf-chart-area">
+      <div class="uf-chart-header">
+        <div class="uf-chart-title">${esc(chartTitle)}</div>
+        <div class="uf-chart-legend">
+          <div class="uf-legend-item"><div class="uf-legend-dot" style="background:#FEA400"></div>Actual</div>
+          <div class="uf-legend-item"><div class="uf-legend-dot" style="background:#4A7A9B"></div>Plan</div>
+        </div>
+      </div>
+      <div class="uf-bars">${chartBars}</div>
+    </div>`;
+
+  // Drilldown tab
+  const drillHTML = `
+    <div class="uf-signal-banner info">
+      <div class="uf-signal-icon">🔍</div>
+      <div class="uf-signal-text"><strong>Drill-Down — Segment Performance · W10</strong>Click any segment card to load detailed commentary and update the AI panel context.</div>
+    </div>
+    <div class="uf-drill-grid">
+      ${DATA.drillSegments.map(seg => {
+        const minV = Math.min(...seg.spark), maxV = Math.max(...seg.spark);
+        const metricTrips = state.metric === "Orders" ? (parseFloat(seg.trips)*1.6).toFixed(1)+"K orders" : "$"+seg.trips+"M";
+        const sparkBars = seg.spark.map((v,i) => {
+          const h = Math.max(4, Math.round(((v-minV)/Math.max(maxV-minV,1))*30));
+          const isLast = i === seg.spark.length-1;
+          const col = seg.varColor==="up" ? "#2ECC71" : isLast ? "#E74C3C" : "#4A7A9B";
+          return `<div class="uf-spark-bar" style="height:${h}px;background:${col};opacity:${isLast?1:0.6}"></div>`;
+        }).join("");
+        return `<div class="uf-drill-card ${state.selectedDrill===seg.id?'selected':''}" onclick="handleDrillClick('${seg.id}')">
+          <div class="uf-drill-card-header"><div><div class="uf-drill-card-name">${esc(seg.name)}</div><div class="uf-drill-card-region">${esc(seg.region)}</div></div><div class="uf-stat-delta uf-${seg.varColor}" style="font-size:12px;font-weight:700">${seg.variance}</div></div>
+          <div class="uf-drill-spark">${sparkBars}</div>
+          <div class="uf-drill-stats">
+            <div class="uf-drill-stat-item"><div class="uf-drill-stat-val" style="color:${seg.utilColor}">${seg.util}</div><div class="uf-drill-stat-lbl">Courier Util</div></div>
+            <div class="uf-drill-stat-item"><div class="uf-drill-stat-val">${metricTrips}</div><div class="uf-drill-stat-lbl">${esc(state.metric)} W10</div></div>
+            <div class="uf-drill-stat-item"><div class="uf-drill-stat-val uf-${seg.varColor}">${seg.tripsVsPlan}</div><div class="uf-drill-stat-lbl">vs Plan</div></div>
+          </div>
+        </div>`;
+      }).join("")}
+    </div>`;
+
+  // Exceptions tab
+  const excHTML = `
+    <div class="uf-signal-banner critical">
+      <div class="uf-signal-icon">🚨</div>
+      <div class="uf-signal-text"><strong>3 Critical · 2 Warning · 2 Positive — W10 Exceptions</strong>Click any exception to see full AI diagnosis and recommended action in the query panel.</div>
+    </div>
+    <div class="uf-exc-list">
+      ${DATA.exceptions.map(exc => `
+        <div class="uf-exc-card ${exc.severity} ${state.selectedExc===exc.id?'selected':''}" onclick="handleExcClick('${exc.id}')">
+          <div class="uf-exc-icon">${exc.icon}</div>
+          <div class="uf-exc-body">
+            <div class="uf-exc-name">${esc(exc.name)}</div>
+            <div class="uf-exc-detail">${esc(exc.detail)}</div>
+            <div class="uf-exc-meta">${renderTags(exc.tags)}</div>
+          </div>
+          <div class="uf-exc-right">
+            <div class="uf-exc-val ${exc.severity==='positive'?'uf-up':exc.severity==='critical'?'uf-down':'uf-warn'}">${exc.value}</div>
+            <div class="uf-exc-week">${esc(exc.week)}</div>
+          </div>
+        </div>
+      `).join("")}
+    </div>`;
+
+  // Signals tab
+  const sigHTML = `
+    <div class="uf-signal-banner">
+      <div class="uf-signal-icon">📡</div>
+      <div class="uf-signal-text"><strong>ML Signal Radar — 6 Active Signals · W10</strong>Predictive flags generated from 14-day rolling models. Confidence scores reflect historical accuracy.</div>
+    </div>
+    <div class="uf-signals-list">
+      ${DATA.signals.map((sig, idx) => `
+        <div class="uf-signal-card ${state.selectedSignal===idx?'selected':''}" onclick="handleSignalClick(${idx})">
+          <div class="uf-signal-card-header"><div class="uf-signal-card-name">${esc(sig.name)}</div><span class="uf-signal-card-type ${sig.typeCls}">${esc(sig.type)}</span></div>
+          <div class="uf-signal-card-body">${esc(sig.body)}</div>
+          <div class="uf-signal-card-footer"><span class="uf-signal-conf">Confidence: ${sig.confidence}%</span><div class="uf-signal-conf-bar"><div class="uf-signal-conf-fill" style="width:${sig.confidence}%;background:${sig.confColor}"></div></div></div>
+        </div>
+      `).join("")}
+    </div>`;
+
+  // History tab
+  const histHTML = `
+    <div class="uf-signal-banner info">
+      <div class="uf-signal-icon">📅</div>
+      <div class="uf-signal-text"><strong>12-Week Rolling History · Global</strong>Click any week to load that period's data across the full workbench.</div>
+    </div>
+    <div class="uf-history-list">
+      ${DATA.history.map(h => `
+        <div class="uf-history-row ${h.current?'current':''} ${state.selectedHistory===h.week?'selected':''}" onclick="handleHistoryClick('${h.week}')">
+          <div><div class="uf-history-week">${esc(h.week)}${h.current?'<span style="color:var(--gold);font-size:9px;margin-left:6px">← CURRENT</span>':''}</div><div class="uf-history-dates">${esc(h.dates)}</div></div>
+          <div class="uf-history-tags">${renderTags(h.tags)}</div>
+          <div class="uf-${h.varColor}" style="font-size:15px;font-weight:700">${h.variance}</div>
+        </div>
+      `).join("")}
+    </div>`;
+
+  const tabContents = { analysis: analysisHTML, drilldown: drillHTML, exceptions: excHTML, signals: sigHTML, history: histHTML };
+
+  document.getElementById("app").innerHTML = `
+    <div class="uf-app">
+      <!-- Top Bar -->
+      <div class="uf-topbar">
+        <div class="uf-topbar-left">
+          <div class="uf-logo">Flux<span>Plus</span></div>
+          <div class="uf-week-badge">${esc(reg.week)} · Generated 08:38 AM</div>
+        </div>
+        <div class="uf-topbar-right">
+          <div class="uf-metric-toggle">
+            <button class="uf-metric-btn ${state.metric==='Revenue'?'active':''}" onclick="handleMetricToggle('Revenue')">Revenue</button>
+            <button class="uf-metric-btn ${state.metric==='Orders'?'active':''}" onclick="handleMetricToggle('Orders')">Orders</button>
+          </div>
+          <div class="uf-status-dot"></div>
+          <div class="uf-status-text">All sources reconciled · 9/9</div>
+          <div class="uf-avatar">JO</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="uf-tabs">
+        ${tabs.map(t => `<button class="uf-tab ${state.tab===t.key?'active':''}" onclick="handleTabClick('${t.key}')">${t.label}</button>`).join("")}
+      </div>
+
+      <!-- Metric Strip -->
+      <div class="uf-metric-strip">
+        <span class="uf-metric-strip-label">Viewing</span>
+        <span class="uf-metric-strip-value">${esc(state.metric)}</span>
+        <span class="uf-metric-strip-sep">·</span>
+        <span class="uf-metric-strip-sub">${state.metric==='Orders'?'Showing Order volume — operational fulfillment metrics':'Click Orders above to switch to Order volume view'}</span>
+      </div>
+
+      <!-- Main -->
+      <div class="uf-main">
+        <!-- Sidebar -->
+        <div class="uf-sidebar">
+          <div class="uf-nav-section">
+            <div class="uf-nav-label">Regions</div>
+            ${regionItems.map(r => `<button class="uf-nav-item ${state.region===r.key?'active':''}" onclick="handleRegionClick('${r.key}')">${esc(r.label)}<span class="uf-nav-pill ${regionPillColorMap[r.key]}">${regionPillMap[r.key]}</span></button>`).join("")}
+          </div>
+          <div class="uf-nav-section">
+            <div class="uf-nav-label">Comparison</div>
+            ${compItems.map(c => `<button class="uf-nav-item ${state.comparison===c.key?'active':''}" onclick="handleCompClick('${c.key}')">${esc(c.label)}</button>`).join("")}
+          </div>
+          <div class="uf-nav-section">
+            <div class="uf-nav-label">Segments</div>
+            ${segNavItems.map(s => `<button class="uf-nav-item" onclick="handleSegNav('${s.key}')">${esc(s.label)}<span class="uf-nav-pill ${s.pillCls}">${s.pill}</span></button>`).join("")}
+          </div>
+        </div>
+
+        <!-- Centre -->
+        <div class="uf-centre">
+          <div class="uf-fade-in">${tabContents[state.tab]}</div>
+        </div>
+
+        <!-- AI Panel -->
+        <div class="uf-ai-panel">
+          <div class="uf-ai-header">
+            <div class="uf-ai-icon">✦</div>
+            <div><div class="uf-ai-title">AI Query</div><div class="uf-ai-subtitle">${tabHints[state.tab]}</div></div>
+          </div>
+          <div class="uf-ai-messages" id="ai-messages">
+            ${state.aiMessages.map(msg => `
+              <div class="uf-msg ${msg.role} uf-fade-in">
+                <div class="uf-msg-role">${esc(msg.name)}</div>
+                <div class="uf-msg-bubble">${msg.html || esc(msg.text || '')}</div>
+              </div>
+            `).join("")}
+            ${state.isTyping ? `<div class="uf-msg ai typing uf-fade-in"><div class="uf-msg-role">FluxPlus AI</div><div class="uf-msg-bubble"><span style="opacity:0.5">●</span> <span style="opacity:0.3">●</span> <span style="opacity:0.15">●</span></div></div>` : ''}
+          </div>
+          <div class="uf-ai-input-area">
+            <div class="uf-ai-input-wrap">
+              <input type="text" id="chat-input" placeholder="Ask about any segment or signal..." ${state.isTyping?'disabled':''} onkeydown="handleChatKeyDown(event)">
+              <button class="uf-ai-send" onclick="handleChatSubmit()" style="opacity:${state.isTyping?0.4:1}">↑</button>
+            </div>
+            <div class="uf-ai-suggestions">
+              ${state.suggestions.map((s,i) => `<button class="uf-suggestion" onclick="handleSuggestionClick(${i})">${esc(s)}</button>`).join("")}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="uf-bottombar">
+        <div class="uf-bottom-left">
+          <div class="uf-bottom-stat">Sources <span>9/9</span></div>
+          <div class="uf-bottom-stat">Segments <span>12</span></div>
+          <div class="uf-bottom-stat">Comparison <span>${esc(comp.label)}</span></div>
+          <div class="uf-bottom-stat">Generated <span>08:38 AM</span></div>
+        </div>
+        <div class="uf-bottom-right">FluxPlus · Week 10 · ${esc(reg.label)}</div>
+      </div>
+    </div>`;
+
+  scrollAI();
+}
+
+function renderAIPanel() {
+  const el = document.getElementById("ai-messages");
+  if (!el) return;
+  el.innerHTML = state.aiMessages.map(msg => `
+    <div class="uf-msg ${msg.role} uf-fade-in">
+      <div class="uf-msg-role">${esc(msg.name)}</div>
+      <div class="uf-msg-bubble">${msg.html || esc(msg.text || '')}</div>
+    </div>
+  `).join("") + (state.isTyping ? `<div class="uf-msg ai typing uf-fade-in"><div class="uf-msg-role">FluxPlus AI</div><div class="uf-msg-bubble"><span style="opacity:0.5">●</span> <span style="opacity:0.3">●</span> <span style="opacity:0.15">●</span></div></div>` : '');
+
+  const sugEl = document.querySelector(".uf-ai-suggestions");
+  if (sugEl) {
+    sugEl.innerHTML = state.suggestions.map((s,i) => `<button class="uf-suggestion" onclick="handleSuggestionClick(${i})">${esc(s)}</button>`).join("");
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  EVENT HANDLERS
+// ═══════════════════════════════════════════════════════
+
+function handleRegionClick(r) {
+  if (r === state.region) return;
+  state.region = r;
+  state.selectedSegment = -1;
+  seedAI();
+  render();
+}
+
+function handleCompClick(c) {
+  if (c === state.comparison) return;
+  state.comparison = c;
+  state.selectedSegment = -1;
+  const comp = DATA.comparisons[c];
+  addUserMsg("Switch to " + comp.label);
+  addAIMsg("<strong>" + comp.label + " loaded — " + getRegionData().label + ".</strong><br><br>" + comp.aiA);
+  render();
+}
+
+function handleMetricToggle(m) {
+  if (m === state.metric) return;
+  state.metric = m;
+  addUserMsg("Switch to " + m + " view");
+  addAIMsg("<strong>Now showing " + (m==="Orders"?"Order volume":"Revenue (USD)") + ".</strong><br><br>The variance patterns and rankings are identical — the underlying drivers don't change with the metric lens.", 700);
+  render();
+}
+
+function handleTabClick(t) {
+  state.tab = t;
+  render();
+}
+
+function handleSegmentClick(idx) {
+  const segs = getSegments();
+  const seg = segs[idx];
+  state.selectedSegment = idx;
+  const comp = getCompData();
+  addUserMsg("Deep-dive: " + seg.name + " (" + comp.label + ")");
+  addAIMsg("<strong>" + seg.name + " — " + comp.label + " analysis:</strong><br><br>" + seg.text + "<br><br><strong>Variance:</strong> " + seg.variance + " · <strong>Metric:</strong> " + state.metric + "<br><strong>Tags:</strong> " + seg.tags.map(t=>t.label).join(", "), 750);
+  render();
+}
+
+function handleStatClick(type) {
+  const met = getMetricData();
+  const comp = getCompData();
+  const reg = getRegionData();
+  const totalVariance = state.metric === "Revenue" ? (comp.totalVariance || met.variance) : met.variance;
+  if (type === "variance") {
+    addUserMsg("What is driving the " + comp.label + " variance of " + totalVariance + "?");
+    addAIMsg("<strong>Variance decomposition — " + reg.label + " · " + comp.label + ":</strong><br><br>" + (comp.signal || reg.signal.body), 750);
+  } else if (type === "flagged") {
+    addUserMsg("Why are " + met.flagged + " segments flagged?");
+    addAIMsg("<strong>" + met.flagged + " segments flagged</strong> (" + met.flaggedDetail + ").<br><br>Flags trigger when variance exceeds 1.5 standard deviations from the rolling 8-week baseline.", 750);
+  } else if (type === "driver") {
+    addUserMsg("Tell me more about: " + met.driver);
+    addAIMsg("<strong>Top driver: " + met.driver + "</strong> — " + met.driverDetail + ".<br><br>This factor accounts for ~50–65% of the total " + comp.label + " variance. " + reg.signal.body, 750);
+  }
+}
+
+function handleSegNav(key) {
+  const d = DATA.segmentNav[key];
+  if (d) { addUserMsg(d.aiQ); addAIMsg(d.aiA, 850); }
+}
+
+function handleDrillClick(id) {
+  state.selectedDrill = id;
+  const d = DATA.drillAI[id];
+  if (d) { addUserMsg(d.q); addAIMsg(d.a, 900); }
+  render();
+}
+
+function handleExcClick(id) {
+  state.selectedExc = id;
+  const exc = DATA.exceptions.find(e => e.id === id);
+  if (exc) { addUserMsg(exc.aiQ); addAIMsg(exc.aiA, 900); }
+  render();
+}
+
+function handleSignalClick(idx) {
+  state.selectedSignal = idx;
+  const sig = DATA.signals[idx];
+  const n = Math.round(sig.confidence * 0.18 + 4);
+  addUserMsg("Explain: " + sig.name);
+  addAIMsg("<strong>" + sig.name + "</strong><br><br><strong>Type:</strong> " + sig.type + " · <strong>Confidence: <span style='color:" + sig.confColor + "'>" + sig.confidence + "%</span></strong><br><br>" + sig.body + "<br><br>Model basis: " + n + " comparable patterns. Signal generated 08:38 AM from 9/9 sources.", 800);
+  render();
+}
+
+function handleHistoryClick(week) {
+  state.selectedHistory = week;
+  const h = DATA.history.find(x => x.week === week);
+  const d = DATA.historyAI[week];
+  const q = d ? d.q : "Summarize " + week + " (" + h.dates + ")";
+  const a = d ? d.a : "<strong>" + week + " — " + h.dates + "</strong><br><br>Total variance vs Plan: <strong class='uf-" + h.varColor + "'>" + h.variance + "</strong><br><br>Primary drivers: " + h.tags.map(t=>t.label).join(", ") + ".";
+  addUserMsg(q);
+  addAIMsg(a, 800);
+  render();
+}
+
+function handleSuggestionClick(idx) {
+  const s = state.suggestions[idx];
+  const reg = getRegionData();
+  const lastAi = reg.ai.messages.filter(m => m.role === "ai").pop();
+  addUserMsg(s);
+  addAIMsg("<strong>" + s + "</strong><br><br>Analyzing for <em>" + reg.label + "</em> — " + state.metric + " · " + getCompData().label + ".<br><br>" + (lastAi ? (lastAi.html || lastAi.text) : ""), 850);
+}
+
+function handleChatKeyDown(e) {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleChatSubmit(); }
+}
+
+function handleChatSubmit() {
+  const input = document.getElementById("chat-input");
+  const text = (input.value || "").trim();
+  if (!text || state.isTyping) return;
+  input.value = "";
+  addUserMsg(text);
+  // Generate contextual response
+  const reg = getRegionData();
+  const comp = getCompData();
+  const met = getMetricData();
+  const totalVariance = state.metric === "Revenue" ? (comp.totalVariance || met.variance) : met.variance;
+  const q = text.toLowerCase();
+  let resp;
+  if (q.includes("risk") || q.includes("concern") || q.includes("watch"))
+    resp = "<strong>Risk assessment for " + reg.label + ":</strong><br><br>" + reg.signal.body;
+  else if (q.includes("action") || q.includes("recommend"))
+    resp = "<strong>Recommended actions — " + reg.label + ":</strong><br><br>" + (reg.ai.messages.filter(m=>m.role==="ai").pop()?.html || reg.signal.body);
+  else if (q.includes("variance") || q.includes("gap") || q.includes("miss"))
+    resp = "<strong>Variance — " + reg.label + " · " + comp.label + ":</strong><br><br>Total: <strong>" + totalVariance + "</strong>. " + (comp.signal || reg.signal.body);
+  else if (q.includes("driver") || q.includes("cause") || q.includes("why"))
+    resp = "<strong>Top driver: " + met.driver + "</strong> — " + met.driverDetail + ".<br><br>" + reg.signal.body;
+  else if (q.includes("forecast") || q.includes("next week") || q.includes("w11"))
+    resp = "<strong>Forward outlook — " + reg.label + ":</strong><br><br>" + reg.signal.body;
+  else
+    resp = "<strong>Analysis for \"" + esc(text) + "\":</strong><br><br>" + reg.label + " — " + state.metric + " · " + comp.label + ". Total: <strong>" + totalVariance + "</strong>. " + met.flagged + " flagged. Driver: " + met.driver + ".<br><br>" + reg.signal.body;
+  addAIMsg(resp, 900);
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+
+seedAI();
+render();
+</script>
+</body>
+</html>

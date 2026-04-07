@@ -80,7 +80,7 @@ export function StandardFluxDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-lg p-0">
         {/* Header */}
-        <div className="border-b border-slate-200 bg-slate-50 px-6 py-5">
+        <div className="border-b border-slate-200 bg-slate-50 px-4 sm:px-6 py-4 sm:py-5">
           <SheetHeader className="pb-0">
             <SheetTitle className="text-lg font-bold text-slate-900">{row.name}</SheetTitle>
             <p className="text-sm text-slate-500">
@@ -102,7 +102,7 @@ export function StandardFluxDrawer({
           </div>
         </div>
 
-        <div className="px-6 py-5 space-y-5">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 space-y-5">
           {/* Section 1: Variance Summary */}
           <div>
             <h4 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">

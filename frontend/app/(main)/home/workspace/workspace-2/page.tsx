@@ -63,7 +63,7 @@ export default function MyWorkspace2Page() {
   return (
     <div className="flex flex-col bg-white" style={{ height: "100%", minHeight: 0 }}>
       {/* Header with Breadcrumb and Title */}
-      <header className="sticky top-0 z-10 bg-white px-6 py-2 flex-shrink-0">
+      <header className="sticky top-0 z-10 bg-white px-3 sm:px-6 py-2 flex-shrink-0">
         <Breadcrumb activeRoute="home/workspace/workspace-2" className="mb-1.5" />
         <div className="flex items-start justify-between mb-1">
           <div>
@@ -836,8 +836,8 @@ export default function MyWorkspace2Page() {
                   {/* At-Risk Recons Table */}
                   <div>
                     <h4 className="text-sm font-medium text-slate-700 mb-3">At-Risk Recons</h4>
-                    <div className="border rounded-lg overflow-hidden">
-                      <table className="w-full text-sm">
+                    <div className="border rounded-lg overflow-hidden overflow-x-auto">
+                      <table className="w-full text-sm min-w-[600px]">
                         <thead className="bg-slate-50 border-b">
                           <tr>
                             <th className="text-left p-3 font-medium">Recon ID</th>

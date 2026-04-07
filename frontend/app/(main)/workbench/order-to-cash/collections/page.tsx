@@ -1096,10 +1096,10 @@ export default function CollectionsWorkbenchPage() {
   return (
     <div className="h-full flex flex-col bg-slate-50">
       <div className="flex-1 overflow-auto">
-        <div className="px-5 py-2">
+        <div className="px-3 sm:px-5 py-2">
           {/* ── Row 1: Tabs + Compact KPI Stats ── */}
-          <div className="flex items-center justify-between gap-2 mb-2">
-            <div className="flex items-center gap-0.5">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-0.5 overflow-x-auto">
               {([
                 { id: "accounts" as const, label: "Accounts" },
                 { id: "dunning" as const, label: "Dunning" },
@@ -1121,7 +1121,7 @@ export default function CollectionsWorkbenchPage() {
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-2 text-[11px]">
+            <div className="hidden md:flex items-center gap-2 text-[11px]">
               {activeTab === "accounts" && (
                 <>
                   <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
@@ -1222,8 +1222,8 @@ export default function CollectionsWorkbenchPage() {
           </div>
 
           {/* ── Row 2: Search + Filters + Quick Views + Actions ── */}
-          <div className="flex items-center justify-between gap-2 mb-2">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
                 <Input
@@ -1236,7 +1236,7 @@ export default function CollectionsWorkbenchPage() {
                     else if (activeTab === "disputes") setDisputeSearch(e.target.value);
                     else setCorrSearch(e.target.value);
                   }}
-                  className="pl-8 w-52 h-7 text-xs bg-white"
+                  className="pl-8 w-44 sm:w-52 h-7 text-xs bg-white"
                 />
               </div>
 

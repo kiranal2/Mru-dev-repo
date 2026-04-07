@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, startTransition } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 
@@ -10,6 +11,8 @@ import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import NavigationPanel from "@/components/layout/navigation-panel";
 import MainContent from "@/components/layout/main-content";
+import MobileNavDrawer from "@/components/layout/mobile-nav-drawer";
+import { Home, RefreshCw, BarChart3, LayoutGrid, Shield } from "lucide-react";
 
 // UI Components
 import LivePinModal from "@/components/ui/live-pin-modal";
@@ -39,6 +42,8 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   const [isCreateWatchModalOpen, setIsCreateWatchModalOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isSidebarHidden, setIsSidebarHidden] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
   const hoverClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -68,10 +73,14 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     }
   }, [selectedRailItem]);
 
-  // Handle responsive collapse
+  // Handle responsive collapse + mobile detection
   useEffect(() => {
     const handleResize = () => {
-      setIsCollapsed(window.innerWidth <= 1024);
+      const w = window.innerWidth;
+      setIsCollapsed(w <= 1024);
+      setIsMobile(w < 768);
+      // Close mobile nav if resizing to desktop
+      if (w >= 768) setIsMobileNavOpen(false);
     };
 
     handleResize();
@@ -272,10 +281,12 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
           loadingState={hasInitiallyLoaded ? "loaded" : loadingState}
           isSidebarHidden={isSidebarHidden}
           onToggleSidebar={() => setIsSidebarHidden(!isSidebarHidden)}
+          isMobile={isMobile}
+          onMobileMenuToggle={() => setIsMobileNavOpen(true)}
         />
 
-        <div className="flex min-h-[calc(100vh-57px)]">
-          {!isSidebarHidden && (
+        <div className={cn("flex", isMobile ? "min-h-[calc(100vh-46px-52px)]" : "min-h-[calc(100vh-50px)] xl:min-h-[calc(100vh-57px)]")}>
+          {!isSidebarHidden && !isMobile && (
             <Sidebar
               loadingState={hasInitiallyLoaded ? "loaded" : loadingState}
               isCollapsed={isCollapsed}
@@ -298,8 +309,8 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
           </MainContent>
         </div>
 
-        {/* Navigation Panel Overlay */}
-        {!isSidebarHidden && (
+        {/* Navigation Panel Overlay (desktop only) */}
+        {!isSidebarHidden && !isMobile && (
           <NavigationPanel
             hoveredRailItem={hoveredRailItem}
             selectedRailItem={selectedRailItem}
@@ -311,6 +322,52 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
             onToggleMenu={handleToggleMenu}
             onNavigationItemClick={handleNavigationItemClick}
           />
+        )}
+
+        {/* Mobile Navigation Drawer */}
+        {isMobile && (
+          <MobileNavDrawer
+            open={isMobileNavOpen}
+            onOpenChange={setIsMobileNavOpen}
+            selectedRailItem={selectedRailItem}
+            activeRoute={activeRoute}
+            navigationStructure={NAVIGATION_STRUCTURE}
+            onRailItemClick={handleRailItemClick}
+            onNavigationItemClick={handleNavigationItemClick}
+          />
+        )}
+
+        {/* Mobile Bottom Tab Bar */}
+        {isMobile && (
+          <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t bg-white px-1 pb-[env(safe-area-inset-bottom)]"
+            style={{ borderColor: 'var(--theme-border)', height: 52 }}
+          >
+            {([
+              { key: "home" as RailItem, icon: <Home size={20} />, label: "Home" },
+              { key: "automation" as RailItem, icon: <RefreshCw size={20} />, label: "Auto" },
+              { key: "reports" as RailItem, icon: <BarChart3 size={20} />, label: "Reports" },
+              { key: "workbench" as RailItem, icon: <LayoutGrid size={20} />, label: "Workbench" },
+              { key: "admin" as RailItem, icon: <Shield size={20} />, label: "Admin" },
+            ]).map((item) => {
+              const isActive = getRailItemSelectedState(item.key);
+              return (
+                <button
+                  key={item.key}
+                  onClick={() => handleRailItemClick(item.key)}
+                  className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-0"
+                  style={{
+                    color: isActive ? 'var(--theme-sidebar-text-active, #1E40AF)' : 'var(--theme-text-secondary, #94a3b8)',
+                    background: 'none',
+                    border: 'none',
+                    outline: 'none',
+                  }}
+                >
+                  {item.icon}
+                  <span className="text-[9px] font-medium leading-none truncate">{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
         )}
 
         {/* Live Pin Modal */}

@@ -21,7 +21,7 @@ export function FluxPagination({
   onPageChange,
 }: FluxPaginationProps) {
   return (
-    <div className="flex items-center justify-between p-3 border-t border-slate-200 bg-slate-50/70">
+    <div className="flex flex-wrap items-center justify-between gap-2 p-3 border-t border-slate-200 bg-slate-50/70">
       <span className="text-xs text-slate-500">
         Showing {tableStart}–{tableEnd} of {totalRows}
       </span>

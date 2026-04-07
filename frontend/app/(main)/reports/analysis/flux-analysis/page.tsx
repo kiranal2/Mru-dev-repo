@@ -38,7 +38,7 @@ export default function FluxAnalysisPage() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-slate-50">
       {/* Title */}
-      <div className="px-5 pt-3 pb-1 bg-slate-50">
+      <div className="px-3 sm:px-5 pt-3 pb-1 bg-slate-50">
         <h1 className="text-sm font-semibold text-slate-900">Flux Analysis</h1>
         <p className="text-[11px] text-slate-500">Period variance analysis &amp; AI-driven driver decomposition</p>
       </div>
@@ -68,7 +68,7 @@ export default function FluxAnalysisPage() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto" style={{ minHeight: 0 }}>
-        <div className="space-y-3 px-5 py-3">
+        <div className="space-y-3 px-3 sm:px-5 py-3">
           <div className="grid grid-cols-1 gap-3 xl:grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_440px]">
             {/* LEFT: Tables & Drivers */}
             <div className="min-w-0 space-y-3">
