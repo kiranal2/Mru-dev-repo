@@ -39,7 +39,7 @@ export default function NavigationPanel({
   return (
     <aside
       className={cn(
-        "fixed left-14 xl:left-20 top-[46px] md:top-[50px] xl:top-[57px] bottom-0 flex flex-col transition-all duration-300 ease-out z-30",
+        "fixed left-16 xl:left-20 top-[44px] md:top-[48px] xl:top-[56px] bottom-0 flex flex-col transition-all duration-300 ease-out z-30",
         (hoveredRailItem || isPanelHovered)
           ? "w-60 opacity-100"
           : "w-0 opacity-0 overflow-hidden"
@@ -142,9 +142,6 @@ function NavigationItemComponent({ item, activeRoute, onItemClick, level = 0 }: 
         role="menuitem"
         aria-current={isExactActive ? "page" : undefined}
       >
-        {isExactActive && (
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[65%] rounded-r-full" style={{ background: 'var(--theme-navpanel-indicator)' }} />
-        )}
         <span className="flex-shrink-0 transition-colors duration-200" style={{ color: isExactActive ? 'var(--theme-navpanel-text-active)' : 'var(--theme-navpanel-group-text)' }}>{item.icon}</span>
         <span className="flex-1 text-left">{item.label}</span>
       </button>

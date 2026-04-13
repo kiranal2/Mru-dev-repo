@@ -50,7 +50,7 @@ export default function Sidebar({
 
   return (
     <aside className={cn(
-        "flex flex-col pt-3 xl:pt-5 relative border-r w-14 xl:w-20",
+        "flex flex-col pt-1 xl:pt-2 relative border-r w-16 xl:w-20",
         loadingState === 'loading'
           ? "transition-all duration-300 ease-out opacity-0 -translate-x-4"
           : "transition-none opacity-100 translate-x-0"
@@ -60,7 +60,7 @@ export default function Sidebar({
         borderColor: 'var(--theme-border)',
       }}
     >
-        <nav className="flex flex-col gap-0.5 px-1.5" role="navigation" aria-label="Main navigation">
+        <nav className="flex flex-col gap-0.5 px-1 xl:px-1.5 [&_svg]:w-[18px] [&_svg]:h-[18px] xl:[&_svg]:w-[22px] xl:[&_svg]:h-[22px]" role="navigation" aria-label="Main navigation">
           <Tooltip delayDuration={150}>
             <TooltipTrigger asChild>
               <RailButton
@@ -158,7 +158,7 @@ export default function Sidebar({
         </nav>
 
         {/* Profile Icon at Bottom */}
-        <div className="mt-auto mb-4 flex justify-center">
+        <div className="mt-auto mb-2 xl:mb-4 flex justify-center">
           <Tooltip delayDuration={150}>
             <TooltipTrigger asChild>
               <button
@@ -170,12 +170,11 @@ export default function Sidebar({
                   onUserMenuToggle();
                 }}
               >
-                <UserCircle2 size={22} className="transition-transform duration-200 group-hover:scale-105" />
+                <UserCircle2 size={18} className="transition-transform duration-200 group-hover:scale-105 xl:[width:22px] xl:[height:22px]" />
                 {showUserMenu && (
                   <div
-                    className="fixed w-52 rounded-xl py-2 shadow-elevation-3 animate-scale-in"
+                    className="fixed w-52 rounded-xl py-2 shadow-elevation-3 animate-scale-in left-[68px] xl:left-[84px]"
                     style={{
-                      left: '84px',
                       bottom: '16px',
                       zIndex: 9999,
                       background: 'var(--theme-user-menu-bg)',
@@ -245,7 +244,9 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className="flex flex-col items-center justify-center w-full py-3 relative group transition-all duration-200 ease-out rounded-md"
+      className={cn(
+        "flex flex-col items-center justify-center aspect-square w-full relative group transition-all duration-200 ease-out rounded-lg"
+      )}
       style={{
         color: isSelected ? 'var(--theme-sidebar-text-active)' : 'var(--theme-sidebar-text)',
         background: isSelected ? 'var(--theme-sidebar-active-bg)' : 'transparent',
@@ -257,16 +258,13 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
       aria-label={label}
       aria-current={isSelected ? "page" : undefined}
     >
-      {/* Active indicator bar */}
-      <span
-        className={cn(
-          "absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] rounded-r-full transition-all duration-300",
-          isSelected
-            ? "h-7 opacity-100"
-            : "h-0 opacity-0 group-hover:h-4 group-hover:opacity-40"
-        )}
-        style={{ background: 'var(--theme-sidebar-indicator)' }}
-      />
+      {/* Hover indicator bar */}
+      {!isSelected && (
+        <span
+          className="absolute left-0 top-0 bottom-0 w-[3px] transition-all duration-300 opacity-0 group-hover:opacity-40"
+          style={{ background: 'var(--theme-sidebar-indicator)' }}
+        />
+      )}
       <span className="transition-transform duration-200">
         {icon}
       </span>

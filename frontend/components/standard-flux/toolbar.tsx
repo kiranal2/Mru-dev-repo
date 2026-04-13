@@ -127,7 +127,7 @@ export function StandardFluxToolbar({
   return (
     <>
       {/* ── Mobile/Tablet toolbar (< xl) ── */}
-      <div className="xl:hidden px-4 py-1.5 space-y-1.5">
+      <div className="xl:hidden px-4 py-1.5 space-y-1.5 min-w-0 overflow-hidden">
         {/* Row 1: Compare + View + (tablet: inline selects) + action buttons */}
         <div className="flex items-center gap-1.5 overflow-x-auto">
           {/* Compare pills */}
@@ -286,10 +286,10 @@ export function StandardFluxToolbar({
       </div>
 
       {/* ── Desktop: multi-row toolbar (xl+) ── */}
-      <div className="hidden xl:block px-5 py-2 bg-slate-50 space-y-1.5">
-        {/* Row 1: Compare + View tabs */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-lg border border-slate-200 bg-white p-0.5">
+      <div className="hidden xl:block px-5 py-2 bg-slate-50 space-y-1.5 min-w-0">
+        {/* Row 1: Controls */}
+        <div className="flex items-center gap-2 flex-wrap min-w-0">
+          <div className="flex items-center rounded-lg border border-slate-200 bg-white p-0.5 shrink-0">
             {COMPARISON_MODES.map((mode) => (
               <button
                 key={mode}
@@ -306,9 +306,9 @@ export function StandardFluxToolbar({
             ))}
           </div>
 
-          <span className="h-4 w-px bg-slate-200" />
+          <span className="h-4 w-px bg-slate-200 shrink-0" />
 
-          <div className="flex items-center rounded-lg border border-slate-200 bg-white p-0.5">
+          <div className="flex items-center rounded-lg border border-slate-200 bg-white p-0.5 shrink-0">
             {(["is", "bs", "cf"] as const).map((view) => {
               const labels = { is: "Income Statement", bs: "Balance Sheet", cf: "Cash Flow Bridge" };
               return (
@@ -328,10 +328,10 @@ export function StandardFluxToolbar({
             })}
           </div>
 
-          <span className="h-4 w-px bg-slate-200" />
+          <span className="h-4 w-px bg-slate-200 shrink-0" />
 
           <Select defaultValue="q3-current">
-            <SelectTrigger className="h-7 w-[150px] rounded-md border-slate-200 bg-white text-xs">
+            <SelectTrigger className="h-7 w-[150px] rounded-md border-slate-200 bg-white text-xs shrink-0">
               <SelectValue placeholder="Period" />
             </SelectTrigger>
             <SelectContent>
@@ -343,7 +343,7 @@ export function StandardFluxToolbar({
           </Select>
 
           <Select value={consolidation} onValueChange={onConsolidationChange}>
-            <SelectTrigger className="h-7 w-[120px] rounded-md border-slate-200 bg-white text-xs">
+            <SelectTrigger className="h-7 w-[120px] rounded-md border-slate-200 bg-white text-xs shrink-0">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -354,7 +354,7 @@ export function StandardFluxToolbar({
           </Select>
 
           <Select value={currency} onValueChange={onCurrencyChange}>
-            <SelectTrigger className="h-7 w-[80px] rounded-md border-slate-200 bg-white text-xs">
+            <SelectTrigger className="h-7 w-[80px] rounded-md border-slate-200 bg-white text-xs shrink-0">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -366,7 +366,7 @@ export function StandardFluxToolbar({
 
           <Popover>
             <PopoverTrigger asChild>
-              <button className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+              <button className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors shrink-0">
                 <ListFilter className="h-3.5 w-3.5" />
                 Filters
                 {activeFilterCount > 0 && (
@@ -381,28 +381,29 @@ export function StandardFluxToolbar({
 
           <button
             onClick={onExport}
-            className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors shrink-0"
           >
             <Download className="h-3.5 w-3.5" /> Export
           </button>
           <button
             onClick={onOpenWatch}
-            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-primary/90 transition-colors shrink-0"
           >
             <Plus className="h-3.5 w-3.5" /> Watch
           </button>
+        </div>
 
-          <div className="flex items-center gap-1.5 ml-auto">
-            {viewKpis.map((kpi) => (
-              <div key={kpi.label} className="flex items-center gap-1 rounded-md bg-white border border-slate-200 px-2 py-0.5">
-                <span className="text-[10px] text-slate-500">{kpi.label}</span>
-                <span className="text-[10px] font-bold text-slate-900">{kpi.value}</span>
-                {kpi.change && (
-                  <span className={cn("text-[10px] font-medium", kpi.positive ? "text-emerald-600" : "text-red-600")}>{kpi.change}</span>
-                )}
-              </div>
-            ))}
-          </div>
+        {/* Row 2: KPI chips */}
+        <div className="flex items-center gap-1.5 overflow-x-auto min-w-0">
+          {viewKpis.map((kpi) => (
+            <div key={kpi.label} className="flex items-center gap-1 rounded-md bg-white border border-slate-200 px-2 py-0.5 shrink-0">
+              <span className="text-[10px] text-slate-500 whitespace-nowrap">{kpi.label}</span>
+              <span className="text-[10px] font-bold text-slate-900 whitespace-nowrap">{kpi.value}</span>
+              {kpi.change && (
+                <span className={cn("text-[10px] font-medium whitespace-nowrap", kpi.positive ? "text-emerald-600" : "text-red-600")}>{kpi.change}</span>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </>

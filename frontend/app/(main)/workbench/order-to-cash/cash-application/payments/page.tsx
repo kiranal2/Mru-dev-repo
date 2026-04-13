@@ -238,10 +238,10 @@ export default function PaymentsQueuePage() {
     <div className="h-full flex flex-col bg-slate-50">
       <div className="flex-1 overflow-auto">
         <div className="px-3 sm:px-5 py-2">
-          <div className="mb-2 space-y-1.5">
+          <div className="mb-1.5 xl:mb-2 space-y-1">
             {/* Single row: Search + Filters + Status tabs + KPI stats */}
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center justify-between gap-1.5 overflow-x-auto">
+              <div className="flex items-center gap-1.5 shrink-0">
                 {/* Search */}
                 <div className="relative">
                   <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
@@ -249,7 +249,7 @@ export default function PaymentsQueuePage() {
                     placeholder="Search payments..."
                     value={q.filters.search}
                     onChange={(e) => q.setFilters({ ...q.filters, search: e.target.value })}
-                    className="pl-8 w-44 h-7 text-xs bg-white"
+                    className="pl-8 w-32 md:w-44 h-7 text-xs bg-white"
                   />
                 </div>
 
@@ -616,8 +616,8 @@ export default function PaymentsQueuePage() {
                   </PopoverContent>
                 </Popover>
 
-                {/* Status tabs */}
-                <div className="flex items-center gap-1">
+                {/* Status tabs — scrollable on tablet */}
+                <div className="flex items-center gap-1 overflow-x-auto">
                   {[
                     { id: "all", label: "All", count: q.payments.length },
                     { id: "AutoMatched", label: "Auto-Matched", count: q.stats.autoMatched },
@@ -633,7 +633,7 @@ export default function PaymentsQueuePage() {
                           : q.handleQueueStatusChange(seg.id)
                       }
                       className={cn(
-                        "px-3 py-1.5 text-xs font-medium rounded-md transition-colors",
+                        "px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors whitespace-nowrap shrink-0",
                         queueStatusFilter === seg.id
                           ? "bg-white text-primary shadow-sm border border-slate-200"
                           : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
@@ -650,8 +650,8 @@ export default function PaymentsQueuePage() {
                 </div>
               </div>
 
-              {/* Compact KPI stat chips */}
-              <div className="hidden md:flex items-center gap-2 text-[11px]">
+              {/* Compact KPI stat chips — desktop only, tablet uses status tab counts */}
+              <div className="hidden xl:flex items-center gap-2 text-[11px]">
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200">
                   <span className="text-slate-500">Total</span>
                   <span className="font-semibold text-slate-900">{q.payments.length}</span>
@@ -942,14 +942,23 @@ export default function PaymentsQueuePage() {
                               className="border-slate-300"
                             />
                           </th>
-                          {visibleHeaders.map((header) => (
-                            <th
-                              key={header}
-                              className="px-3 py-2 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider"
-                            >
-                              {header}
-                            </th>
-                          ))}
+                          {visibleHeaders.map((header) => {
+                            // Hide certain columns on tablet/mobile for density
+                            const hiddenOnTablet = header === "Payer Name" || header === "Remittance";
+                            const hiddenOnMobile = header === "Date";
+                            return (
+                              <th
+                                key={header}
+                                className={cn(
+                                  "px-2 xl:px-3 py-2 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap",
+                                  hiddenOnTablet && "hidden xl:table-cell",
+                                  hiddenOnMobile && "hidden md:table-cell"
+                                )}
+                              >
+                                {header}
+                              </th>
+                            );
+                          })}
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 bg-white">
@@ -1011,22 +1020,22 @@ export default function PaymentsQueuePage() {
                                       />
                                     </div>
                                   </td>
-                                  <td className={`px-3 py-1.5 text-xs font-medium text-blue-600 whitespace-nowrap`}>
+                                  <td className={`px-2 xl:px-3 py-1.5 text-xs font-medium text-blue-600 whitespace-nowrap`}>
                                     {payment.paymentNumber}
                                   </td>
-                                  <td className={`px-3 py-1.5 text-xs text-slate-700 whitespace-nowrap`}>
+                                  <td className={`px-2 xl:px-3 py-1.5 text-xs text-slate-700 whitespace-nowrap hidden md:table-cell`}>
                                     {payment.date}
                                   </td>
-                                  <td className={`px-3 py-1.5 text-xs font-semibold text-slate-900 whitespace-nowrap`}>
+                                  <td className={`px-2 xl:px-3 py-1.5 text-xs font-semibold text-slate-900 whitespace-nowrap`}>
                                     {q.formatCurrency(payment.amount)}
                                   </td>
-                                  <td className={`px-3 py-1.5 text-xs font-medium text-slate-800`}>
+                                  <td className={`px-2 xl:px-3 py-1.5 text-xs font-medium text-slate-800 hidden xl:table-cell`}>
                                     {payment.payerNameRaw}
                                   </td>
-                                  <td className={`px-3 py-1.5 text-xs text-slate-700`}>
+                                  <td className={`px-2 xl:px-3 py-1.5 text-xs text-slate-700`}>
                                     {payment.customerName}
                                   </td>
-                                  <td className={`px-3 py-1.5 text-xs text-slate-500`}>
+                                  <td className={`px-2 xl:px-3 py-1.5 text-xs text-slate-500 hidden xl:table-cell`}>
                                     {payment.remittanceSource}
                                   </td>
                                   <td className={`px-3 py-1.5 whitespace-nowrap`}>

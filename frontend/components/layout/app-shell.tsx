@@ -43,6 +43,8 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isSidebarHidden, setIsSidebarHidden] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+  const [tabletPanelOpen, setTabletPanelOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
   const hoverClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -79,8 +81,11 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
       const w = window.innerWidth;
       setIsCollapsed(w <= 1024);
       setIsMobile(w < 768);
+      setIsTablet(w >= 768 && w < 1280);
       // Close mobile nav if resizing to desktop
       if (w >= 768) setIsMobileNavOpen(false);
+      // Close tablet panel if resizing to desktop
+      if (w >= 1280) setTabletPanelOpen(false);
     };
 
     handleResize();
@@ -115,6 +120,21 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   }, [pathname, router]);
 
   const handleRailItemClick = (item: RailItem) => {
+    // On tablet: toggle the nav panel instead of navigating
+    if (isTablet) {
+      if (tabletPanelOpen && hoveredRailItem === item) {
+        // Clicking same item again — close panel
+        setTabletPanelOpen(false);
+        setHoveredRailItem(null);
+      } else {
+        // Open panel for this rail
+        setSelectedRailItem(item);
+        setHoveredRailItem(item);
+        setTabletPanelOpen(true);
+      }
+      return;
+    }
+
     setSelectedRailItem(item);
     // Set hoveredRailItem to show panel immediately when clicking
     setHoveredRailItem(item);
@@ -161,6 +181,12 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     // This prevents the panel from switching back to the previous rail item
     if (railItem) {
       setHoveredRailItem(railItem);
+    }
+
+    // Close tablet panel after navigation
+    if (isTablet) {
+      setTabletPanelOpen(false);
+      setHoveredRailItem(null);
     }
 
     startTransition(() => {
@@ -285,7 +311,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
           onMobileMenuToggle={() => setIsMobileNavOpen(true)}
         />
 
-        <div className={cn("flex", isMobile ? "min-h-[calc(100vh-46px-52px)]" : "min-h-[calc(100vh-50px)] xl:min-h-[calc(100vh-57px)]")}>
+        <div className={cn("flex", isMobile ? "min-h-[calc(100vh-44px-52px)]" : "min-h-[calc(100vh-48px)] xl:min-h-[calc(100vh-56px)]")}>
           {!isSidebarHidden && !isMobile && (
             <Sidebar
               loadingState={hasInitiallyLoaded ? "loaded" : loadingState}
@@ -309,18 +335,26 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
           </MainContent>
         </div>
 
-        {/* Navigation Panel Overlay (desktop only) */}
+        {/* Navigation Panel Overlay (desktop hover + tablet click) */}
         {!isSidebarHidden && !isMobile && (
           <NavigationPanel
             hoveredRailItem={hoveredRailItem}
             selectedRailItem={selectedRailItem}
-            isPanelHovered={isPanelHovered}
+            isPanelHovered={isTablet ? tabletPanelOpen : isPanelHovered}
             activeRoute={activeRoute}
             navigationStructure={NAVIGATION_STRUCTURE}
-            onPanelMouseEnter={handlePanelMouseEnter}
-            onPanelMouseLeave={handlePanelMouseLeave}
-            onToggleMenu={handleToggleMenu}
+            onPanelMouseEnter={isTablet ? () => {} : handlePanelMouseEnter}
+            onPanelMouseLeave={isTablet ? () => {} : handlePanelMouseLeave}
+            onToggleMenu={() => { if (isTablet) { setTabletPanelOpen(false); setHoveredRailItem(null); } else { handleToggleMenu(); } }}
             onNavigationItemClick={handleNavigationItemClick}
+          />
+        )}
+
+        {/* Tablet backdrop — closes panel when tapping outside */}
+        {isTablet && tabletPanelOpen && (
+          <div
+            className="fixed inset-0 z-20"
+            onClick={() => { setTabletPanelOpen(false); setHoveredRailItem(null); }}
           />
         )}
 

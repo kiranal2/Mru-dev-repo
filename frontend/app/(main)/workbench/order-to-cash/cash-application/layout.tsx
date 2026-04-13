@@ -152,15 +152,15 @@ export default function CashApplicationLayout({ children }: { children: React.Re
 
   return (
     <div className="h-full flex flex-col">
-      {/* Title */}
-      <div className="px-3 sm:px-5 pt-3 pb-1 bg-slate-50">
+      {/* Title — desktop only; on tablet the nav tabs provide enough context */}
+      <div className="hidden xl:block px-5 pt-3 pb-1 bg-slate-50">
         <h1 className="text-sm font-semibold text-slate-900">Cash Application</h1>
-        <p className="text-[11px] text-slate-500 hidden sm:block">AI-powered payment matching, remittance processing &amp; exception management</p>
+        <p className="text-[11px] text-slate-500">AI-powered payment matching, remittance processing &amp; exception management</p>
       </div>
       {/* Navigation Tabs */}
       <div className="bg-slate-50">
-        <div className="px-3 sm:px-5 pb-1.5 pt-2">
-          <div className="flex items-center justify-between gap-2 sm:gap-4">
+        <div className="px-3 sm:px-5 pb-1 pt-1 xl:pb-1.5 xl:pt-2">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1 overflow-x-auto">
               <button
                 onClick={() => setShowSidebar(!showSidebar)}
@@ -279,7 +279,7 @@ export default function CashApplicationLayout({ children }: { children: React.Re
       {/* Content Area */}
       <div className="flex-1 flex overflow-hidden">
         {showSidebar && (
-          <div className="w-48 flex-shrink-0 bg-slate-50 border-r border-slate-200 overflow-y-auto py-3 px-2 space-y-1">
+          <div className="hidden xl:block w-48 flex-shrink-0 bg-slate-50 border-r border-slate-200 overflow-y-auto py-3 px-2 space-y-1">
             <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-2 mb-1.5">Quick Access</div>
             {[
               { path: "/workbench/order-to-cash/cash-application/exceptions", label: "Exceptions", icon: AlertCircle, iconColor: "text-amber-500", count: stats.exceptions },

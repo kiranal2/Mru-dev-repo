@@ -31,6 +31,7 @@ import {
   ChevronDown,
   ChevronUp,
   BarChart3,
+  ShieldAlert,
   Sparkles,
   TrendingUp,
   TrendingDown,
@@ -98,74 +99,47 @@ export default function StandardFluxPage() {
       {/* ╔══════════════════════════════════════════════════════════╗
           ║  MOBILE / TABLET LAYOUT (< xl, 1280px)                 ║
           ╚══════════════════════════════════════════════════════════╝ */}
-      <div className="xl:hidden flex flex-col h-full min-h-0">
+      <div className="xl:hidden flex flex-col h-full min-h-0 min-w-0">
 
         {/* ── Title row with action icons ── */}
-        <div className="flex items-center justify-between px-4 pt-3 pb-1">
+        <div className="flex items-center justify-between px-4 pt-1.5 pb-1">
           <h1 className="text-sm font-semibold text-slate-900">Standard Flux</h1>
           <div className="flex items-center gap-1">
+            {BANNERS.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setAlertsExpanded(!alertsExpanded)}
+                className="relative rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 transition-colors"
+                title="Alerts"
+              >
+                <ShieldAlert className="h-4 w-4" />
+                <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-500 text-[8px] font-bold text-white">
+                  {BANNERS.length}
+                </span>
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setDriversSheetOpen(true)}
-              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 transition-colors"
+              className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 transition-colors"
               title="Top Drivers"
             >
-              <BarChart3 className="h-4.5 w-4.5" />
+              <BarChart3 className="h-4 w-4" />
             </button>
             <button
               type="button"
               onClick={() => setAiSheetOpen(true)}
-              className="rounded-lg p-2 text-primary hover:bg-primary/5 transition-colors"
+              className="rounded-lg p-1.5 text-primary hover:bg-primary/5 transition-colors"
               title="AI Assistant"
             >
-              <Sparkles className="h-4.5 w-4.5" />
+              <Sparkles className="h-4 w-4" />
             </button>
           </div>
         </div>
 
-        {/* ── Alerts bar (collapsed) ── */}
-        <div className="px-4 pb-1.5">
-          <button
-            type="button"
-            onClick={() => setAlertsExpanded(!alertsExpanded)}
-            className="flex w-full items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-left"
-          >
-            <AlertTriangle className="h-3.5 w-3.5 text-red-600 shrink-0" />
-            <span className="text-[11px] font-semibold text-red-800 flex-1 truncate">
-              {BANNERS.length} alerts &mdash; AR timing, intercompany
-            </span>
-            {alertsExpanded ? (
-              <ChevronUp className="h-3.5 w-3.5 text-red-400 shrink-0" />
-            ) : (
-              <ChevronDown className="h-3.5 w-3.5 text-red-400 shrink-0" />
-            )}
-          </button>
-          {alertsExpanded && (
-            <div className="mt-1.5 space-y-1.5">
-              {BANNERS.map((b) => (
-                <CrossModuleBanner key={b.scenarioTitle} {...b} />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* ── Phone: single-line KPI strip (< md) ── */}
-        <div className="md:hidden flex items-center gap-2 px-4 pb-1.5 overflow-x-auto text-xs">
-          <span className={cn("font-bold shrink-0", state.totalVariance >= 0 ? "text-emerald-600" : "text-red-600")}>
-            {state.totalVariance >= 0 ? "+" : ""}${Math.abs(state.totalVariance).toFixed(1)}M
-            {state.totalVariance >= 0 ? <TrendingUp className="inline h-3 w-3 ml-0.5" /> : <TrendingDown className="inline h-3 w-3 ml-0.5" />}
-          </span>
-          <span className="text-slate-300 shrink-0">|</span>
-          <span className="text-slate-500 shrink-0">{state.reviewStats.closed}/{state.reviewStats.total} reviewed</span>
-          <span className="text-slate-300 shrink-0">|</span>
-          <span className={cn("font-medium shrink-0", state.exceptionCount > 0 ? "text-amber-600" : "text-emerald-600")}>
-            {state.exceptionCount > 0 ? `${state.exceptionCount} need attention` : "All clear"}
-          </span>
-        </div>
-
-        {/* ── Tablet: 2x2 dashboard widget grid (md+) ── */}
-        <div className="hidden md:grid grid-cols-2 gap-2 px-4 pb-2">
-          {/* Widget 1: Net Variance */}
+        {/* ── KPI cards — 2x2 on tablet, stacked on phone ── */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 px-4 pb-2">
+          {/* Net Variance */}
           <div className="rounded-lg border border-slate-200 bg-white p-3">
             <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Net Variance</div>
             <div className="mt-1 flex items-center gap-1.5">
@@ -174,10 +148,10 @@ export default function StandardFluxPage() {
               </span>
               {state.totalVariance >= 0 ? <TrendingUp className="h-4 w-4 text-emerald-500" /> : <TrendingDown className="h-4 w-4 text-red-500" />}
             </div>
-            <div className="mt-1 text-[10px] text-slate-400">QoQ period change</div>
+            <div className="text-[10px] text-slate-400 mt-0.5">QoQ period change</div>
           </div>
 
-          {/* Widget 2: Review Progress */}
+          {/* Review Progress */}
           <div className="rounded-lg border border-slate-200 bg-white p-3">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Review Progress</span>
@@ -189,14 +163,14 @@ export default function StandardFluxPage() {
                 <div className="bg-amber-400" style={{ width: `${Math.round((state.reviewStats.inReview / state.reviewStats.total) * 100)}%` }} />
               )}
             </div>
-            <div className="mt-1.5 flex items-center gap-3 text-[10px] text-slate-500">
+            <div className="mt-1.5 flex items-center gap-2 text-[10px] text-slate-500 flex-wrap">
               <span className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />Closed {state.reviewStats.closed}</span>
               <span className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-400" />Review {state.reviewStats.inReview}</span>
               <span className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-blue-400" />Open {state.reviewStats.open}</span>
             </div>
           </div>
 
-          {/* Widget 3: Top Drivers */}
+          {/* Top Drivers */}
           <div className="rounded-lg border border-slate-200 bg-white p-3">
             <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Top Drivers</div>
             <div className="mt-1.5 flex flex-wrap gap-1">
@@ -214,7 +188,7 @@ export default function StandardFluxPage() {
             </div>
           </div>
 
-          {/* Widget 4: Attention */}
+          {/* Needs Attention */}
           <div className={cn("rounded-lg border bg-white p-3", state.exceptionCount > 0 ? "border-amber-200" : "border-slate-200")}>
             <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Needs Attention</div>
             <div className="mt-1 flex items-center gap-1.5">
@@ -223,7 +197,7 @@ export default function StandardFluxPage() {
               </span>
               {state.exceptionCount > 0 && <AlertTriangle className="h-4 w-4 text-amber-500" />}
             </div>
-            <div className="mt-1 text-[10px] text-slate-400">
+            <div className="text-[10px] text-slate-400 mt-0.5">
               {state.exceptionCount > 0 ? "Items missing evidence" : "All items addressed"}
             </div>
           </div>
@@ -356,6 +330,26 @@ export default function StandardFluxPage() {
                   drivers={state.topDrivers}
                   baseRevenue={state.kpiRevenue?.base ?? 48.2}
                 />
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        {/* ── Alerts Side Sheet ── */}
+        <Sheet open={alertsExpanded} onOpenChange={setAlertsExpanded}>
+          <SheetContent side="right" className="w-[340px] sm:w-[400px] p-0 overflow-hidden">
+            <div className="flex h-full flex-col">
+              <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <ShieldAlert className="h-4 w-4 text-amber-600" />
+                  <SheetTitle className="text-sm font-semibold">Alerts &amp; Actions</SheetTitle>
+                  <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-700">{BANNERS.length}</span>
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                {BANNERS.map((b) => (
+                  <CrossModuleBanner key={b.scenarioTitle} {...b} />
+                ))}
               </div>
             </div>
           </SheetContent>

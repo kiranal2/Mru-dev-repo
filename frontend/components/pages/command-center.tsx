@@ -1535,12 +1535,12 @@ export default function CommandCenter({
               </div>
             </div>
           ) : (
-            <div className="h-[calc(100vh-120px)] overflow-y-auto">
-              <div className="w-full max-w-[821px] mx-auto px-4 pb-8">
+            <div className="h-[calc(100vh-120px)] flex flex-col overflow-y-auto">
+              <div className="w-full max-w-[821px] mx-auto px-4 pb-4 flex flex-col flex-1 min-h-0 pt-2 md:pt-4 xl:justify-center xl:pt-0">
                 {/* Hero Greeting */}
                 <div
                   className={cn(
-                    "text-center mb-8 md:mb-12 transition-all duration-1200 ease-out delay-200",
+                    "text-center mb-2 md:mb-3 xl:mb-8 transition-all duration-1200 ease-out delay-200",
                     loadingState === "loading"
                       ? "opacity-0 translate-y-6"
                       : "opacity-100 translate-y-0"
@@ -1575,13 +1575,13 @@ export default function CommandCenter({
                 {/* Prompt Composer */}
                 <div
                   className={cn(
-                    "w-full max-w-[821px] rounded-[24px] mx-auto mb-4 transition-all duration-1000 ease-out delay-700 bg-slate-50 p-2",
+                    "w-full max-w-[821px] rounded-[24px] mx-auto mb-1 md:mb-1.5 xl:mb-4 transition-all duration-1000 ease-out delay-700 bg-slate-50 p-2",
                     loadingState === "loading"
                       ? "opacity-0 translate-y-8 scale-95"
                       : "opacity-100 translate-y-0 scale-100"
                   )}
                 >
-                  <div className="h-[207px] border border-slate-400 bg-white rounded-[24px] p-4 relative hover:border-primary hover:shadow-lg transition-all duration-300 ease-out focus-within:border-primary focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/20">
+                  <div className="h-[120px] md:h-[130px] xl:h-[207px] border border-slate-400 bg-white rounded-[24px] p-4 relative hover:border-primary hover:shadow-lg transition-all duration-300 ease-out focus-within:border-primary focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/20">
                     {/* Textarea */}
                     <textarea
                       placeholder="Sample prompt: Give me 60 days and above aging details for Walmart"
@@ -1752,43 +1752,10 @@ export default function CommandCenter({
                   </div>
                 </div>
 
-                {/* Suggested Prompts */}
-                <div
-                  className={cn(
-                    "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 my-6 transition-all duration-1000 ease-out delay-900",
-                    loadingState === "loading"
-                      ? "opacity-0 translate-y-6"
-                      : "opacity-100 translate-y-0"
-                  )}
-                >
-                  {SUGGESTED_PROMPTS.map((prompt, idx) => {
-                    const Icon = prompt.icon;
-                    return (
-                      <button
-                        key={prompt.id}
-                        onClick={() => onPromptSuggestionClick(prompt.text)}
-                        className="group flex items-start gap-3 text-left px-4 py-3.5 rounded-2xl border border-slate-200 bg-white hover:border-primary/40 hover:bg-slate-50 hover:shadow-md transition-all duration-200 ease-out active:scale-[0.98]"
-                        style={{ animationDelay: `${900 + idx * 80}ms` }}
-                      >
-                        <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-primary/15 transition-colors duration-200">
-                          <Icon size={16} className="text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-slate-800 leading-snug group-hover:text-slate-900 transition-colors duration-200">
-                            {prompt.text}
-                          </p>
-                          <span className="text-[11px] text-slate-400 mt-1 inline-block">{prompt.category}</span>
-                        </div>
-                        <ArrowRight size={14} className="mt-1 flex-shrink-0 text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
-                      </button>
-                    );
-                  })}
-                </div>
-
                 {/* Quick Filter Chips */}
                 <div
                   className={cn(
-                    "flex flex-wrap items-center justify-center gap-2 mt-2 transition-all duration-1000 ease-out delay-1100",
+                    "flex flex-wrap items-center justify-center gap-2 mt-1 mb-2 md:mb-2.5 xl:mb-3 transition-all duration-1000 ease-out delay-800",
                     loadingState === "loading"
                       ? "opacity-0 translate-y-6"
                       : "opacity-100 translate-y-0"
@@ -1810,6 +1777,40 @@ export default function CommandCenter({
                     </button>
                   ))}
                 </div>
+
+                {/* Suggested Prompts */}
+                <div
+                  className={cn(
+                    "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-2 xl:gap-3 mt-0 mb-2 xl:my-6 transition-all duration-1000 ease-out delay-900",
+                    loadingState === "loading"
+                      ? "opacity-0 translate-y-6"
+                      : "opacity-100 translate-y-0"
+                  )}
+                >
+                  {SUGGESTED_PROMPTS.map((prompt, idx) => {
+                    const Icon = prompt.icon;
+                    return (
+                      <button
+                        key={prompt.id}
+                        onClick={() => onPromptSuggestionClick(prompt.text)}
+                        className="group flex items-start gap-2.5 text-left px-3 py-2.5 md:px-3.5 md:py-3 xl:px-4 xl:py-3.5 rounded-2xl border border-slate-200 bg-white hover:border-primary/40 hover:bg-slate-50 hover:shadow-md transition-all duration-200 ease-out active:scale-[0.98]"
+                        style={{ animationDelay: `${900 + idx * 80}ms` }}
+                      >
+                        <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-primary/15 transition-colors duration-200">
+                          <Icon size={16} className="text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-slate-800 leading-snug group-hover:text-slate-900 transition-colors duration-200">
+                            {prompt.text}
+                          </p>
+                          <span className="text-[11px] text-slate-400 mt-1 inline-block">{prompt.category}</span>
+                        </div>
+                        <ArrowRight size={14} className="mt-1 flex-shrink-0 text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
+                      </button>
+                    );
+                  })}
+                </div>
+
               </div>
             </div>
           )}

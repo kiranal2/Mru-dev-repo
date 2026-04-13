@@ -37,7 +37,7 @@ export default function Header({ loadingState, isSidebarHidden, onToggleSidebar,
       {/* Top App Bar — compact on tablet (md), full on desktop */}
       <header
         className={cn(
-          "flex items-center justify-between px-3 sm:px-4 xl:px-6 h-11 md:h-12 xl:h-14",
+          "flex items-center justify-between px-2 sm:px-3 xl:px-4 h-11 md:h-12 xl:h-14",
           loadingState === "loading"
             ? "transition-all duration-300 ease-out opacity-0 -translate-y-4"
             : "transition-none opacity-100 translate-y-0"
@@ -47,7 +47,7 @@ export default function Header({ loadingState, isSidebarHidden, onToggleSidebar,
           borderBottom: '1px solid var(--theme-header-border)',
         }}
       >
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        <div className="flex items-center gap-1 sm:gap-1.5 min-w-0">
           {/* Mobile hamburger */}
           {isMobile && onMobileMenuToggle && (
             <button
@@ -70,11 +70,11 @@ export default function Header({ loadingState, isSidebarHidden, onToggleSidebar,
               {isSidebarHidden ? <Menu size={20} /> : <PanelLeftClose size={20} />}
             </button>
           )}
-          {/* Logo */}
+          {/* Logo — smaller on tablet */}
           {theme === "default" ? (
-            <img src="/meeru-logo.png" alt="Meeru AI Logo" className="h-8 w-auto object-contain" />
+            <img src="/meeru-logo.png" alt="Meeru AI Logo" className="h-4 xl:h-5 w-auto object-contain" />
           ) : (
-            <span style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF', letterSpacing: -0.3 }}>
+            <span className="text-[15px] xl:text-[18px]" style={{ fontWeight: 700, color: '#FFFFFF', letterSpacing: -0.3 }}>
               Meeru<span style={{ color: 'var(--theme-accent)' }}>AI</span>
             </span>
           )}
@@ -84,24 +84,24 @@ export default function Header({ loadingState, isSidebarHidden, onToggleSidebar,
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1 sm:gap-3">
+        <div className="flex items-center gap-1 xl:gap-3">
           <button
-            className="hidden sm:block p-2 rounded-lg transition-all duration-200 ease-out-expo"
+            className="hidden xl:block p-2 rounded-lg transition-all duration-200 ease-out-expo"
             style={{ color: 'var(--theme-text-secondary)' }}
             aria-label="Help"
           >
-            <CircleHelp size={20} />
+            <CircleHelp size={18} />
           </button>
           <button
-            className="p-2 rounded-lg transition-all duration-200 ease-out-expo relative"
+            className="p-1.5 xl:p-2 rounded-lg transition-all duration-200 ease-out-expo relative"
             style={{ color: 'var(--theme-text-secondary)' }}
             aria-label="Notifications"
           >
-            <Bell size={20} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full animate-breathing" style={{ background: 'var(--theme-notification-dot)' }} />
+            <Bell size={18} />
+            <span className="absolute top-1 right-1 xl:top-1.5 xl:right-1.5 w-1.5 h-1.5 xl:w-2 xl:h-2 rounded-full animate-breathing" style={{ background: 'var(--theme-notification-dot)' }} />
           </button>
-          <span className="hidden sm:block"><ThemeSwitcher /></span>
-          <div className="hidden sm:block w-px h-6 mx-1" style={{ background: 'var(--theme-border)' }} />
+          <span className="hidden xl:block"><ThemeSwitcher /></span>
+          <div className="hidden xl:block w-px h-5 mx-0.5" style={{ background: 'var(--theme-border)' }} />
           <UserMenu />
         </div>
       </header>

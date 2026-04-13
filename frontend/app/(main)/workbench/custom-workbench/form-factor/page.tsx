@@ -309,36 +309,36 @@ const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 .ff-root {
-  --teal: #00D4AA;
-  --teal-dark: #00B090;
-  --teal-light: rgba(0,212,170,0.10);
-  --teal-mid: rgba(0,212,170,0.28);
-  --navy: #0A1628;
-  --navy-dark: #070F1C;
-  --navy-light: rgba(255,255,255,0.04);
-  --navy-mid: rgba(255,255,255,0.09);
-  --bg: #0A1628;
-  --bg-white: #112240;
-  --bg-subtle: #0D1C36;
-  --border: rgba(255,255,255,0.07);
-  --border-strong: rgba(255,255,255,0.14);
-  --text-primary: #E8F0FF;
-  --text-secondary: #8FA8C8;
-  --text-muted: #4A6585;
-  --green: #00D4AA;
-  --green-bg: rgba(0,212,170,0.12);
-  --green-br: rgba(0,212,170,0.32);
-  --red: #FF5C7A;
-  --red-bg: rgba(255,92,122,0.12);
-  --red-br: rgba(255,92,122,0.32);
-  --amber: #F5A623;
-  --amber-bg: rgba(245,166,35,0.12);
-  --amber-br: rgba(245,166,35,0.32);
+  --teal: #1E40AF;
+  --teal-dark: #1e3a8a;
+  --teal-light: rgba(30,64,175,0.06);
+  --teal-mid: rgba(30,64,175,0.20);
+  --navy: #ffffff;
+  --navy-dark: #f8fafc;
+  --navy-light: rgba(0,0,0,0.02);
+  --navy-mid: rgba(0,0,0,0.04);
+  --bg: #f8fafc;
+  --bg-white: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --green: #16a34a;
+  --green-bg: rgba(22,163,74,0.08);
+  --green-br: rgba(22,163,74,0.25);
+  --red: #dc2626;
+  --red-bg: rgba(220,38,38,0.08);
+  --red-br: rgba(220,38,38,0.25);
+  --amber: #d97706;
+  --amber-bg: rgba(217,119,6,0.08);
+  --amber-br: rgba(217,119,6,0.25);
   --sans: 'Inter', system-ui, sans-serif;
   --mono: 'JetBrains Mono', monospace;
   --wordmark: 'Poppins', sans-serif;
-  --sh-sm: 0 1px 4px rgba(0,0,0,0.35);
-  --sh-md: 0 4px 16px rgba(0,0,0,0.45);
+  --sh-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --sh-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
 
   background: var(--bg);
   color: var(--text-primary);
@@ -354,29 +354,29 @@ const STYLES = `
 /* SIDEBAR */
 .ff-sidebar {
   width: 232px; flex-shrink: 0; background: var(--navy-dark);
-  display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column; border-right: 1px solid var(--border);
   overflow-y: auto;
 }
-.ff-sb-logo { padding: 22px 20px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.ff-sb-logo { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); }
 .ff-sb-wordmark { font-family: var(--wordmark); font-size: 20px; font-weight: 700; color: var(--teal); letter-spacing: -0.3px; }
-.ff-sb-sub { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.32); margin-top: 2px; }
-.ff-sb-group { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
-.ff-sb-glabel { padding: 4px 18px 7px; font-size: 10px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase; color: rgba(255,255,255,0.26); }
+.ff-sb-sub { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; }
+.ff-sb-group { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.ff-sb-glabel { padding: 4px 18px 7px; font-size: 10px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase; color: var(--text-muted); }
 .ff-sb-item {
   display: flex; align-items: center; gap: 9px; padding: 9px 18px;
-  cursor: pointer; color: rgba(255,255,255,0.52); font-size: 13px; font-weight: 400;
+  cursor: pointer; color: var(--text-secondary); font-size: 13px; font-weight: 400;
   border: none; background: none; width: 100%; text-align: left;
   border-left: 3px solid transparent; transition: all 0.15s; user-select: none;
   font-family: var(--sans);
 }
-.ff-sb-item:hover { color: rgba(255,255,255,0.82); background: rgba(255,255,255,0.05); }
-.ff-sb-item.active { color: var(--teal); background: rgba(26,172,184,0.13); border-left-color: var(--teal); font-weight: 500; }
+.ff-sb-item:hover { color: var(--text-primary); background: rgba(0,0,0,0.03); }
+.ff-sb-item.active { color: var(--teal); background: rgba(30,64,175,0.08); border-left-color: var(--teal); font-weight: 500; }
 .ff-sb-icon { width: 17px; text-align: center; font-size: 14px; flex-shrink: 0; }
-.ff-sb-foot { margin-top: auto; padding: 14px 18px; border-top: 1px solid rgba(255,255,255,0.06); }
-.ff-fresh-row { display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(255,255,255,0.33); }
-.ff-dot-live { width: 7px; height: 7px; border-radius: 50%; background: #34D399; flex-shrink: 0; animation: ffBlink 2.2s ease-in-out infinite; }
+.ff-sb-foot { margin-top: auto; padding: 14px 18px; border-top: 1px solid var(--border); }
+.ff-fresh-row { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--text-muted); }
+.ff-dot-live { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; flex-shrink: 0; animation: ffBlink 2.2s ease-in-out infinite; }
 @keyframes ffBlink { 0%,100%{opacity:1} 50%{opacity:0.22} }
-.ff-fresh-src { font-size: 10px; color: rgba(255,255,255,0.2); margin-top: 3px; }
+.ff-fresh-src { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
 
 /* MAIN */
 .ff-main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
@@ -417,7 +417,7 @@ const STYLES = `
 }
 .ff-sc::after { content:''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 12px 12px 0 0; }
 .ff-sc.t::after { background: var(--teal); }
-.ff-sc.n::after { background: #4FC3F7; }
+.ff-sc.n::after { background: #60a5fa; }
 .ff-sc.r::after { background: var(--red); }
 .ff-sc.a::after { background: var(--amber); }
 .ff-sc-label { font-size: 10.5px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.3px; text-transform: uppercase; margin-bottom: 7px; }
@@ -440,7 +440,7 @@ const STYLES = `
 
 /* NARRATIVE */
 .ff-narr {
-  background: linear-gradient(135deg,rgba(0,212,170,0.07) 0%,rgba(10,22,40,0) 100%);
+  background: linear-gradient(135deg,rgba(30,64,175,0.07) 0%,rgba(10,22,40,0) 100%);
   border: 1px solid var(--teal-mid); border-radius: 12px; padding: 16px 20px; margin-bottom: 18px;
 }
 .ff-narr-chip {
@@ -473,9 +473,9 @@ const STYLES = `
   height: 100%; border-radius: 4px; display: flex; align-items: center; padding: 0 9px;
   font-size: 11px; font-weight: 600; font-family: var(--mono); transition: width 0.7s cubic-bezier(0.16,1,0.3,1);
 }
-.ff-wf-bar.pos { background: var(--green-bg); color: var(--green); border-right: 2px solid #6EE7B7; }
-.ff-wf-bar.neg { background: var(--red-bg); color: var(--red); border-right: 2px solid #FCA5A5; }
-.ff-wf-bar.base { background: rgba(0,212,170,0.12); color: var(--teal); border-right: 2px solid var(--teal-mid); }
+.ff-wf-bar.pos { background: var(--green-bg); color: var(--green); border-right: 2px solid #86efac; }
+.ff-wf-bar.neg { background: var(--red-bg); color: var(--red); border-right: 2px solid #fca5a5; }
+.ff-wf-bar.base { background: rgba(30,64,175,0.12); color: var(--teal); border-right: 2px solid var(--teal-mid); }
 
 /* TABLE */
 .ff-dt { width: 100%; border-collapse: collapse; }
@@ -597,14 +597,14 @@ const STYLES = `
 .ff-root ::-webkit-scrollbar-track { background: transparent; }
 .ff-root ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
 
-/* AI CHAT PANEL */
+/* AI CHAT PANEL — base styles (positioning handled by toggle section above) */
 .ff-ai-panel {
-  width: 280px; flex-shrink: 0; background: var(--navy-dark);
-  border-left: 1px solid rgba(255,255,255,0.08);
+  background: var(--navy-dark);
+  border-left: 1px solid var(--border);
   display: flex; flex-direction: column; min-height: 0;
 }
 .ff-ai-header {
-  padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
   display: flex; align-items: center; gap: 8px; flex-shrink: 0;
 }
 .ff-ai-icon { font-size: 16px; }
@@ -623,23 +623,23 @@ const STYLES = `
   border-radius: 8px; padding: 9px 12px;
   font-size: 11px; line-height: 1.55;
 }
-.ff-ai-msg.user .ff-ai-msg-bubble { background: rgba(0,212,170,0.12); color: var(--text-primary); }
+.ff-ai-msg.user .ff-ai-msg-bubble { background: rgba(30,64,175,0.12); color: var(--text-primary); }
 .ff-ai-msg.ai .ff-ai-msg-bubble { background: var(--bg-white); border: 1px solid var(--border); color: var(--text-secondary); }
 .ff-ai-msg.ai .ff-ai-msg-bubble strong { color: var(--teal); }
 .ff-ai-msg.typing .ff-ai-msg-bubble { color: var(--text-muted); font-style: italic; }
 .ff-ai-input-area {
-  padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 12px; border-top: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
 }
 .ff-ai-suggestions { display: flex; flex-direction: column; gap: 5px; }
 .ff-ai-sug {
-  background: rgba(0,212,170,0.05); border: 1px solid rgba(0,212,170,0.15);
+  background: rgba(30,64,175,0.05); border: 1px solid rgba(30,64,175,0.15);
   border-radius: 5px; padding: 5px 10px;
   font-size: 10px; color: var(--text-muted); cursor: pointer;
   font-family: var(--mono); transition: all 0.15s; user-select: none;
   text-align: left; width: 100%;
 }
-.ff-ai-sug:hover { border-color: var(--teal); color: var(--teal); background: rgba(0,212,170,0.08); }
+.ff-ai-sug:hover { border-color: var(--teal); color: var(--teal); background: rgba(30,64,175,0.08); }
 .ff-ai-input-row {
   display: flex; gap: 6px; align-items: center;
 }
@@ -661,12 +661,38 @@ const STYLES = `
 .ff-ai-send:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ═══════════════════════════════════════════════
-   RESPONSIVE TOGGLE CONTROLS
+   AI PANEL — ALWAYS HIDDEN, TOGGLE TO SHOW
    ═══════════════════════════════════════════════ */
-.ff-sidebar-toggle,
-.ff-ai-toggle { display: none; }
-.ff-ai-close { display: none; }
+.ff-sidebar-toggle { display: none; }
+.ff-ai-toggle {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 7px;
+  background: var(--bg-white); border: 1px solid var(--border);
+  color: var(--teal); cursor: pointer; transition: all 0.15s;
+  font-size: 14px; flex-shrink: 0;
+}
+.ff-ai-toggle:hover { border-color: var(--teal); background: var(--teal-light); }
+.ff-ai-close {
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 5px; margin-left: auto;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-muted); cursor: pointer; font-size: 12px;
+}
+.ff-ai-close:hover { border-color: var(--teal); color: var(--teal); }
 .ff-sidebar-overlay { display: none; }
+.ff-ai-overlay {
+  position: fixed; inset: 0; z-index: 199;
+  background: rgba(0,0,0,0.3); display: none;
+}
+.ff-ai-overlay.open { display: block; }
+
+/* AI panel: slide-over on ALL screen sizes */
+.ff-ai-panel {
+  position: fixed; right: 0; top: 0; bottom: 0; z-index: 200;
+  width: 340px; transform: translateX(100%);
+  transition: transform 0.25s ease; box-shadow: -8px 0 30px rgba(0,0,0,0.08);
+}
+.ff-ai-panel.open { transform: translateX(0); }
 
 /* ═══════════════════════════════════════════════
    TABLET (768px – 1279px)
@@ -678,68 +704,97 @@ const STYLES = `
   .ff-sidebar {
     position: fixed; left: 0; top: 0; bottom: 0; z-index: 200;
     width: 260px; transform: translateX(-100%);
-    transition: transform 0.25s ease; box-shadow: 8px 0 30px rgba(0,0,0,0.5);
+    transition: transform 0.25s ease; box-shadow: 8px 0 30px rgba(0,0,0,0.08);
   }
   .ff-sidebar.open { transform: translateX(0); }
   .ff-sidebar-overlay {
     position: fixed; inset: 0; z-index: 199;
-    background: rgba(0,0,0,0.5); display: none;
+    background: rgba(0,0,0,0.3); display: none;
   }
   .ff-sidebar-overlay.open { display: block; }
 
-  /* AI Panel: slide-over from right */
-  .ff-ai-panel {
-    position: fixed; right: 0; top: 0; bottom: 0; z-index: 200;
-    width: 320px; transform: translateX(100%);
-    transition: transform 0.25s ease; box-shadow: -8px 0 30px rgba(0,0,0,0.5);
-  }
-  .ff-ai-panel.open { transform: translateX(0); }
-
-  /* Show toggle buttons */
-  .ff-sidebar-toggle,
-  .ff-ai-toggle {
+  /* Show sidebar toggle */
+  .ff-sidebar-toggle {
     display: flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; border-radius: 7px;
+    width: 28px; height: 28px; border-radius: 6px;
     background: var(--bg-white); border: 1px solid var(--border);
     color: var(--text-muted); cursor: pointer; transition: all 0.15s;
-    font-size: 14px; flex-shrink: 0;
+    font-size: 13px; flex-shrink: 0;
   }
-  .ff-sidebar-toggle:hover,
-  .ff-ai-toggle:hover { border-color: var(--teal); color: var(--teal); }
+  .ff-sidebar-toggle:hover { border-color: var(--teal); color: var(--teal); }
 
-  .ff-ai-close {
-    display: flex; align-items: center; justify-content: center;
-    width: 24px; height: 24px; border-radius: 5px; margin-left: auto;
-    background: transparent; border: 1px solid var(--border);
-    color: var(--text-muted); cursor: pointer; font-size: 12px;
-  }
-  .ff-ai-close:hover { border-color: var(--teal); color: var(--teal); }
+  /* AI panel narrower on tablet */
+  .ff-ai-panel { width: 300px; }
 
   /* Topbar: compact */
-  .ff-topbar { padding: 10px 16px; }
-  .ff-tb-title { font-size: 15px; }
+  .ff-topbar { padding: 6px 14px; }
+  .ff-tb-title { font-size: 14px; }
+  .ff-btn { padding: 5px 10px; font-size: 12px; }
 
-  /* Page content: tighter padding */
-  .ff-page { padding: 16px; }
+  /* Page content: tight padding, minimal gaps */
+  .ff-page { padding: 10px 14px 20px; }
 
-  /* Stat grid: 2x2 */
-  .ff-sg { grid-template-columns: 1fr 1fr; }
-  .ff-sc-val { font-size: 22px; }
+  /* Info banner: compact */
+  .ff-ibanner { padding: 6px 12px; font-size: 11px; margin-bottom: 8px; }
 
-  /* 2-col grids: stay 2-col on tablet */
-  .ff-g2 { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .ff-g6040 { grid-template-columns: 1fr 1fr; gap: 12px; }
+  /* Narrative: compact */
+  .ff-narr { padding: 10px 14px; margin-bottom: 10px; }
+  .ff-narr-chip { font-size: 8px; padding: 2px 8px; margin-bottom: 5px; }
+  .ff-narr-head { font-size: 12.5px; margin-bottom: 4px; line-height: 1.4; }
+  .ff-narr-body { font-size: 11.5px; line-height: 1.5; }
 
-  /* Forecast row: 2x2 instead of 4 */
-  .ff-frow { flex-wrap: wrap; gap: 10px; }
-  .ff-fc { flex: 1 1 calc(50% - 5px); min-width: calc(50% - 5px); }
+  /* Stat grid: KEEP 4-col — tablet has enough width */
+  .ff-sg { grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
+  .ff-sc { padding: 10px 12px; border-radius: 8px; }
+  .ff-sc-val { font-size: 20px; margin-bottom: 2px; }
+  .ff-sc-label { font-size: 8.5px; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .ff-sc-delta { font-size: 10px; }
 
-  /* Tables: horizontal scroll */
-  .ff-card { overflow-x: auto; }
+  /* 2-col grids: stay 2-col, tighter */
+  .ff-g2 { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .ff-g6040 { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+
+  /* Cards: compact */
+  .ff-card { padding: 12px 14px; overflow-x: auto; border-radius: 8px; }
+  .ff-card-title { font-size: 9px; margin-bottom: 8px; }
+
+  /* Forecast row: keep 4-col on tablet */
+  .ff-frow { gap: 8px; margin-bottom: 10px; }
+  .ff-fc { padding: 10px 12px; }
+  .ff-fc-v { font-size: 20px; }
+  .ff-fc-p { font-size: 9px; margin-bottom: 4px; }
+
+  /* Tables: horizontal scroll, compact */
   .ff-dt { min-width: 600px; }
+  .ff-dt th { padding: 6px 10px; font-size: 9px; }
+  .ff-dt td { padding: 7px 10px; font-size: 12px; }
 
-  /* Accuracy rings: wrap */
-  .ff-acc-grid { gap: 16px; }
+  /* Section headers: compact */
+  .ff-sh { margin-bottom: 8px; }
+  .ff-sh-t { font-size: 14px; }
+
+  /* Filter chips: smaller */
+  .ff-fbar { margin-bottom: 8px; }
+  .ff-fchip { padding: 4px 10px; font-size: 11px; }
+
+  /* Tabs: compact */
+  .ff-tabs { margin-bottom: 10px; }
+  .ff-tab { padding: 5px 12px; font-size: 12px; }
+
+  /* Waterfall: compact */
+  .ff-wf-row { gap: 7px; }
+  .ff-wf-lbl { font-size: 10px; width: 60px; }
+  .ff-wf-track { height: 22px; }
+  .ff-wf-bar { font-size: 10px; }
+
+  /* Accuracy rings: compact */
+  .ff-acc-grid { gap: 14px; }
+  .ff-ring-wrap { width: 52px; height: 52px; }
+  .ff-ring-val { font-size: 11px; }
+  .ff-acc-lbl { font-size: 12px; }
+
+  /* Bottom bar: slim */
+  .ff-mb { margin-bottom: 10px; }
 }
 
 /* ═══════════════════════════════════════════════
@@ -857,7 +912,7 @@ function SvgBarChart({
         const y = yScale(val)
         return (
           <g key={i}>
-            <line x1={pad.l} x2={w - pad.r} y1={y} y2={y} stroke="rgba(255,255,255,0.05)" />
+            <line x1={pad.l} x2={w - pad.r} y1={y} y2={y} stroke="rgba(0,0,0,0.03)" />
             <text x={pad.l - 8} y={y + 4} fill="#4A6585" fontSize="10" textAnchor="end" fontFamily="'JetBrains Mono',monospace">
               {yFmt ? yFmt(val) : val.toFixed(0)}
             </text>
@@ -930,7 +985,7 @@ function SvgLineChart({
         const y = yScale(val)
         return (
           <g key={i}>
-            <line x1={pad.l} x2={w - pad.r} y1={y} y2={y} stroke="rgba(255,255,255,0.05)" />
+            <line x1={pad.l} x2={w - pad.r} y1={y} y2={y} stroke="rgba(0,0,0,0.03)" />
             <text x={pad.l - 8} y={y + 4} fill="#4A6585" fontSize="10" textAnchor="end" fontFamily="'JetBrains Mono',monospace">
               {yFmt ? yFmt(val) : val.toFixed(0)}
             </text>
@@ -1045,7 +1100,7 @@ export default function FormFactorPage() {
 
   // AI Chat state
   const [aiMessages, setAiMessages] = useState<{role: "user"|"ai"; text: string}[]>([
-    { role: "ai", text: "<strong>Margin Intelligence AI</strong> — ready to assist.<br><br>I have context on W8 margin data across all segments and drivers. Ask me about variances, forecasts, or drill into specific segments." },
+    { role: "ai", text: "<strong>Meeru AI</strong> — ready to assist.<br><br>I have context on W8 margin data across all segments and drivers. Ask me about variances, forecasts, or drill into specific segments." },
   ])
   const [aiInput, setAiInput] = useState("")
   const [isAiTyping, setIsAiTyping] = useState(false)
@@ -1295,8 +1350,8 @@ export default function FormFactorPage() {
               yMin={30}
               yMax={34}
               lines={[
-                { label: "Actual %", values: d.map((x) => x.margin), color: "#00D4AA", fill: true },
-                { label: "Forecast %", values: d.map((x) => x.fcst), color: "rgba(0,212,170,0.35)", dash: true },
+                { label: "Actual %", values: d.map((x) => x.margin), color: "#1E40AF", fill: true },
+                { label: "Forecast %", values: d.map((x) => x.fcst), color: "rgba(30,64,175,0.35)", dash: true },
               ]}
               yFmt={(v) => v + "%"}
             />
@@ -1376,8 +1431,8 @@ export default function FormFactorPage() {
             yMin={Math.min(...d.map((x) => Math.min(x.cost, x.rev))) * 0.9}
             yMax={Math.max(...d.map((x) => x.rev)) * 1.05}
             sets={[
-              { label: "Revenue ($M)", values: d.map((x) => x.rev), color: "rgba(0,212,170,0.18)", borderColor: "#00D4AA" },
-              { label: "Std Cost ($M)", values: d.map((x) => x.cost), color: "rgba(255,92,122,0.13)", borderColor: "rgba(255,92,122,0.55)" },
+              { label: "Revenue ($M)", values: d.map((x) => x.rev), color: "rgba(30,64,175,0.18)", borderColor: "#1E40AF" },
+              { label: "Std Cost ($M)", values: d.map((x) => x.cost), color: "rgba(220,38,38,0.13)", borderColor: "rgba(220,38,38,0.55)" },
             ]}
             yFmt={(v) => "$" + v.toFixed(0) + "M"}
           />
@@ -1390,8 +1445,8 @@ export default function FormFactorPage() {
             yMin={yr.min}
             yMax={yr.max}
             lines={[
-              { label: "Actual %", values: d.map((x) => x.margin), color: "#00D4AA", fill: true },
-              { label: "Forecast %", values: d.map((x) => x.fcst), color: "#4FC3F7", dash: true },
+              { label: "Actual %", values: d.map((x) => x.margin), color: "#1E40AF", fill: true },
+              { label: "Forecast %", values: d.map((x) => x.fcst), color: "#60a5fa", dash: true },
             ]}
             yFmt={(v) => v + "%"}
           />
@@ -1476,8 +1531,8 @@ export default function FormFactorPage() {
               yMin={revMin}
               yMax={revMax}
               sets={[
-                { label: "Actual", values: data.map((d) => d.ra), color: "rgba(0,212,170,0.18)", borderColor: "#00D4AA" },
-                { label: "Forecast", values: data.map((d) => d.rf), color: "rgba(79,195,247,0.15)", borderColor: "#4FC3F7" },
+                { label: "Actual", values: data.map((d) => d.ra), color: "rgba(30,64,175,0.18)", borderColor: "#1E40AF" },
+                { label: "Forecast", values: data.map((d) => d.rf), color: "rgba(79,195,247,0.15)", borderColor: "#60a5fa" },
               ]}
               yFmt={(v) => "$" + v.toFixed(0) + "M"}
             />
@@ -1490,8 +1545,8 @@ export default function FormFactorPage() {
               yMin={mrgMin}
               yMax={mrgMax}
               sets={[
-                { label: "Actual %", values: data.map((d) => d.ma), color: "rgba(0,212,170,0.18)", borderColor: "#00D4AA" },
-                { label: "Forecast %", values: data.map((d) => d.mf), color: "rgba(79,195,247,0.15)", borderColor: "#4FC3F7" },
+                { label: "Actual %", values: data.map((d) => d.ma), color: "rgba(30,64,175,0.18)", borderColor: "#1E40AF" },
+                { label: "Forecast %", values: data.map((d) => d.mf), color: "rgba(79,195,247,0.15)", borderColor: "#60a5fa" },
               ]}
               yFmt={(v) => v.toFixed(0) + "%"}
             />
@@ -1565,10 +1620,10 @@ export default function FormFactorPage() {
               labels={["N. America", "APAC", "EMEA", "LatAm"]}
               height={240}
               sets={[
-                { label: "Price", values: ds.seg.price, color: "rgba(0,212,170,0.30)", borderColor: "#00D4AA" },
-                { label: "Mix", values: ds.seg.mix, color: "rgba(255,92,122,0.20)", borderColor: "#FF5C7A" },
-                { label: "Volume", values: ds.seg.volume, color: "rgba(79,195,247,0.20)", borderColor: "#4FC3F7" },
-                { label: "Cost", values: ds.seg.cost, color: "rgba(245,166,35,0.20)", borderColor: "#F5A623" },
+                { label: "Price", values: ds.seg.price, color: "rgba(30,64,175,0.30)", borderColor: "#1E40AF" },
+                { label: "Mix", values: ds.seg.mix, color: "rgba(220,38,38,0.20)", borderColor: "#dc2626" },
+                { label: "Volume", values: ds.seg.volume, color: "rgba(79,195,247,0.20)", borderColor: "#60a5fa" },
+                { label: "Cost", values: ds.seg.cost, color: "rgba(217,119,6,0.20)", borderColor: "#d97706" },
               ]}
             />
           </div>
@@ -1671,8 +1726,8 @@ export default function FormFactorPage() {
               yMin={barMin}
               yMax={barMax}
               sets={[
-                { label: B.w, values: barData.map((d) => d.bv), color: "rgba(0,212,170,0.18)", borderColor: "#00D4AA" },
-                { label: C.w, values: barData.map((d) => d.cv), color: "rgba(79,195,247,0.15)", borderColor: "#4FC3F7" },
+                { label: B.w, values: barData.map((d) => d.bv), color: "rgba(30,64,175,0.18)", borderColor: "#1E40AF" },
+                { label: C.w, values: barData.map((d) => d.cv), color: "rgba(79,195,247,0.15)", borderColor: "#60a5fa" },
               ]}
             />
           </div>
@@ -1691,7 +1746,7 @@ export default function FormFactorPage() {
                 <span className="ff-cmp-lbl">Cost Change</span>
                 <span className="ff-cmp-val" style={{ color: ccUp ? "var(--green)" : "var(--red)" }}>{parseFloat(cc) >= 0 ? "+" : ""}${cc}M</span>
               </div>
-              <div style={{ padding: "11px 13px", background: "rgba(0,212,170,0.07)", border: "1px solid rgba(0,212,170,0.2)", borderRadius: 8, fontSize: 12.5, color: "var(--text-secondary)", lineHeight: 1.65, marginTop: 3 }}>
+              <div style={{ padding: "11px 13px", background: "rgba(30,64,175,0.07)", border: "1px solid rgba(30,64,175,0.2)", borderRadius: 8, fontSize: 12.5, color: "var(--text-secondary)", lineHeight: 1.65, marginTop: 3 }}>
                 {insight}
               </div>
             </div>
@@ -1730,10 +1785,10 @@ export default function FormFactorPage() {
     const fct: (number | null)[] = [null, null, null, null, null, null, null, 31.3, 31.8, 32.2, 32.5, 33.6, 34.8]
 
     const ringData = [
-      { pct: 91, color: "#00D4AA", label: "North America", sub: "Group A · Standard cost available" },
-      { pct: 84, color: "#F5A623", label: "APAC", sub: "Group B · Proxy v2.3 applied" },
-      { pct: 88, color: "#00D4AA", label: "EMEA", sub: "Group C · Mixed sources" },
-      { pct: 76, color: "#FF5C7A", label: "LatAm", sub: "Group D · Proxy fwd-fill · low coverage" },
+      { pct: 91, color: "#1E40AF", label: "North America", sub: "Group A · Standard cost available" },
+      { pct: 84, color: "#d97706", label: "APAC", sub: "Group B · Proxy v2.3 applied" },
+      { pct: 88, color: "#1E40AF", label: "EMEA", sub: "Group C · Mixed sources" },
+      { pct: 76, color: "#dc2626", label: "LatAm", sub: "Group D · Proxy fwd-fill · low coverage" },
     ]
 
     return (
@@ -1779,8 +1834,8 @@ export default function FormFactorPage() {
             yMin={28}
             yMax={42}
             lines={[
-              { label: "Actual %", values: act, color: "#00D4AA", fill: true },
-              { label: "Forecast %", values: fct, color: "#4FC3F7", dash: true },
+              { label: "Actual %", values: act, color: "#1E40AF", fill: true },
+              { label: "Forecast %", values: fct, color: "#60a5fa", dash: true },
             ]}
             yFmt={(v) => v + "%"}
           />
@@ -1823,7 +1878,6 @@ export default function FormFactorPage() {
       {/* SIDEBAR */}
       <nav className={`ff-sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="ff-sb-logo">
-          <div className="ff-sb-wordmark">MeeruAI</div>
           <div className="ff-sb-sub">Margin Intelligence</div>
         </div>
 
@@ -1884,6 +1938,9 @@ export default function FormFactorPage() {
           {page === "forward" && renderForward()}
         </div>
       </main>
+
+      {/* AI OVERLAY */}
+      <div className={`ff-ai-overlay ${aiPanelOpen ? "open" : ""}`} onClick={() => setAiPanelOpen(false)} />
 
       {/* AI CHAT PANEL */}
       <aside className={`ff-ai-panel ${aiPanelOpen ? "open" : ""}`}>

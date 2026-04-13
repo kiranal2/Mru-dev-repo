@@ -156,20 +156,20 @@ const DATA: {
       chart: {
         title: "Weekly Revenue Variance — California Retail",
         bars: [
-          { week: "W6", actual: 58, plan: 62, color: "#FEA400" },
-          { week: "W7", actual: 56, plan: 62, color: "#FEA400" },
-          { week: "W8", actual: 52, plan: 62, color: "#FEA400" },
-          { week: "W9", actual: 46, plan: 62, color: "#E74C3C" },
-          { week: "W10", actual: 42, plan: 62, color: "#E74C3C" },
-          { week: "W11▸", actual: 39, plan: 62, color: "#E74C3C", forecast: true },
+          { week: "W6", actual: 58, plan: 62, color: "#1E40AF" },
+          { week: "W7", actual: 56, plan: 62, color: "#1E40AF" },
+          { week: "W8", actual: 52, plan: 62, color: "#1E40AF" },
+          { week: "W9", actual: 46, plan: 62, color: "#dc2626" },
+          { week: "W10", actual: 42, plan: 62, color: "#dc2626" },
+          { week: "W11▸", actual: 39, plan: 62, color: "#dc2626", forecast: true },
         ],
       },
       ai: {
         messages: [
           { role: "user", name: "Josh", text: "What are the most significant exceptions this week?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>3 exceptions ranked by significance:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>California Retail labor cost surge — 3rd consecutive week, accelerating margin compression</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Texas Energy natural gas price drop — 18% spot decline, unhedged exposure</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#2ECC71"></div>NY Financial Svcs positive — Q1 trading outperformance, no action needed</div></div>` },
+          { role: "ai", name: "Meeru AI", html: `<strong>3 exceptions ranked by significance:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>California Retail labor cost surge — 3rd consecutive week, accelerating margin compression</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Texas Energy natural gas price drop — 18% spot decline, unhedged exposure</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#2ECC71"></div>NY Financial Svcs positive — Q1 trading outperformance, no action needed</div></div>` },
           { role: "user", name: "Josh", text: "What should we watch before Thursday?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>California staffing model.</strong> Labor costs have exceeded budget for 3 weeks running. If the current overtime trajectory holds, ML model projects −2% to −4% additional margin erosion in W11. Recommend reviewing shift scheduling and automation deployment with West region ops before earnings prep.` },
+          { role: "ai", name: "Meeru AI", html: `<strong>California staffing model.</strong> Labor costs have exceeded budget for 3 weeks running. If the current overtime trajectory holds, ML model projects −2% to −4% additional margin erosion in W11. Recommend reviewing shift scheduling and automation deployment with West region ops before earnings prep.` },
         ],
         suggestions: ["Why did the West underperform?", "Compare W10 to Q1 2024 NY wage event", "Which signals need action?"],
       },
@@ -188,20 +188,20 @@ const DATA: {
       chart: {
         title: "Weekly Revenue Variance — NY Financial Svcs",
         bars: [
-          { week: "W6", actual: 54, plan: 52, color: "#2ECC71" },
-          { week: "W7", actual: 55, plan: 52, color: "#2ECC71" },
-          { week: "W8", actual: 56, plan: 52, color: "#2ECC71" },
-          { week: "W9", actual: 58, plan: 52, color: "#2ECC71" },
-          { week: "W10", actual: 60, plan: 52, color: "#2ECC71" },
-          { week: "W11▸", actual: 57, plan: 52, color: "#2ECC71", forecast: true },
+          { week: "W6", actual: 54, plan: 52, color: "#16a34a" },
+          { week: "W7", actual: 55, plan: 52, color: "#16a34a" },
+          { week: "W8", actual: 56, plan: 52, color: "#16a34a" },
+          { week: "W9", actual: 58, plan: 52, color: "#16a34a" },
+          { week: "W10", actual: 60, plan: 52, color: "#16a34a" },
+          { week: "W11▸", actual: 57, plan: 52, color: "#16a34a", forecast: true },
         ],
       },
       ai: {
         messages: [
           { role: "user", name: "Josh", text: "What is driving the Northeast outperformance?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>New York Financial Services is the engine</strong> at +$0.7M vs Plan. Equity trading desks captured elevated volatility in W9–W10 — VIX averaged 22 vs modeled 18. Advisory pipeline also contributing with 3 deals closing ahead of Q1 schedule.<br><br>MA Healthcare (−$0.2M) and CT Insurance (−$0.1M) are minor headwinds that partially offset the trading gains.` },
+          { role: "ai", name: "Meeru AI", html: `<strong>New York Financial Services is the engine</strong> at +$0.7M vs Plan. Equity trading desks captured elevated volatility in W9–W10 — VIX averaged 22 vs modeled 18. Advisory pipeline also contributing with 3 deals closing ahead of Q1 schedule.<br><br>MA Healthcare (−$0.2M) and CT Insurance (−$0.1M) are minor headwinds that partially offset the trading gains.` },
           { role: "user", name: "Josh", text: "Will Northeast continue outperforming in W11?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>Likely modest pullback.</strong> Volatility is expected to normalize post-FOMC — W11 projection shows +$0.2M vs plan (down from +$0.4M). MA Healthcare carrier escalation should begin clearing the reimbursement backlog. CT Insurance claims processing on track for W12 clearance.` },
+          { role: "ai", name: "Meeru AI", html: `<strong>Likely modest pullback.</strong> Volatility is expected to normalize post-FOMC — W11 projection shows +$0.2M vs plan (down from +$0.4M). MA Healthcare carrier escalation should begin clearing the reimbursement backlog. CT Insurance claims processing on track for W12 clearance.` },
         ],
         suggestions: ["NY trading desk breakdown", "MA carrier escalation status", "Northeast vs Prior Year"],
       },
@@ -220,20 +220,20 @@ const DATA: {
       chart: {
         title: "Weekly Revenue Variance — Florida Tourism",
         bars: [
-          { week: "W6", actual: 60, plan: 62, color: "#FEA400" },
-          { week: "W7", actual: 61, plan: 62, color: "#FEA400" },
-          { week: "W8", actual: 62, plan: 62, color: "#2ECC71" },
-          { week: "W9", actual: 59, plan: 62, color: "#F39C12" },
-          { week: "W10", actual: 54, plan: 62, color: "#E74C3C" },
-          { week: "W11▸", actual: 65, plan: 62, color: "#2ECC71", forecast: true },
+          { week: "W6", actual: 60, plan: 62, color: "#1E40AF" },
+          { week: "W7", actual: 61, plan: 62, color: "#1E40AF" },
+          { week: "W8", actual: 62, plan: 62, color: "#16a34a" },
+          { week: "W9", actual: 59, plan: 62, color: "#d97706" },
+          { week: "W10", actual: 54, plan: 62, color: "#dc2626" },
+          { week: "W11▸", actual: 65, plan: 62, color: "#16a34a", forecast: true },
         ],
       },
       ai: {
         messages: [
           { role: "user", name: "Josh", text: "What drove the Southeast miss this week?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>Two timing-related issues:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Florida Tourism — spring break calendar shift from W10 to W11 (−$0.4M timing)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Georgia Logistics — Savannah port congestion delaying revenue recognition (−$0.3M)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#2ECC71"></div>NC Tech partially offset with early deal closures (+$0.1M)</div></div>` },
+          { role: "ai", name: "Meeru AI", html: `<strong>Two timing-related issues:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Florida Tourism — spring break calendar shift from W10 to W11 (−$0.4M timing)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Georgia Logistics — Savannah port congestion delaying revenue recognition (−$0.3M)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#2ECC71"></div>NC Tech partially offset with early deal closures (+$0.1M)</div></div>` },
           { role: "user", name: "Josh", text: "Will Southeast recover next week?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>Strong recovery expected.</strong> Florida tourism W11 bookings are tracking 18% above W10 — spring break peak will drive a reversal. Georgia port congestion is improving (queue down to 6 ships from 8). W11 projection: +$0.3M vs Plan.` },
+          { role: "ai", name: "Meeru AI", html: `<strong>Strong recovery expected.</strong> Florida tourism W11 bookings are tracking 18% above W10 — spring break peak will drive a reversal. Georgia port congestion is improving (queue down to 6 ships from 8). W11 projection: +$0.3M vs Plan.` },
         ],
         suggestions: ["Florida W11 booking data", "Savannah port queue trend", "NC Tech pipeline detail"],
       },
@@ -252,20 +252,20 @@ const DATA: {
       chart: {
         title: "Weekly Revenue Variance — Illinois Manufacturing",
         bars: [
-          { week: "W6", actual: 61, plan: 62, color: "#FEA400" },
-          { week: "W7", actual: 60, plan: 62, color: "#FEA400" },
-          { week: "W8", actual: 57, plan: 62, color: "#F39C12" },
-          { week: "W9", actual: 53, plan: 62, color: "#E74C3C" },
-          { week: "W10", actual: 50, plan: 62, color: "#E74C3C" },
-          { week: "W11▸", actual: 54, plan: 62, color: "#F39C12", forecast: true },
+          { week: "W6", actual: 61, plan: 62, color: "#1E40AF" },
+          { week: "W7", actual: 60, plan: 62, color: "#1E40AF" },
+          { week: "W8", actual: 57, plan: 62, color: "#d97706" },
+          { week: "W9", actual: 53, plan: 62, color: "#dc2626" },
+          { week: "W10", actual: 50, plan: 62, color: "#dc2626" },
+          { week: "W11▸", actual: 54, plan: 62, color: "#d97706", forecast: true },
         ],
       },
       ai: {
         messages: [
           { role: "user", name: "Josh", text: "What is driving the Midwest miss?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>Two structural issues:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>Illinois Manufacturing — Chicago hub bottleneck at 94% capacity, rail car shortage limiting outbound (−$0.5M)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Michigan Auto — EV transition production pause during retooling (−$0.3M)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Ohio Agriculture — early frost crop delay, minor impact (−$0.1M)</div></div>` },
+          { role: "ai", name: "Meeru AI", html: `<strong>Two structural issues:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>Illinois Manufacturing — Chicago hub bottleneck at 94% capacity, rail car shortage limiting outbound (−$0.5M)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Michigan Auto — EV transition production pause during retooling (−$0.3M)</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Ohio Agriculture — early frost crop delay, minor impact (−$0.1M)</div></div>` },
           { role: "user", name: "Josh", text: "When does the Midwest normalize?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>Phased recovery W11–W13.</strong> Chicago hub rail car allocation increases W11 (Union Pacific confirmed +15% capacity). Michigan EV retooling completes W12 — first EV units off line W13. Ohio frost impact is immaterial near-term. Net W11 projection: −$0.5M vs Plan, improving from −$0.9M.` },
+          { role: "ai", name: "Meeru AI", html: `<strong>Phased recovery W11–W13.</strong> Chicago hub rail car allocation increases W11 (Union Pacific confirmed +15% capacity). Michigan EV retooling completes W12 — first EV units off line W13. Ohio frost impact is immaterial near-term. Net W11 projection: −$0.5M vs Plan, improving from −$0.9M.` },
         ],
         suggestions: ["Chicago hub capacity detail", "Michigan EV retooling timeline", "Ohio crop insurance status"],
       },
@@ -284,20 +284,20 @@ const DATA: {
       chart: {
         title: "Weekly Revenue Variance — California Retail",
         bars: [
-          { week: "W6", actual: 60, plan: 64, color: "#FEA400" },
-          { week: "W7", actual: 58, plan: 64, color: "#FEA400" },
-          { week: "W8", actual: 54, plan: 64, color: "#F39C12" },
-          { week: "W9", actual: 48, plan: 64, color: "#E74C3C" },
-          { week: "W10", actual: 44, plan: 64, color: "#E74C3C" },
-          { week: "W11▸", actual: 42, plan: 64, color: "#E74C3C", forecast: true },
+          { week: "W6", actual: 60, plan: 64, color: "#1E40AF" },
+          { week: "W7", actual: 58, plan: 64, color: "#1E40AF" },
+          { week: "W8", actual: 54, plan: 64, color: "#d97706" },
+          { week: "W9", actual: 48, plan: 64, color: "#dc2626" },
+          { week: "W10", actual: 44, plan: 64, color: "#dc2626" },
+          { week: "W11▸", actual: 42, plan: 64, color: "#dc2626", forecast: true },
         ],
       },
       ai: {
         messages: [
           { role: "user", name: "Josh", text: "Why is the West the worst performing region?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>California Retail is the primary driver</strong> at −$1.2M, representing 75% of the West miss. Root cause is the minimum wage increase effective W8 — labor costs in LA and SF are 12% above budget with overtime at 18% above plan.<br><br>Washington Tech adds −$0.6M from enterprise deal deferrals. Oregon Clean Energy is the sole bright spot at +$0.2M on federal subsidy release.` },
+          { role: "ai", name: "Meeru AI", html: `<strong>California Retail is the primary driver</strong> at −$1.2M, representing 75% of the West miss. Root cause is the minimum wage increase effective W8 — labor costs in LA and SF are 12% above budget with overtime at 18% above plan.<br><br>Washington Tech adds −$0.6M from enterprise deal deferrals. Oregon Clean Energy is the sole bright spot at +$0.2M on federal subsidy release.` },
           { role: "user", name: "Josh", text: "What action should we take on California?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>Two recommended actions:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>California: Accelerate self-checkout automation rollout from W14 to W11 — estimated $0.4M labor savings per week once deployed</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Washington: Schedule executive touchpoints with the 4 deferred deal sponsors to confirm W12–W13 close timing</div></div>` },
+          { role: "ai", name: "Meeru AI", html: `<strong>Two recommended actions:</strong><div class="uf-sig-list"><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#E74C3C"></div>California: Accelerate self-checkout automation rollout from W14 to W11 — estimated $0.4M labor savings per week once deployed</div><div class="uf-sig-item"><div class="uf-sig-dot" style="background:#F39C12"></div>Washington: Schedule executive touchpoints with the 4 deferred deal sponsors to confirm W12–W13 close timing</div></div>` },
         ],
         suggestions: ["California automation timeline", "Washington deal deferral details", "West vs prior year"],
       },
@@ -316,20 +316,20 @@ const DATA: {
       chart: {
         title: "Weekly Revenue Variance — Texas Energy",
         bars: [
-          { week: "W6", actual: 62, plan: 64, color: "#FEA400" },
-          { week: "W7", actual: 61, plan: 64, color: "#FEA400" },
-          { week: "W8", actual: 58, plan: 64, color: "#F39C12" },
-          { week: "W9", actual: 52, plan: 64, color: "#E74C3C" },
-          { week: "W10", actual: 48, plan: 64, color: "#E74C3C" },
-          { week: "W11▸", actual: 50, plan: 64, color: "#E74C3C", forecast: true },
+          { week: "W6", actual: 62, plan: 64, color: "#1E40AF" },
+          { week: "W7", actual: 61, plan: 64, color: "#1E40AF" },
+          { week: "W8", actual: 58, plan: 64, color: "#d97706" },
+          { week: "W9", actual: 52, plan: 64, color: "#dc2626" },
+          { week: "W10", actual: 48, plan: 64, color: "#dc2626" },
+          { week: "W11▸", actual: 50, plan: 64, color: "#dc2626", forecast: true },
         ],
       },
       ai: {
         messages: [
           { role: "user", name: "Josh", text: "What is driving the Southwest miss?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>Texas Energy is the dominant driver</strong> at −$0.8M, representing 73% of the Southwest miss. Natural gas spot price dropped 18% WoW — the hedging program covers 60% of volume but the unhedged 40% is fully exposed to the decline.<br><br>Arizona Real Estate adds −$0.2M from mortgage rate cooling, and Colorado Tourism contributes −$0.1M on below-average snowpack.` },
+          { role: "ai", name: "Meeru AI", html: `<strong>Texas Energy is the dominant driver</strong> at −$0.8M, representing 73% of the Southwest miss. Natural gas spot price dropped 18% WoW — the hedging program covers 60% of volume but the unhedged 40% is fully exposed to the decline.<br><br>Arizona Real Estate adds −$0.2M from mortgage rate cooling, and Colorado Tourism contributes −$0.1M on below-average snowpack.` },
           { role: "user", name: "Josh", text: "Should we increase hedge coverage?" },
-          { role: "ai", name: "FluxPlus AI", html: `<strong>Hedge review recommended.</strong> Current 60% coverage was set when natural gas was at $3.20/MMBtu — now at $2.62. Forward curve suggests stabilization around $2.80 by W12.<br><br>Options: (1) Increase hedge to 80% at current forwards — locks in ~$2.75 floor, costs ~$120K premium. (2) Wait for W12 stabilization signal before acting. Risk: another 10% drop in W11 would add −$0.3M exposure.<br><br><strong>Recommend Option 1</strong> given earnings sensitivity.` },
+          { role: "ai", name: "Meeru AI", html: `<strong>Hedge review recommended.</strong> Current 60% coverage was set when natural gas was at $3.20/MMBtu — now at $2.62. Forward curve suggests stabilization around $2.80 by W12.<br><br>Options: (1) Increase hedge to 80% at current forwards — locks in ~$2.75 floor, costs ~$120K premium. (2) Wait for W12 stabilization signal before acting. Risk: another 10% drop in W11 would add −$0.3M exposure.<br><br><strong>Recommend Option 1</strong> given earnings sensitivity.` },
         ],
         suggestions: ["Texas hedge position detail", "Arizona spring market forecast", "Colorado summer pivot plan"],
       },
@@ -444,12 +444,12 @@ const DATA: {
   },
 
   drillSegments: [
-    { id: "caretail", name: "California Retail", region: "West", variance: "−$1.2M", varColor: "down", spark: [58, 54, 50, 46, 42], util: "92%", utilColor: "#E74C3C", trips: "$4.8M", tripsVsPlan: "−12.1%" },
-    { id: "txenergy", name: "Texas Energy", region: "Southwest", variance: "−$0.8M", varColor: "down", spark: [64, 62, 58, 52, 48], util: "78%", utilColor: "#F39C12", trips: "$3.2M", tripsVsPlan: "−8.6%" },
-    { id: "nyfinance", name: "New York Financial Svcs", region: "Northeast", variance: "+$0.7M", varColor: "up", spark: [52, 54, 56, 58, 60], util: "71%", utilColor: "#2ECC71", trips: "$8.1M", tripsVsPlan: "+4.8%" },
-    { id: "fltourism", name: "Florida Tourism", region: "Southeast", variance: "−$0.4M", varColor: "down", spark: [62, 61, 62, 59, 54], util: "68%", utilColor: "#3498DB", trips: "$2.9M", tripsVsPlan: "−7.2%" },
-    { id: "ilmfg", name: "Illinois Manufacturing", region: "Midwest", variance: "−$0.5M", varColor: "down", spark: [61, 60, 57, 53, 50], util: "94%", utilColor: "#E74C3C", trips: "$5.4M", tripsVsPlan: "−6.8%" },
-    { id: "watech", name: "Washington Tech", region: "West", variance: "−$0.6M", varColor: "down", spark: [58, 57, 55, 52, 49], util: "65%", utilColor: "#F39C12", trips: "$6.2M", tripsVsPlan: "−5.4%" },
+    { id: "caretail", name: "California Retail", region: "West", variance: "−$1.2M", varColor: "down", spark: [58, 54, 50, 46, 42], util: "92%", utilColor: "#dc2626", trips: "$4.8M", tripsVsPlan: "−12.1%" },
+    { id: "txenergy", name: "Texas Energy", region: "Southwest", variance: "−$0.8M", varColor: "down", spark: [64, 62, 58, 52, 48], util: "78%", utilColor: "#d97706", trips: "$3.2M", tripsVsPlan: "−8.6%" },
+    { id: "nyfinance", name: "New York Financial Svcs", region: "Northeast", variance: "+$0.7M", varColor: "up", spark: [52, 54, 56, 58, 60], util: "71%", utilColor: "#16a34a", trips: "$8.1M", tripsVsPlan: "+4.8%" },
+    { id: "fltourism", name: "Florida Tourism", region: "Southeast", variance: "−$0.4M", varColor: "down", spark: [62, 61, 62, 59, 54], util: "68%", utilColor: "#2563eb", trips: "$2.9M", tripsVsPlan: "−7.2%" },
+    { id: "ilmfg", name: "Illinois Manufacturing", region: "Midwest", variance: "−$0.5M", varColor: "down", spark: [61, 60, 57, 53, 50], util: "94%", utilColor: "#dc2626", trips: "$5.4M", tripsVsPlan: "−6.8%" },
+    { id: "watech", name: "Washington Tech", region: "West", variance: "−$0.6M", varColor: "down", spark: [58, 57, 55, 52, 49], util: "65%", utilColor: "#d97706", trips: "$6.2M", tripsVsPlan: "−5.4%" },
   ],
 
   drillAI: {
@@ -471,12 +471,12 @@ const DATA: {
   ],
 
   signals: [
-    { name: "California Retail Margin Erosion Risk W11", type: "Labor", typeCls: "pill-red", confidence: 92, body: "Overtime trajectory projects continued margin compression through W11. Self-checkout automation deployment is the key lever — accelerating from W14 to W11 could save $0.4M/week. Model based on 12 comparable wage-event scenarios.", confColor: "#E74C3C" },
-    { name: "Texas Natural Gas Price Stabilization W12", type: "Commodity", typeCls: "pill-amber", confidence: 76, body: "Henry Hub forward curve projects stabilization at $2.80/MMBtu by W12. Current spot at $2.62 — 7% below forward. Historical accuracy on similar storage-build scenarios: 74%. Hedge increase recommended.", confColor: "#F39C12" },
-    { name: "NY Financial Svcs Q1 Close Strong", type: "Revenue", typeCls: "pill-green", confidence: 94, body: "Advisory pipeline has $2.4M in W11–W13 committed closings. Trading infrastructure upgrade providing structural 15bps capture improvement. VIX may moderate but structural gains persist.", confColor: "#2ECC71" },
-    { name: "Florida Tourism Spring Break Rebound W11", type: "Seasonal", typeCls: "pill-blue", confidence: 89, body: "W11 advance bookings +18% above W10. Calendar shift is well-understood — 4 of 5 historical spring break timing shifts showed full revenue recovery in the following week. Confidence high.", confColor: "#3498DB" },
-    { name: "Illinois Hub Rail Car Resolution W11", type: "Supply Chain", typeCls: "pill-blue", confidence: 81, body: "Union Pacific confirmed +15% rail car allocation starting W11. If delivery holds, Chicago hub returns to 85% capacity by W12. Historical UP delivery accuracy on committed allocations: 79%.", confColor: "#3498DB" },
-    { name: "Oregon Clean Energy: Q2 Pipeline Acceleration", type: "Growth", typeCls: "pill-green", confidence: 73, body: "IRA subsidy tranche ahead of schedule suggests Q2 pipeline of $1.8M could pull forward by 4–6 weeks. Customer demand 30% above pre-IRA baseline. Team expansion recommended to capture.", confColor: "#2ECC71" },
+    { name: "California Retail Margin Erosion Risk W11", type: "Labor", typeCls: "pill-red", confidence: 92, body: "Overtime trajectory projects continued margin compression through W11. Self-checkout automation deployment is the key lever — accelerating from W14 to W11 could save $0.4M/week. Model based on 12 comparable wage-event scenarios.", confColor: "#dc2626" },
+    { name: "Texas Natural Gas Price Stabilization W12", type: "Commodity", typeCls: "pill-amber", confidence: 76, body: "Henry Hub forward curve projects stabilization at $2.80/MMBtu by W12. Current spot at $2.62 — 7% below forward. Historical accuracy on similar storage-build scenarios: 74%. Hedge increase recommended.", confColor: "#d97706" },
+    { name: "NY Financial Svcs Q1 Close Strong", type: "Revenue", typeCls: "pill-green", confidence: 94, body: "Advisory pipeline has $2.4M in W11–W13 committed closings. Trading infrastructure upgrade providing structural 15bps capture improvement. VIX may moderate but structural gains persist.", confColor: "#16a34a" },
+    { name: "Florida Tourism Spring Break Rebound W11", type: "Seasonal", typeCls: "pill-blue", confidence: 89, body: "W11 advance bookings +18% above W10. Calendar shift is well-understood — 4 of 5 historical spring break timing shifts showed full revenue recovery in the following week. Confidence high.", confColor: "#2563eb" },
+    { name: "Illinois Hub Rail Car Resolution W11", type: "Supply Chain", typeCls: "pill-blue", confidence: 81, body: "Union Pacific confirmed +15% rail car allocation starting W11. If delivery holds, Chicago hub returns to 85% capacity by W12. Historical UP delivery accuracy on committed allocations: 79%.", confColor: "#2563eb" },
+    { name: "Oregon Clean Energy: Q2 Pipeline Acceleration", type: "Growth", typeCls: "pill-green", confidence: 73, body: "IRA subsidy tranche ahead of schedule suggests Q2 pipeline of $1.8M could pull forward by 4–6 weeks. Customer demand 30% above pre-IRA baseline. Team expansion recommended to capture.", confColor: "#16a34a" },
   ],
 
   history: [
@@ -510,21 +510,21 @@ const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
 .uf-root {
-  --navy: #112736;
-  --navyMd: #1C3A4A;
-  --navyLt: #2D5570;
-  --gold: #FEA400;
-  --green: #2ECC71;
-  --red: #E74C3C;
-  --amber: #F39C12;
-  --blue: #3498DB;
-  --text: #E8EFF4;
-  --muted: #7A99AA;
-  --border: #243D4D;
-  --surface: #1A3345;
-  --surfaceLt: #213C50;
+  --navy: #ffffff;
+  --navyMd: #f8fafc;
+  --navyLt: #e2e8f0;
+  --gold: #1E40AF;
+  --green: #16a34a;
+  --red: #dc2626;
+  --amber: #d97706;
+  --blue: #2563eb;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --surface: #f8fafc;
+  --surfaceLt: #f1f5f9;
 
-  background: #0C1E2A;
+  background: #f8fafc;
   font-family: 'Inter', sans-serif;
   color: var(--text);
   display: flex;
@@ -540,17 +540,17 @@ const STYLES = `
   display: flex;
   flex-direction: column;
   background: var(--navy);
-  border-radius: 14px;
+  border-radius: 10px;
   overflow: hidden;
   border: 1px solid var(--border);
-  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
-  margin: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  margin: 6px;
   min-height: 0;
 }
 
 /* Top Bar */
 .uf-topbar {
-  background: #0C1E2A;
+  background: #ffffff;
   padding: 12px 20px;
   display: flex;
   align-items: center;
@@ -592,12 +592,12 @@ const STYLES = `
   color: var(--muted); transition: all 0.15s;
   border: none; background: transparent;
 }
-.uf-metric-btn.active { background: var(--gold); color: #0C1E2A; }
+.uf-metric-btn.active { background: var(--gold); color: #ffffff; }
 
 /* Tabs */
 .uf-tabs {
   display: flex; gap: 0;
-  background: #0C1E2A;
+  background: #ffffff;
   border-bottom: 1px solid var(--border);
   padding: 0 20px;
   flex-shrink: 0;
@@ -614,8 +614,8 @@ const STYLES = `
 
 /* Metric Strip */
 .uf-metric-strip {
-  background: rgba(254,164,0,0.05);
-  border-bottom: 1px solid rgba(254,164,0,0.15);
+  background: rgba(30,64,175,0.05);
+  border-bottom: 1px solid rgba(30,64,175,0.15);
   padding: 5px 20px;
   display: flex; align-items: center; gap: 7px;
   font-size: 10.5px; font-family: 'DM Mono', monospace;
@@ -629,7 +629,7 @@ const STYLES = `
 /* Main Layout */
 .uf-main {
   display: grid;
-  grid-template-columns: 220px 1fr 280px;
+  grid-template-columns: 220px 1fr;
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -637,7 +637,7 @@ const STYLES = `
 
 /* Sidebar */
 .uf-sidebar {
-  background: #0F2533;
+  background: #f1f5f9;
   border-right: 1px solid var(--border);
   padding: 16px 0;
   overflow-y: auto;
@@ -662,10 +662,10 @@ const STYLES = `
   font-size: 9px; border-radius: 3px; padding: 2px 6px;
   font-family: 'DM Mono', monospace; font-weight: 500;
 }
-.pill-red { background: rgba(231,76,60,0.2); color: #E74C3C; }
-.pill-amber { background: rgba(243,156,18,0.2); color: #F39C12; }
-.pill-green { background: rgba(46,204,113,0.2); color: #2ECC71; }
-.pill-blue { background: rgba(52,152,219,0.2); color: #3498DB; }
+.pill-red { background: rgba(220,38,38,0.2); color: #E74C3C; }
+.pill-amber { background: rgba(217,119,6,0.2); color: #F39C12; }
+.pill-green { background: rgba(22,163,74,0.2); color: #2ECC71; }
+.pill-blue { background: rgba(37,99,235,0.2); color: #3498DB; }
 
 /* Centre */
 .uf-centre {
@@ -675,24 +675,38 @@ const STYLES = `
 
 /* Signal Banner */
 .uf-signal-banner {
-  background: rgba(254,164,0,0.08);
-  border: 1px solid rgba(254,164,0,0.25);
+  background: rgba(30,64,175,0.08);
+  border: 1px solid rgba(30,64,175,0.25);
   border-radius: 8px; padding: 11px 14px;
   display: flex; align-items: flex-start; gap: 10px;
 }
 .uf-signal-banner.positive {
-  background: rgba(46,204,113,0.08);
-  border-color: rgba(46,204,113,0.25);
+  background: rgba(22,163,74,0.08);
+  border-color: rgba(22,163,74,0.25);
 }
 .uf-signal-banner.info {
-  background: rgba(52,152,219,0.08);
-  border-color: rgba(52,152,219,0.3);
+  background: rgba(37,99,235,0.08);
+  border-color: rgba(37,99,235,0.3);
 }
 .uf-signal-banner.critical {
-  background: rgba(231,76,60,0.08);
-  border-color: rgba(231,76,60,0.3);
+  background: rgba(220,38,38,0.08);
+  border-color: rgba(220,38,38,0.3);
 }
 .uf-signal-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+.uf-signal-dismiss {
+  margin-left: auto; flex-shrink: 0; background: none; border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 8px; font-size: 10px; font-weight: 500;
+  color: var(--muted); cursor: pointer; transition: all 0.15s;
+  font-family: 'Inter', sans-serif;
+}
+.uf-signal-dismiss:hover { border-color: var(--gold); color: var(--gold); }
+.uf-signal-show {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: none; border: 1px solid var(--border); border-radius: 6px;
+  padding: 4px 10px; font-size: 10px; color: var(--muted); cursor: pointer;
+  transition: all 0.15s; font-family: 'Inter', sans-serif;
+}
+.uf-signal-show:hover { border-color: var(--gold); color: var(--gold); }
 .uf-signal-text { font-size: 11.5px; line-height: 1.55; }
 .uf-signal-text strong { color: var(--gold); display: block; margin-bottom: 2px; font-size: 12px; }
 .uf-signal-banner.positive .uf-signal-text strong { color: var(--green); }
@@ -737,8 +751,8 @@ const STYLES = `
   border-bottom: 1px solid var(--border);
 }
 .uf-segment-row:last-child { border-bottom: none; }
-.uf-segment-row:hover { background: rgba(254,164,0,0.04); }
-.uf-segment-row.selected { background: rgba(254,164,0,0.07); border-left: 2px solid var(--gold); padding-left: 10px; }
+.uf-segment-row:hover { background: rgba(30,64,175,0.04); }
+.uf-segment-row.selected { background: rgba(30,64,175,0.07); border-left: 2px solid var(--gold); padding-left: 10px; }
 .uf-seg-rank {
   width: 20px; height: 20px; border-radius: 4px;
   background: var(--navyLt); display: flex; align-items: center; justify-content: center;
@@ -770,7 +784,7 @@ const STYLES = `
 .uf-bar-label { font-size: 8.5px; color: var(--muted); font-family: 'DM Mono', monospace; }
 .uf-bar-tooltip {
   position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-  background: #0C1E2A; border: 1px solid var(--gold);
+  background: #ffffff; border: 1px solid var(--gold);
   border-radius: 5px; padding: 5px 9px; font-size: 10px; font-family: 'DM Mono', monospace;
   color: var(--text); pointer-events: none; z-index: 100; white-space: nowrap;
   opacity: 0; transition: opacity 0.15s;
@@ -803,11 +817,11 @@ const STYLES = `
   border-radius: 8px; padding: 12px 14px; cursor: pointer;
   transition: all 0.15s; display: flex; align-items: center; gap: 12px;
 }
-.uf-exc-card:hover { border-color: rgba(254,164,0,0.4); transform: translateX(2px); }
+.uf-exc-card:hover { border-color: rgba(30,64,175,0.4); transform: translateX(2px); }
 .uf-exc-card.critical { border-left: 3px solid var(--red); }
 .uf-exc-card.warning { border-left: 3px solid var(--amber); }
 .uf-exc-card.positive { border-left: 3px solid var(--green); }
-.uf-exc-card.selected { background: rgba(254,164,0,0.06); border-color: var(--gold); }
+.uf-exc-card.selected { background: rgba(30,64,175,0.06); border-color: var(--gold); }
 .uf-exc-icon { font-size: 18px; flex-shrink: 0; }
 .uf-exc-body { flex: 1; }
 .uf-exc-name { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
@@ -824,7 +838,7 @@ const STYLES = `
   border-radius: 8px; padding: 12px 14px; cursor: pointer;
   transition: all 0.15s;
 }
-.uf-signal-card:hover { border-color: rgba(254,164,0,0.4); }
+.uf-signal-card:hover { border-color: rgba(30,64,175,0.4); }
 .uf-signal-card.selected { border-color: var(--gold); }
 .uf-signal-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .uf-signal-card-name { font-size: 12px; font-weight: 600; }
@@ -843,86 +857,131 @@ const STYLES = `
   display: flex; align-items: center; justify-content: space-between;
   transition: all 0.15s;
 }
-.uf-history-row:hover { border-color: rgba(254,164,0,0.4); }
-.uf-history-row.current { border-color: var(--gold); background: rgba(254,164,0,0.06); }
+.uf-history-row:hover { border-color: rgba(30,64,175,0.4); }
+.uf-history-row.current { border-color: var(--gold); background: rgba(30,64,175,0.06); }
 .uf-history-row.selected { border-color: var(--gold); }
 .uf-history-week { font-size: 12px; font-weight: 600; font-family: 'DM Mono', monospace; }
 .uf-history-dates { font-size: 10px; color: var(--muted); margin-top: 2px; }
 .uf-history-tags { display: flex; gap: 5px; }
 
-/* AI Panel */
+/* AI Panel — slide-over on all screen sizes */
 .uf-ai-panel {
-  background: #0F2533;
+  position: fixed; right: 0; top: 0; bottom: 0; z-index: 200;
+  width: 340px; transform: translateX(100%);
+  transition: transform 0.25s ease;
+  background: #ffffff;
   border-left: 1px solid var(--border);
   display: flex; flex-direction: column;
   min-height: 0;
+  box-shadow: -8px 0 30px rgba(0,0,0,0.08);
 }
+.uf-ai-panel.open { transform: translateX(0); }
+.uf-ai-overlay {
+  position: fixed; inset: 0; z-index: 199;
+  background: rgba(0,0,0,0.3); display: none;
+}
+.uf-ai-overlay.open { display: block; }
+/* AI Header */
 .uf-ai-header {
-  padding: 12px 16px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 8px;
-  flex-shrink: 0;
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0; background: linear-gradient(135deg, rgba(30,64,175,0.04) 0%, transparent 100%);
 }
-.uf-ai-icon { font-size: 14px; }
-.uf-ai-title { font-size: 12px; font-weight: 600; }
+.uf-ai-icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: linear-gradient(135deg, #1E40AF, #3B82F6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: #fff; flex-shrink: 0;
+}
+.uf-ai-title { font-size: 13px; font-weight: 600; color: var(--text); }
 .uf-ai-subtitle { font-size: 10px; color: var(--muted); }
+
+/* Messages area */
 .uf-ai-messages {
-  flex: 1; overflow-y: auto; padding: 14px;
-  display: flex; flex-direction: column; gap: 12px;
-  min-height: 0;
+  flex: 1; overflow-y: auto; padding: 16px;
+  display: flex; flex-direction: column; gap: 16px;
+  min-height: 0; background: var(--surface);
 }
-.uf-msg { display: flex; flex-direction: column; gap: 3px; }
-.uf-msg-role {
-  font-size: 9px; font-family: 'DM Mono', monospace; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 1px;
+
+/* Message containers */
+.uf-msg { display: flex; gap: 8px; animation: ufMsgIn 0.3s ease; }
+@keyframes ufMsgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes ufDot { 0%,80%,100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1.1); } }
+
+.uf-msg-avatar {
+  width: 24px; height: 24px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
 }
+.uf-msg.user .uf-msg-avatar { background: #e2e8f0; color: #475569; }
+.uf-msg.ai .uf-msg-avatar { background: linear-gradient(135deg, #1E40AF, #3B82F6); color: #fff; }
+
+.uf-msg-content { flex: 1; min-width: 0; }
+.uf-msg-role { display: none; }
+
 .uf-msg-bubble {
-  border-radius: 8px; padding: 9px 12px;
-  font-size: 11px; line-height: 1.55;
+  border-radius: 12px; padding: 10px 14px;
+  font-size: 12px; line-height: 1.6;
 }
-.uf-msg.user .uf-msg-bubble { background: var(--navyLt); color: var(--text); }
-.uf-msg.ai .uf-msg-bubble { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
-.uf-msg.ai .uf-msg-bubble strong { color: var(--gold); }
+.uf-msg.user .uf-msg-bubble {
+  background: var(--gold); color: #fff;
+  border-radius: 12px 12px 4px 12px;
+  font-weight: 500;
+}
+.uf-msg.ai .uf-msg-bubble {
+  background: #fff; border: 1px solid var(--border); color: var(--text);
+  border-radius: 12px 12px 12px 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.uf-msg.ai .uf-msg-bubble strong { color: var(--gold); font-weight: 600; }
 .uf-msg.typing .uf-msg-bubble { color: var(--muted); font-style: italic; }
 
-.uf-sig-list { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
-.uf-sig-item { display: flex; align-items: center; gap: 7px; font-size: 10.5px; }
-.uf-sig-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.uf-sig-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.uf-sig-item {
+  display: flex; align-items: center; gap: 8px; font-size: 11px;
+  padding: 6px 10px; background: var(--surface); border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.uf-sig-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
+/* Input area */
 .uf-ai-input-area {
-  padding: 12px; border-top: 1px solid var(--border);
+  padding: 12px 14px; border-top: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 8px;
-  flex-shrink: 0;
+  flex-shrink: 0; background: #fff;
 }
 .uf-ai-input {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 7px; padding: 8px 12px;
-  font-size: 11px; color: var(--text); font-family: 'Inter', sans-serif;
-  display: flex; align-items: center; justify-content: space-between;
-  cursor: pointer; transition: border-color 0.2s;
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: 12px; padding: 0;
+  font-size: 12px; color: var(--text); font-family: 'Inter', sans-serif;
+  display: flex; align-items: center;
+  transition: border-color 0.2s;
+  overflow: hidden;
 }
-.uf-ai-input:hover { border-color: rgba(254,164,0,0.4); }
-.uf-ai-input span { color: var(--muted); }
+.uf-ai-input:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(30,64,175,0.08); }
 .uf-ai-send {
-  font-size: 12px; cursor: pointer; background: var(--gold); color: #0C1E2A;
-  border-radius: 4px; width: 22px; height: 22px; display: flex; align-items: center;
-  justify-content: center; font-weight: 700; transition: opacity 0.15s;
-  border: none;
+  cursor: pointer; background: var(--gold); color: #fff;
+  border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center;
+  justify-content: center; font-weight: 700; transition: all 0.15s;
+  border: none; margin: 3px; font-size: 13px; flex-shrink: 0;
 }
-.uf-ai-send:hover { opacity: 0.8; }
+.uf-ai-send:hover { background: #1e3a8a; }
+.uf-ai-send:disabled { opacity: 0.3; cursor: not-allowed; }
 
-.uf-ai-suggestions { display: flex; flex-direction: column; gap: 5px; }
+/* Suggestions */
+.uf-ai-suggestions { display: flex; flex-wrap: wrap; gap: 5px; }
 .uf-suggestion {
-  background: rgba(254,164,0,0.05); border: 1px solid rgba(254,164,0,0.15);
-  border-radius: 5px; padding: 5px 10px;
-  font-size: 10px; color: var(--muted); cursor: pointer;
-  font-family: 'DM Mono', monospace; transition: all 0.15s; user-select: none;
-  text-align: left; width: 100%;
+  background: rgba(30,64,175,0.04); border: 1px solid rgba(30,64,175,0.12);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 10.5px; color: var(--gold); cursor: pointer;
+  font-weight: 500; transition: all 0.15s; user-select: none;
+  text-align: left; font-family: 'Inter', sans-serif;
 }
-.uf-suggestion:hover { border-color: var(--gold); color: var(--gold); background: rgba(254,164,0,0.08); }
+.uf-suggestion:hover { border-color: var(--gold); background: rgba(30,64,175,0.08); transform: translateY(-1px); box-shadow: 0 2px 4px rgba(30,64,175,0.1); }
 
 /* Bottom Bar */
 .uf-bottombar {
-  background: #0C1E2A; border-top: 1px solid var(--border);
+  background: #ffffff; border-top: 1px solid var(--border);
   padding: 8px 20px; display: flex; align-items: center; justify-content: space-between;
   flex-shrink: 0;
 }
@@ -939,21 +998,34 @@ const STYLES = `
    MOBILE/TABLET TOGGLE CONTROLS
    ═══════════════════════════════════════════════ */
 .uf-mobile-controls { display: none; }
-.uf-sidebar-toggle,
-.uf-ai-toggle { display: none; }
-.uf-ai-close { display: none; }
+.uf-sidebar-toggle { display: none; }
+.uf-ai-toggle {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--gold); cursor: pointer; transition: all 0.15s;
+  font-size: 14px; flex-shrink: 0;
+}
+.uf-ai-toggle:hover { border-color: var(--gold); background: rgba(30,64,175,0.05); }
+.uf-ai-close {
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 4px; margin-left: auto;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); cursor: pointer; font-size: 12px;
+}
+.uf-ai-close:hover { border-color: var(--gold); color: var(--gold); }
 .uf-sidebar-overlay { display: none; }
 
 /* ═══════════════════════════════════════════════
    TABLET (768px – 1279px)
    ═══════════════════════════════════════════════ */
 @media (max-width: 1279px) {
-  .uf-app { margin: 4px; border-radius: 10px; }
+  .uf-app { margin: 2px; border-radius: 8px; }
 
-  /* 2-column grid: hide sidebar, AI toggleable */
+  /* Single-column grid: sidebar as drawer */
   .uf-main { grid-template-columns: 1fr; }
 
-  /* Sidebar: hidden by default, slide-over */
+  /* Sidebar: slide-over drawer */
   .uf-sidebar {
     position: fixed; left: 0; top: 0; bottom: 0; z-index: 200;
     width: 240px; transform: translateX(-100%);
@@ -966,63 +1038,89 @@ const STYLES = `
   }
   .uf-sidebar-overlay.open { display: block; }
 
-  /* AI Panel: hidden by default, slide-over from right */
-  .uf-ai-panel {
-    position: fixed; right: 0; top: 0; bottom: 0; z-index: 200;
-    width: 320px; transform: translateX(100%);
-    transition: transform 0.25s ease;
-  }
-  .uf-ai-panel.open { transform: translateX(0); }
+  /* AI panel: narrower on tablet */
+  .uf-ai-panel { width: 300px; }
 
-  /* Show toggle buttons */
-  .uf-mobile-controls { display: flex; }
-  .uf-sidebar-toggle,
-  .uf-ai-toggle {
+  /* Show sidebar toggle */
+  .uf-sidebar-toggle {
     display: flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; border-radius: 6px;
+    width: 28px; height: 28px; border-radius: 6px;
     background: var(--surface); border: 1px solid var(--border);
     color: var(--muted); cursor: pointer; transition: all 0.15s;
-    font-size: 14px; flex-shrink: 0;
+    font-size: 13px; flex-shrink: 0;
   }
-  .uf-sidebar-toggle:hover,
-  .uf-ai-toggle:hover { border-color: var(--gold); color: var(--gold); }
+  .uf-sidebar-toggle:hover { border-color: var(--gold); color: var(--gold); }
 
-  .uf-ai-close {
-    display: flex; align-items: center; justify-content: center;
-    width: 24px; height: 24px; border-radius: 4px; margin-left: auto;
-    background: transparent; border: 1px solid var(--border);
-    color: var(--muted); cursor: pointer; font-size: 12px;
-  }
-
-  /* Topbar: more compact */
-  .uf-topbar { padding: 8px 12px; }
+  /* Topbar: compact — single tight row */
+  .uf-topbar { padding: 6px 12px; }
+  .uf-logo { font-size: 14px; }
   .uf-week-badge { display: none; }
   .uf-status-text { display: none; }
 
-  /* Stat cards: 2x2 grid */
-  .uf-stat-row { grid-template-columns: 1fr 1fr; }
-  .uf-stat-card { padding: 10px 12px; }
-  .uf-stat-value { font-size: 17px; }
-
-  /* Drill grid: stays 2-col */
-  .uf-drill-grid { grid-template-columns: 1fr 1fr; }
-
-  /* Tabs: scroll if needed */
+  /* Tabs: slimmer */
   .uf-tabs { overflow-x: auto; padding: 0 12px; }
-  .uf-tab { white-space: nowrap; padding: 8px 14px; font-size: 11px; }
+  .uf-tab { white-space: nowrap; padding: 6px 12px; font-size: 11px; }
 
-  /* Centre: tighter padding */
-  .uf-centre { padding: 12px; gap: 10px; }
+  /* Metric strip: hide on tablet — saves ~24px */
+  .uf-metric-strip { display: none; }
 
-  /* Bottom bar: compact */
-  .uf-bottombar { padding: 6px 12px; }
+  /* Centre: tight padding, minimal gaps */
+  .uf-centre { padding: 10px 14px; gap: 8px; }
+
+  /* Signal banner: compact single-line feel */
+  .uf-signal-banner { padding: 8px 12px; gap: 8px; border-radius: 6px; }
+  .uf-signal-icon { font-size: 14px; }
+  .uf-signal-text { font-size: 11px; line-height: 1.4; }
+  .uf-signal-text strong { font-size: 11px; display: inline; margin-bottom: 0; }
+
+  /* Stat cards: KEEP 4-col row — tablet has enough width */
+  .uf-stat-row { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .uf-stat-card { padding: 8px 10px; }
+  .uf-stat-value { font-size: 16px; margin-bottom: 1px; }
+  .uf-stat-label { font-size: 8px; letter-spacing: 0.7px; margin-bottom: 3px; }
+  .uf-stat-delta { font-size: 9px; }
+
+  /* Commentary: compact */
+  .uf-commentary-header { padding: 7px 12px; flex-wrap: wrap; gap: 4px; }
+  .uf-commentary-title { font-size: 11px; }
+  .uf-commentary-meta { font-size: 9px; }
+  .uf-commentary-body { padding: 8px 10px; gap: 6px; }
+  .uf-segment-row { padding: 6px; gap: 8px; }
+  .uf-seg-rank { width: 18px; height: 18px; font-size: 9px; }
+  .uf-seg-name { font-size: 11px; }
+  .uf-seg-text { font-size: 10px; line-height: 1.4; }
+  .uf-seg-tags { margin-top: 3px; gap: 3px; }
+  .uf-seg-tag { font-size: 8.5px; padding: 1px 5px; }
+
+  /* Chart area: smaller */
+  .uf-chart-area { padding: 10px; }
+  .uf-bars { height: 60px; }
+
+  /* Drill grid: stays 2-col, compact */
+  .uf-drill-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .uf-drill-card { padding: 10px 12px; }
+  .uf-drill-spark { height: 28px; }
+  .uf-drill-card-name { font-size: 11px; }
+
+  /* Exception cards: compact */
+  .uf-exc-card { padding: 8px 10px; gap: 8px; }
+  .uf-exc-name { font-size: 11px; }
+  .uf-exc-detail { font-size: 10px; }
+  .uf-exc-val { font-size: 14px; }
+
+  /* Signal cards: compact */
+  .uf-signal-card { padding: 10px 12px; }
+  .uf-signal-card-name { font-size: 11px; }
+  .uf-signal-card-body { font-size: 10px; }
+
+  /* History: compact */
+  .uf-history-row { padding: 7px 12px; }
+
+  /* Bottom bar: slim */
+  .uf-bottombar { padding: 4px 12px; }
+  .uf-bottom-stat { font-size: 9px; }
+  .uf-bottom-right { font-size: 9px; }
   .uf-bottom-left { gap: 10px; }
-
-  /* Metric strip: compact */
-  .uf-metric-strip { padding: 4px 12px; }
-
-  /* Commentary meta: hide on smaller */
-  .uf-commentary-header { flex-wrap: wrap; gap: 4px; }
 }
 
 /* ═══════════════════════════════════════════════
@@ -1113,6 +1211,7 @@ export default function FluxPlusPage() {
   const [chatInput, setChatInput] = useState("")
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [aiPanelOpen, setAiPanelOpen] = useState(false)
+  const [signalDismissed, setSignalDismissed] = useState(false)
 
   const aiMessagesRef = useRef<HTMLDivElement>(null)
   const typingRef = useRef<ReturnType<typeof setTimeout>>()
@@ -1174,7 +1273,7 @@ export default function FluxPlusPage() {
       if (typingRef.current) clearTimeout(typingRef.current)
       typingRef.current = setTimeout(() => {
         setIsTyping(false)
-        setAiMessages((prev) => [...prev, { role: "ai", name: "FluxPlus AI", html }])
+        setAiMessages((prev) => [...prev, { role: "ai", name: "Meeru AI", html }])
         scrollAI()
       }, delay)
     },
@@ -1353,11 +1452,11 @@ export default function FluxPlusPage() {
           <div className="uf-chart-title">{chartTitle}</div>
           <div className="uf-chart-legend">
             <div className="uf-legend-item">
-              <div className="uf-legend-dot" style={{ background: "#FEA400" }} />
+              <div className="uf-legend-dot" style={{ background: "#1E40AF" }} />
               Actual
             </div>
             <div className="uf-legend-item">
-              <div className="uf-legend-dot" style={{ background: "#4A7A9B" }} />
+              <div className="uf-legend-dot" style={{ background: "#94a3b8" }} />
               Plan
             </div>
           </div>
@@ -1389,7 +1488,7 @@ export default function FluxPlusPage() {
                       borderBottom: b.forecast ? "none" : undefined,
                     }}
                   />
-                  <div className="uf-bar" style={{ height: `${pH}px`, background: "#4A7A9B", opacity: b.forecast ? 0.3 : 0.55 }} />
+                  <div className="uf-bar" style={{ height: `${pH}px`, background: "#94a3b8", opacity: b.forecast ? 0.3 : 0.55 }} />
                 </div>
                 <div className="uf-bar-label" style={{ color: b.forecast ? b.color : undefined }}>
                   {b.week}
@@ -1449,7 +1548,7 @@ export default function FluxPlusPage() {
           <div className="uf-topbar-left">
             <button className="uf-sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} title="Navigation">☰</button>
             <div className="uf-logo">
-              Flux<span>Plus</span>
+              Variance <span>Workbench</span>
             </div>
             <div className="uf-week-badge">{regData.week} · Generated 08:38 AM</div>
           </div>
@@ -1527,16 +1626,23 @@ export default function FluxPlusPage() {
             {/* ANALYSIS TAB */}
             {tab === "analysis" && (
               <div className="uf-fade-in" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                {/* Signal Banner */}
-                <div className={`uf-signal-banner ${regData.signal.positive ? "positive" : ""}`}>
-                  <div className="uf-signal-icon">{regData.signal.icon}</div>
-                  <div className="uf-signal-text">
-                    <strong>
-                      {compData.label} · {metric} · {regData.label}
-                    </strong>
-                    {compData.signal || regData.signal.body}
+                {/* Signal Banner — dismissable */}
+                {signalDismissed ? (
+                  <button className="uf-signal-show" onClick={() => setSignalDismissed(false)}>
+                    {regData.signal.icon} Show insight — {compData.label} · {metric} · {regData.label} ▾
+                  </button>
+                ) : (
+                  <div className={`uf-signal-banner ${regData.signal.positive ? "positive" : ""}`}>
+                    <div className="uf-signal-icon">{regData.signal.icon}</div>
+                    <div className="uf-signal-text">
+                      <strong>
+                        {compData.label} · {metric} · {regData.label}
+                      </strong>
+                      {compData.signal || regData.signal.body}
+                    </div>
+                    <button className="uf-signal-dismiss" onClick={() => setSignalDismissed(true)}>Hide</button>
                   </div>
-                </div>
+                )}
 
                 {/* Stat Cards */}
                 <div className="uf-stat-row">
@@ -1643,7 +1749,7 @@ export default function FluxPlusPage() {
                           {seg.spark.map((v, i) => {
                             const h = Math.max(4, Math.round(((v - minV) / Math.max(maxV - minV, 1)) * 30))
                             const isLast = i === seg.spark.length - 1
-                            const col = seg.varColor === "up" ? "#2ECC71" : isLast ? "#E74C3C" : "#4A7A9B"
+                            const col = seg.varColor === "up" ? "#16a34a" : isLast ? "#dc2626" : "#94a3b8"
                             return <div key={i} className="uf-spark-bar" style={{ height: h, background: col, opacity: isLast ? 1 : 0.6 }} />
                           })}
                         </div>
@@ -1788,6 +1894,9 @@ export default function FluxPlusPage() {
             )}
           </div>
 
+          {/* AI OVERLAY */}
+          <div className={`uf-ai-overlay ${aiPanelOpen ? "open" : ""}`} onClick={() => setAiPanelOpen(false)} />
+
           {/* ── Right AI Panel ── */}
           <div className={`uf-ai-panel ${aiPanelOpen ? "open" : ""}`}>
             <div className="uf-ai-header">
@@ -1801,21 +1910,28 @@ export default function FluxPlusPage() {
 
             <div className="uf-ai-messages" ref={aiMessagesRef}>
               {aiMessages.map((msg, i) => (
-                <div key={i} className={`uf-msg ${msg.role} uf-fade-in`}>
-                  <div className="uf-msg-role">{msg.name}</div>
-                  {msg.html ? (
-                    <div className="uf-msg-bubble" dangerouslySetInnerHTML={{ __html: msg.html }} />
-                  ) : (
-                    <div className="uf-msg-bubble">{msg.text}</div>
-                  )}
+                <div key={i} className={`uf-msg ${msg.role}`}>
+                  <div className="uf-msg-avatar">
+                    {msg.role === "user" ? "JO" : "✦"}
+                  </div>
+                  <div className="uf-msg-content">
+                    {msg.html ? (
+                      <div className="uf-msg-bubble" dangerouslySetInnerHTML={{ __html: msg.html }} />
+                    ) : (
+                      <div className="uf-msg-bubble">{msg.text}</div>
+                    )}
+                  </div>
                 </div>
               ))}
               {isTyping && (
-                <div className="uf-msg ai typing uf-fade-in">
-                  <div className="uf-msg-role">FluxPlus AI</div>
-                  <div className="uf-msg-bubble">
-                    <span style={{ opacity: 0.5 }}>●</span> <span style={{ opacity: 0.3 }}>●</span>{" "}
-                    <span style={{ opacity: 0.15 }}>●</span>
+                <div className="uf-msg ai">
+                  <div className="uf-msg-avatar">✦</div>
+                  <div className="uf-msg-content">
+                    <div className="uf-msg-bubble" style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--gold)", animation: "ufDot 1.4s infinite", animationDelay: "0s" }} />
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--gold)", animation: "ufDot 1.4s infinite", animationDelay: "0.2s" }} />
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--gold)", animation: "ufDot 1.4s infinite", animationDelay: "0.4s" }} />
+                    </div>
                   </div>
                 </div>
               )}
@@ -1846,13 +1962,8 @@ export default function FluxPlusPage() {
                   className="uf-ai-send"
                   onClick={handleChatSubmit}
                   disabled={isTyping || !chatInput.trim()}
-                  style={{
-                    margin: 4,
-                    opacity: chatInput.trim() && !isTyping ? 1 : 0.4,
-                    cursor: chatInput.trim() && !isTyping ? "pointer" : "default",
-                  }}
                 >
-                  ↑
+                  →
                 </button>
               </div>
               <div className="uf-ai-suggestions">
@@ -1882,7 +1993,7 @@ export default function FluxPlusPage() {
               Generated <span>08:38 AM</span>
             </div>
           </div>
-          <div className="uf-bottom-right">FluxPlus · Week 10 · {regData.label}</div>
+          <div className="uf-bottom-right">Variance Workbench · Week 10 · {regData.label}</div>
         </div>
       </div>
     </div>
