@@ -5,6 +5,7 @@ import { useStandardFlux } from "./hooks/use-standard-flux";
 import {
   WorkbenchHeader,
   StandardFluxToolbar,
+  FilterBar,
   WorklistTable,
   StandardFluxDrawer,
   StandardFluxAiPanel,
@@ -381,6 +382,29 @@ export default function StandardFluxPage() {
           topDrivers={state.headerTopDrivers}
           reviewStats={state.reviewStats}
           exceptionCount={state.exceptionCount}
+          activeKpiCard={state.activeKpiCard}
+          onKpiCardClick={state.handleKpiCardClick}
+        />
+
+        {/* KPI-card-driven filter bar */}
+        <FilterBar
+          activeCard={state.activeKpiCard}
+          expanded={state.filterBarExpanded}
+          onToggle={() => state.setFilterBarExpanded(!state.filterBarExpanded)}
+          comparisonMode={state.comparisonMode}
+          onComparisonModeChange={state.setComparisonMode}
+          materiality={state.materiality}
+          onMaterialityChange={state.setMateriality}
+          excludeNoise={state.excludeNoise}
+          onExcludeNoiseChange={state.setExcludeNoise}
+          ownerFilter={state.ownerFilter}
+          onOwnerFilterChange={state.setOwnerFilter}
+          statusFilter={state.statusFilter}
+          onStatusFilterChange={state.setStatusFilter}
+          ownerOptions={state.ownerOptions}
+          statusOptions={state.statusOptions}
+          quickFilter={state.quickFilter}
+          onQuickFilterChange={state.setQuickFilter}
         />
 
         {/* Toolbar */}
@@ -514,6 +538,12 @@ export default function StandardFluxPage() {
         ownerOptions={state.ownerOptions}
         onUpdateOwner={state.handleUpdateOwner}
         onUpdateStatus={state.handleUpdateStatus}
+        commentaryIsGenerating={state.commentaryIsGenerating}
+        commentaryThinkingSteps={state.commentaryThinkingSteps}
+        onGenerateCommentary={state.handleGenerateCommentary}
+        onUpdateCommentary={state.handleUpdateCommentary}
+        onSubmitCommentary={state.handleSubmitCommentary}
+        onApproveCommentary={state.handleApproveCommentary}
       />
     </div>
   );

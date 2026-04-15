@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { FluxRow } from "@/lib/data/types/flux-analysis";
+import type { FluxRow, CommentaryStatus } from "@/lib/data/types/flux-analysis";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,9 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Clock, MessageSquare, Paperclip, Save, Sparkles, Upload, UserCircle } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { CheckCircle2, Clock, FileText, MessageSquare, Paperclip, Save, Sparkles, Upload, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { fmtMoney, fmtPct, statusClass } from "@/app/(main)/reports/analysis/flux-analysis/helpers";
+import { fmtMoney, fmtPct, statusClass, expectednessClass, commentaryStatusClass } from "@/app/(main)/reports/analysis/flux-analysis/helpers";
 import { ACTIVITY_LOG } from "@/app/(main)/reports/analysis/flux-analysis/constants";
 import { toast } from "sonner";
 
@@ -34,6 +35,13 @@ interface StandardFluxDrawerProps {
   ownerOptions: string[];
   onUpdateOwner: (rowId: string, owner: string) => void;
   onUpdateStatus: (rowId: string, status: string) => void;
+  // Commentary props
+  commentaryIsGenerating?: boolean;
+  commentaryThinkingSteps?: string[];
+  onGenerateCommentary?: (row: FluxRow) => void;
+  onUpdateCommentary?: (rowId: string, text: string) => void;
+  onSubmitCommentary?: (rowId: string) => void;
+  onApproveCommentary?: (rowId: string, approverName: string) => void;
 }
 
 export function StandardFluxDrawer({
@@ -47,22 +55,39 @@ export function StandardFluxDrawer({
   ownerOptions,
   onUpdateOwner,
   onUpdateStatus,
+  commentaryIsGenerating = false,
+  commentaryThinkingSteps = [],
+  onGenerateCommentary,
+  onUpdateCommentary,
+  onSubmitCommentary,
+  onApproveCommentary,
 }: StandardFluxDrawerProps) {
   const [localOwner, setLocalOwner] = useState("");
   const [localStatus, setLocalStatus] = useState("");
+  const [localCommentary, setLocalCommentary] = useState("");
 
   // Sync local state when row changes
   useEffect(() => {
     if (row) {
       setLocalOwner(row.owner);
       setLocalStatus(row.status);
+      setLocalCommentary(row.commentary || "");
     }
   }, [row]);
+
+  // Sync commentary when AI generates it
+  useEffect(() => {
+    if (row?.commentary) {
+      setLocalCommentary(row.commentary);
+    }
+  }, [row?.commentary]);
 
   if (!row) return null;
 
   const delta = row.actual - row.base;
   const pct = row.base ? delta / row.base : 0;
+  const cmtStatus: CommentaryStatus = row.commentaryStatus || "none";
+  const exp = row.expectedness || "Expected";
 
   const handleSaveWorkflow = () => {
     if (localOwner !== row.owner) {
@@ -92,6 +117,9 @@ export function StandardFluxDrawer({
             <Badge className={cn("border text-xs", statusClass(row.status))}>
               <span className={cn("mr-1 inline-block h-1.5 w-1.5 rounded-full", row.status === "Closed" ? "bg-emerald-500" : row.status === "In Review" ? "bg-amber-500" : "bg-blue-500")} />
               {row.status}
+            </Badge>
+            <Badge className={cn("border text-xs", expectednessClass(exp))}>
+              {exp}
             </Badge>
             <Badge
               variant="outline"
@@ -130,10 +158,126 @@ export function StandardFluxDrawer({
             </div>
           </div>
 
-          {/* Section 2: AI Explanation (moved up) */}
+          {/* Section 2: Commentary Composer (FLAGSHIP) */}
           <div>
             <h4 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600">2</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">2</span>
+              <FileText className="h-3.5 w-3.5 text-primary" />
+              Commentary
+              {cmtStatus !== "none" && (
+                <Badge className={cn("ml-auto border text-[10px]", commentaryStatusClass(cmtStatus))}>
+                  {cmtStatus === "draft" ? "Draft" : cmtStatus === "submitted" ? "Submitted" : cmtStatus === "approved" ? `Approved${row.approvedBy ? ` · ${row.approvedBy}` : ""}` : "—"}
+                </Badge>
+              )}
+            </h4>
+            <div className="rounded-lg border border-slate-200 p-4 space-y-3">
+              {/* AI Generate button */}
+              {cmtStatus === "none" && !commentaryIsGenerating && (
+                <div className="flex flex-col items-center py-4 text-center">
+                  <div className="mb-2 rounded-full bg-primary/10 p-2.5">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                  </div>
+                  <p className="text-xs text-slate-500 mb-3">No commentary yet. Let AI draft it for you.</p>
+                  <Button
+                    size="sm"
+                    className="gap-2 bg-primary text-xs text-white hover:bg-primary/90"
+                    onClick={() => onGenerateCommentary?.(row)}
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Generate AI Draft
+                  </Button>
+                </div>
+              )}
+
+              {/* Thinking animation */}
+              {commentaryIsGenerating && (
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-1.5">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">AI is composing commentary</p>
+                  {commentaryThinkingSteps.map((step, idx) => {
+                    const isLatest = idx === commentaryThinkingSteps.length - 1;
+                    return (
+                      <div key={`${step}-${idx}`} className={cn("text-xs", isLatest ? "font-medium text-slate-700" : "text-slate-500")}>
+                        {step}
+                        {isLatest && (
+                          <span className="ml-1.5 inline-flex items-center gap-1 align-middle">
+                            <span className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-pulse" />
+                            <span className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-pulse" style={{ animationDelay: "0.2s" }} />
+                            <span className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-pulse" style={{ animationDelay: "0.4s" }} />
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Commentary textarea (visible when draft/submitted/approved) */}
+              {cmtStatus !== "none" && !commentaryIsGenerating && (
+                <>
+                  <Textarea
+                    value={localCommentary}
+                    onChange={(e) => {
+                      setLocalCommentary(e.target.value);
+                      onUpdateCommentary?.(row.id, e.target.value);
+                    }}
+                    disabled={cmtStatus === "approved"}
+                    className="min-h-[160px] resize-none text-xs leading-5 border-slate-200"
+                    placeholder="Write or edit commentary..."
+                  />
+
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-2 pt-1">
+                    {cmtStatus === "draft" && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1.5 text-xs"
+                          onClick={() => onGenerateCommentary?.(row)}
+                        >
+                          <Sparkles className="h-3 w-3" />
+                          Regenerate
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="gap-1.5 bg-primary text-xs text-white hover:bg-primary/90 ml-auto"
+                          onClick={() => onSubmitCommentary?.(row.id)}
+                        >
+                          Submit for Review
+                        </Button>
+                      </>
+                    )}
+                    {cmtStatus === "submitted" && (
+                      <>
+                        <span className="text-[11px] text-blue-600 font-medium flex items-center gap-1">
+                          <Clock className="h-3 w-3" /> Pending controller review
+                        </span>
+                        <Button
+                          size="sm"
+                          className="gap-1.5 bg-emerald-600 text-xs text-white hover:bg-emerald-700 ml-auto"
+                          onClick={() => onApproveCommentary?.(row.id, "S. Chen")}
+                        >
+                          <CheckCircle2 className="h-3 w-3" />
+                          Approve
+                        </Button>
+                      </>
+                    )}
+                    {cmtStatus === "approved" && (
+                      <div className="flex items-center gap-2 text-xs text-emerald-700">
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        <span>Approved by {row.approvedBy}{row.approvedAt ? ` · ${new Date(row.approvedAt).toLocaleDateString()}` : ""}</span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Section 3: AI Explanation */}
+          <div>
+            <h4 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600">3</span>
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               AI Explanation
             </h4>
@@ -170,10 +314,10 @@ export function StandardFluxDrawer({
             </div>
           </div>
 
-          {/* Section 3: Owner + Status Workflow (NEW) */}
+          {/* Section 4: Owner + Status Workflow */}
           <div>
             <h4 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600">3</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600">4</span>
               <UserCircle className="h-3.5 w-3.5 text-slate-500" />
               Owner &amp; Status
             </h4>
@@ -217,10 +361,10 @@ export function StandardFluxDrawer({
             </div>
           </div>
 
-          {/* Section 4: Evidence */}
+          {/* Section 5: Evidence */}
           <div>
             <h4 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600">4</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600">5</span>
               Evidence
             </h4>
             <div className="rounded-lg border border-slate-200 p-4">
@@ -245,10 +389,10 @@ export function StandardFluxDrawer({
             </div>
           </div>
 
-          {/* Section 5: Activity */}
+          {/* Section 6: Activity */}
           <div>
             <h4 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600">5</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600">6</span>
               Activity
             </h4>
             <div className="rounded-lg border border-slate-200 p-4">

@@ -2,43 +2,57 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
 
-export type AppTheme = "default" | "uberflux" | "formfactor"
+export type AppTheme = "light" | "dark"
 
 export interface ThemeConfig {
   id: AppTheme
   label: string
-  accent: string // hex color for preview swatch
+  accent: string
 }
 
 export const THEMES: ThemeConfig[] = [
-  { id: "default", label: "Default", accent: "#1E40AF" },
-  { id: "uberflux", label: "FluxPlus", accent: "#FEA400" },
-  { id: "formfactor", label: "Form Factor", accent: "#00D4AA" },
+  { id: "light", label: "Light", accent: "#1E40AF" },
+  { id: "dark", label: "Dark", accent: "#3B82F6" },
 ]
 
 interface ThemeContextValue {
   theme: AppTheme
   setTheme: (theme: AppTheme) => void
+  toggleTheme: () => void
   themeConfig: ThemeConfig
+  isDark: boolean
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: "default",
+  theme: "light",
   setTheme: () => {},
+  toggleTheme: () => {},
   themeConfig: THEMES[0],
+  isDark: false,
 })
 
+const STORAGE_KEY = "meeru-app-theme"
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<AppTheme>("default")
+  const [theme, setThemeState] = useState<AppTheme>("light")
   const [mounted, setMounted] = useState(false)
 
-  // Load persisted theme on mount
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("meeru-app-theme") as AppTheme | null
-      if (saved && THEMES.some((t) => t.id === saved)) {
+      const saved = localStorage.getItem(STORAGE_KEY) as AppTheme | null
+      if (saved && (saved === "light" || saved === "dark")) {
         setThemeState(saved)
         document.documentElement.setAttribute("data-theme", saved)
+      }
+      // Migrate old theme values
+      if (saved === "default") {
+        setThemeState("light")
+        document.documentElement.setAttribute("data-theme", "light")
+        localStorage.setItem(STORAGE_KEY, "light")
+      } else if (saved === "uberflux" || saved === "formfactor") {
+        setThemeState("dark")
+        document.documentElement.setAttribute("data-theme", "dark")
+        localStorage.setItem(STORAGE_KEY, "dark")
       }
     } catch {
       // no-op
@@ -50,15 +64,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setThemeState(newTheme)
     document.documentElement.setAttribute("data-theme", newTheme)
     try {
-      localStorage.setItem("meeru-app-theme", newTheme)
+      localStorage.setItem(STORAGE_KEY, newTheme)
     } catch {
       // no-op
     }
   }, [])
 
-  const themeConfig = THEMES.find((t) => t.id === theme) || THEMES[0]
+  const toggleTheme = useCallback(() => {
+    const next = theme === "light" ? "dark" : "light"
+    setTheme(next)
+  }, [theme, setTheme])
 
-  // Set initial data-theme attribute on mount
+  const themeConfig = THEMES.find((t) => t.id === theme) || THEMES[0]
+  const isDark = theme === "dark"
+
   useEffect(() => {
     if (mounted) {
       document.documentElement.setAttribute("data-theme", theme)
@@ -66,7 +85,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [mounted, theme])
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, themeConfig }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, themeConfig, isDark }}>
       {children}
     </ThemeContext.Provider>
   )

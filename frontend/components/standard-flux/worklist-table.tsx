@@ -1,9 +1,9 @@
 "use client";
 
 import type { FluxRow } from "@/lib/data/types/flux-analysis";
-import { fmtMoney, fmtPct, statusClass } from "@/app/(main)/reports/analysis/flux-analysis/helpers";
+import { fmtMoney, fmtPct, statusClass, expectednessClass, expectednessIcon, commentaryStatusClass } from "@/app/(main)/reports/analysis/flux-analysis/helpers";
 import { cn } from "@/lib/utils";
-import { Minus, Paperclip, TrendingDown, TrendingUp } from "lucide-react";
+import { FileText, Minus, Paperclip, TrendingDown, TrendingUp } from "lucide-react";
 
 /* ─── Driver Taxonomy ─── */
 
@@ -261,6 +261,9 @@ export function WorklistTable({
                 Ownership
               </th>
               <th colSpan={1} className="px-3 py-1.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400 border-l border-slate-200">
+                Classification
+              </th>
+              <th colSpan={2} className="px-3 py-1.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400 border-l border-slate-200">
                 Support
               </th>
             </tr>
@@ -274,13 +277,15 @@ export function WorklistTable({
               <th className="px-3 py-2 text-left text-[11px] font-medium text-slate-500 uppercase tracking-wide border-l border-slate-100">Driver</th>
               <th className="px-3 py-2 text-left text-[11px] font-medium text-slate-500 uppercase tracking-wide border-l border-slate-100">Owner</th>
               <th className="px-3 py-2 text-left text-[11px] font-medium text-slate-500 uppercase tracking-wide min-w-[100px]">Status</th>
-              <th className="px-3 py-2 text-left text-[11px] font-medium text-slate-500 uppercase tracking-wide border-l border-slate-100">Evidence</th>
+              <th className="px-3 py-2 text-left text-[11px] font-medium text-slate-500 uppercase tracking-wide border-l border-slate-100">Expect.</th>
+              <th className="px-3 py-2 text-left text-[11px] font-medium text-slate-500 uppercase tracking-wide border-l border-slate-100">Commentary</th>
+              <th className="px-3 py-2 text-left text-[11px] font-medium text-slate-500 uppercase tracking-wide">Evidence</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={10} className="py-10 text-center text-sm text-slate-500">
+                <td colSpan={12} className="py-10 text-center text-sm text-slate-500">
                   No items match your current filters.
                 </td>
               </tr>
@@ -291,6 +296,8 @@ export function WorklistTable({
                 const rowHasEvidence = hasEvidence(row);
                 const chip = getDriverChip(row.driver);
                 const needsAttention = !rowHasEvidence && row.status !== "Closed";
+                const exp = row.expectedness || "Expected";
+                const cmtStatus = row.commentaryStatus || "none";
 
                 return (
                   <tr
@@ -336,8 +343,26 @@ export function WorklistTable({
                         {row.status}
                       </span>
                     </td>
-                    {/* Evidence */}
+                    {/* Expectedness classification */}
                     <td className="px-3 py-2 text-xs border-l border-slate-50">
+                      <span className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[10px] font-semibold", expectednessClass(exp))}>
+                        <span className="text-[9px]">{expectednessIcon(exp)}</span>
+                        {exp}
+                      </span>
+                    </td>
+                    {/* Commentary status */}
+                    <td className="px-3 py-2 text-xs border-l border-slate-50">
+                      {cmtStatus !== "none" ? (
+                        <span className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[10px] font-semibold", commentaryStatusClass(cmtStatus))}>
+                          <FileText className="h-2.5 w-2.5" />
+                          {cmtStatus === "draft" ? "Draft" : cmtStatus === "submitted" ? "Submitted" : "Approved"}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-slate-400">—</span>
+                      )}
+                    </td>
+                    {/* Evidence */}
+                    <td className="px-3 py-2 text-xs">
                       {rowHasEvidence ? (
                         <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] text-emerald-700">
                           <Paperclip className="h-3 w-3" /> Attached

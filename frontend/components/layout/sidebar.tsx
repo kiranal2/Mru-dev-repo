@@ -2,9 +2,11 @@
 
 import React from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Home, BarChart3, RefreshCw, UserCircle2, Settings, LogOut, LayoutGrid, Shield } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Home, BarChart3, RefreshCw, UserCircle2, Settings, LogOut, LayoutGrid, Shield, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { RailItem } from '@/lib/navigation';
+import { useRouter } from 'next/navigation';
+import { RailItem, RAIL_CONFIG, ALL_RAILS } from '@/lib/navigation';
 
 // Safe auth hook with fallback
 const useAuth = () => {
@@ -32,6 +34,7 @@ interface SidebarProps {
   onUserMenuToggle: () => void;
   onUserMenuClose: () => void;
   getRailItemSelectedState: (railItem: RailItem) => boolean;
+  visibleRails?: RailItem[];
 }
 
 export default function Sidebar({
@@ -44,12 +47,22 @@ export default function Sidebar({
   onRailItemHover,
   onUserMenuToggle,
   onUserMenuClose,
-  getRailItemSelectedState
+  getRailItemSelectedState,
+  visibleRails,
 }: SidebarProps) {
   const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    try { localStorage.removeItem("meeru-demo-config"); } catch { /* ignore */ }
+    try { logout(); } catch { /* ignore */ }
+    onUserMenuClose();
+    window.location.href = "/login";
+  };
 
   return (
-    <aside className={cn(
+    <aside
+      className={cn(
         "flex flex-col pt-1 xl:pt-2 relative border-r w-16 xl:w-20",
         loadingState === 'loading'
           ? "transition-all duration-300 ease-out opacity-0 -translate-x-4"
@@ -60,169 +73,69 @@ export default function Sidebar({
         borderColor: 'var(--theme-border)',
       }}
     >
-        <nav className="flex flex-col gap-0.5 px-1 xl:px-1.5 [&_svg]:w-[18px] [&_svg]:h-[18px] xl:[&_svg]:w-[22px] xl:[&_svg]:h-[22px]" role="navigation" aria-label="Main navigation">
-          <Tooltip delayDuration={150}>
-            <TooltipTrigger asChild>
-              <RailButton
-                icon={<Home size={22} />}
-                label="Home"
-                isSelected={getRailItemSelectedState('home')}
-                isCollapsed={isCollapsed}
-                onClick={() => onRailItemClick('home')}
-                onMouseEnter={() => onRailItemHover('home')}
-                onMouseLeave={() => onRailItemHover(null)}
-              />
-            </TooltipTrigger>
-            {isCollapsed && (
-              <TooltipContent side="right" align="center" sideOffset={8}>
-                Home
-              </TooltipContent>
-            )}
-          </Tooltip>
-
-          <Tooltip delayDuration={150}>
-            <TooltipTrigger asChild>
-              <RailButton
-                icon={<RefreshCw size={22} />}
-                label="Automation"
-                isSelected={getRailItemSelectedState('automation')}
-                isCollapsed={isCollapsed}
-                onClick={() => onRailItemClick('automation')}
-                onMouseEnter={() => onRailItemHover('automation')}
-                onMouseLeave={() => onRailItemHover(null)}
-              />
-            </TooltipTrigger>
-            {isCollapsed && (
-              <TooltipContent side="right" align="center" sideOffset={8}>
-                Automation
-              </TooltipContent>
-            )}
-          </Tooltip>
-
-          <Tooltip delayDuration={150}>
-            <TooltipTrigger asChild>
-              <RailButton
-                icon={<BarChart3 size={22} />}
-                label="Reports"
-                isSelected={getRailItemSelectedState('reports')}
-                isCollapsed={isCollapsed}
-                onClick={() => onRailItemClick('reports')}
-                onMouseEnter={() => onRailItemHover('reports')}
-                onMouseLeave={() => onRailItemHover(null)}
-              />
-            </TooltipTrigger>
-            {isCollapsed && (
-              <TooltipContent side="right" align="center" sideOffset={8}>
-                Reports
-              </TooltipContent>
-            )}
-          </Tooltip>
-
-          <Tooltip delayDuration={150}>
-            <TooltipTrigger asChild>
-              <RailButton
-                icon={<LayoutGrid size={22} />}
-                label="Workbench"
-                isSelected={getRailItemSelectedState('workbench')}
-                isCollapsed={isCollapsed}
-                onClick={() => onRailItemClick('workbench')}
-                onMouseEnter={() => onRailItemHover('workbench')}
-                onMouseLeave={() => onRailItemHover(null)}
-              />
-            </TooltipTrigger>
-            {isCollapsed && (
-              <TooltipContent side="right" align="center" sideOffset={8}>
-                Workbench
-              </TooltipContent>
-            )}
-          </Tooltip>
-
-          <Tooltip delayDuration={150}>
-            <TooltipTrigger asChild>
-              <RailButton
-                icon={<Shield size={22} />}
-                label="Admin"
-                isSelected={getRailItemSelectedState('admin')}
-                isCollapsed={isCollapsed}
-                onClick={() => onRailItemClick('admin')}
-                onMouseEnter={() => onRailItemHover('admin')}
-                onMouseLeave={() => onRailItemHover(null)}
-              />
-            </TooltipTrigger>
-            {isCollapsed && (
-              <TooltipContent side="right" align="center" sideOffset={8}>
-                Admin
-              </TooltipContent>
-            )}
-          </Tooltip>
+        <nav data-tour-id="sidebar" className="flex flex-col gap-0.5 px-1 xl:px-1.5 [&_svg]:w-[18px] [&_svg]:h-[18px] xl:[&_svg]:w-[22px] xl:[&_svg]:h-[22px]" role="navigation" aria-label="Main navigation">
+          {(visibleRails || ALL_RAILS).map((railId) => {
+            const config = RAIL_CONFIG[railId];
+            return (
+              <Tooltip key={railId} delayDuration={150}>
+                <TooltipTrigger asChild>
+                  <RailButton
+                    icon={config.icon}
+                    label={config.label}
+                    isSelected={getRailItemSelectedState(railId)}
+                    isCollapsed={isCollapsed}
+                    onClick={() => onRailItemClick(railId)}
+                    onMouseEnter={() => onRailItemHover(railId)}
+                    onMouseLeave={() => onRailItemHover(null)}
+                    tourId={`rail-${railId}`}
+                  />
+                </TooltipTrigger>
+                {isCollapsed && (
+                  <TooltipContent side="right" align="center" sideOffset={8}>
+                    {config.label}
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            );
+          })}
         </nav>
 
         {/* Profile Icon at Bottom */}
         <div className="mt-auto mb-2 xl:mb-4 flex justify-center">
-          <Tooltip delayDuration={150}>
-            <TooltipTrigger asChild>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <button
-                className="transition-all duration-200 p-2 rounded-lg relative group"
+                className="transition-all duration-200 p-2 rounded-lg group"
                 style={{ outline: 'none', border: 'none', color: 'var(--theme-sidebar-text)' }}
                 aria-label="User profile"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onUserMenuToggle();
-                }}
               >
                 <UserCircle2 size={18} className="transition-transform duration-200 group-hover:scale-105 xl:[width:22px] xl:[height:22px]" />
-                {showUserMenu && (
-                  <div
-                    className="fixed w-52 rounded-xl py-2 shadow-elevation-3 animate-scale-in left-[68px] xl:left-[84px]"
-                    style={{
-                      bottom: '16px',
-                      zIndex: 9999,
-                      background: 'var(--theme-user-menu-bg)',
-                      backdropFilter: 'blur(12px)',
-                      border: '1px solid var(--theme-border)',
-                    }}
-                  >
-                    <div className="px-4 py-2.5" style={{ borderBottom: '1px solid var(--theme-border)' }}>
-                      <p className="text-sm font-semibold" style={{ color: 'var(--theme-text)' }}>{user?.name || 'User'}</p>
-                      <p className="text-xs mt-0.5" style={{ color: 'var(--theme-text-muted)' }}>{user?.email}</p>
-                    </div>
-                    <div className="py-1">
-                      <button
-                        className="w-full px-4 py-2 text-left text-sm flex items-center transition-all duration-150 rounded-md mx-1"
-                        style={{ outline: 'none', border: 'none', width: 'calc(100% - 8px)', color: 'var(--theme-text-secondary)' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--theme-sidebar-active-bg)'; e.currentTarget.style.color = 'var(--theme-text)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--theme-text-secondary)'; }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onUserMenuClose();
-                        }}
-                      >
-                        <Settings className="w-4 h-4 mr-2.5" />
-                        Settings
-                      </button>
-                      <button
-                        className="w-full px-4 py-2 text-left text-sm flex items-center transition-all duration-150 rounded-md mx-1"
-                        style={{ outline: 'none', border: 'none', width: 'calc(100% - 8px)', color: '#ef4444cc' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; e.currentTarget.style.color = '#ef4444'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ef4444cc'; }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          logout();
-                          onUserMenuClose();
-                        }}
-                      >
-                        <LogOut className="w-4 h-4 mr-2.5" />
-                        Logout
-                      </button>
-                    </div>
-                  </div>
-                )}
               </button>
-            </TooltipTrigger>
-            <TooltipContent side="right" align="center" sideOffset={8}>
-              Profile
-            </TooltipContent>
-          </Tooltip>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="right" align="end" sideOffset={8} className="w-52">
+              <DropdownMenuLabel className="font-normal">
+                <p className="text-sm font-semibold">{user?.name || 'User'}</p>
+                <p className="text-xs text-muted-foreground">{user?.email}</p>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem disabled>
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                try { localStorage.removeItem("meeru-demo-config"); } catch { /* ignore */ }
+                window.location.href = "/login";
+              }}>
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Switch Persona
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600">
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </aside>
   );
@@ -236,11 +149,15 @@ interface RailButtonProps {
   onClick: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  tourId?: string;
 }
 
-function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnter, onMouseLeave }: RailButtonProps) {
+const RailButton = React.forwardRef<HTMLButtonElement, RailButtonProps>(
+  function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnter, onMouseLeave, tourId, ...rest }, ref) {
   return (
     <button
+      ref={ref}
+      data-tour-id={tourId}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -257,6 +174,7 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
       onMouseOut={(e) => { if (!isSelected) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--theme-sidebar-text)'; } }}
       aria-label={label}
       aria-current={isSelected ? "page" : undefined}
+      {...rest}
     >
       {/* Hover indicator bar */}
       {!isSelected && (
@@ -275,4 +193,4 @@ function RailButton({ icon, label, isSelected, isCollapsed, onClick, onMouseEnte
       )}
     </button>
   );
-}
+});

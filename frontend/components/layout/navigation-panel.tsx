@@ -3,7 +3,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { RailItem } from '@/lib/navigation';
+import { RailItem, RAIL_CONFIG } from '@/lib/navigation';
 
 type NavigationItem = {
   id: string;
@@ -55,8 +55,16 @@ export default function NavigationPanel({
     >
       {/* Panel Header */}
       <div className="h-14 flex items-center justify-between px-4" style={{ borderBottom: '1px solid var(--theme-navpanel-border)' }}>
-        <h2 className="font-semibold capitalize text-sm tracking-wide" style={{ color: 'var(--theme-text)' }}>
-          {hoveredRailItem || selectedRailItem}
+        <h2 className="font-semibold text-sm tracking-wide" style={{ color: 'var(--theme-text)' }}>
+          {(() => {
+            const currentRail = hoveredRailItem || selectedRailItem;
+            if (!currentRail) return "";
+            const panelLabels: Record<string, string> = {
+              "decision-intelligence": "Decision Intelligence",
+              "close-intelligence": "Close Intelligence",
+            };
+            return panelLabels[currentRail] || RAIL_CONFIG[currentRail]?.label || currentRail;
+          })()}
         </h2>
         <button
           onClick={onToggleMenu}

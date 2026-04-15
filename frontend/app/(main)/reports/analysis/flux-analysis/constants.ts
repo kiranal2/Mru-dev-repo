@@ -5,6 +5,8 @@ import type {
   FluxPageData,
   PromptSuggestion,
   MaterialityMode,
+  Expectedness,
+  CommentaryStatus,
 } from "@/lib/data/types/flux-analysis";
 
 export const MATERIALITY_OPTIONS: Array<{ value: MaterialityMode; label: string }> = [
@@ -53,6 +55,61 @@ export const EVIDENCE_TYPE_OPTIONS = [
 
 export const QUICK_LINK_EVIDENCE_OPTIONS = ["GL Extract", "Trial Balance", "Subledger Report", "Bank Rec"];
 
+export const EXPECTEDNESS_OPTIONS: Array<{ value: Expectedness; label: string }> = [
+  { value: "Expected", label: "Expected" },
+  { value: "Seasonal", label: "Seasonal" },
+  { value: "Anomalous", label: "Anomalous" },
+  { value: "One-time", label: "One-time" },
+];
+
+/** Default expectedness per account — pattern-based inference */
+export const ACCOUNT_EXPECTEDNESS: Record<string, Expectedness> = {
+  "4000": "Expected",    // Revenue — recurring growth
+  "4100": "Expected",    // Product Revenue
+  "4200": "Expected",    // Services Revenue
+  "4300": "Expected",    // Subscription Revenue
+  "5000": "Expected",    // COGS — tracks with revenue
+  "5100": "Anomalous",   // Direct Materials — commodity spike
+  "5150": "Expected",    // Direct Labor
+  "5180": "One-time",    // Manufacturing OH — allocation change
+  "5200": "Expected",    // Gross Margin
+  "6100": "Expected",    // R&D
+  "6200": "One-time",    // Sales & Marketing — campaign
+  "6300": "One-time",    // G&A — timing
+  "6400": "Expected",    // Depreciation
+  "6500": "Expected",    // Amortization
+  "6600": "Seasonal",    // Stock Compensation — grant cycle
+  "6700": "Expected",    // Interest Expense
+  "6800": "Anomalous",   // Other Income — FX gains
+  "7000": "Expected",    // Tax Provision
+  "7100": "Expected",    // Operating Income
+  "7200": "Expected",    // EBITDA
+  "4400": "Expected",    // License Revenue
+  "4500": "Anomalous",   // Maintenance Revenue — churn
+  "5250": "Expected",    // Freight & Logistics
+  "5300": "Seasonal",    // Warranty Reserve — claims cycle
+  "6150": "One-time",    // Engineering Contractors — project
+  "6250": "Expected",    // Customer Success
+  "6350": "Expected",    // Facilities
+  "6450": "One-time",    // Professional Fees — audit/legal
+  // BS accounts
+  "1100": "Expected",    // Cash
+  "1200": "Anomalous",   // AR — collections slowdown
+  "1400": "Expected",    // Inventory
+  "2000": "Expected",    // AP
+  "2400": "Seasonal",    // Deferred Revenue — billings cycle
+};
+
+/** Commentary templates per account for AI-generated drafts */
+export const COMMENTARY_TEMPLATES: Record<string, string> = {
+  "4000": "Revenue increased $4.7M (+9.8%) from $48.2M at Q2 2025 to $52.9M at Q3 2025.\n\nThe movement is driven by price realization (+$2.1M, 45%), volume growth from existing accounts (+$1.8M, 38%), and favorable mix shift to higher-margin SKUs (+$1.4M, 30%). Partially offset by FX headwind (-$0.6M) and customer churn (-$0.9M).\n\nPrice increases were implemented in July per the approved pricing schedule. Volume growth is consistent with enterprise pipeline conversion reported by Sales Ops. Mix shift reflects higher adoption of premium SKUs in the mid-market segment.\n\nExpected. Revenue growth is consistent with Q3 guidance range ($51–54M) and prior Q3 seasonal patterns (Q3 2024: +8.2%, Q3 2023: +7.6%). No anomaly.",
+  "4100": "Product Revenue increased $4.2M (+10.9%) from $38.6M to $42.8M.\n\nEnterprise segment contributed +$2.8M from new logo wins, mid-market upsells added +$1.1M, and price catalog increases contributed +$0.8M. Offset by -$0.5M from delayed renewals.\n\nNew enterprise logos consistent with Sales pipeline close report for Q3. Renewal delays traced to 3 accounts in contract negotiation — expected to close in Q4.\n\nExpected. Consistent with annual enterprise booking cycle.",
+  "5000": "COGS rose $2.2M (+7.2%) from $30.4M to $32.6M.\n\nRaw material price inflation contributed +$1.1M due to commodity market conditions. Volume-related consumption added +$0.8M tracking with revenue growth. Freight surcharges contributed +$0.3M.\n\nCommodity price increase confirmed by Procurement. Volume consumption reconciles to production schedule. Freight surcharge per carrier contract amendment effective July 1.\n\nExpected. COGS growth rate (7.2%) below revenue growth rate (9.8%), indicating positive operating leverage.",
+  "5200": "Gross Margin expanded $2.5M (+14.0%) from $17.8M to $20.3M.\n\nRevenue growth (+$4.7M) exceeded COGS growth (+$2.2M). Margin rate improved from 36.9% to 38.4%. Mix shift to higher-margin products contributed +$0.8M. Operating efficiency gains added +$0.3M.\n\nMargin expansion is consistent with pricing strategy and product mix optimization. No one-time items.\n\nExpected. Gross margin rate within guidance band (37–39%).",
+  "1200": "Accounts Receivable increased $0.8M (+4.3%) from $18.4M to $19.2M.\n\nThe movement is driven by collections timing — DSO increased from 43 to 45 days. Two large invoices ($175K Acme Corp, $75K GlobalTech) remain unapplied as of period end.\n\nAR aging analysis shows $250K in unapplied cash requiring investigation. Acme Corp payment received but not matched; GlobalTech has a revenue posting discrepancy.\n\nAnomalous. DSO increase and unapplied cash require immediate attention. Linked to Close Task CT-2025-047 and Cash Application queue.",
+  "6200": "Sales & Marketing spend increased $0.4M (+8.3%) from $4.8M to $5.2M.\n\nQ3 product launch campaign accounted for $0.3M. Incremental headcount (2 marketing hires) added $0.1M.\n\nCampaign spend approved in Q2 marketing plan. Hires per approved headcount budget.\n\nOne-time. Campaign spend is non-recurring. Headcount addition is a permanent run-rate increase of ~$0.05M/month.",
+};
+
 export const AI_THINKING_STEPS = [
   "Understanding your question",
   "Scanning filtered Flux accounts",
@@ -98,6 +155,11 @@ function makeIsRow(
     thresholdPct: 0.05,
     significant: true,
     aiExplanation: null,
+    expectedness: ACCOUNT_EXPECTEDNESS[acct] || "Expected",
+    commentary: COMMENTARY_TEMPLATES[acct] || null,
+    commentaryStatus: COMMENTARY_TEMPLATES[acct] ? "draft" : "none",
+    approvedBy: null,
+    approvedAt: null,
   };
 }
 
@@ -151,6 +213,11 @@ export const FALLBACK_DATA: FluxPageData = {
       thresholdPct: 0.05,
       significant: true,
       aiExplanation: null,
+      expectedness: "Expected",
+      commentary: null,
+      commentaryStatus: "none",
+      approvedBy: null,
+      approvedAt: null,
     },
     {
       id: "bs-1200",
@@ -168,6 +235,11 @@ export const FALLBACK_DATA: FluxPageData = {
       thresholdPct: 0.05,
       significant: true,
       aiExplanation: null,
+      expectedness: "Anomalous",
+      commentary: COMMENTARY_TEMPLATES["1200"] || null,
+      commentaryStatus: "draft",
+      approvedBy: null,
+      approvedAt: null,
     },
     {
       id: "bs-1400",
@@ -185,6 +257,11 @@ export const FALLBACK_DATA: FluxPageData = {
       thresholdPct: 0.05,
       significant: true,
       aiExplanation: null,
+      expectedness: "Expected",
+      commentary: null,
+      commentaryStatus: "none",
+      approvedBy: null,
+      approvedAt: null,
     },
     {
       id: "bs-2000",
@@ -202,6 +279,11 @@ export const FALLBACK_DATA: FluxPageData = {
       thresholdPct: 0.05,
       significant: true,
       aiExplanation: null,
+      expectedness: "Expected",
+      commentary: null,
+      commentaryStatus: "none",
+      approvedBy: null,
+      approvedAt: null,
     },
     {
       id: "bs-2400",
@@ -219,6 +301,11 @@ export const FALLBACK_DATA: FluxPageData = {
       thresholdPct: 0.05,
       significant: true,
       aiExplanation: null,
+      expectedness: "Seasonal",
+      commentary: null,
+      commentaryStatus: "none",
+      approvedBy: null,
+      approvedAt: null,
     },
   ],
   bsRoll: [

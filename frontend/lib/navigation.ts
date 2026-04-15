@@ -42,9 +42,11 @@ import {
   Landmark,
   Store,
   PhoneCall,
+  LayoutDashboard,
+  Home,
 } from "lucide-react";
 
-type RailItem = "home" | "automation" | "reports" | "workbench" | "admin";
+type RailItem = "home" | "decision-intelligence" | "close-intelligence" | "automation" | "reports" | "workbench" | "admin";
 
 type NavigationItem = {
   id: string;
@@ -57,6 +59,12 @@ type NavigationItem = {
 export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
   // ─── HOME ─────────────────────────────────────────────
   home: [
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: React.createElement(LayoutDashboard, { size: 18 }),
+      route: "/home/dashboard",
+    },
     {
       id: "command-center",
       label: "Command Center",
@@ -98,6 +106,118 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       label: "Process-to-Automation",
       icon: React.createElement(Workflow, { size: 18 }),
       route: "/home/process-to-automation",
+    },
+  ],
+
+  // ─── DECISION INTELLIGENCE ────────────────────────────
+  "decision-intelligence": [
+    {
+      id: "di-workbenches",
+      label: "Workbenches",
+      icon: React.createElement(Sparkles, { size: 18 }),
+      route: "/workbench/decision-intelligence",
+      children: [
+        {
+          id: "uberflux",
+          label: "FluxPlus",
+          icon: React.createElement(Activity, { size: 16 }),
+          route: "/workbench/custom-workbench/uberflux",
+        },
+        {
+          id: "form-factor",
+          label: "Form Factor",
+          icon: React.createElement(Abacus, { size: 16 }),
+          route: "/workbench/custom-workbench/form-factor",
+        },
+        {
+          id: "variance-drivers",
+          label: "Variance Drivers",
+          icon: React.createElement(BarChart3, { size: 16 }),
+          route: "/workbench/fpa/variance-drivers",
+        },
+      ],
+    },
+    {
+      id: "di-analysis",
+      label: "Analysis",
+      icon: React.createElement(TrendingUp, { size: 18 }),
+      route: "/reports/analysis",
+      children: [
+        {
+          id: "flux-analysis",
+          label: "Flux Analysis",
+          icon: React.createElement(BarChart3, { size: 16 }),
+          route: "/reports/analysis/flux-analysis",
+        },
+        {
+          id: "one-click-variance",
+          label: "One Click Variance",
+          icon: React.createElement(BarChart3, { size: 16 }),
+          route: "/reports/analysis/one-click-variance",
+        },
+      ],
+    },
+  ],
+
+  // ─── CLOSE INTELLIGENCE ──────────────────────────────
+  "close-intelligence": [
+    {
+      id: "ci-workbenches",
+      label: "Workbenches",
+      icon: React.createElement(FileCheck, { size: 18 }),
+      route: "/workbench/close-intelligence",
+      children: [
+        {
+          id: "standard-flux",
+          label: "Standard Flux",
+          icon: React.createElement(TrendingUp, { size: 16 }),
+          route: "/workbench/record-to-report/standard-flux",
+        },
+        {
+          id: "close",
+          label: "Close Workbench",
+          icon: React.createElement(FileCheck, { size: 16 }),
+          route: "/workbench/record-to-report/close",
+        },
+        {
+          id: "reconciliations",
+          label: "Reconciliations",
+          icon: React.createElement(Calculator, { size: 16 }),
+          route: "/workbench/record-to-report/reconciliations",
+        },
+      ],
+    },
+    {
+      id: "ci-reports",
+      label: "Reports",
+      icon: React.createElement(BookOpen, { size: 18 }),
+      route: "/reports/sec",
+      children: [
+        {
+          id: "balance-sheet",
+          label: "Balance Sheet",
+          icon: React.createElement(BarChart3, { size: 16 }),
+          route: "/reports/sec/balance-sheet",
+        },
+        {
+          id: "income-statement",
+          label: "Income Statement",
+          icon: React.createElement(BarChart3, { size: 16 }),
+          route: "/reports/sec/income-statement",
+        },
+        {
+          id: "trial-balance",
+          label: "Trial Balance",
+          icon: React.createElement(BookOpen, { size: 16 }),
+          route: "/reports/financials/trial-balance",
+        },
+        {
+          id: "account-activity",
+          label: "Account Activity",
+          icon: React.createElement(Activity, { size: 16 }),
+          route: "/reports/financials/account-activity",
+        },
+      ],
     },
   ],
 
@@ -207,6 +327,61 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
 
   // ─── WORKBENCH ────────────────────────────────────────
   workbench: [
+    // ── Decision Intelligence ──
+    {
+      id: "decision-intelligence",
+      label: "Decision Intelligence",
+      icon: React.createElement(Sparkles, { size: 18 }),
+      route: "/workbench/decision-intelligence",
+      children: [
+        {
+          id: "uberflux",
+          label: "FluxPlus",
+          icon: React.createElement(Activity, { size: 16 }),
+          route: "/workbench/custom-workbench/uberflux",
+        },
+        {
+          id: "form-factor",
+          label: "Form Factor",
+          icon: React.createElement(Abacus, { size: 16 }),
+          route: "/workbench/custom-workbench/form-factor",
+        },
+        {
+          id: "variance-drivers",
+          label: "Variance Drivers",
+          icon: React.createElement(BarChart3, { size: 16 }),
+          route: "/workbench/fpa/variance-drivers",
+        },
+      ],
+    },
+    // ── Close Intelligence ──
+    {
+      id: "close-intelligence",
+      label: "Close Intelligence",
+      icon: React.createElement(FileCheck, { size: 18 }),
+      route: "/workbench/close-intelligence",
+      children: [
+        {
+          id: "standard-flux",
+          label: "Standard Flux",
+          icon: React.createElement(TrendingUp, { size: 16 }),
+          route: "/workbench/record-to-report/standard-flux",
+        },
+        {
+          id: "close",
+          label: "Close Workbench",
+          icon: React.createElement(FileCheck, { size: 16 }),
+          route: "/workbench/record-to-report/close",
+        },
+        {
+          id: "reconciliations",
+          label: "Reconciliations",
+          icon: React.createElement(Calculator, { size: 16 }),
+          route: "/workbench/record-to-report/reconciliations",
+        },
+      ],
+    },
+    // ── Operations ──
     {
       id: "order-to-cash",
       label: "Order-to-Cash",
@@ -260,32 +435,6 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
       ],
     },
     {
-      id: "record-to-report",
-      label: "Record-to-Report",
-      icon: React.createElement(FileText, { size: 18 }),
-      route: "/workbench/record-to-report",
-      children: [
-        {
-          id: "close",
-          label: "Close Workbench",
-          icon: React.createElement(FileCheck, { size: 16 }),
-          route: "/workbench/record-to-report/close",
-        },
-        {
-          id: "reconciliations",
-          label: "Reconciliations Workbench",
-          icon: React.createElement(Calculator, { size: 16 }),
-          route: "/workbench/record-to-report/reconciliations",
-        },
-        {
-          id: "standard-flux",
-          label: "Standard Flux",
-          icon: React.createElement(TrendingUp, { size: 16 }),
-          route: "/workbench/record-to-report/standard-flux",
-        },
-      ],
-    },
-    {
       id: "supply-chain-finance",
       label: "Supply Chain Finance",
       icon: React.createElement(Package, { size: 18 }),
@@ -296,46 +445,6 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
           label: "MRP Workbench",
           icon: React.createElement(Package, { size: 16 }),
           route: "/workbench/supply-chain-finance/mrp",
-        },
-      ],
-    },
-    {
-      id: "custom-workbench",
-      label: "Custom Workbench",
-      icon: React.createElement(Layers, { size: 18 }),
-      route: "/workbench/custom-workbench",
-      children: [
-        {
-          id: "uberflux",
-          label: "FluxPlus",
-          icon: React.createElement(Activity, { size: 16 }),
-          route: "/workbench/custom-workbench/uberflux",
-        },
-        {
-          id: "form-factor",
-          label: "Form Factor",
-          icon: React.createElement(Abacus, { size: 16 }),
-          route: "/workbench/custom-workbench/form-factor",
-        },
-      ],
-    },
-    {
-      id: "bpo-setup",
-      label: "BPO Setup",
-      icon: React.createElement(Settings, { size: 18 }),
-      route: "/workbench/bpo-setup",
-    },
-    {
-      id: "fpa",
-      label: "FP&A",
-      icon: React.createElement(TrendingUp, { size: 18 }),
-      route: "/workbench/fpa",
-      children: [
-        {
-          id: "variance-drivers",
-          label: "Variance Drivers",
-          icon: React.createElement(BarChart3, { size: 16 }),
-          route: "/workbench/fpa/variance-drivers",
         },
       ],
     },
@@ -367,6 +476,12 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
         },
       ],
     },
+    {
+      id: "bpo-setup",
+      label: "BPO Setup",
+      icon: React.createElement(Settings, { size: 18 }),
+      route: "/workbench/bpo-setup",
+    },
   ],
 
   // ─── ADMIN ────────────────────────────────────────────
@@ -397,5 +512,18 @@ export const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
     },
   ],
 };
+
+// ─── RAIL_CONFIG — shared icon/label mapping for sidebar, mobile nav, bottom tabs ──
+export const RAIL_CONFIG: Record<RailItem, { icon: React.ReactElement; label: string }> = {
+  home: { icon: React.createElement(Home, { size: 22 }), label: "Home" },
+  "decision-intelligence": { icon: React.createElement(Sparkles, { size: 22 }), label: "Decision" },
+  "close-intelligence": { icon: React.createElement(FileCheck, { size: 22 }), label: "Close" },
+  automation: { icon: React.createElement(RefreshCw, { size: 22 }), label: "Automation" },
+  reports: { icon: React.createElement(BarChart3, { size: 22 }), label: "Reports" },
+  workbench: { icon: React.createElement(LayoutGrid, { size: 22 }), label: "Workbench" },
+  admin: { icon: React.createElement(Shield, { size: 22 }), label: "Admin" },
+};
+
+export const ALL_RAILS: RailItem[] = ["home", "decision-intelligence", "close-intelligence", "automation", "reports", "workbench", "admin"];
 
 export type { RailItem, NavigationItem };

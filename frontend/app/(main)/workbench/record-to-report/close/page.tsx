@@ -48,6 +48,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { CommandCenterPanel, AiPanelTrigger } from "@/components/ai";
 import { toast } from "sonner";
 import { useCloseTasks } from "@/hooks/data";
 import { LinkReconModal } from "@/components/modals/link-recon-modal";
@@ -153,6 +154,7 @@ export default function CloseWorkbenchPage() {
   const [linkReconOpen, setLinkReconOpen] = useState(false);
   const [quickCreateOpen, setQuickCreateOpen] = useState(false);
   const [quickCreateType, setQuickCreateType] = useState("");
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
 
   /* Hook filters */
   const filters: CloseTaskFilters = useMemo(() => {
@@ -374,6 +376,10 @@ export default function CloseWorkbenchPage() {
                 Blocked
                 <span className="font-semibold">{kpis.blocked}</span>
               </span>
+              <AiPanelTrigger
+                onClick={() => setAiPanelOpen(!aiPanelOpen)}
+                isActive={aiPanelOpen}
+              />
             </div>
           )}
         </div>
@@ -520,8 +526,9 @@ export default function CloseWorkbenchPage() {
         </div>
       </div>
 
-      {/* ── Content ───────────────────────────────────────── */}
-      <div className="flex-1 overflow-auto px-5 pb-5">
+      {/* ── Content + AI Panel ─────────────────────────────── */}
+      <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
+      <div className={cn("flex-1 overflow-auto px-5 pb-5", aiPanelOpen && "border-r border-slate-200")}>
         {loading && tasks.length === 0 ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-sm text-slate-500">Loading close tasks...</div>
@@ -783,6 +790,19 @@ export default function CloseWorkbenchPage() {
             )}
           </>
         )}
+      </div>
+
+      {/* ── AI Command Center Panel ── */}
+      {aiPanelOpen && (
+        <div className="w-[340px] shrink-0">
+          <CommandCenterPanel
+            workbenchContext="close-workbench"
+            isOpen={aiPanelOpen}
+            onClose={() => setAiPanelOpen(false)}
+            theme="light"
+          />
+        </div>
+      )}
       </div>
 
       {/* ── Detail Drawer ─────────────────────────────────── */}

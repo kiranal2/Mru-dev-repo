@@ -33,7 +33,7 @@ import { NotificationBell } from "./notification-bell";
 import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-type RailItem = "home" | "automation" | "reports" | "workbench" | "admin";
+type RailItem = "home" | "decision-intelligence" | "close-intelligence" | "automation" | "reports" | "workbench" | "admin";
 
 interface NavigationItem {
   id: string;

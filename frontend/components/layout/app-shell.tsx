@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, startTransition } from "react";
+import React, { useState, useEffect, useRef, useMemo, startTransition } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useRouter, usePathname } from "next/navigation";
@@ -19,7 +19,9 @@ import LivePinModal from "@/components/ui/live-pin-modal";
 import { CreateWatchModal } from "@/components/ui/create-watch-modal";
 
 // Navigation
-import { NAVIGATION_STRUCTURE, RailItem } from "@/lib/navigation";
+import { NAVIGATION_STRUCTURE, ALL_RAILS, RAIL_CONFIG, RailItem } from "@/lib/navigation";
+import { usePersona } from "@/lib/persona-context";
+import { isRailRelevant, filterNavigationItems } from "@/lib/demo-routing";
 
 type LoadingState = "loading" | "loaded";
 
@@ -49,6 +51,21 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
   const hoverClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Persona-based navigation filtering
+  const { persona } = usePersona();
+
+  const visibleRails = useMemo(() => {
+    return ALL_RAILS.filter((rail) => isRailRelevant(persona, rail));
+  }, [persona]);
+
+  const filteredNavigationStructure = useMemo(() => {
+    const result: Record<string, any> = {};
+    for (const rail of visibleRails) {
+      result[rail] = filterNavigationItems(persona, rail, NAVIGATION_STRUCTURE[rail]);
+    }
+    return result as typeof NAVIGATION_STRUCTURE;
+  }, [persona, visibleRails]);
+
   // Handle loading animation only on initial mount
   useEffect(() => {
     if (!hasInitiallyLoaded) {
@@ -63,7 +80,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   // Load persisted rail selection from localStorage
   useEffect(() => {
     const savedRailItem = localStorage.getItem("meeru-selected-rail");
-    if (savedRailItem && ["home", "automation", "reports", "workbench", "admin"].includes(savedRailItem)) {
+    if (savedRailItem && ALL_RAILS.includes(savedRailItem as RailItem)) {
       setSelectedRailItem(savedRailItem as RailItem);
     }
   }, []);
@@ -139,7 +156,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     // Set hoveredRailItem to show panel immediately when clicking
     setHoveredRailItem(item);
     const defaultRoutes: Record<RailItem, string> = {
-      home: "/home/command-center",
+      home: "/home/dashboard",
       automation: "/automation/data-templates",
       reports: "/reports/sec/balance-sheet",
       workbench: "/workbench/order-to-cash/cash-application",
@@ -324,6 +341,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
               onUserMenuToggle={() => setShowUserMenu(!showUserMenu)}
               onUserMenuClose={() => setShowUserMenu(false)}
               getRailItemSelectedState={getRailItemSelectedState}
+              visibleRails={visibleRails}
             />
           )}
 
@@ -342,7 +360,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
             selectedRailItem={selectedRailItem}
             isPanelHovered={isTablet ? tabletPanelOpen : isPanelHovered}
             activeRoute={activeRoute}
-            navigationStructure={NAVIGATION_STRUCTURE}
+            navigationStructure={filteredNavigationStructure}
             onPanelMouseEnter={isTablet ? () => {} : handlePanelMouseEnter}
             onPanelMouseLeave={isTablet ? () => {} : handlePanelMouseLeave}
             onToggleMenu={() => { if (isTablet) { setTabletPanelOpen(false); setHoveredRailItem(null); } else { handleToggleMenu(); } }}
@@ -365,7 +383,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
             onOpenChange={setIsMobileNavOpen}
             selectedRailItem={selectedRailItem}
             activeRoute={activeRoute}
-            navigationStructure={NAVIGATION_STRUCTURE}
+            navigationStructure={filteredNavigationStructure}
             onRailItemClick={handleRailItemClick}
             onNavigationItemClick={handleNavigationItemClick}
           />
@@ -376,13 +394,11 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
           <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t bg-white px-1 pb-[env(safe-area-inset-bottom)]"
             style={{ borderColor: 'var(--theme-border)', height: 52 }}
           >
-            {([
-              { key: "home" as RailItem, icon: <Home size={20} />, label: "Home" },
-              { key: "automation" as RailItem, icon: <RefreshCw size={20} />, label: "Auto" },
-              { key: "reports" as RailItem, icon: <BarChart3 size={20} />, label: "Reports" },
-              { key: "workbench" as RailItem, icon: <LayoutGrid size={20} />, label: "Workbench" },
-              { key: "admin" as RailItem, icon: <Shield size={20} />, label: "Admin" },
-            ]).map((item) => {
+            {visibleRails.map((railKey) => {
+              const config = RAIL_CONFIG[railKey];
+              const item = { key: railKey, icon: React.cloneElement(config.icon, { size: 20 }), label: config.label === "Automation" ? "Auto" : config.label };
+              return item;
+            }).map((item) => {
               const isActive = getRailItemSelectedState(item.key);
               return (
                 <button

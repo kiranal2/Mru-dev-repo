@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react"
+import { CommandCenterPanel } from "@/components/ai"
 
 // ═══════════════════════════════════════════════════════
 //  TYPES
@@ -309,29 +310,29 @@ const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 .ff-root {
-  --teal: #1E40AF;
-  --teal-dark: #1e3a8a;
-  --teal-light: rgba(30,64,175,0.06);
-  --teal-mid: rgba(30,64,175,0.20);
-  --navy: #ffffff;
-  --navy-dark: #f8fafc;
-  --navy-light: rgba(0,0,0,0.02);
+  --teal: var(--theme-accent, #1E40AF);
+  --teal-dark: var(--theme-accent-hover, #1e3a8a);
+  --teal-light: var(--theme-accent-subtle, rgba(30,64,175,0.06));
+  --teal-mid: rgba(59,130,246,0.20);
+  --navy: var(--theme-surface, #ffffff);
+  --navy-dark: var(--theme-bg, #f8fafc);
+  --navy-light: var(--theme-surface-alt, rgba(0,0,0,0.02));
   --navy-mid: rgba(0,0,0,0.04);
-  --bg: #f8fafc;
-  --bg-white: #ffffff;
-  --bg-subtle: #f1f5f9;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --green: #16a34a;
+  --bg: var(--theme-bg, #f8fafc);
+  --bg-white: var(--theme-surface, #ffffff);
+  --bg-subtle: var(--theme-surface-alt, #f1f5f9);
+  --border: var(--theme-border, #e2e8f0);
+  --border-strong: var(--theme-border-strong, #cbd5e1);
+  --text-primary: var(--theme-text, #0f172a);
+  --text-secondary: var(--theme-text-secondary, #475569);
+  --text-muted: var(--theme-text-muted, #94a3b8);
+  --green: var(--theme-success, #16a34a);
   --green-bg: rgba(22,163,74,0.08);
   --green-br: rgba(22,163,74,0.25);
-  --red: #dc2626;
+  --red: var(--theme-danger, #dc2626);
   --red-bg: rgba(220,38,38,0.08);
   --red-br: rgba(220,38,38,0.25);
-  --amber: #d97706;
+  --amber: var(--theme-warning, #d97706);
   --amber-bg: rgba(217,119,6,0.08);
   --amber-br: rgba(217,119,6,0.25);
   --sans: 'Inter', system-ui, sans-serif;
@@ -1942,47 +1943,14 @@ export default function FormFactorPage() {
       {/* AI OVERLAY */}
       <div className={`ff-ai-overlay ${aiPanelOpen ? "open" : ""}`} onClick={() => setAiPanelOpen(false)} />
 
-      {/* AI CHAT PANEL */}
+      {/* AI CHAT PANEL (Command Center) */}
       <aside className={`ff-ai-panel ${aiPanelOpen ? "open" : ""}`}>
-        <div className="ff-ai-header">
-          <span className="ff-ai-icon">✦</span>
-          <div>
-            <div className="ff-ai-title">Margin AI</div>
-            <div className="ff-ai-subtitle">Context: {PAGE_TITLES[page]} · {PERIODS[periodIdx]}</div>
-          </div>
-          <button className="ff-ai-close" onClick={() => setAiPanelOpen(false)}>✕</button>
-        </div>
-        <div className="ff-ai-messages" ref={aiRef}>
-          {aiMessages.map((msg, i) => (
-            <div key={i} className={`ff-ai-msg ${msg.role}`}>
-              <div className="ff-ai-msg-role">{msg.role === "user" ? "You" : "Margin AI"}</div>
-              <div className="ff-ai-msg-bubble" dangerouslySetInnerHTML={{ __html: msg.role === "ai" ? msg.text : msg.text.replace(/</g, '&lt;') }} />
-            </div>
-          ))}
-          {isAiTyping && (
-            <div className="ff-ai-msg typing">
-              <div className="ff-ai-msg-role">Margin AI</div>
-              <div className="ff-ai-msg-bubble">Analyzing…</div>
-            </div>
-          )}
-        </div>
-        <div className="ff-ai-input-area">
-          <div className="ff-ai-suggestions">
-            {suggestions.map((s, i) => (
-              <button key={i} className="ff-ai-sug" onClick={() => handleSuggestionClick(s)}>{s}</button>
-            ))}
-          </div>
-          <div className="ff-ai-input-row">
-            <input
-              className="ff-ai-input"
-              placeholder="Ask about margins…"
-              value={aiInput}
-              onChange={(e) => setAiInput(e.target.value)}
-              onKeyDown={handleAiKeyDown}
-            />
-            <button className="ff-ai-send" onClick={handleAiSend} disabled={!aiInput.trim() || isAiTyping}>→</button>
-          </div>
-        </div>
+        <CommandCenterPanel
+          workbenchContext="form-factor"
+          isOpen={aiPanelOpen}
+          onClose={() => setAiPanelOpen(false)}
+          theme="dark"
+        />
       </aside>
     </div>
   )

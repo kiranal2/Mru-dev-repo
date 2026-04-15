@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
+import { CommandCenterPanel } from "@/components/ai"
 
 // ═══════════════════════════════════════════════════════
 //  TYPES
@@ -159,9 +160,9 @@ const DATA: {
           { week: "W6", actual: 58, plan: 62, color: "#1E40AF" },
           { week: "W7", actual: 56, plan: 62, color: "#1E40AF" },
           { week: "W8", actual: 52, plan: 62, color: "#1E40AF" },
-          { week: "W9", actual: 46, plan: 62, color: "#dc2626" },
-          { week: "W10", actual: 42, plan: 62, color: "#dc2626" },
-          { week: "W11▸", actual: 39, plan: 62, color: "#dc2626", forecast: true },
+          { week: "W9", actual: 46, plan: 62, color: "var(--red)" },
+          { week: "W10", actual: 42, plan: 62, color: "var(--red)" },
+          { week: "W11▸", actual: 39, plan: 62, color: "var(--red)", forecast: true },
         ],
       },
       ai: {
@@ -188,12 +189,12 @@ const DATA: {
       chart: {
         title: "Weekly Revenue Variance — NY Financial Svcs",
         bars: [
-          { week: "W6", actual: 54, plan: 52, color: "#16a34a" },
-          { week: "W7", actual: 55, plan: 52, color: "#16a34a" },
-          { week: "W8", actual: 56, plan: 52, color: "#16a34a" },
-          { week: "W9", actual: 58, plan: 52, color: "#16a34a" },
-          { week: "W10", actual: 60, plan: 52, color: "#16a34a" },
-          { week: "W11▸", actual: 57, plan: 52, color: "#16a34a", forecast: true },
+          { week: "W6", actual: 54, plan: 52, color: "var(--green)" },
+          { week: "W7", actual: 55, plan: 52, color: "var(--green)" },
+          { week: "W8", actual: 56, plan: 52, color: "var(--green)" },
+          { week: "W9", actual: 58, plan: 52, color: "var(--green)" },
+          { week: "W10", actual: 60, plan: 52, color: "var(--green)" },
+          { week: "W11▸", actual: 57, plan: 52, color: "var(--green)", forecast: true },
         ],
       },
       ai: {
@@ -222,10 +223,10 @@ const DATA: {
         bars: [
           { week: "W6", actual: 60, plan: 62, color: "#1E40AF" },
           { week: "W7", actual: 61, plan: 62, color: "#1E40AF" },
-          { week: "W8", actual: 62, plan: 62, color: "#16a34a" },
+          { week: "W8", actual: 62, plan: 62, color: "var(--green)" },
           { week: "W9", actual: 59, plan: 62, color: "#d97706" },
-          { week: "W10", actual: 54, plan: 62, color: "#dc2626" },
-          { week: "W11▸", actual: 65, plan: 62, color: "#16a34a", forecast: true },
+          { week: "W10", actual: 54, plan: 62, color: "var(--red)" },
+          { week: "W11▸", actual: 65, plan: 62, color: "var(--green)", forecast: true },
         ],
       },
       ai: {
@@ -255,8 +256,8 @@ const DATA: {
           { week: "W6", actual: 61, plan: 62, color: "#1E40AF" },
           { week: "W7", actual: 60, plan: 62, color: "#1E40AF" },
           { week: "W8", actual: 57, plan: 62, color: "#d97706" },
-          { week: "W9", actual: 53, plan: 62, color: "#dc2626" },
-          { week: "W10", actual: 50, plan: 62, color: "#dc2626" },
+          { week: "W9", actual: 53, plan: 62, color: "var(--red)" },
+          { week: "W10", actual: 50, plan: 62, color: "var(--red)" },
           { week: "W11▸", actual: 54, plan: 62, color: "#d97706", forecast: true },
         ],
       },
@@ -287,9 +288,9 @@ const DATA: {
           { week: "W6", actual: 60, plan: 64, color: "#1E40AF" },
           { week: "W7", actual: 58, plan: 64, color: "#1E40AF" },
           { week: "W8", actual: 54, plan: 64, color: "#d97706" },
-          { week: "W9", actual: 48, plan: 64, color: "#dc2626" },
-          { week: "W10", actual: 44, plan: 64, color: "#dc2626" },
-          { week: "W11▸", actual: 42, plan: 64, color: "#dc2626", forecast: true },
+          { week: "W9", actual: 48, plan: 64, color: "var(--red)" },
+          { week: "W10", actual: 44, plan: 64, color: "var(--red)" },
+          { week: "W11▸", actual: 42, plan: 64, color: "var(--red)", forecast: true },
         ],
       },
       ai: {
@@ -319,9 +320,9 @@ const DATA: {
           { week: "W6", actual: 62, plan: 64, color: "#1E40AF" },
           { week: "W7", actual: 61, plan: 64, color: "#1E40AF" },
           { week: "W8", actual: 58, plan: 64, color: "#d97706" },
-          { week: "W9", actual: 52, plan: 64, color: "#dc2626" },
-          { week: "W10", actual: 48, plan: 64, color: "#dc2626" },
-          { week: "W11▸", actual: 50, plan: 64, color: "#dc2626", forecast: true },
+          { week: "W9", actual: 52, plan: 64, color: "var(--red)" },
+          { week: "W10", actual: 48, plan: 64, color: "var(--red)" },
+          { week: "W11▸", actual: 50, plan: 64, color: "var(--red)", forecast: true },
         ],
       },
       ai: {
@@ -444,11 +445,11 @@ const DATA: {
   },
 
   drillSegments: [
-    { id: "caretail", name: "California Retail", region: "West", variance: "−$1.2M", varColor: "down", spark: [58, 54, 50, 46, 42], util: "92%", utilColor: "#dc2626", trips: "$4.8M", tripsVsPlan: "−12.1%" },
+    { id: "caretail", name: "California Retail", region: "West", variance: "−$1.2M", varColor: "down", spark: [58, 54, 50, 46, 42], util: "92%", utilColor: "var(--red)", trips: "$4.8M", tripsVsPlan: "−12.1%" },
     { id: "txenergy", name: "Texas Energy", region: "Southwest", variance: "−$0.8M", varColor: "down", spark: [64, 62, 58, 52, 48], util: "78%", utilColor: "#d97706", trips: "$3.2M", tripsVsPlan: "−8.6%" },
-    { id: "nyfinance", name: "New York Financial Svcs", region: "Northeast", variance: "+$0.7M", varColor: "up", spark: [52, 54, 56, 58, 60], util: "71%", utilColor: "#16a34a", trips: "$8.1M", tripsVsPlan: "+4.8%" },
+    { id: "nyfinance", name: "New York Financial Svcs", region: "Northeast", variance: "+$0.7M", varColor: "up", spark: [52, 54, 56, 58, 60], util: "71%", utilColor: "var(--green)", trips: "$8.1M", tripsVsPlan: "+4.8%" },
     { id: "fltourism", name: "Florida Tourism", region: "Southeast", variance: "−$0.4M", varColor: "down", spark: [62, 61, 62, 59, 54], util: "68%", utilColor: "#2563eb", trips: "$2.9M", tripsVsPlan: "−7.2%" },
-    { id: "ilmfg", name: "Illinois Manufacturing", region: "Midwest", variance: "−$0.5M", varColor: "down", spark: [61, 60, 57, 53, 50], util: "94%", utilColor: "#dc2626", trips: "$5.4M", tripsVsPlan: "−6.8%" },
+    { id: "ilmfg", name: "Illinois Manufacturing", region: "Midwest", variance: "−$0.5M", varColor: "down", spark: [61, 60, 57, 53, 50], util: "94%", utilColor: "var(--red)", trips: "$5.4M", tripsVsPlan: "−6.8%" },
     { id: "watech", name: "Washington Tech", region: "West", variance: "−$0.6M", varColor: "down", spark: [58, 57, 55, 52, 49], util: "65%", utilColor: "#d97706", trips: "$6.2M", tripsVsPlan: "−5.4%" },
   ],
 
@@ -471,12 +472,12 @@ const DATA: {
   ],
 
   signals: [
-    { name: "California Retail Margin Erosion Risk W11", type: "Labor", typeCls: "pill-red", confidence: 92, body: "Overtime trajectory projects continued margin compression through W11. Self-checkout automation deployment is the key lever — accelerating from W14 to W11 could save $0.4M/week. Model based on 12 comparable wage-event scenarios.", confColor: "#dc2626" },
+    { name: "California Retail Margin Erosion Risk W11", type: "Labor", typeCls: "pill-red", confidence: 92, body: "Overtime trajectory projects continued margin compression through W11. Self-checkout automation deployment is the key lever — accelerating from W14 to W11 could save $0.4M/week. Model based on 12 comparable wage-event scenarios.", confColor: "var(--red)" },
     { name: "Texas Natural Gas Price Stabilization W12", type: "Commodity", typeCls: "pill-amber", confidence: 76, body: "Henry Hub forward curve projects stabilization at $2.80/MMBtu by W12. Current spot at $2.62 — 7% below forward. Historical accuracy on similar storage-build scenarios: 74%. Hedge increase recommended.", confColor: "#d97706" },
-    { name: "NY Financial Svcs Q1 Close Strong", type: "Revenue", typeCls: "pill-green", confidence: 94, body: "Advisory pipeline has $2.4M in W11–W13 committed closings. Trading infrastructure upgrade providing structural 15bps capture improvement. VIX may moderate but structural gains persist.", confColor: "#16a34a" },
+    { name: "NY Financial Svcs Q1 Close Strong", type: "Revenue", typeCls: "pill-green", confidence: 94, body: "Advisory pipeline has $2.4M in W11–W13 committed closings. Trading infrastructure upgrade providing structural 15bps capture improvement. VIX may moderate but structural gains persist.", confColor: "var(--green)" },
     { name: "Florida Tourism Spring Break Rebound W11", type: "Seasonal", typeCls: "pill-blue", confidence: 89, body: "W11 advance bookings +18% above W10. Calendar shift is well-understood — 4 of 5 historical spring break timing shifts showed full revenue recovery in the following week. Confidence high.", confColor: "#2563eb" },
     { name: "Illinois Hub Rail Car Resolution W11", type: "Supply Chain", typeCls: "pill-blue", confidence: 81, body: "Union Pacific confirmed +15% rail car allocation starting W11. If delivery holds, Chicago hub returns to 85% capacity by W12. Historical UP delivery accuracy on committed allocations: 79%.", confColor: "#2563eb" },
-    { name: "Oregon Clean Energy: Q2 Pipeline Acceleration", type: "Growth", typeCls: "pill-green", confidence: 73, body: "IRA subsidy tranche ahead of schedule suggests Q2 pipeline of $1.8M could pull forward by 4–6 weeks. Customer demand 30% above pre-IRA baseline. Team expansion recommended to capture.", confColor: "#16a34a" },
+    { name: "Oregon Clean Energy: Q2 Pipeline Acceleration", type: "Growth", typeCls: "pill-green", confidence: 73, body: "IRA subsidy tranche ahead of schedule suggests Q2 pipeline of $1.8M could pull forward by 4–6 weeks. Customer demand 30% above pre-IRA baseline. Team expansion recommended to capture.", confColor: "var(--green)" },
   ],
 
   history: [
@@ -510,21 +511,21 @@ const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
 .uf-root {
-  --navy: #ffffff;
-  --navyMd: #f8fafc;
-  --navyLt: #e2e8f0;
-  --gold: #1E40AF;
-  --green: #16a34a;
-  --red: #dc2626;
-  --amber: #d97706;
-  --blue: #2563eb;
-  --text: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --surface: #f8fafc;
-  --surfaceLt: #f1f5f9;
+  --navy: var(--theme-surface, #ffffff);
+  --navyMd: var(--theme-bg, #f8fafc);
+  --navyLt: var(--theme-surface-alt, #e2e8f0);
+  --gold: var(--theme-accent, #1E40AF);
+  --green: var(--theme-success, #16a34a);
+  --red: var(--theme-danger, #dc2626);
+  --amber: var(--theme-warning, #d97706);
+  --blue: var(--theme-info, #2563eb);
+  --text: var(--theme-text, #0f172a);
+  --muted: var(--theme-text-muted, #64748b);
+  --border: var(--theme-border, #e2e8f0);
+  --surface: var(--theme-surface, #f8fafc);
+  --surfaceLt: var(--theme-surface-alt, #f1f5f9);
 
-  background: #f8fafc;
+  background: var(--theme-bg, #f8fafc);
   font-family: 'Inter', sans-serif;
   color: var(--text);
   display: flex;
@@ -543,14 +544,14 @@ const STYLES = `
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
   margin: 6px;
   min-height: 0;
 }
 
 /* Top Bar */
 .uf-topbar {
-  background: #ffffff;
+  background: var(--navy);
   padding: 12px 20px;
   display: flex;
   align-items: center;
@@ -597,7 +598,7 @@ const STYLES = `
 /* Tabs */
 .uf-tabs {
   display: flex; gap: 0;
-  background: #ffffff;
+  background: var(--navy);
   border-bottom: 1px solid var(--border);
   padding: 0 20px;
   flex-shrink: 0;
@@ -637,7 +638,7 @@ const STYLES = `
 
 /* Sidebar */
 .uf-sidebar {
-  background: #f1f5f9;
+  background: var(--surfaceLt);
   border-right: 1px solid var(--border);
   padding: 16px 0;
   overflow-y: auto;
@@ -784,7 +785,7 @@ const STYLES = `
 .uf-bar-label { font-size: 8.5px; color: var(--muted); font-family: 'DM Mono', monospace; }
 .uf-bar-tooltip {
   position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-  background: #ffffff; border: 1px solid var(--gold);
+  background: var(--navy); border: 1px solid var(--gold);
   border-radius: 5px; padding: 5px 9px; font-size: 10px; font-family: 'DM Mono', monospace;
   color: var(--text); pointer-events: none; z-index: 100; white-space: nowrap;
   opacity: 0; transition: opacity 0.15s;
@@ -869,11 +870,11 @@ const STYLES = `
   position: fixed; right: 0; top: 0; bottom: 0; z-index: 200;
   width: 340px; transform: translateX(100%);
   transition: transform 0.25s ease;
-  background: #ffffff;
+  background: var(--navy);
   border-left: 1px solid var(--border);
   display: flex; flex-direction: column;
   min-height: 0;
-  box-shadow: -8px 0 30px rgba(0,0,0,0.08);
+  box-shadow: -8px 0 30px rgba(0,0,0,0.10);
 }
 .uf-ai-panel.open { transform: translateX(0); }
 .uf-ai-overlay {
@@ -913,7 +914,7 @@ const STYLES = `
   display: flex; align-items: center; justify-content: center;
   font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
 }
-.uf-msg.user .uf-msg-avatar { background: #e2e8f0; color: #475569; }
+.uf-msg.user .uf-msg-avatar { background: var(--surfaceLt); color: var(--muted); }
 .uf-msg.ai .uf-msg-avatar { background: linear-gradient(135deg, #1E40AF, #3B82F6); color: #fff; }
 
 .uf-msg-content { flex: 1; min-width: 0; }
@@ -931,7 +932,7 @@ const STYLES = `
 .uf-msg.ai .uf-msg-bubble {
   background: #fff; border: 1px solid var(--border); color: var(--text);
   border-radius: 12px 12px 12px 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 .uf-msg.ai .uf-msg-bubble strong { color: var(--gold); font-weight: 600; }
 .uf-msg.typing .uf-msg-bubble { color: var(--muted); font-style: italic; }
@@ -981,7 +982,7 @@ const STYLES = `
 
 /* Bottom Bar */
 .uf-bottombar {
-  background: #ffffff; border-top: 1px solid var(--border);
+  background: var(--navy); border-top: 1px solid var(--border);
   padding: 8px 20px; display: flex; align-items: center; justify-content: space-between;
   flex-shrink: 0;
 }
@@ -1456,7 +1457,7 @@ export default function FluxPlusPage() {
               Actual
             </div>
             <div className="uf-legend-item">
-              <div className="uf-legend-dot" style={{ background: "#94a3b8" }} />
+              <div className="uf-legend-dot" style={{ background: "var(--muted)" }} />
               Plan
             </div>
           </div>
@@ -1488,7 +1489,7 @@ export default function FluxPlusPage() {
                       borderBottom: b.forecast ? "none" : undefined,
                     }}
                   />
-                  <div className="uf-bar" style={{ height: `${pH}px`, background: "#94a3b8", opacity: b.forecast ? 0.3 : 0.55 }} />
+                  <div className="uf-bar" style={{ height: `${pH}px`, background: "var(--muted)", opacity: b.forecast ? 0.3 : 0.55 }} />
                 </div>
                 <div className="uf-bar-label" style={{ color: b.forecast ? b.color : undefined }}>
                   {b.week}
@@ -1749,7 +1750,7 @@ export default function FluxPlusPage() {
                           {seg.spark.map((v, i) => {
                             const h = Math.max(4, Math.round(((v - minV) / Math.max(maxV - minV, 1)) * 30))
                             const isLast = i === seg.spark.length - 1
-                            const col = seg.varColor === "up" ? "#16a34a" : isLast ? "#dc2626" : "#94a3b8"
+                            const col = seg.varColor === "up" ? "var(--green)" : isLast ? "var(--red)" : "var(--muted)"
                             return <div key={i} className="uf-spark-bar" style={{ height: h, background: col, opacity: isLast ? 1 : 0.6 }} />
                           })}
                         </div>
@@ -1897,83 +1898,14 @@ export default function FluxPlusPage() {
           {/* AI OVERLAY */}
           <div className={`uf-ai-overlay ${aiPanelOpen ? "open" : ""}`} onClick={() => setAiPanelOpen(false)} />
 
-          {/* ── Right AI Panel ── */}
+          {/* ── Right AI Panel (Command Center) ── */}
           <div className={`uf-ai-panel ${aiPanelOpen ? "open" : ""}`}>
-            <div className="uf-ai-header">
-              <div className="uf-ai-icon">✦</div>
-              <div>
-                <div className="uf-ai-title">AI Query</div>
-                <div className="uf-ai-subtitle">{tabHints[tab]}</div>
-              </div>
-              <button className="uf-ai-close" onClick={() => setAiPanelOpen(false)}>✕</button>
-            </div>
-
-            <div className="uf-ai-messages" ref={aiMessagesRef}>
-              {aiMessages.map((msg, i) => (
-                <div key={i} className={`uf-msg ${msg.role}`}>
-                  <div className="uf-msg-avatar">
-                    {msg.role === "user" ? "JO" : "✦"}
-                  </div>
-                  <div className="uf-msg-content">
-                    {msg.html ? (
-                      <div className="uf-msg-bubble" dangerouslySetInnerHTML={{ __html: msg.html }} />
-                    ) : (
-                      <div className="uf-msg-bubble">{msg.text}</div>
-                    )}
-                  </div>
-                </div>
-              ))}
-              {isTyping && (
-                <div className="uf-msg ai">
-                  <div className="uf-msg-avatar">✦</div>
-                  <div className="uf-msg-content">
-                    <div className="uf-msg-bubble" style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--gold)", animation: "ufDot 1.4s infinite", animationDelay: "0s" }} />
-                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--gold)", animation: "ufDot 1.4s infinite", animationDelay: "0.2s" }} />
-                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--gold)", animation: "ufDot 1.4s infinite", animationDelay: "0.4s" }} />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="uf-ai-input-area">
-              <div className="uf-ai-input" style={{ padding: 0, overflow: "hidden" }}>
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyDown={handleChatKeyDown}
-                  placeholder="Ask about any segment or signal..."
-                  disabled={isTyping}
-                  style={{
-                    flex: 1,
-                    background: "transparent",
-                    border: "none",
-                    outline: "none",
-                    color: "var(--text)",
-                    fontSize: 11,
-                    fontFamily: "'Inter', sans-serif",
-                    padding: "8px 12px",
-                    width: "100%",
-                  }}
-                />
-                <button
-                  className="uf-ai-send"
-                  onClick={handleChatSubmit}
-                  disabled={isTyping || !chatInput.trim()}
-                >
-                  →
-                </button>
-              </div>
-              <div className="uf-ai-suggestions">
-                {suggestions.map((s, i) => (
-                  <button key={i} className="uf-suggestion" onClick={() => handleSuggestionClick(s)}>
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <CommandCenterPanel
+              workbenchContext="uberflux"
+              isOpen={aiPanelOpen}
+              onClose={() => setAiPanelOpen(false)}
+              theme="dark"
+            />
           </div>
         </div>
 

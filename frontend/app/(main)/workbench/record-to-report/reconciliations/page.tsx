@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { CommandCenterPanel, AiPanelTrigger } from "@/components/ai";
 
 import { useReconciliations } from "@/hooks/data";
 import type { Reconciliation, ReconFilters } from "@/lib/data/types";
@@ -125,6 +126,9 @@ export default function ReconciliationWorkbenchPage() {
   const [selectedRecon, setSelectedRecon] = useState<Reconciliation | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTab, setDrawerTab] = useState<"details" | "runs" | "activity">("details");
+
+  // AI Panel
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
 
   // Wizard
   const [wizardOpen, setWizardOpen] = useState(false);
@@ -363,12 +367,17 @@ export default function ReconciliationWorkbenchPage() {
               <span className="text-[11px] text-slate-500">Exceptions</span>
               <span className={cn("text-[11px] font-bold", totals.totalExceptions > 0 ? "text-red-600" : "text-emerald-600")}>{formatCurrency(totals.totalExceptions)}</span>
             </div>
+            <AiPanelTrigger
+              onClick={() => setAiPanelOpen(!aiPanelOpen)}
+              isActive={aiPanelOpen}
+            />
           </div>
         </div>
       </div>
 
-      {/* ─── Main Content ─── */}
-      <div className="flex-1 overflow-auto" style={{ minHeight: 0 }}>
+      {/* ─── Main Content + AI Panel ─── */}
+      <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
+      <div className={cn("flex-1 overflow-auto", aiPanelOpen && "border-r border-slate-200")}>
         <div className="space-y-3 px-5 py-3">
           {loading && !recons.length ? (
             <div className="flex items-center justify-center py-12">
@@ -594,6 +603,19 @@ export default function ReconciliationWorkbenchPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* ── AI Command Center Panel ── */}
+      {aiPanelOpen && (
+        <div className="w-[340px] shrink-0">
+          <CommandCenterPanel
+            workbenchContext="reconciliations"
+            isOpen={aiPanelOpen}
+            onClose={() => setAiPanelOpen(false)}
+            theme="light"
+          />
+        </div>
+      )}
       </div>
 
       {/* ─── Detail Drawer ─── */}

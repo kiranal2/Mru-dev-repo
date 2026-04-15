@@ -25,6 +25,8 @@ export interface FluxRaw {
 export type FluxStatus = "Open" | "In Review" | "Closed";
 export type PeriodType = "QoQ" | "YoY" | "Other";
 export type MaterialityMode = "default" | "tight" | "loose";
+export type Expectedness = "Expected" | "Seasonal" | "Anomalous" | "One-time";
+export type CommentaryStatus = "none" | "draft" | "submitted" | "approved";
 
 export interface FluxRow {
   id: string;
@@ -42,6 +44,16 @@ export interface FluxRow {
   thresholdPct: number;
   significant: boolean;
   aiExplanation: string | null;
+  /** Expectedness classification — Component 04 from flux primer */
+  expectedness?: Expectedness;
+  /** Written commentary text (AI-drafted or human-written) */
+  commentary?: string | null;
+  /** Commentary workflow status */
+  commentaryStatus?: CommentaryStatus;
+  /** Who approved the commentary */
+  approvedBy?: string | null;
+  /** When commentary was approved */
+  approvedAt?: string | null;
 }
 
 export interface BsRollRow {

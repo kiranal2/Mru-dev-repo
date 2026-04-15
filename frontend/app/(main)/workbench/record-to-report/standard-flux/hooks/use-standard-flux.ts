@@ -11,11 +11,13 @@ import type {
   PromptSuggestion,
   MaterialityMode,
 } from "@/lib/data/types/flux-analysis";
+import type { CommentaryStatus } from "@/lib/data/types/flux-analysis";
 import {
   FALLBACK_DATA,
   AI_PROMPT_SUGGESTIONS,
   AI_THINKING_STEPS,
   AI_ANALYSIS_MAP,
+  COMMENTARY_TEMPLATES,
 } from "@/app/(main)/reports/analysis/flux-analysis/constants";
 import {
   buildPageData,
@@ -25,6 +27,15 @@ import {
   fmtMoney,
   calculateSensitivity,
 } from "@/app/(main)/reports/analysis/flux-analysis/helpers";
+
+/* ──────────────────────────────── CONSTANTS ──────────────────────────────── */
+
+const COMMENTARY_THINKING_STEPS = [
+  "Reading GL variance data...",
+  "Identifying primary drivers...",
+  "Gathering accounting evidence...",
+  "Composing structured commentary...",
+];
 
 /* ──────────────────────────────── HOOK ──────────────────────────────── */
 
@@ -50,11 +61,15 @@ export function useStandardFlux() {
   const [selectedRowId, setSelectedRowId] = useState("");
   const [detailOpen, setDetailOpen] = useState(false);
 
-  // NEW: Comparison mode
+  // Comparison mode
   const [comparisonMode, setComparisonMode] = useState("QoQ");
 
-  // NEW: Quick filter for worklist
+  // Quick filter for worklist
   const [quickFilter, setQuickFilter] = useState("all");
+
+  // KPI-card-driven filter bar
+  const [activeKpiCard, setActiveKpiCard] = useState<"variance" | "drivers" | "progress" | "attention" | null>(null);
+  const [filterBarExpanded, setFilterBarExpanded] = useState(false);
 
   // NEW: Row overrides (owner/status changes)
   const [rowOverrides, setRowOverrides] = useState<Record<string, { owner?: string; status?: string }>>({});
@@ -79,6 +94,13 @@ export function useStandardFlux() {
   const [evidenceTargetRow, setEvidenceTargetRow] = useState<FluxRow | null>(null);
   const [evidenceOverrides, setEvidenceOverrides] = useState<Record<string, boolean>>({});
 
+  // Commentary state
+  const [commentaryOverrides, setCommentaryOverrides] = useState<
+    Record<string, { text?: string; status?: CommentaryStatus; approvedBy?: string | null; approvedAt?: string | null }>
+  >({});
+  const [commentaryIsGenerating, setCommentaryIsGenerating] = useState(false);
+  const [commentaryThinkingSteps, setCommentaryThinkingSteps] = useState<string[]>([]);
+
   /* ─── Refs ─── */
   const aiThinkingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const aiResponseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -88,14 +110,21 @@ export function useStandardFlux() {
   const applyOverrides = useCallback((rows: FluxRow[]): FluxRow[] => {
     return rows.map((row) => {
       const override = rowOverrides[row.id];
-      if (!override) return row;
-      return {
-        ...row,
-        owner: override.owner ?? row.owner,
-        status: (override.status as FluxRow["status"]) ?? row.status,
-      };
+      const cmtOverride = commentaryOverrides[row.id];
+      const patched = { ...row };
+      if (override) {
+        if (override.owner != null) patched.owner = override.owner;
+        if (override.status != null) patched.status = override.status as FluxRow["status"];
+      }
+      if (cmtOverride) {
+        if (cmtOverride.text != null) patched.commentary = cmtOverride.text;
+        if (cmtOverride.status != null) patched.commentaryStatus = cmtOverride.status;
+        if (cmtOverride.approvedBy !== undefined) patched.approvedBy = cmtOverride.approvedBy;
+        if (cmtOverride.approvedAt !== undefined) patched.approvedAt = cmtOverride.approvedAt;
+      }
+      return patched;
     });
-  }, [rowOverrides]);
+  }, [rowOverrides, commentaryOverrides]);
 
   /* ─── Computed: row collections (with overrides applied) ─── */
   const isRows = useMemo(() => applyOverrides(data.is), [data.is, applyOverrides]);
@@ -508,7 +537,83 @@ export function useStandardFlux() {
     toast.success(`Status updated to ${status}`);
   }, []);
 
-  /* ─── NEW: AI Explanation action handlers ─── */
+  /* ─── Commentary handlers ─── */
+  const commentaryThinkingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const commentaryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleGenerateCommentary = useCallback((row: FluxRow) => {
+    if (commentaryIsGenerating) return;
+    setCommentaryIsGenerating(true);
+    setCommentaryThinkingSteps([]);
+
+    let stepIdx = 0;
+    commentaryThinkingRef.current = setInterval(() => {
+      if (stepIdx < COMMENTARY_THINKING_STEPS.length) {
+        setCommentaryThinkingSteps((prev) => [...prev, COMMENTARY_THINKING_STEPS[stepIdx]]);
+        stepIdx++;
+      }
+    }, 600);
+
+    commentaryTimeoutRef.current = setTimeout(() => {
+      if (commentaryThinkingRef.current) clearInterval(commentaryThinkingRef.current);
+      setCommentaryIsGenerating(false);
+      setCommentaryThinkingSteps([]);
+
+      const template = COMMENTARY_TEMPLATES[row.acct];
+      const delta = row.actual - row.base;
+      const pct = row.base ? ((delta / row.base) * 100).toFixed(1) : "0.0";
+      const generated = template ||
+        `${row.name} moved ${delta >= 0 ? "+" : ""}$${Math.abs(delta).toFixed(1)}M (${delta >= 0 ? "+" : ""}${pct}%) from $${row.base.toFixed(1)}M to $${row.actual.toFixed(1)}M.\n\nThe movement is primarily driven by ${row.driver.toLowerCase()}. Owner ${row.owner || "TBD"} should validate supporting evidence and confirm the driver attribution.\n\n${row.expectedness === "Anomalous" ? "Anomalous. Requires investigation and controller review." : row.expectedness === "One-time" ? "One-time. Non-recurring — verify classification." : row.expectedness === "Seasonal" ? "Seasonal. Consistent with prior period patterns." : "Expected. Within normal operating range."}`;
+
+      setCommentaryOverrides((prev) => ({
+        ...prev,
+        [row.id]: { ...prev[row.id], text: generated, status: "draft" },
+      }));
+      toast.success("AI commentary drafted — review and edit before submitting");
+    }, 2800);
+  }, [commentaryIsGenerating]);
+
+  const handleUpdateCommentary = useCallback((rowId: string, text: string) => {
+    setCommentaryOverrides((prev) => ({
+      ...prev,
+      [rowId]: { ...prev[rowId], text, status: prev[rowId]?.status || "draft" },
+    }));
+  }, []);
+
+  const handleSubmitCommentary = useCallback((rowId: string) => {
+    setCommentaryOverrides((prev) => ({
+      ...prev,
+      [rowId]: { ...prev[rowId], status: "submitted" },
+    }));
+    toast.success("Commentary submitted for review");
+  }, []);
+
+  const handleApproveCommentary = useCallback((rowId: string, approverName: string) => {
+    setCommentaryOverrides((prev) => ({
+      ...prev,
+      [rowId]: {
+        ...prev[rowId],
+        status: "approved",
+        approvedBy: approverName,
+        approvedAt: new Date().toISOString(),
+      },
+    }));
+    toast.success(`Commentary approved by ${approverName}`);
+  }, []);
+
+  /* ─── KPI card filter bar handler ─── */
+  const handleKpiCardClick = useCallback((card: "variance" | "drivers" | "progress" | "attention") => {
+    if (activeKpiCard === card) {
+      // Toggle off — collapse filter bar
+      setActiveKpiCard(null);
+      setFilterBarExpanded(false);
+    } else {
+      setActiveKpiCard(card);
+      setFilterBarExpanded(true);
+    }
+  }, [activeKpiCard]);
+
+  /* ─── AI Explanation action handlers ─── */
   const handleExplanationAssignOwner = useCallback((acct: string) => {
     toast.info(`Open owner assignment for ${acct}`);
   }, []);
@@ -646,11 +751,25 @@ export function useStandardFlux() {
     handleAttachEvidence,
     hasEvidence,
 
-    // NEW: Owner/Status updates
+    // KPI filter bar
+    activeKpiCard,
+    filterBarExpanded,
+    handleKpiCardClick,
+    setFilterBarExpanded,
+
+    // Owner/Status updates
     handleUpdateOwner,
     handleUpdateStatus,
 
-    // NEW: Explanation actions
+    // Commentary
+    commentaryIsGenerating,
+    commentaryThinkingSteps,
+    handleGenerateCommentary,
+    handleUpdateCommentary,
+    handleSubmitCommentary,
+    handleApproveCommentary,
+
+    // Explanation actions
     handleExplanationAssignOwner,
     handleExplanationAddEvidence,
     handleExplanationMarkClosed,

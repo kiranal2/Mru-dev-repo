@@ -7,6 +7,8 @@ import type {
   DriverRow,
   CfRow,
   AiResponse,
+  Expectedness,
+  CommentaryStatus,
 } from "@/lib/data/types/flux-analysis";
 import { OWNER_RULES, DRIVER_RULES, FALLBACK_CF_DATA, FALLBACK_DATA } from "./constants";
 
@@ -86,6 +88,28 @@ export function metricToneClass(tone: "positive" | "negative" | "neutral"): stri
   if (tone === "positive") return "border-emerald-200 bg-emerald-50 text-emerald-700";
   if (tone === "negative") return "border-red-200 bg-red-50 text-red-700";
   return "border-slate-200 bg-slate-50 text-slate-600";
+}
+
+export function expectednessClass(e: Expectedness): string {
+  if (e === "Expected") return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  if (e === "Seasonal") return "border-blue-200 bg-blue-50 text-blue-700";
+  if (e === "Anomalous") return "border-red-200 bg-red-50 text-red-700";
+  // One-time
+  return "border-orange-200 bg-orange-50 text-orange-700";
+}
+
+export function expectednessIcon(e: Expectedness): string {
+  if (e === "Expected") return "✓";
+  if (e === "Seasonal") return "↻";
+  if (e === "Anomalous") return "⚠";
+  return "①"; // One-time
+}
+
+export function commentaryStatusClass(s: CommentaryStatus): string {
+  if (s === "approved") return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  if (s === "submitted") return "border-blue-200 bg-blue-50 text-blue-700";
+  if (s === "draft") return "border-amber-200 bg-amber-50 text-amber-700";
+  return "border-slate-200 bg-slate-50 text-slate-500";
 }
 
 /* ──────────────────────────────── CANVAS ──────────────────────────────── */

@@ -3,31 +3,44 @@
 import { AlertTriangle, TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+type KpiCard = "variance" | "drivers" | "progress" | "attention";
+
 interface WorkbenchHeaderProps {
   totalVariance: number;
   topDrivers: { driver: string; impact: number }[];
   reviewStats: { closed: number; inReview: number; open: number; total: number };
   exceptionCount: number;
+  activeKpiCard?: KpiCard | null;
+  onKpiCardClick?: (card: KpiCard) => void;
 }
 
 /**
  * Desktop-only KPI header (4-column grid).
- * Mobile/tablet KPIs are rendered inline in the page component.
+ * Cards are clickable — clicking a card drives the filter bar content below.
  */
 export function WorkbenchHeader({
   totalVariance,
   topDrivers,
   reviewStats,
   exceptionCount,
+  activeKpiCard,
+  onKpiCardClick,
 }: WorkbenchHeaderProps) {
   const closedPct = reviewStats.total ? (reviewStats.closed / reviewStats.total) * 100 : 0;
   const inReviewPct = reviewStats.total ? (reviewStats.inReview / reviewStats.total) * 100 : 0;
   const openPct = reviewStats.total ? (reviewStats.open / reviewStats.total) * 100 : 0;
 
+  const cardBase = "rounded-lg border bg-white p-4 cursor-pointer transition-all";
+  const cardActive = "border-primary/40 ring-2 ring-primary/10 shadow-sm";
+  const cardInactive = "border-slate-200 hover:border-slate-300 hover:shadow-sm";
+
   return (
     <div className="mx-5 mb-3 grid grid-cols-4 gap-3">
       {/* Total Net Variance */}
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div
+        className={cn(cardBase, activeKpiCard === "variance" ? cardActive : cardInactive)}
+        onClick={() => onKpiCardClick?.("variance")}
+      >
         <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
           Total Net Variance
         </div>
@@ -45,7 +58,10 @@ export function WorkbenchHeader({
       </div>
 
       {/* Top Drivers */}
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div
+        className={cn(cardBase, activeKpiCard === "drivers" ? cardActive : cardInactive)}
+        onClick={() => onKpiCardClick?.("drivers")}
+      >
         <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">Top Drivers</div>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {topDrivers.map((d) => (
@@ -66,7 +82,10 @@ export function WorkbenchHeader({
       </div>
 
       {/* Review Progress */}
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div
+        className={cn(cardBase, activeKpiCard === "progress" ? cardActive : cardInactive)}
+        onClick={() => onKpiCardClick?.("progress")}
+      >
         <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">Review Progress</div>
         <div className="mt-2">
           <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
@@ -92,7 +111,13 @@ export function WorkbenchHeader({
       </div>
 
       {/* Needs Attention */}
-      <div className={cn("rounded-lg border bg-white p-4", exceptionCount > 0 ? "border-amber-200" : "border-slate-200")}>
+      <div
+        className={cn(
+          cardBase,
+          activeKpiCard === "attention" ? cardActive : exceptionCount > 0 ? "border-amber-200 hover:border-amber-300 hover:shadow-sm" : cardInactive
+        )}
+        onClick={() => onKpiCardClick?.("attention")}
+      >
         <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">Needs Attention</div>
         <div className="mt-1 flex items-center gap-2">
           <span className={cn("text-2xl font-bold", exceptionCount > 0 ? "text-amber-600" : "text-emerald-600")}>
