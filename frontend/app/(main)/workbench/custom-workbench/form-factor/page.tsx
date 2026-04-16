@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react"
-import { CommandCenterPanel } from "@/components/ai"
+import { WorkbenchAiPanel } from "@/components/shared/workbench-ai-panel"
 import { useIndustry } from "@/hooks/use-industry"
+import { getFormFactorData } from "@/lib/industry-form-factor-data"
 
 // ═══════════════════════════════════════════════════════
 //  TYPES
@@ -454,29 +455,29 @@ const STYLES = `
 
 /* NARRATIVE */
 .ff-narr {
-  background: linear-gradient(135deg,rgba(30,64,175,0.07) 0%,rgba(10,22,40,0) 100%);
-  border: 1px solid var(--teal-mid); border-radius: 12px; padding: 16px 20px; margin-bottom: 18px;
+  background: var(--bg-subtle); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 12px; margin-bottom: 10px;
 }
 .ff-narr-chip {
-  display: inline-flex; align-items: center; gap: 5px; background: var(--teal); color: #fff;
-  font-size: 9.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-  padding: 3px 10px; border-radius: 20px; margin-bottom: 9px;
+  display: inline-flex; align-items: center; gap: 4px; background: var(--teal); color: #fff;
+  font-size: 8px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 10px; margin-bottom: 4px;
 }
-.ff-narr-head { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 7px; line-height: 1.5; }
-.ff-narr-body { font-size: 13px; color: var(--text-secondary); line-height: 1.75; }
+.ff-narr-head { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; line-height: 1.4; }
+.ff-narr-body { font-size: 11px; color: var(--text-secondary); line-height: 1.6; }
 .ff-narr-body strong { color: var(--text-primary); font-weight: 600; }
 .ff-narr-toggle {
   display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none;
 }
 .ff-narr-toggle-btn {
-  display: flex; align-items: center; gap: 5px; background: none; border: 1px solid var(--teal-mid);
-  border-radius: 5px; padding: 3px 9px; font-size: 10px; font-family: var(--mono);
-  color: var(--teal); cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+  display: flex; align-items: center; gap: 4px; background: none; border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 7px; font-size: 9px; font-family: var(--sans);
+  color: var(--text-muted); cursor: pointer; transition: all 0.15s; flex-shrink: 0;
 }
-.ff-narr-toggle-btn:hover { background: var(--teal-light); }
+.ff-narr-toggle-btn:hover { background: var(--bg-subtle); color: var(--teal); }
 .ff-narr-content { overflow: hidden; transition: max-height 0.3s ease, opacity 0.2s ease; }
 .ff-narr-content.collapsed { max-height: 0; opacity: 0; margin-top: 0; }
-.ff-narr-content.expanded { max-height: 500px; opacity: 1; margin-top: 9px; }
+.ff-narr-content.expanded { max-height: 500px; opacity: 1; margin-top: 5px; }
 
 /* WATERFALL */
 .ff-wf { display: flex; flex-direction: column; gap: 7px; }
@@ -524,11 +525,11 @@ const STYLES = `
 
 /* INFO BANNER */
 .ff-ibanner {
-  display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border); border-radius: 8px; padding: 9px 15px;
-  font-size: 12px; color: var(--text-muted); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 6px; background: var(--bg-subtle);
+  border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px;
+  font-size: 10px; color: var(--text-muted); margin-bottom: 10px;
 }
-.ff-ibanner-ico { color: var(--teal); font-size: 14px; flex-shrink: 0; }
+.ff-ibanner-ico { color: var(--teal); font-size: 12px; flex-shrink: 0; }
 
 /* TABS */
 .ff-tabs {
@@ -1119,7 +1120,7 @@ export default function FormFactorPage() {
   const [aiInput, setAiInput] = useState("")
   const [isAiTyping, setIsAiTyping] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [aiPanelOpen, setAiPanelOpen] = useState(false)
+  const [aiPanelOpen, setAiPanelOpen] = useState(true)
   const [insightCollapsed, setInsightCollapsed] = useState(false)
   const aiRef = useRef<HTMLDivElement>(null)
   const aiTypingRef = useRef<ReturnType<typeof setTimeout>>()
@@ -1138,10 +1139,65 @@ export default function FormFactorPage() {
   }, [toggleAiPanel])
 
   // ── Industry data overlay ──
-  const { config: industryConfig, isDemoMode } = useIndustry()
+  const { config: industryConfig, industry, isDemoMode } = useIndustry()
+  const ffData = useMemo(() => getFormFactorData(industry), [industry])
 
-  const WEEKS = WD_ALL.map((d) => d.w)
-  const SEGMENTS: TrendSeg[] = ["All Segments", "North America", "APAC", "EMEA", "LatAm"]
+  // ── Industry-aware data references ──
+  const effectiveWdAll = isDemoMode ? ffData.weeklyData[ffData.segments[0]] || WD_ALL : WD_ALL
+  const WEEKS = effectiveWdAll.map((d) => d.w)
+  const SEGMENTS: TrendSeg[] = (isDemoMode ? ffData.segments : ["All Segments", "North America", "APAC", "EMEA", "LatAm"]) as TrendSeg[]
+
+  const effectiveTrendData = useMemo(() => {
+    if (!isDemoMode) return TREND_DATA
+    const result: Record<string, typeof WD_ALL> = {}
+    ffData.segments.forEach((seg) => { result[seg] = ffData.weeklyData[seg] || [] })
+    return result as Record<TrendSeg, typeof WD_ALL>
+  }, [isDemoMode, ffData])
+
+  const effectiveTrendYRange = useMemo(() => {
+    if (!isDemoMode) return TREND_YRANGE
+    const result: Record<string, { min: number; max: number }> = {}
+    ffData.segments.forEach((seg) => { result[seg] = ffData.trendYRange[seg] || { min: 0, max: 40 } })
+    return result as Record<TrendSeg, { min: number; max: number }>
+  }, [isDemoMode, ffData])
+
+  const effectiveTrendNarr = useMemo(() => {
+    if (!isDemoMode) return TREND_NARR
+    const result: Record<string, { head: string; body: string }> = {}
+    ffData.segments.forEach((seg) => { result[seg] = ffData.trendNarr[seg] || { head: "", body: "" } })
+    return result as Record<TrendSeg, { head: string; body: string }>
+  }, [isDemoMode, ffData])
+
+  const effectiveAvf = useMemo(() => (isDemoMode ? ffData.avf : AVF) as Record<AvfKey, typeof AVF.product>, [isDemoMode, ffData])
+  const effectiveAvfH = useMemo(() => (isDemoMode ? ffData.avfHeaders : AVFH) as Record<AvfKey, string>, [isDemoMode, ffData])
+  const effectiveAvfNarr = useMemo(() => (isDemoMode ? ffData.avfNarr : AVF_NARR) as Record<AvfKey, { head: string; body: string }>, [isDemoMode, ffData])
+
+  const effectiveDrvData = useMemo(() => {
+    if (!isDemoMode) return DRV_DATA
+    const result: Record<string, { bridge: BridgeItem[]; seg: { price: number[]; mix: number[]; volume: number[]; cost: number[] }; narr: string }> = {}
+    ffData.segments.forEach((seg) => { result[seg] = ffData.drvData[seg] || { bridge: [], seg: { price: [], mix: [], volume: [], cost: [] }, narr: "" } })
+    return result as typeof DRV_DATA
+  }, [isDemoMode, ffData])
+
+  const effectiveDrvHeads = useMemo(() => {
+    if (!isDemoMode) return DRV_HEADS
+    const result: Record<string, string> = {}
+    ffData.segments.forEach((seg) => { result[seg] = ffData.drvHeads[seg] || "" })
+    return result as typeof DRV_HEADS
+  }, [isDemoMode, ffData])
+
+  const effectiveDrvRows = useMemo(() => {
+    if (!isDemoMode) return DRV_ROWS
+    const result: Record<string, typeof DRV_ROWS["All Segments"]> = {}
+    ffData.segments.forEach((seg) => { result[seg] = ffData.drvRows[seg] || [] })
+    return result as typeof DRV_ROWS
+  }, [isDemoMode, ffData])
+
+  const effectiveBridgeBase = isDemoMode ? ffData.bridgeBase : [
+    { l: "Volume", v: 2.3, t: "pos" as const },
+    { l: "Mix", v: -1.8, t: "neg" as const },
+    { l: "Cost", v: -0.6, t: "neg" as const },
+  ]
 
   const sidebarItems: { group: string; items: { id: PageId; icon: string; label: string }[] }[] = [
     {
@@ -1318,7 +1374,7 @@ export default function FormFactorPage() {
   // ═════════════════════════════════════════════════════
 
   const renderExec = () => {
-    const d = WD_ALL
+    const d = effectiveWdAll
     return (
       <>
         <div className="ff-ibanner">
@@ -1395,11 +1451,7 @@ export default function FormFactorPage() {
           <div className="ff-card">
             <div className="ff-card-title">Top 3 Drivers · W7 → W8</div>
             <Waterfall
-              items={[
-                { l: "Volume", v: 2.3, t: "pos" },
-                { l: "Mix", v: -1.8, t: "neg" },
-                { l: "Cost", v: -0.6, t: "neg" },
-              ]}
+              items={effectiveBridgeBase.filter((b: BridgeItem) => b.t !== "base")}
             />
           </div>
         </div>
@@ -1429,9 +1481,9 @@ export default function FormFactorPage() {
   }
 
   const renderTrend = () => {
-    const d = TREND_DATA[trendSeg]
-    const yr = TREND_YRANGE[trendSeg]
-    const narr = TREND_NARR[trendSeg]
+    const d = effectiveTrendData[trendSeg]
+    const yr = effectiveTrendYRange[trendSeg]
+    const narr = effectiveTrendNarr[trendSeg]
 
     return (
       <>
@@ -1518,8 +1570,8 @@ export default function FormFactorPage() {
   }
 
   const renderAvf = () => {
-    const data = AVF[avfKey]
-    const narr = AVF_NARR[avfKey]
+    const data = effectiveAvf[avfKey]
+    const narr = effectiveAvfNarr[avfKey]
     const labs = data.map((d) =>
       d.dim
         .split("—")[0]
@@ -1537,12 +1589,12 @@ export default function FormFactorPage() {
     return (
       <>
         <div className="ff-sh">
-          <div><div className="ff-sh-t">Actual vs. Forecast</div><div className="ff-sh-s">Revenue, cost &amp; margin comparison — By {AVFH[avfKey]} — W8</div></div>
+          <div><div className="ff-sh-t">Actual vs. Forecast</div><div className="ff-sh-s">Revenue, cost &amp; margin comparison — By {effectiveAvfH[avfKey]} — W8</div></div>
         </div>
         <div className="ff-tabs">
           {(["product", "customer", "segment"] as AvfKey[]).map((k) => (
             <button key={k} className={`ff-tab ${avfKey === k ? "active" : ""}`} onClick={() => setAvfKey(k)}>
-              By {AVFH[k]}
+              By {effectiveAvfH[k]}
             </button>
           ))}
         </div>
@@ -1590,7 +1642,7 @@ export default function FormFactorPage() {
         </div>
         <div className="ff-card overflow-x-auto">
           <table className="ff-dt" style={{ minWidth: 800 }}>
-            <thead><tr><th>{AVFH[avfKey]}</th><th>Rev Actual</th><th>Rev Fcst</th><th>Rev Gap</th><th>Margin Act.</th><th>Margin Fcst</th><th>Margin Gap</th><th>Confidence</th></tr></thead>
+            <thead><tr><th>{effectiveAvfH[avfKey]}</th><th>Rev Actual</th><th>Rev Fcst</th><th>Rev Gap</th><th>Margin Act.</th><th>Margin Fcst</th><th>Margin Gap</th><th>Confidence</th></tr></thead>
             <tbody>
               {data.map((d) => {
                 const rg = (d.ra - d.rf).toFixed(1)
@@ -1616,8 +1668,8 @@ export default function FormFactorPage() {
   }
 
   const renderDrivers = () => {
-    const ds = DRV_DATA[drvSeg]
-    const rows = DRV_ROWS[drvSeg]
+    const ds = effectiveDrvData[drvSeg]
+    const rows = effectiveDrvRows[drvSeg]
     const confLabel: Record<string, string> = { ph: "High", pm: "Medium", pl: "Low" }
 
     return (
@@ -1641,7 +1693,7 @@ export default function FormFactorPage() {
             </button>
           </div>
           <div className={`ff-narr-content ${insightCollapsed ? "collapsed" : "expanded"}`}>
-          <div className="ff-narr-head">{DRV_HEADS[drvSeg]}</div>
+          <div className="ff-narr-head">{effectiveDrvHeads[drvSeg]}</div>
           <div className="ff-narr-body" dangerouslySetInnerHTML={{ __html: ds.narr }} />
           </div>
         </div>
@@ -1695,8 +1747,8 @@ export default function FormFactorPage() {
   }
 
   const renderCompare = () => {
-    const B = WD_ALL[selB]
-    const C = WD_ALL[selC]
+    const B = effectiveWdAll[selB]
+    const C = effectiveWdAll[selC]
     const rv = (C.rev - B.rev).toFixed(1)
     const mc = (C.margin - B.margin).toFixed(1)
     const cc = (C.cost - B.cost).toFixed(1)
@@ -1815,7 +1867,7 @@ export default function FormFactorPage() {
   }
 
   const renderForward = () => {
-    const actData = WD_ALL.map((d) => d.margin)
+    const actData = effectiveWdAll.map((d) => d.margin)
     const labels = ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9", "W10", "W11", "Q3", "Q4"]
     const act: (number | null)[] = [...actData, null, null, null, null, null]
     const fct: (number | null)[] = [null, null, null, null, null, null, null, 31.3, 31.8, 32.2, 32.5, 33.6, 34.8]
@@ -1951,14 +2003,21 @@ export default function FormFactorPage() {
 
             {/* ── Inline AI Panel (right column) ── */}
             {aiPanelOpen && (
-              <div className="ff-ai-right">
-                <CommandCenterPanel
-                  workbenchContext="form-factor"
-                  isOpen={aiPanelOpen}
-                  onClose={() => setAiPanelOpen(false)}
-                  theme="light"
-                />
-              </div>
+              <aside className="w-[380px] flex-shrink-0 border-l border-slate-200 bg-white flex flex-col min-h-0">
+                <div className="flex-1 overflow-y-auto p-3 min-h-0">
+                  <WorkbenchAiPanel
+                    title="AI Analysis"
+                    suggestions={isDemoMode ? industryConfig.aiSuggestions : [
+                      "Why did margin compress in W8?",
+                      "Which segment is most at risk?",
+                      "Show forecast vs actual trend",
+                      "Top 3 cost drivers by impact",
+                      "Explain the APAC performance shift",
+                    ]}
+                    generateResponse={generateAiResponse}
+                  />
+                </div>
+              </aside>
             )}
           </div>
         </main>

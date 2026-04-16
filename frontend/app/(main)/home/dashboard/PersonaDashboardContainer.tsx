@@ -14,7 +14,7 @@ export default function PersonaDashboardContainer() {
   const router = useRouter();
   const [persona, setPersona] = useState<Persona | null>(null);
   const [checked, setChecked] = useState(false);
-  const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(true);
 
   // Read persona from localStorage directly (avoids PersonaProvider dependency issues)
   useEffect(() => {

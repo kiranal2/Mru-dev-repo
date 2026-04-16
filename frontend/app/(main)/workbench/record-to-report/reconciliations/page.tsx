@@ -128,7 +128,7 @@ export default function ReconciliationWorkbenchPage() {
   const [drawerTab, setDrawerTab] = useState<"details" | "runs" | "activity">("details");
 
   // AI Panel
-  const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(true);
 
   // Wizard
   const [wizardOpen, setWizardOpen] = useState(false);

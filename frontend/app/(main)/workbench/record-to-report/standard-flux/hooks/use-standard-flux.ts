@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFluxAnalysis } from "@/hooks/data";
+import { useIndustry } from "@/hooks/use-industry";
+import { getStandardFluxIndustryData } from "@/lib/industry-standard-flux-data";
 import { toast } from "sonner";
 import type {
   FluxRaw,
@@ -37,17 +39,28 @@ const COMMENTARY_THINKING_STEPS = [
   "Composing structured commentary...",
 ];
 
+
 /* ──────────────────────────────── HOOK ──────────────────────────────── */
 
 export function useStandardFlux() {
+  /* ─── Industry config ─── */
+  const { config: industryConfig, isDemoMode } = useIndustry();
+
   /* ─── Data fetch ─── */
   const { data: fluxRaw, loading: fluxLoading, error: fluxError } = useFluxAnalysis();
 
-  const data = useMemo<FluxPageData>(() => {
+  const jsonData = useMemo<FluxPageData>(() => {
     if (!fluxRaw.length) return FALLBACK_DATA;
     const rawItems = fluxRaw as unknown as FluxRaw[];
     return buildPageData(rawItems);
   }, [fluxRaw]);
+
+  const industryData = useMemo<FluxPageData>(() => {
+    if (!isDemoMode) return FALLBACK_DATA;
+    return getStandardFluxIndustryData(industryConfig.id);
+  }, [isDemoMode, industryConfig]);
+
+  const data = isDemoMode ? industryData : jsonData;
 
   /* ─── State variables ─── */
   const [materiality, setMateriality] = useState<MaterialityMode>("default");
@@ -472,9 +485,9 @@ export function useStandardFlux() {
   const handleSelectPromptSuggestion = useCallback(
     (suggestionPrompt: string) => {
       if (aiIsThinking) return;
-      setAiPrompt(suggestionPrompt);
+      handleAsk(suggestionPrompt);
     },
-    [aiIsThinking]
+    [aiIsThinking, handleAsk]
   );
 
   const handleNewChat = useCallback(() => {
@@ -724,6 +737,7 @@ export function useStandardFlux() {
     aiThinkingSteps,
     showAiAutocomplete,
     autocompleteSuggestions: aiAutocompleteSuggestions,
+    defaultPromptSuggestions: AI_PROMPT_SUGGESTIONS,
     handleAsk,
     handleSelectPromptSuggestion,
     handleNewChat,

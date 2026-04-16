@@ -154,7 +154,7 @@ export default function CloseWorkbenchPage() {
   const [linkReconOpen, setLinkReconOpen] = useState(false);
   const [quickCreateOpen, setQuickCreateOpen] = useState(false);
   const [quickCreateType, setQuickCreateType] = useState("");
-  const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(true);
 
   /* Hook filters */
   const filters: CloseTaskFilters = useMemo(() => {

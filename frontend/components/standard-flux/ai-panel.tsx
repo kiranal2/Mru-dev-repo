@@ -18,6 +18,7 @@ interface StandardFluxAiPanelProps {
   aiThinkingSteps: string[];
   showAutocomplete: boolean;
   autocompleteSuggestions: PromptSuggestion[];
+  defaultSuggestions?: PromptSuggestion[];
   onAsk: (prompt?: string) => void;
   onSelectSuggestion: (prompt: string) => void;
   onNewChat: () => void;
@@ -33,6 +34,7 @@ export function StandardFluxAiPanel({
   aiThinkingSteps,
   showAutocomplete,
   autocompleteSuggestions,
+  defaultSuggestions = [],
   onAsk,
   onSelectSuggestion,
   onNewChat,
@@ -49,21 +51,28 @@ export function StandardFluxAiPanel({
       ]
     : [];
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      onAsk();
+    }
+  };
+
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white flex flex-col">
       {/* Header */}
-      <div className="border-b border-slate-200 bg-slate-50 px-4 py-2.5">
-        <div className="flex items-center justify-between text-slate-900">
+      <div className="border-b border-slate-200 bg-slate-50 px-4 py-2.5 shrink-0">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <h3 className="text-xs font-semibold">AI Analysis</h3>
+            <h3 className="text-xs font-semibold text-slate-900">AI Analysis</h3>
           </div>
           <button
             type="button"
             onClick={onNewChat}
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 transition-colors hover:text-primary"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 transition-colors hover:text-primary"
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className="h-3.5 w-3.5" />
             New Chat
           </button>
         </div>
@@ -71,7 +80,7 @@ export function StandardFluxAiPanel({
 
       {/* Scoped Row Context */}
       {scopedRow && (
-        <div className="flex items-center gap-2 border-b border-blue-100 bg-blue-50 px-4 py-2">
+        <div className="flex items-center gap-2 border-b border-blue-100 bg-blue-50 px-4 py-2 shrink-0">
           <Target className="h-3.5 w-3.5 text-blue-600" />
           <span className="text-[11px] font-medium text-blue-700">
             Scoped to: {scopedRow.name} ({scopedRow.acct}) — {scopedRow.driver}
@@ -79,7 +88,8 @@ export function StandardFluxAiPanel({
         </div>
       )}
 
-      <div className="space-y-3 p-4">
+      {/* Messages area */}
+      <div className="p-4 space-y-3">
         {/* Row-specific suggestions */}
         {scopedRow && rowSuggestions.length > 0 && !hasAiConversation && (
           <div className="flex flex-wrap gap-1.5">
@@ -96,13 +106,37 @@ export function StandardFluxAiPanel({
           </div>
         )}
 
-        {/* Chat area */}
         {!hasAiConversation && !scopedRow ? (
-          <div className="flex flex-col items-center py-6 text-center">
-            <div className="mb-3 rounded-full bg-slate-100 p-3">
-              <Sparkles className="h-6 w-6 text-slate-400" />
+          <div className="space-y-4">
+            {/* Empty state */}
+            <div className="flex flex-col items-center py-6 text-center">
+              <div className="mb-3 rounded-full bg-slate-100 p-3">
+                <Sparkles className="h-6 w-6 text-slate-400" />
+              </div>
+              <p className="text-xs text-slate-500">Ask a question or click a row to scope the AI</p>
             </div>
-            <p className="text-xs text-slate-500">Ask a question or click a row to scope the AI</p>
+
+            {/* Default suggestions */}
+            {defaultSuggestions.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="border-b border-slate-100 bg-slate-50 px-3 py-2 -mx-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                  Suggestions
+                </div>
+                {defaultSuggestions.slice(0, 5).map((s, i) => (
+                  <button
+                    key={s.prompt}
+                    type="button"
+                    onClick={() => onAsk(s.prompt)}
+                    className={cn(
+                      "w-full text-left text-xs font-medium text-slate-700 px-3 py-2 transition-colors hover:bg-slate-50 rounded-md",
+                      i > 0 && "border-t border-slate-50"
+                    )}
+                  >
+                    {s.prompt}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="max-h-[360px] space-y-3 overflow-y-auto pr-1">
@@ -150,6 +184,9 @@ export function StandardFluxAiPanel({
                   </div>
                   <div className="flex-1 space-y-2">
                     <p className="text-sm leading-6 text-slate-700">{response.summary}</p>
+                    {response.matchedPrompt ? (
+                      <p className="text-[11px] text-slate-500">Matched saved prompt: {response.matchedPrompt}</p>
+                    ) : null}
                     <div className="flex flex-wrap gap-1.5">
                       {response.metrics.map((metric) => (
                         <Badge
@@ -173,8 +210,10 @@ export function StandardFluxAiPanel({
             ))}
           </div>
         )}
+      </div>
 
-        {/* Input */}
+      {/* Input area */}
+      <div className="shrink-0 border-t border-slate-200 p-3">
         <div className="flex items-end gap-2">
           <Textarea
             value={aiPrompt}
@@ -187,13 +226,8 @@ export function StandardFluxAiPanel({
                 : "Ask: Explain AR increase and cash impact"
             }
             disabled={aiIsThinking}
-            className="min-h-[80px] resize-none border-2 border-slate-200 bg-white text-sm focus-visible:ring-primary"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                onAsk();
-              }
-            }}
+            className="min-h-[60px] resize-none border-slate-200 bg-white text-sm focus-visible:ring-primary"
+            onKeyDown={handleKeyDown}
           />
           <Button
             size="icon"
@@ -213,10 +247,10 @@ export function StandardFluxAiPanel({
           </Button>
         </div>
 
-        {/* Autocomplete */}
+        {/* Autocomplete suggestions */}
         {showAutocomplete ? (
-          <div className="overflow-hidden rounded-xl border border-slate-200">
-            <div className="border-b border-slate-100 bg-slate-50 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+          <div className="mt-2 space-y-1.5">
+            <div className="border-b border-slate-100 bg-slate-50 px-3 py-2 -mx-3 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
               Suggestions
             </div>
             {autocompleteSuggestions.map((suggestion, index) => (
@@ -225,8 +259,8 @@ export function StandardFluxAiPanel({
                 type="button"
                 onClick={() => onSelectSuggestion(suggestion.prompt)}
                 className={cn(
-                  "flex w-full items-center px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50",
-                  index > 0 && "border-t border-slate-100"
+                  "w-full text-left text-xs font-medium text-slate-700 px-3 py-2 transition-colors hover:bg-slate-50 rounded-md",
+                  index > 0 && "border-t border-slate-50"
                 )}
               >
                 {suggestion.prompt}

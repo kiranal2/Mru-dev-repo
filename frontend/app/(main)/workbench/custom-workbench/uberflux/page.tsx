@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react"
-import { CommandCenterPanel } from "@/components/ai"
+import { WorkbenchAiPanel } from "@/components/shared/workbench-ai-panel"
 import { useIndustry } from "@/hooks/use-industry"
 
 // ═══════════════════════════════════════════════════════
@@ -1228,7 +1228,7 @@ export default function FluxPlusPage() {
   const [isTyping, setIsTyping] = useState(false)
   const [chatInput, setChatInput] = useState("")
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [aiPanelOpen, setAiPanelOpen] = useState(false)
+  const [aiPanelOpen, setAiPanelOpen] = useState(true)
   const [signalDismissed, setSignalDismissed] = useState(false)
 
   const aiMessagesRef = useRef<HTMLDivElement>(null)
@@ -1260,6 +1260,7 @@ export default function FluxPlusPage() {
   const metricData = metric === "Revenue" ? regData.revenue : regData.orders
 
   const segments = (() => {
+    if (isDemoMode) return indRegion.segments
     const overrides = compData.segmentOverrides[region]
     if (overrides) return overrides
     return regData.segments.map((s) => ({
@@ -1268,25 +1269,112 @@ export default function FluxPlusPage() {
     }))
   })()
 
-  const totalVariance = metric === "Revenue" ? (compData.totalVariance || metricData.variance) : metricData.variance
-  const totalColor = compData.totalColor || metricData.color
+  const totalVariance = isDemoMode
+    ? indRegion.variance
+    : metric === "Revenue" ? (compData.totalVariance || metricData.variance) : metricData.variance
+  const totalColor = isDemoMode
+    ? indRegion.varianceColor === "up" ? "up" : "down"
+    : compData.totalColor || metricData.color
 
-  const regionPillMap: Record<Region, string> = {
-    national: compData.stats.national,
-    northeast: compData.stats.ne,
-    southeast: compData.stats.se,
-    midwest: compData.stats.mw,
-    west: compData.stats.w,
-    southwest: compData.stats.sw,
-  }
-  const regionPillColorMap: Record<Region, string> = {
-    national: compData.pillColors.national,
-    northeast: compData.pillColors.ne,
-    southeast: compData.pillColors.se,
-    midwest: compData.pillColors.mw,
-    west: compData.pillColors.w,
-    southwest: compData.pillColors.sw,
-  }
+  // ── Industry-derived sidebar data ──
+  const effectiveRegionItems = useMemo(() => {
+    if (!isDemoMode) return null
+    const keys: Region[] = ["national", "northeast", "southeast", "midwest", "west", "southwest"]
+    return industryConfig.regions.map((r, i) => ({
+      key: keys[i] || keys[0],
+      label: r.label,
+    }))
+  }, [isDemoMode, industryConfig])
+
+  const effectiveSegmentNav = useMemo(() => {
+    if (!isDemoMode) return null
+    return industryConfig.drivers.map((d) => ({
+      key: d.name.toLowerCase().replace(/\s+/g, "-"),
+      label: d.name,
+      pillCls: d.impactDir === "up" ? "pill-green" : d.confidence === "high" ? "pill-red" : "pill-amber",
+      pill: d.impact,
+    }))
+  }, [isDemoMode, industryConfig])
+
+  const effectiveDrillSegments = useMemo(() => {
+    if (!isDemoMode) return DATA.drillSegments
+    return industryConfig.regions.flatMap((r) =>
+      r.segments.map((s, si) => ({
+        id: s.name.toLowerCase().replace(/\s+/g, "-"),
+        name: s.name,
+        region: r.label,
+        variance: s.variance.split(" ")[0],
+        varColor: (s.variance.startsWith("+") || s.variance.startsWith("−$0.") === false && s.variance.startsWith("+")) ? "up" as const : "down" as const,
+        spark: s.variance.startsWith("+") ? [48, 50, 52, 55, 58] : [62, 60, 57, 53, 50],
+        util: "—",
+        utilColor: "var(--muted)",
+        trips: s.variance.split(" ")[0].replace("−", "-"),
+        tripsVsPlan: s.variance.split(" ")[0],
+      }))
+    ).slice(0, 6)
+  }, [isDemoMode, industryConfig])
+
+  const effectiveExceptions = useMemo(() => {
+    if (!isDemoMode) return DATA.exceptions
+    return industryConfig.drivers.map((d, i) => ({
+      id: `ind-exc-${i}`,
+      severity: d.impactDir === "up" ? "positive" : d.confidence === "high" ? "critical" : "warning",
+      icon: d.impactDir === "up" ? "🟢" : d.confidence === "high" ? "🔴" : "🟡",
+      name: `${d.name} — ${industryConfig.label}`,
+      detail: `Impact: ${d.impact}. Confidence: ${d.confidence}. ${industryConfig.narratives.headline}`,
+      tags: [
+        { cls: d.impactDir === "up" ? "pill-green" : d.confidence === "high" ? "pill-red" : "pill-amber", label: d.confidence.charAt(0).toUpperCase() + d.confidence.slice(1) },
+        { cls: d.impactDir === "up" ? "pill-green" : "pill-amber", label: d.impactDir === "up" ? "Positive" : "Watch" },
+      ],
+      value: d.impact,
+      week: "Current",
+      aiQ: `Explain the ${d.name} impact`,
+      aiA: `<strong>${d.name}</strong> has an impact of <strong>${d.impact}</strong>. ${industryConfig.narratives.headline}`,
+    }))
+  }, [isDemoMode, industryConfig])
+
+  const effectiveSignals = useMemo(() => {
+    if (!isDemoMode) return DATA.signals
+    return industryConfig.drivers.map((d) => ({
+      name: `${d.name} — ${industryConfig.label}`,
+      type: d.impactDir === "up" ? "Growth" : d.confidence === "high" ? "Risk" : "Watch",
+      typeCls: d.impactDir === "up" ? "pill-green" : d.confidence === "high" ? "pill-red" : "pill-amber",
+      confidence: d.confidence === "high" ? 92 : d.confidence === "medium" ? 76 : 65,
+      body: `${d.name} shows ${d.impact} impact with ${d.confidence} confidence. ${industryConfig.narratives.headline}`,
+      confColor: d.impactDir === "up" ? "var(--green)" : d.confidence === "high" ? "var(--red)" : "#d97706",
+    }))
+  }, [isDemoMode, industryConfig])
+
+  const regionPillMap: Record<Region, string> = isDemoMode
+    ? (() => {
+        const map: Record<Region, string> = { national: "", northeast: "", southeast: "", midwest: "", west: "", southwest: "" }
+        const keys: Region[] = ["national", "northeast", "southeast", "midwest", "west", "southwest"]
+        industryConfig.regions.forEach((r, i) => { if (i < keys.length) map[keys[i]] = r.variance })
+        return map
+      })()
+    : {
+        national: compData.stats.national,
+        northeast: compData.stats.ne,
+        southeast: compData.stats.se,
+        midwest: compData.stats.mw,
+        west: compData.stats.w,
+        southwest: compData.stats.sw,
+      }
+  const regionPillColorMap: Record<Region, string> = isDemoMode
+    ? (() => {
+        const map: Record<Region, string> = { national: "", northeast: "", southeast: "", midwest: "", west: "", southwest: "" }
+        const keys: Region[] = ["national", "northeast", "southeast", "midwest", "west", "southwest"]
+        industryConfig.regions.forEach((r, i) => { if (i < keys.length) map[keys[i]] = r.varianceColor === "up" ? "pill-green" : "pill-red" })
+        return map
+      })()
+    : {
+        national: compData.pillColors.national,
+        northeast: compData.pillColors.ne,
+        southeast: compData.pillColors.se,
+        midwest: compData.pillColors.mw,
+        west: compData.pillColors.w,
+        southwest: compData.pillColors.sw,
+      }
 
   // ── AI helpers ──
   const scrollAI = useCallback(() => {
@@ -1320,12 +1408,19 @@ export default function FluxPlusPage() {
 
   // ── Seed AI on region change ──
   useEffect(() => {
-    const r = DATA.regions[region]
-    setAiMessages([...r.ai.messages])
-    setSuggestions([...r.ai.suggestions])
+    if (isDemoMode) {
+      setAiMessages([
+        { role: "ai", name: "Meeru AI", html: `<strong>${indRegion.signalTitle}</strong><br><br>${indRegion.signalBody}` },
+      ])
+      setSuggestions([...industryConfig.aiSuggestions])
+    } else {
+      const r = DATA.regions[region]
+      setAiMessages([...r.ai.messages])
+      setSuggestions([...r.ai.suggestions])
+    }
     setIsTyping(false)
     if (typingRef.current) clearTimeout(typingRef.current)
-  }, [region])
+  }, [region, isDemoMode, indRegion, industryConfig])
 
   // ── Scroll AI on message change ──
   useEffect(() => {
@@ -1482,8 +1577,16 @@ export default function FluxPlusPage() {
 
   // ── Chart render ──
   const renderChart = () => {
-    const bars = regData.chart.bars
-    const chartTitle = regData.chart.title + (metric === "Orders" ? " (Orders)" : " (Revenue)")
+    const bars = isDemoMode
+      ? indRegion.chartBars.map((b: { week: string; actual: number; plan: number; forecast?: boolean }) => ({
+          week: b.week,
+          actual: b.actual,
+          plan: b.plan,
+          color: b.actual >= b.plan ? "var(--green)" : b.actual >= b.plan * 0.85 ? "#d97706" : "var(--red)",
+          forecast: b.forecast,
+        }))
+      : regData.chart.bars
+    const chartTitle = (isDemoMode ? indRegion.chartTitle : regData.chart.title) + (metric === "Orders" ? " (Orders)" : " (Revenue)")
     return (
       <div className="uf-chart-area" data-tour-id="uf-chart">
         <div className="uf-chart-header">
@@ -1602,10 +1705,10 @@ export default function FluxPlusPage() {
             {/* Regions group */}
             <div className="uf-sb-group">
               <div className="uf-sb-glabel">Regions</div>
-              {regionItems.map((r) => (
+              {(effectiveRegionItems || regionItems).map((r) => (
                 <button key={r.key} className={`uf-sb-item ${region === r.key ? "active" : ""}`} onClick={() => handleRegionClick(r.key)}>
                   {r.label}
-                  <span className={`uf-nav-pill ${regionPillColorMap[r.key]}`}>{regionPillMap[r.key]}</span>
+                  <span className={`uf-nav-pill ${regionPillColorMap[r.key] || ""}`}>{regionPillMap[r.key] || ""}</span>
                 </button>
               ))}
             </div>
@@ -1620,9 +1723,16 @@ export default function FluxPlusPage() {
             </div>
             {/* Segments group */}
             <div className="uf-sb-group">
-              <div className="uf-sb-glabel">Segments</div>
-              {segmentNavItems.map((s) => (
-                <button key={s.key} className="uf-sb-item" onClick={() => handleSegmentNav(s.key)}>
+              <div className="uf-sb-glabel">{isDemoMode ? "Drivers" : "Segments"}</div>
+              {(effectiveSegmentNav || segmentNavItems).map((s) => (
+                <button key={s.key} className="uf-sb-item" onClick={() => {
+                  if (isDemoMode) {
+                    addUserMsg(`Tell me about ${s.label}`)
+                    addAIMsg(`<strong>${s.label}</strong> — Impact: <strong>${s.pill}</strong>.<br><br>${industryConfig.narratives.headline}`, 750)
+                  } else {
+                    handleSegmentNav(s.key)
+                  }
+                }}>
                   {s.label}
                   <span className={`uf-nav-pill ${s.pillCls}`}>{s.pill}</span>
                 </button>
@@ -1763,7 +1873,7 @@ export default function FluxPlusPage() {
                   </div>
                 </div>
                 <div className="uf-drill-grid">
-                  {DATA.drillSegments.map((seg) => {
+                  {effectiveDrillSegments.map((seg) => {
                     const minV = Math.min(...seg.spark)
                     const maxV = Math.max(...seg.spark)
                     const metricTrips = metric === "Orders" ? (parseFloat(seg.trips) * 1.6).toFixed(2) + "K orders" : "$" + seg.trips + "M"
@@ -1795,7 +1905,7 @@ export default function FluxPlusPage() {
                             <div className="uf-drill-stat-val" style={{ color: seg.utilColor }}>
                               {seg.util}
                             </div>
-                            <div className="uf-drill-stat-lbl">Courier Util</div>
+                            <div className="uf-drill-stat-lbl">{isDemoMode ? "Status" : "Courier Util"}</div>
                           </div>
                           <div className="uf-drill-stat-item">
                             <div className="uf-drill-stat-val">{metricTrips}</div>
@@ -1824,7 +1934,7 @@ export default function FluxPlusPage() {
                   </div>
                 </div>
                 <div className="uf-exc-list">
-                  {DATA.exceptions.map((exc) => (
+                  {effectiveExceptions.map((exc) => (
                     <div
                       key={exc.id}
                       className={`uf-exc-card ${exc.severity} ${selectedExc === exc.id ? "selected" : ""}`}
@@ -1865,7 +1975,7 @@ export default function FluxPlusPage() {
                   </div>
                 </div>
                 <div className="uf-signals-list">
-                  {DATA.signals.map((sig, idx) => (
+                  {effectiveSignals.map((sig, idx) => (
                     <div
                       key={idx}
                       className={`uf-signal-card ${selectedSignal === idx ? "selected" : ""}`}
@@ -1933,14 +2043,21 @@ export default function FluxPlusPage() {
 
           {/* ── Inline AI Panel (right column) ── */}
           {aiPanelOpen && (
-            <div className="uf-ai-right">
-              <CommandCenterPanel
-                workbenchContext="uberflux"
-                isOpen={aiPanelOpen}
-                onClose={() => setAiPanelOpen(false)}
-                theme="light"
-              />
-            </div>
+            <aside className="w-[380px] flex-shrink-0 border-l border-slate-200 bg-white flex flex-col min-h-0" style={{ borderLeft: '1px solid var(--border)' }}>
+              <div className="flex-1 overflow-y-auto p-3 min-h-0">
+                <WorkbenchAiPanel
+                  title="AI Analysis"
+                  suggestions={isDemoMode ? industryConfig.aiSuggestions : [
+                    "What are the most significant exceptions this week?",
+                    "Which region has the highest variance?",
+                    "Explain the top driver impact",
+                    "What should we watch before Thursday?",
+                    "Compare W10 to prior week",
+                  ]}
+                  generateResponse={generateAIResponse}
+                />
+              </div>
+            </aside>
           )}
           </div>{/* close uf-centre-wrap */}
 
@@ -1962,7 +2079,7 @@ export default function FluxPlusPage() {
               Generated <span>08:38 AM</span>
             </div>
           </div>
-          <div className="uf-bottom-right">Variance Workbench · Week 10 · {regData.label}</div>
+          <div className="uf-bottom-right">Variance Workbench · Week 10 · {isDemoMode ? indRegion.label : regData.label}</div>
         </div>
       </div>
     </div>

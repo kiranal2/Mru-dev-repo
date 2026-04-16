@@ -75,7 +75,7 @@ export default function StandardFluxPage() {
   const state = useStandardFlux();
   const { config: industryConfig, isDemoMode } = useIndustry();
   const [aiSheetOpen, setAiSheetOpen] = useState(false);
-  const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(true);
   const [driversSheetOpen, setDriversSheetOpen] = useState(false);
   const [alertsExpanded, setAlertsExpanded] = useState(false);
 
@@ -307,6 +307,7 @@ export default function StandardFluxPage() {
                   aiThinkingSteps={state.aiThinkingSteps}
                   showAutocomplete={state.showAiAutocomplete}
                   autocompleteSuggestions={state.autocompleteSuggestions}
+                  defaultSuggestions={state.defaultPromptSuggestions}
                   onAsk={state.handleAsk}
                   onSelectSuggestion={state.handleSelectPromptSuggestion}
                   onNewChat={state.handleNewChat}
@@ -332,26 +333,6 @@ export default function StandardFluxPage() {
           </SheetContent>
         </Sheet>
 
-        {/* ── Top Drivers Bottom Sheet ── */}
-        <Sheet open={driversSheetOpen} onOpenChange={setDriversSheetOpen}>
-          <SheetContent side="bottom" className="h-[60vh] rounded-t-2xl p-0 overflow-hidden">
-            <div className="flex h-full flex-col">
-              <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4 text-slate-600" />
-                  <SheetTitle className="text-sm font-semibold">Top Drivers</SheetTitle>
-                </div>
-              </div>
-              <div className="flex-1 overflow-y-auto">
-                <FluxTopDriversTable
-                  drivers={state.topDrivers}
-                  baseRevenue={state.kpiRevenue?.base ?? 48.2}
-                />
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
-
       </div>
 
       {/* ╔══════════════════════════════════════════════════════════╗
@@ -360,6 +341,46 @@ export default function StandardFluxPage() {
       <div className="hidden xl:flex h-full min-h-0">
         {/* LEFT: KPIs + toolbar + content */}
         <div className="flex-1 flex flex-col min-w-0 min-h-0">
+
+        {/* ── Title row with action icons (desktop) ── */}
+        <div className="flex items-center justify-between px-5 pt-1.5 pb-1">
+          <h1 className="text-sm font-semibold text-slate-900">Standard Flux</h1>
+          <div className="flex items-center gap-1">
+            {BANNERS.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setAlertsExpanded(!alertsExpanded)}
+                className="relative rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 transition-colors"
+                title="Alerts"
+              >
+                <ShieldAlert className="h-4 w-4" />
+                <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-500 text-[8px] font-bold text-white">
+                  {BANNERS.length}
+                </span>
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setDriversSheetOpen(true)}
+              className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 transition-colors"
+              title="Top Drivers"
+            >
+              <BarChart3 className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={toggleAiPanel}
+              className={cn(
+                "rounded-lg p-1.5 transition-colors",
+                aiPanelOpen ? "text-primary bg-primary/5" : "text-slate-500 hover:bg-slate-100"
+              )}
+              title="AI Assistant"
+            >
+              <Sparkles className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
         {/* Header KPIs */}
         <div data-tour-id="sf-kpis">
         <WorkbenchHeader
@@ -481,6 +502,7 @@ export default function StandardFluxPage() {
                 aiThinkingSteps={state.aiThinkingSteps}
                 showAutocomplete={state.showAiAutocomplete}
                 autocompleteSuggestions={state.autocompleteSuggestions}
+                defaultSuggestions={state.defaultPromptSuggestions}
                 onAsk={state.handleAsk}
                 onSelectSuggestion={state.handleSelectPromptSuggestion}
                 onNewChat={state.handleNewChat}
@@ -505,6 +527,26 @@ export default function StandardFluxPage() {
           </aside>
         )}
       </div>
+
+      {/* ── Top Drivers Sheet (shared) ── */}
+      <Sheet open={driversSheetOpen} onOpenChange={setDriversSheetOpen}>
+        <SheetContent side="right" className="w-[340px] sm:w-[400px] p-0 overflow-hidden">
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-slate-600" />
+                <SheetTitle className="text-sm font-semibold">Top Drivers</SheetTitle>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <FluxTopDriversTable
+                drivers={state.topDrivers}
+                baseRevenue={state.kpiRevenue?.base ?? 48.2}
+              />
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* ── Alerts Side Sheet (shared) ── */}
       <Sheet open={alertsExpanded} onOpenChange={setAlertsExpanded}>
