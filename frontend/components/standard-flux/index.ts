@@ -1,5 +1,7 @@
 export { WorkbenchHeader } from "./workbench-header";
 export { StandardFluxToolbar } from "./toolbar";
+export { StandardFluxTopNav } from "./top-nav";
+export { StandardFluxLeftNav } from "./left-nav";
 export { FilterBar } from "./filter-bar";
 export { WorklistTable } from "./worklist-table";
 export { StandardFluxDrawer } from "./detail-drawer";

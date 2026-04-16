@@ -2,6 +2,10 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import { WorkbenchAiPanel } from "@/components/shared/workbench-ai-panel"
+import {
+  WorkbenchActionStrip,
+  type WorkbenchAction,
+} from "@/components/shared/workbench-action-strip"
 import { useIndustry } from "@/hooks/use-industry"
 
 // ═══════════════════════════════════════════════════════
@@ -1675,6 +1679,42 @@ export default function FluxPlusPage() {
     { key: "history", icon: "⟋", label: "History" },
   ]
 
+  // ── Contextual action cards (drive the bottom adaptive-UI strip) ──
+  const contextualActions: WorkbenchAction[] = []
+  const regionLabel = isDemoMode ? indRegion.label : regData.label
+  const isUnderperforming = totalColor === "down"
+  if (isUnderperforming) {
+    contextualActions.push({
+      kind: "slack",
+      label: `Slack ${regionLabel} ops lead`,
+      recipient: `${regionLabel} Ops`,
+      contextual: true,
+    })
+    contextualActions.push({
+      kind: "email",
+      label: "Email CFO summary",
+      recipient: "CFO",
+      body: `${regionLabel} is underperforming (${totalVariance}) vs ${compData.label}. Key driver: ${metricData.driver}.`,
+      contextual: true,
+    })
+  }
+  if (tab === "exceptions" && effectiveExceptions.length > 0) {
+    contextualActions.push({
+      kind: "reminder",
+      label: `Chase ${effectiveExceptions.length} exception${effectiveExceptions.length > 1 ? "s" : ""}`,
+      contextual: true,
+    })
+  }
+  if (tab === "signals" && effectiveSignals.length > 0) {
+    contextualActions.push({
+      kind: "pin",
+      label: `Pin top signal to workspace`,
+      contextual: true,
+    })
+  }
+
+  const contextTitle = `${regionLabel} · ${metric} · ${compData.label}`
+
   // ═════════════════════════════════════════════════════
   //  JSX
   // ═════════════════════════════════════════════════════
@@ -1684,6 +1724,22 @@ export default function FluxPlusPage() {
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
       <div className="uf-app">
+        {/* ── Top Nav: view categories ── */}
+        <div className="uf-tabs" role="tablist" aria-label="Workbench view">
+          {tabs.map((t) => (
+            <button
+              key={t.key}
+              role="tab"
+              aria-selected={tab === t.key}
+              className={`uf-tab ${tab === t.key ? "active" : ""}`}
+              onClick={() => setTab(t.key)}
+            >
+              <span className="uf-sb-icon" style={{ marginRight: 6 }}>{t.icon}</span>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
         {/* ── Main ── */}
         <div className="uf-main">
           {/* Sidebar overlay for mobile/tablet */}
@@ -1691,17 +1747,6 @@ export default function FluxPlusPage() {
 
           {/* ── Left Sidebar ── */}
           <div className={`uf-sidebar ${sidebarOpen ? "open" : ""}`}>
-            {/* Sidebar header — just the title */}
-            {/* Views group */}
-            <div className="uf-sb-group">
-              <div className="uf-sb-glabel">Overview</div>
-              {tabs.map((t) => (
-                <button key={t.key} className={`uf-sb-item ${tab === t.key ? "active" : ""}`} onClick={() => setTab(t.key)}>
-                  <span className="uf-sb-icon">{t.icon}</span>
-                  {t.label}
-                </button>
-              ))}
-            </div>
             {/* Regions group */}
             <div className="uf-sb-group">
               <div className="uf-sb-glabel">Regions</div>
@@ -2062,6 +2107,12 @@ export default function FluxPlusPage() {
           </div>{/* close uf-centre-wrap */}
 
         </div>
+
+        {/* ── Bottom adaptive-UI action strip ── */}
+        <WorkbenchActionStrip
+          contextualActions={contextualActions}
+          contextTitle={contextTitle}
+        />
 
         {/* ── Bottom Bar ── */}
         <div className="uf-bottombar">

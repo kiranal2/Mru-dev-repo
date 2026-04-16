@@ -2,6 +2,10 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import { WorkbenchAiPanel } from "@/components/shared/workbench-ai-panel"
+import {
+  WorkbenchActionStrip,
+  type WorkbenchAction,
+} from "@/components/shared/workbench-action-strip"
 import { useIndustry } from "@/hooks/use-industry"
 import { getFormFactorData } from "@/lib/industry-form-factor-data"
 
@@ -355,6 +359,34 @@ const STYLES = `
 }
 .ff-root * { box-sizing: border-box; margin: 0; padding: 0; }
 .ff-body { display: flex; flex: 1; min-height: 0; }
+
+/* TOP NAV (categories) */
+.ff-topnav {
+  display: flex; align-items: stretch;
+  background: var(--bg-white); border-bottom: 1px solid var(--border);
+  padding: 0 16px; gap: 0; flex-shrink: 0; overflow-x: auto;
+}
+.ff-tn-group {
+  display: flex; align-items: center; gap: 2px;
+  padding: 0 10px; border-right: 1px solid var(--border);
+}
+.ff-tn-group:last-child { border-right: none; padding-right: 0; }
+.ff-tn-glabel {
+  font-size: 9px; font-weight: 600; letter-spacing: 1.4px;
+  text-transform: uppercase; color: var(--text-muted);
+  padding: 0 8px 0 2px; user-select: none; white-space: nowrap;
+}
+.ff-tn-btn {
+  padding: 10px 14px; font-size: 12px; font-weight: 500;
+  color: var(--text-muted); cursor: pointer; background: none;
+  border: none; border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap; font-family: var(--sans);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.ff-tn-btn:hover { color: var(--text-secondary); }
+.ff-tn-btn.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 600; }
+.ff-tn-icon { font-size: 13px; }
 
 /* SIDEBAR */
 .ff-sidebar {
@@ -1952,6 +1984,40 @@ export default function FormFactorPage() {
     )
   }
 
+  // ── Contextual action cards (drive bottom adaptive-UI strip) ──
+  const pageLabel =
+    sidebarItems.flatMap((g) => g.items).find((i) => i.id === page)?.label ?? "Margin Intelligence"
+  const contextualActions: WorkbenchAction[] = [
+    {
+      kind: "slack",
+      label: "Slack finance lead",
+      recipient: "Finance Lead",
+      contextual: true,
+    },
+    {
+      kind: "email",
+      label: "Email CFO summary",
+      recipient: "CFO",
+      body: `Sharing ${pageLabel} view for review.`,
+      contextual: true,
+    },
+  ]
+  if (page === "drivers" || page === "compare") {
+    contextualActions.push({
+      kind: "pin",
+      label: `Pin ${pageLabel} to workspace`,
+      contextual: true,
+    })
+  }
+  if (page === "forward") {
+    contextualActions.push({
+      kind: "reminder",
+      label: "Remind me before forecast cutoff",
+      contextual: true,
+    })
+  }
+  const contextTitle = `Margin Intelligence · ${pageLabel}`
+
   // ═════════════════════════════════════════════════════
   //  JSX
   // ═════════════════════════════════════════════════════
@@ -1960,11 +2026,29 @@ export default function FormFactorPage() {
     <div className="ff-root">
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
-      {/* BODY — sidebar + main side by side */}
+      {/* TOP NAV — Overview category (Executive View, Trending Report) */}
+      <nav className="ff-topnav" data-tour-id="ff-topnav" role="tablist" aria-label="Overview pages">
+        <div className="ff-tn-group">
+          {(sidebarItems[0]?.items ?? []).map((item) => (
+            <button
+              key={item.id}
+              role="tab"
+              aria-selected={page === item.id}
+              className={`ff-tn-btn ${page === item.id ? "active" : ""}`}
+              onClick={() => setPage(item.id)}
+            >
+              <span className="ff-tn-icon">{item.icon}</span>
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* BODY — sidebar (Analysis + Forward View) + main */}
       <div className="ff-body">
-        {/* LEFT SIDEBAR */}
-        <nav className="ff-sidebar" data-tour-id="ff-sidebar">
-          {sidebarItems.map((group) => (
+        {/* LEFT SIDEBAR — non-overview categories */}
+        <nav className="ff-sidebar" data-tour-id="ff-sidebar" aria-label="Analysis pages">
+          {sidebarItems.slice(1).map((group) => (
             <div key={group.group} className="ff-sb-group">
               <div className="ff-sb-glabel">{group.group}</div>
               {group.items.map((item) => (
@@ -2020,6 +2104,12 @@ export default function FormFactorPage() {
               </aside>
             )}
           </div>
+
+          {/* Bottom adaptive-UI action strip — scoped to main (not sidebar) */}
+          <WorkbenchActionStrip
+            contextualActions={contextualActions}
+            contextTitle={contextTitle}
+          />
         </main>
       </div>{/* close ff-body */}
     </div>

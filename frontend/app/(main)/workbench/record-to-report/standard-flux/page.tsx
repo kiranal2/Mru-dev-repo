@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useIndustry } from "@/hooks/use-industry";
 import { useStandardFlux } from "./hooks/use-standard-flux";
 import {
   WorkbenchHeader,
   StandardFluxToolbar,
+  StandardFluxTopNav,
+  StandardFluxLeftNav,
   FilterBar,
   WorklistTable,
   StandardFluxDrawer,
@@ -24,6 +26,10 @@ import {
 } from "@/components/flux-analysis";
 import { CrossModuleBanner } from "@/components/cross-module";
 import {
+  WorkbenchActionStrip,
+  type WorkbenchAction,
+} from "@/components/shared/workbench-action-strip";
+import {
   Sheet,
   SheetContent,
   SheetHeader,
@@ -31,8 +37,6 @@ import {
 } from "@/components/ui/sheet";
 import {
   AlertTriangle,
-  ChevronDown,
-  ChevronUp,
   BarChart3,
   ShieldAlert,
   Sparkles,
@@ -90,6 +94,38 @@ export default function StandardFluxPage() {
     return () => window.removeEventListener("meeru-toggle-ai", handler);
   }, [toggleAiPanel]);
 
+  /* ─── Contextual actions driven by AI state ─── */
+  const contextualActions = useMemo<WorkbenchAction[]>(() => {
+    const actions: WorkbenchAction[] = [];
+    if (state.detailRow) {
+      actions.push({
+        kind: "slack",
+        label: `Slack owner · ${state.detailRow.name}`,
+        recipient: state.detailRow.owner ?? "Owner",
+        contextual: true,
+      });
+      actions.push({
+        kind: "email",
+        label: `Email CFO summary`,
+        recipient: "CFO",
+        body: `Flagging ${state.detailRow.name} variance for review.`,
+        contextual: true,
+      });
+    }
+    if (state.exceptionCount > 0) {
+      actions.push({
+        kind: "reminder",
+        label: `Chase ${state.exceptionCount} exception${state.exceptionCount > 1 ? "s" : ""}`,
+        contextual: true,
+      });
+    }
+    return actions;
+  }, [state.detailRow, state.exceptionCount]);
+
+  const contextTitle = state.detailRow
+    ? `${state.detailRow.name} — ${state.comparisonMode}`
+    : `Flux Intelligence — ${state.comparisonMode}`;
+
   if (state.fluxLoading) {
     return (
       <div className="flex h-full min-h-0 items-center justify-center bg-slate-50">
@@ -120,7 +156,7 @@ export default function StandardFluxPage() {
 
         {/* ── Title row with action icons ── */}
         <div className="flex items-center justify-between px-4 pt-1.5 pb-1">
-          <h1 className="text-sm font-semibold text-slate-900">Standard Flux</h1>
+          <h1 className="text-sm font-semibold text-slate-900">Flux Intelligence</h1>
           <div className="flex items-center gap-1">
             {BANNERS.length > 0 && (
               <button
@@ -154,9 +190,29 @@ export default function StandardFluxPage() {
           </div>
         </div>
 
+        {/* ── Mobile view tabs (IS/BS/CF) ── */}
+        <div className="px-4 pb-1">
+          <div className="flex items-center rounded-md border border-slate-200 bg-white p-0.5 w-full">
+            {(["is", "bs", "cf"] as const).map((view) => {
+              const labels = { is: "Income Stmt", bs: "Balance Sheet", cf: "Cash Flow" };
+              return (
+                <button
+                  key={view}
+                  onClick={() => state.setActiveView(view)}
+                  className={cn(
+                    "flex-1 px-2 py-1 text-[11px] font-medium rounded transition-colors whitespace-nowrap",
+                    state.activeView === view ? "bg-primary text-white" : "text-slate-500"
+                  )}
+                >
+                  {labels[view]}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* ── KPI cards — 2x2 on tablet, stacked on phone ── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 px-4 pb-2">
-          {/* Net Variance */}
           <div className="rounded-lg border border-slate-200 bg-white p-3">
             <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Net Variance</div>
             <div className="mt-1 flex items-center gap-1.5">
@@ -165,10 +221,9 @@ export default function StandardFluxPage() {
               </span>
               {state.totalVariance >= 0 ? <TrendingUp className="h-4 w-4 text-emerald-500" /> : <TrendingDown className="h-4 w-4 text-red-500" />}
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5">QoQ period change</div>
+            <div className="text-[10px] text-slate-400 mt-0.5">{state.comparisonMode} period change</div>
           </div>
 
-          {/* Review Progress */}
           <div className="rounded-lg border border-slate-200 bg-white p-3">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Review Progress</span>
@@ -187,7 +242,6 @@ export default function StandardFluxPage() {
             </div>
           </div>
 
-          {/* Top Drivers */}
           <div className="rounded-lg border border-slate-200 bg-white p-3">
             <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Top Drivers</div>
             <div className="mt-1.5 flex flex-wrap gap-1">
@@ -205,7 +259,6 @@ export default function StandardFluxPage() {
             </div>
           </div>
 
-          {/* Needs Attention */}
           <div className={cn("rounded-lg border bg-white p-3", state.exceptionCount > 0 ? "border-amber-200" : "border-slate-200")}>
             <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Needs Attention</div>
             <div className="mt-1 flex items-center gap-1.5">
@@ -220,10 +273,8 @@ export default function StandardFluxPage() {
           </div>
         </div>
 
-        {/* ── Combined toolbar (ONE row) ── */}
+        {/* ── Mobile toolbar (now without IS/BS/CF — moved to tabs above) ── */}
         <StandardFluxToolbar
-          activeView={state.activeView}
-          onViewChange={state.setActiveView}
           comparisonMode={state.comparisonMode}
           onComparisonModeChange={state.setComparisonMode}
           consolidation={state.consolidation}
@@ -286,6 +337,12 @@ export default function StandardFluxPage() {
           </div>
         </div>
 
+        {/* ── Mobile action strip ── */}
+        <WorkbenchActionStrip
+          contextualActions={contextualActions}
+          contextTitle={contextTitle}
+        />
+
         {/* ── AI Bottom Sheet ── */}
         <Sheet open={aiSheetOpen} onOpenChange={setAiSheetOpen}>
           <SheetContent side="bottom" className="h-[75vh] rounded-t-2xl p-0 overflow-hidden">
@@ -338,115 +395,89 @@ export default function StandardFluxPage() {
       {/* ╔══════════════════════════════════════════════════════════╗
           ║  DESKTOP LAYOUT (xl+, 1280px)                          ║
           ╚══════════════════════════════════════════════════════════╝ */}
-      <div className="hidden xl:flex h-full min-h-0">
-        {/* LEFT: KPIs + toolbar + content */}
-        <div className="flex-1 flex flex-col min-w-0 min-h-0">
-
-        {/* ── Title row with action icons (desktop) ── */}
-        <div className="flex items-center justify-between px-5 pt-1.5 pb-1">
-          <h1 className="text-sm font-semibold text-slate-900">Standard Flux</h1>
-          <div className="flex items-center gap-1">
-            {BANNERS.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setAlertsExpanded(!alertsExpanded)}
-                className="relative rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 transition-colors"
-                title="Alerts"
-              >
-                <ShieldAlert className="h-4 w-4" />
-                <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-500 text-[8px] font-bold text-white">
-                  {BANNERS.length}
-                </span>
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => setDriversSheetOpen(true)}
-              className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 transition-colors"
-              title="Top Drivers"
-            >
-              <BarChart3 className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={toggleAiPanel}
-              className={cn(
-                "rounded-lg p-1.5 transition-colors",
-                aiPanelOpen ? "text-primary bg-primary/5" : "text-slate-500 hover:bg-slate-100"
-              )}
-              title="AI Assistant"
-            >
-              <Sparkles className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Header KPIs */}
-        <div data-tour-id="sf-kpis">
-        <WorkbenchHeader
-          totalVariance={state.totalVariance}
-          topDrivers={state.headerTopDrivers}
-          reviewStats={state.reviewStats}
-          exceptionCount={state.exceptionCount}
-          activeKpiCard={state.activeKpiCard}
-          onKpiCardClick={state.handleKpiCardClick}
-        />
-        </div>
-
-        {/* KPI-card-driven filter bar */}
-        <FilterBar
-          activeCard={state.activeKpiCard}
-          expanded={state.filterBarExpanded}
-          onToggle={() => state.setFilterBarExpanded(!state.filterBarExpanded)}
-          comparisonMode={state.comparisonMode}
-          onComparisonModeChange={state.setComparisonMode}
-          materiality={state.materiality}
-          onMaterialityChange={state.setMateriality}
-          excludeNoise={state.excludeNoise}
-          onExcludeNoiseChange={state.setExcludeNoise}
-          ownerFilter={state.ownerFilter}
-          onOwnerFilterChange={state.setOwnerFilter}
-          statusFilter={state.statusFilter}
-          onStatusFilterChange={state.setStatusFilter}
-          ownerOptions={state.ownerOptions}
-          statusOptions={state.statusOptions}
-          quickFilter={state.quickFilter}
-          onQuickFilterChange={state.setQuickFilter}
-        />
-
-        {/* Toolbar */}
-        <div data-tour-id="sf-toolbar">
-        <StandardFluxToolbar
+      <div className="hidden xl:flex flex-col h-full min-h-0">
+        {/* ── Top nav (categories: IS / BS / CF) ── */}
+        <StandardFluxTopNav
           activeView={state.activeView}
           onViewChange={state.setActiveView}
-          comparisonMode={state.comparisonMode}
-          onComparisonModeChange={state.setComparisonMode}
-          consolidation={state.consolidation}
-          onConsolidationChange={state.setConsolidation}
-          currency={state.currency}
-          onCurrencyChange={state.setCurrency}
-          materiality={state.materiality}
-          onMaterialityChange={state.setMateriality}
-          ownerFilter={state.ownerFilter}
-          onOwnerFilterChange={state.setOwnerFilter}
-          statusFilter={state.statusFilter}
-          onStatusFilterChange={state.setStatusFilter}
-          excludeNoise={state.excludeNoise}
-          onExcludeNoiseChange={state.setExcludeNoise}
-          ownerOptions={state.ownerOptions}
-          statusOptions={state.statusOptions}
-          viewKpis={state.viewKpis}
-          onExport={() => window.print()}
-          onOpenWatch={state.handleOpenWatchDialog}
+          aiPanelOpen={aiPanelOpen}
+          onToggleAi={toggleAiPanel}
+          onOpenDrivers={() => setDriversSheetOpen(true)}
+          onOpenAlerts={() => setAlertsExpanded(true)}
+          alertsCount={BANNERS.length}
         />
-        </div>
 
-        {/* Main Content */}
-        <div className="flex-1 flex overflow-hidden" style={{ minHeight: 0 }}>
-          <div className="flex-1 overflow-y-auto space-y-3 px-5 py-3 min-w-0">
-            <div className="space-y-3">
-              {/* LEFT */}
-              <div className="min-w-0 space-y-3" data-tour-id="sf-worklist">
+        {/* ── Main row: left nav | content column | AI panel ── */}
+        <div className="flex-1 flex min-h-0">
+          {/* Left nav: comparison mode */}
+          <StandardFluxLeftNav
+            comparisonMode={state.comparisonMode}
+            onComparisonChange={state.setComparisonMode}
+          />
+
+          {/* Content column */}
+          <div className="flex-1 flex flex-col min-w-0 min-h-0">
+            {/* Header KPIs */}
+            <div data-tour-id="sf-kpis">
+              <WorkbenchHeader
+                totalVariance={state.totalVariance}
+                topDrivers={state.headerTopDrivers}
+                reviewStats={state.reviewStats}
+                exceptionCount={state.exceptionCount}
+                activeKpiCard={state.activeKpiCard}
+                onKpiCardClick={state.handleKpiCardClick}
+              />
+            </div>
+
+            {/* KPI-card-driven filter bar */}
+            <FilterBar
+              activeCard={state.activeKpiCard}
+              expanded={state.filterBarExpanded}
+              onToggle={() => state.setFilterBarExpanded(!state.filterBarExpanded)}
+              comparisonMode={state.comparisonMode}
+              onComparisonModeChange={state.setComparisonMode}
+              materiality={state.materiality}
+              onMaterialityChange={state.setMateriality}
+              excludeNoise={state.excludeNoise}
+              onExcludeNoiseChange={state.setExcludeNoise}
+              ownerFilter={state.ownerFilter}
+              onOwnerFilterChange={state.setOwnerFilter}
+              statusFilter={state.statusFilter}
+              onStatusFilterChange={state.setStatusFilter}
+              ownerOptions={state.ownerOptions}
+              statusOptions={state.statusOptions}
+              quickFilter={state.quickFilter}
+              onQuickFilterChange={state.setQuickFilter}
+            />
+
+            {/* Toolbar (slim: period/consolidation/currency + filters/export/watch + KPI chips) */}
+            <div data-tour-id="sf-toolbar">
+              <StandardFluxToolbar
+                comparisonMode={state.comparisonMode}
+                onComparisonModeChange={state.setComparisonMode}
+                consolidation={state.consolidation}
+                onConsolidationChange={state.setConsolidation}
+                currency={state.currency}
+                onCurrencyChange={state.setCurrency}
+                materiality={state.materiality}
+                onMaterialityChange={state.setMateriality}
+                ownerFilter={state.ownerFilter}
+                onOwnerFilterChange={state.setOwnerFilter}
+                statusFilter={state.statusFilter}
+                onStatusFilterChange={state.setStatusFilter}
+                excludeNoise={state.excludeNoise}
+                onExcludeNoiseChange={state.setExcludeNoise}
+                ownerOptions={state.ownerOptions}
+                statusOptions={state.statusOptions}
+                viewKpis={state.viewKpis}
+                onExport={() => window.print()}
+                onOpenWatch={state.handleOpenWatchDialog}
+              />
+            </div>
+
+            {/* Main Content (scrollable) */}
+            <div className="flex-1 overflow-y-auto space-y-3 px-5 py-3 min-w-0" style={{ minHeight: 0 }}>
+              <div className="space-y-3" data-tour-id="sf-worklist">
                 <div className="bg-white rounded-lg border border-slate-200">
                   {(state.activeView === "is" || state.activeView === "bs") && (
                     <>
@@ -482,50 +513,54 @@ export default function StandardFluxPage() {
                 </div>
                 <FluxTopDriversTable drivers={state.topDrivers} baseRevenue={state.kpiRevenue?.base ?? 48.2} />
               </div>
-
             </div>
+
+            {/* Bottom adaptive-UI action strip */}
+            <WorkbenchActionStrip
+              contextualActions={contextualActions}
+              contextTitle={contextTitle}
+            />
           </div>
-        </div>
-        </div>{/* close left column */}
 
-        {/* RIGHT: AI Panel — spans full height */}
-        {aiPanelOpen && (
-          <aside className="w-[380px] 2xl:w-[420px] flex-shrink-0 border-l border-slate-200 bg-white flex flex-col min-h-0" data-tour-id="sf-ai-panel">
-            <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0">
-            <StandardFluxAiPanel
-                scopedRow={state.detailRow}
-                aiPrompt={state.aiPrompt}
-                onAiPromptChange={state.setAiPrompt}
-                aiResponses={state.aiResponses}
-                aiIsThinking={state.aiIsThinking}
-                aiPendingQuestion={state.aiPendingQuestion}
-                aiThinkingSteps={state.aiThinkingSteps}
-                showAutocomplete={state.showAiAutocomplete}
-                autocompleteSuggestions={state.autocompleteSuggestions}
-                defaultSuggestions={state.defaultPromptSuggestions}
-                onAsk={state.handleAsk}
-                onSelectSuggestion={state.handleSelectPromptSuggestion}
-                onNewChat={state.handleNewChat}
-              />
-              <StandardFluxAiExplanations
-                explanations={state.explanationCards}
-                onAssignOwner={state.handleExplanationAssignOwner}
-                onAddEvidence={state.handleExplanationAddEvidence}
-                onMarkClosed={state.handleExplanationMarkClosed}
-                onFollowUp={state.handleExplanationFollowUp}
-              />
-              <FluxSensitivityPanel
-                priceSlider={state.priceSlider}
-                onPriceChange={state.setPriceSlider}
-                volumeSlider={state.volumeSlider}
-                onVolumeChange={state.setVolumeSlider}
-                fxSlider={state.fxSlider}
-                onFxChange={state.setFxSlider}
-                projectedDelta={state.projectedDelta}
-              />
-            </div>
-          </aside>
-        )}
+          {/* RIGHT: AI Panel — spans full height */}
+          {aiPanelOpen && (
+            <aside className="w-[380px] 2xl:w-[420px] flex-shrink-0 border-l border-slate-200 bg-white flex flex-col min-h-0" data-tour-id="sf-ai-panel">
+              <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0">
+                <StandardFluxAiPanel
+                  scopedRow={state.detailRow}
+                  aiPrompt={state.aiPrompt}
+                  onAiPromptChange={state.setAiPrompt}
+                  aiResponses={state.aiResponses}
+                  aiIsThinking={state.aiIsThinking}
+                  aiPendingQuestion={state.aiPendingQuestion}
+                  aiThinkingSteps={state.aiThinkingSteps}
+                  showAutocomplete={state.showAiAutocomplete}
+                  autocompleteSuggestions={state.autocompleteSuggestions}
+                  defaultSuggestions={state.defaultPromptSuggestions}
+                  onAsk={state.handleAsk}
+                  onSelectSuggestion={state.handleSelectPromptSuggestion}
+                  onNewChat={state.handleNewChat}
+                />
+                <StandardFluxAiExplanations
+                  explanations={state.explanationCards}
+                  onAssignOwner={state.handleExplanationAssignOwner}
+                  onAddEvidence={state.handleExplanationAddEvidence}
+                  onMarkClosed={state.handleExplanationMarkClosed}
+                  onFollowUp={state.handleExplanationFollowUp}
+                />
+                <FluxSensitivityPanel
+                  priceSlider={state.priceSlider}
+                  onPriceChange={state.setPriceSlider}
+                  volumeSlider={state.volumeSlider}
+                  onVolumeChange={state.setVolumeSlider}
+                  fxSlider={state.fxSlider}
+                  onFxChange={state.setFxSlider}
+                  projectedDelta={state.projectedDelta}
+                />
+              </div>
+            </aside>
+          )}
+        </div>
       </div>
 
       {/* ── Top Drivers Sheet (shared) ── */}
@@ -601,8 +636,6 @@ export default function StandardFluxPage() {
         onSubmitCommentary={state.handleSubmitCommentary}
         onApproveCommentary={state.handleApproveCommentary}
       />
-
-      {/* AI panel is now inline above */}
     </div>
   );
 }
