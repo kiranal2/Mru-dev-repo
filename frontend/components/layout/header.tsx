@@ -2,12 +2,13 @@
 
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { CircleHelp, Bell, Menu, PanelLeftClose, RotateCcw } from "lucide-react";
+import { CircleHelp, Bell, Menu, PanelLeftClose, RotateCcw, Globe, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserMenu } from "./user-menu";
 import { ThemeSwitcher } from "./theme-switcher";
 import { useTheme } from "@/lib/theme-context";
 import { PERSONA_LABELS } from "@/lib/demo-routing";
+import { PERSONAS, INDUSTRIES, type Industry, type Persona } from "@/lib/persona-context";
 
 interface HeaderProps {
   loadingState: "loading" | "loaded";
@@ -24,23 +25,56 @@ export default function Header({ loadingState, isSidebarHidden, onToggleSidebar,
   const isCashAppWorkbench = pathname?.startsWith("/workbench/order-to-cash/cash-application");
   const isCollectionsWorkbench = pathname?.startsWith("/workbench/order-to-cash/collections");
 
-  // Read persona from localStorage (lightweight, no context dependency)
-  const [demoPersona, setDemoPersona] = React.useState<string | null>(null);
+  // Read persona + industry from localStorage
+  const [demoPersona, setDemoPersona] = React.useState<Persona | null>(null);
+  const [demoIndustry, setDemoIndustry] = React.useState<Industry | null>(null);
+  const [industryDropdownOpen, setIndustryDropdownOpen] = React.useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
   React.useEffect(() => {
     try {
       const stored = localStorage.getItem("meeru-demo-config");
       if (stored) {
         const config = JSON.parse(stored);
         setDemoPersona(config.persona || null);
+        setDemoIndustry(config.industry || null);
       }
     } catch { /* ignore */ }
-  }, [pathname]); // Re-read on navigation
+  }, [pathname]);
+
+  // Close dropdown on outside click
+  React.useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIndustryDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const handleResetDemo = () => {
     try { localStorage.removeItem("meeru-demo-config"); } catch { /* ignore */ }
     setDemoPersona(null);
+    setDemoIndustry(null);
     router.push("/login");
   };
+
+  const handleIndustryChange = (industry: Industry) => {
+    try {
+      const stored = localStorage.getItem("meeru-demo-config");
+      const config = stored ? JSON.parse(stored) : {};
+      config.industry = industry;
+      localStorage.setItem("meeru-demo-config", JSON.stringify(config));
+      setDemoIndustry(industry);
+      window.dispatchEvent(new CustomEvent("meeru-config-changed"));
+      setIndustryDropdownOpen(false);
+      router.refresh();
+    } catch { /* ignore */ }
+  };
+
+  const personaInfo = demoPersona ? PERSONAS.find((p) => p.id === demoPersona) : null;
+  const industryInfo = demoIndustry ? INDUSTRIES.find((i) => i.id === demoIndustry) : null;
 
   let headerTitle: string | null = null;
   if (isCashAppWorkbench) {
@@ -50,14 +84,9 @@ export default function Header({ loadingState, isSidebarHidden, onToggleSidebar,
   }
 
   return (
-    <>
-      {/* Top gradient accent line */}
-      <div className="h-[2px] w-full" style={{ background: 'var(--theme-gradient-accent)' }} />
-
-      {/* Top App Bar — compact on tablet (md), full on desktop */}
       <header
         className={cn(
-          "flex items-center justify-between px-2 sm:px-3 xl:px-4 h-11 md:h-12 xl:h-14",
+          "flex items-center justify-between px-2 sm:px-3 xl:px-4 h-10 md:h-10 xl:h-11",
           loadingState === "loading"
             ? "transition-all duration-300 ease-out opacity-0 -translate-y-4"
             : "transition-none opacity-100 translate-y-0"
@@ -90,7 +119,7 @@ export default function Header({ loadingState, isSidebarHidden, onToggleSidebar,
               {isSidebarHidden ? <Menu size={20} /> : <PanelLeftClose size={20} />}
             </button>
           )}
-          {/* Logo — smaller on tablet */}
+          {/* Logo */}
           {!isDark ? (
             <img src="/meeru-logo.png" alt="Meeru AI Logo" className="h-4 xl:h-5 w-auto object-contain" />
           ) : (
@@ -104,23 +133,68 @@ export default function Header({ loadingState, isSidebarHidden, onToggleSidebar,
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1 xl:gap-3">
-          {/* Persona badge + reset */}
-          {demoPersona && PERSONA_LABELS[demoPersona as keyof typeof PERSONA_LABELS] && (
-            <div className="hidden md:flex items-center gap-1.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#B8860B]/10 text-[#B8860B] border border-[#B8860B]/20">
-                {PERSONA_LABELS[demoPersona as keyof typeof PERSONA_LABELS]}
-              </span>
+
+        <div className="flex items-center gap-1.5 xl:gap-2.5">
+          {/* Industry dropdown */}
+          {demoIndustry && (
+            <div className="relative hidden md:block" ref={dropdownRef}>
               <button
-                onClick={handleResetDemo}
-                className="p-1 rounded-md hover:bg-slate-100 transition-colors"
-                style={{ color: 'var(--theme-text-secondary)' }}
-                title="Reset demo — return to onboarding"
+                onClick={() => setIndustryDropdownOpen(!industryDropdownOpen)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors"
+                style={{
+                  color: 'var(--theme-text-secondary)',
+                  border: '1px solid var(--theme-border)',
+                  background: 'var(--theme-surface)',
+                }}
               >
-                <RotateCcw size={14} />
+                <Globe size={13} />
+                {industryInfo?.title || "Industry"}
+                <ChevronDown size={12} className={cn("transition-transform", industryDropdownOpen && "rotate-180")} />
               </button>
+              {industryDropdownOpen && (
+                <div
+                  className="absolute right-0 top-full mt-1 w-48 rounded-lg py-1"
+                  style={{
+                    background: 'var(--theme-surface, #ffffff)',
+                    border: '1px solid var(--theme-border)',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+                    zIndex: 9999,
+                  }}
+                >
+                  {INDUSTRIES.map((ind) => (
+                    <button
+                      key={ind.id}
+                      onClick={() => handleIndustryChange(ind.id)}
+                      className="w-full text-left px-3 py-2 text-xs transition-colors flex items-center justify-between"
+                      style={{
+                        color: demoIndustry === ind.id ? 'var(--theme-accent, #1E40AF)' : 'var(--theme-text, #0f172a)',
+                        background: demoIndustry === ind.id ? 'hsl(var(--primary) / 0.06)' : 'transparent',
+                        fontWeight: demoIndustry === ind.id ? 600 : 400,
+                      }}
+                      onMouseEnter={(e) => { if (demoIndustry !== ind.id) e.currentTarget.style.background = 'var(--theme-surface-alt, #f1f5f9)'; }}
+                      onMouseLeave={(e) => { if (demoIndustry !== ind.id) e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      <span>{ind.title}</span>
+                      {demoIndustry === ind.id && <span style={{ color: 'var(--theme-accent, #1E40AF)' }}>&#10003;</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
+
+          {/* Reset */}
+          {demoPersona && (
+            <button
+              onClick={handleResetDemo}
+              className="hidden md:block p-1.5 rounded-md transition-colors"
+              style={{ color: 'var(--theme-text-secondary)' }}
+              title="Reset — return to login"
+            >
+              <RotateCcw size={14} />
+            </button>
+          )}
+
           <button
             className="hidden xl:block p-2 rounded-lg transition-all duration-200 ease-out-expo"
             style={{ color: 'var(--theme-text-secondary)' }}
@@ -138,9 +212,28 @@ export default function Header({ loadingState, isSidebarHidden, onToggleSidebar,
           </button>
           <span data-tour-id="theme-toggle"><ThemeSwitcher /></span>
           <div className="hidden xl:block w-px h-5 mx-0.5" style={{ background: 'var(--theme-border)' }} />
-          <UserMenu />
+
+          {/* User profile */}
+          {personaInfo ? (
+            <div className="flex items-center gap-2">
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold bg-primary/10 text-primary"
+              >
+                {personaInfo.profileInitials}
+              </div>
+              <div className="hidden xl:block">
+                <div className="text-[11px] font-semibold leading-tight" style={{ color: 'var(--theme-text)' }}>
+                  {personaInfo.profileName}
+                </div>
+                <div className="text-[9px] leading-tight" style={{ color: 'var(--theme-text-muted)' }}>
+                  {personaInfo.title}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <UserMenu />
+          )}
         </div>
       </header>
-    </>
   );
 }

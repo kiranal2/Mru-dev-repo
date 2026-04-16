@@ -345,7 +345,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
           onMobileMenuToggle={() => setIsMobileNavOpen(true)}
         />
 
-        <div className={cn("flex", isMobile ? "min-h-[calc(100vh-44px-52px)]" : "min-h-[calc(100vh-48px)] xl:min-h-[calc(100vh-56px)]")}>
+        <div className={cn("flex overflow-hidden", isMobile ? "h-[calc(100vh-44px-52px)]" : "h-[calc(100vh-42px)] xl:h-[calc(100vh-46px)]")}>
           {!isSidebarHidden && !isMobile && (
             <Sidebar
               loadingState={hasInitiallyLoaded ? "loaded" : loadingState}

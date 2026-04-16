@@ -597,6 +597,7 @@
    every single page file.
    ═══════════════════════════════════════════════════════════ */
 
+[data-theme="dark"],
 [data-theme="uberflux"],
 [data-theme="formfactor"] {
   /* ── Text color remapping ── */

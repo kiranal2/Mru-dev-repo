@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
-import { X, Sparkles, Send, Trash2, Loader2 } from "lucide-react";
+import { RotateCcw, Send, Sparkles, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   useEmbeddedCommandCenter,
   EmbeddedMessage,
@@ -41,121 +43,57 @@ interface CommandCenterPanelProps {
   className?: string;
 }
 
-// ─── Message bubble ───────────────────────────────────────────────
-function MessageBubble({
-  message,
-  theme,
-}: {
-  message: EmbeddedMessage;
-  theme: "light" | "dark";
-}) {
+// ─── Message bubble (matches StandardFluxAiPanel style) ───────────
+function MessageBubble({ message }: { message: EmbeddedMessage }) {
   const isUser = message.role === "user";
-  const isDark = theme === "dark";
 
   return (
-    <div className={cn("flex gap-2", isUser ? "flex-row-reverse" : "flex-row")}>
-      {/* Avatar */}
-      <div
-        className={cn(
-          "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0",
-          isUser
-            ? isDark
-              ? "bg-amber-500/20 text-amber-400"
-              : "bg-primary/10 text-primary"
-            : isDark
-              ? "bg-white/10 text-amber-400"
-              : "bg-slate-100 text-primary"
-        )}
-      >
-        {isUser ? "U" : "✦"}
-      </div>
-
-      {/* Content */}
-      <div className={cn("flex-1 min-w-0", isUser ? "text-right" : "text-left")}>
+    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+      <div className="flex items-start gap-2">
         <div
           className={cn(
-            "inline-block rounded-lg px-3 py-2 text-[11px] leading-relaxed max-w-[90%] text-left",
-            isUser
-              ? isDark
-                ? "bg-amber-500/15 text-amber-100"
-                : "bg-primary/10 text-slate-800"
-              : isDark
-                ? "bg-white/5 text-slate-200"
-                : "bg-slate-50 text-slate-700"
+            "flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold shrink-0",
+            isUser ? "bg-primary text-white" : "bg-primary/90 text-white"
           )}
         >
+          {isUser ? "Q" : <Sparkles className="h-3.5 w-3.5" />}
+        </div>
+        <div className="flex-1 min-w-0">
           {message.isStreaming ? (
-            <div className="space-y-1">
-              {/* Show streaming events */}
+            <div className="space-y-1.5 rounded-lg border border-slate-200 bg-white p-2.5">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">AI is analyzing</p>
               {message.streamingEvents && message.streamingEvents.length > 0 ? (
-                <div className="space-y-0.5">
-                  {message.streamingEvents.slice(-3).map((evt, i) => (
-                    <div
-                      key={i}
-                      className={cn(
-                        "flex items-center gap-1.5 text-[10px]",
-                        isDark ? "text-slate-400" : "text-slate-500"
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          "w-1 h-1 rounded-full animate-pulse",
-                          isDark ? "bg-amber-400" : "bg-primary"
-                        )}
-                      />
-                      <span>{eventLabel(evt.event_type)}</span>
-                      {evt.message && (
-                        <span className="truncate opacity-70">
-                          — {evt.message.substring(0, 60)}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                message.streamingEvents.slice(-3).map((evt, i) => (
+                  <div key={i} className="flex items-center gap-1.5 text-xs text-slate-500">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                    <span>{eventLabel(evt.event_type)}</span>
+                  </div>
+                ))
               ) : (
                 <div className="flex items-center gap-1.5">
-                  <Loader2
-                    className={cn(
-                      "w-3 h-3 animate-spin",
-                      isDark ? "text-amber-400" : "text-primary"
-                    )}
-                  />
-                  <span
-                    className={cn(
-                      "text-[10px]",
-                      isDark ? "text-slate-400" : "text-slate-500"
-                    )}
-                  >
-                    {message.content}
-                  </span>
+                  <Loader2 className="w-3 h-3 animate-spin text-primary" />
+                  <span className="text-xs text-slate-500">{message.content}</span>
                 </div>
               )}
             </div>
           ) : (
-            <div className="whitespace-pre-wrap">{message.content}</div>
-          )}
-        </div>
-
-        {/* Follow-up prompts from result */}
-        {!message.isStreaming &&
-          message.financialData?.follow_up_prompts &&
-          message.financialData.follow_up_prompts.length > 0 && (
-            <div className="mt-1.5 flex flex-wrap gap-1">
-              {message.financialData.follow_up_prompts.slice(0, 3).map((fp, i) => (
-                <span
-                  key={i}
-                  className={cn(
-                    "inline-block text-[9px] px-2 py-0.5 rounded-full cursor-pointer transition-colors",
-                    isDark
-                      ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-amber-300"
-                      : "bg-slate-100 text-slate-500 hover:bg-primary/10 hover:text-primary"
-                  )}
-                >
-                  {fp}
-                </span>
-              ))}
+            <div className="space-y-2">
+              <p className="text-sm leading-6 text-slate-700 whitespace-pre-wrap">{message.content}</p>
+              {message.financialData?.follow_up_prompts && message.financialData.follow_up_prompts.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {message.financialData.follow_up_prompts.slice(0, 3).map((fp, i) => (
+                    <span
+                      key={i}
+                      className="inline-block text-[10px] px-2.5 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary cursor-pointer hover:bg-primary/10 transition-colors"
+                    >
+                      {fp}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           )}
+        </div>
       </div>
     </div>
   );
@@ -171,7 +109,6 @@ export function CommandCenterPanel({
   className,
 }: CommandCenterPanelProps) {
   const prompts = suggestedPrompts || getPromptsForContext(workbenchContext);
-  const isDark = theme === "dark";
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -183,14 +120,16 @@ export function CommandCenterPanel({
     clearChat,
   } = useEmbeddedCommandCenter({ workbenchContext });
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  if (!isOpen) return null;
+  // Render empty shell when closed
+  if (!isOpen) {
+    return <div className="flex flex-col h-full" />;
+  }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !isLoading) {
       e.preventDefault();
       sendMessage();
@@ -203,198 +142,103 @@ export function CommandCenterPanel({
 
   return (
     <div
-      className={cn(
-        "flex flex-col h-full overflow-hidden",
-        isDark
-          ? "bg-[#0C1E2A]/95 border-l border-white/10"
-          : "bg-white border-l border-slate-200",
-        className
-      )}
+      className={cn("flex flex-col h-full min-h-0 overflow-hidden bg-white", className)}
     >
-      {/* ── Header ── */}
-      <div
-        className={cn(
-          "flex items-center gap-2 px-3 py-2.5 border-b shrink-0",
-          isDark ? "border-white/10" : "border-slate-200"
-        )}
-      >
-        <div
-          className={cn(
-            "w-6 h-6 rounded-md flex items-center justify-center",
-            isDark ? "bg-amber-500/20" : "bg-primary/10"
-          )}
-        >
-          <Sparkles
-            className={cn(
-              "w-3.5 h-3.5",
-              isDark ? "text-amber-400" : "text-primary"
-            )}
-          />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div
-            className={cn(
-              "text-xs font-semibold",
-              isDark ? "text-white" : "text-slate-900"
-            )}
-          >
-            AI Query
+      {/* ── Header (matches StandardFluxAiPanel) ── */}
+      <div className="border-b border-slate-200 bg-slate-50 px-4 py-2.5 shrink-0">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <h3 className="text-xs font-semibold text-slate-900">AI Analysis</h3>
           </div>
-          <div
-            className={cn(
-              "text-[10px]",
-              isDark ? "text-slate-400" : "text-slate-500"
-            )}
-          >
-            Ask anything about this view
-          </div>
-        </div>
-        {messages.length > 0 && (
           <button
-            onClick={clearChat}
-            className={cn(
-              "p-1 rounded transition-colors",
-              isDark
-                ? "hover:bg-white/10 text-slate-400"
-                : "hover:bg-slate-100 text-slate-400"
-            )}
-            title="Clear chat"
+            type="button"
+            onClick={() => { clearChat(); }}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 transition-colors hover:text-primary"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <RotateCcw className="h-3.5 w-3.5" />
+            New Chat
           </button>
-        )}
-        <button
-          onClick={onClose}
-          className={cn(
-            "p-1 rounded transition-colors",
-            isDark
-              ? "hover:bg-white/10 text-slate-400"
-              : "hover:bg-slate-100 text-slate-400"
-          )}
-        >
-          <X className="w-3.5 h-3.5" />
-        </button>
+        </div>
       </div>
 
       {/* ── Messages area ── */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 ? (
-          <div className="space-y-3">
-            {/* Welcome */}
-            <div
-              className={cn(
-                "text-center py-4",
-                isDark ? "text-slate-400" : "text-slate-500"
-              )}
-            >
-              <Sparkles
-                className={cn(
-                  "w-8 h-8 mx-auto mb-2 opacity-40",
-                  isDark ? "text-amber-400" : "text-primary"
-                )}
-              />
-              <p className="text-[11px] font-medium">Finance Command Center</p>
-              <p className="text-[10px] mt-0.5 opacity-70">
-                Ask questions, get insights, take action
-              </p>
+          <div className="space-y-4">
+            {/* Empty state */}
+            <div className="flex flex-col items-center py-6 text-center">
+              <div className="mb-3 rounded-full bg-slate-100 p-3">
+                <Sparkles className="h-6 w-6 text-slate-400" />
+              </div>
+              <p className="text-xs text-slate-500">Ask a question or click a row to scope the AI</p>
             </div>
 
             {/* Suggested prompts */}
-            <div className="space-y-1">
-              <div
-                className={cn(
-                  "text-[9px] font-medium uppercase tracking-wider px-1",
-                  isDark ? "text-slate-500" : "text-slate-400"
-                )}
-              >
-                Suggested
+            {prompts.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="border-b border-slate-100 bg-slate-50 px-3 py-2 -mx-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                  Suggestions
+                </div>
+                {prompts.slice(0, 5).map((p, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSuggestionClick(p)}
+                    className={cn(
+                      "w-full text-left text-xs font-medium text-slate-700 px-3 py-2 transition-colors hover:bg-slate-50 rounded-md",
+                      i > 0 && "border-t border-slate-50"
+                    )}
+                  >
+                    {p.label}
+                  </button>
+                ))}
               </div>
-              {prompts.slice(0, 5).map((p, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleSuggestionClick(p)}
-                  className={cn(
-                    "w-full text-left text-[11px] px-2.5 py-2 rounded-md transition-colors",
-                    isDark
-                      ? "text-slate-300 hover:bg-white/5 hover:text-amber-300"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-primary"
-                  )}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
+            )}
           </div>
         ) : (
-          messages.map((msg) => (
-            <MessageBubble key={msg.id} message={msg} theme={theme} />
-          ))
+          <>
+            {messages.map((msg) => (
+              <MessageBubble key={msg.id} message={msg} />
+            ))}
+          </>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ── Input area ── */}
-      <div
-        className={cn(
-          "shrink-0 border-t px-3 py-2",
-          isDark ? "border-white/10" : "border-slate-200"
-        )}
-      >
-        <div
-          className={cn(
-            "flex items-center gap-1.5 rounded-md border",
-            isDark
-              ? "border-white/10 bg-white/5"
-              : "border-slate-200 bg-slate-50"
-          )}
-        >
-          <input
-            type="text"
+      {/* ── Input area (matches StandardFluxAiPanel) ── */}
+      <div className="shrink-0 border-t border-slate-200 p-3">
+        <div className="flex items-end gap-2">
+          <Textarea
             value={composerValue}
             onChange={(e) => setComposerValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask about any data or signal..."
+            placeholder={isLoading ? "AI is analyzing your request..." : "Ask: Explain AR increase and cash impact"}
             disabled={isLoading}
-            className={cn(
-              "flex-1 bg-transparent border-none outline-none text-[11px] px-2.5 py-2",
-              isDark
-                ? "text-slate-200 placeholder:text-slate-500"
-                : "text-slate-800 placeholder:text-slate-400"
-            )}
+            className="min-h-[60px] resize-none border-2 border-slate-200 bg-white text-sm focus-visible:ring-primary"
+            onKeyDown={handleKeyDown}
           />
-          <button
+          <Button
+            size="icon"
+            className="h-10 w-10 shrink-0 bg-primary hover:bg-primary/90"
             onClick={() => sendMessage()}
             disabled={isLoading || !composerValue.trim()}
-            className={cn(
-              "p-1.5 rounded-md mr-0.5 transition-colors",
-              isDark
-                ? "text-amber-400 hover:bg-amber-500/20 disabled:text-slate-600"
-                : "text-primary hover:bg-primary/10 disabled:text-slate-300"
-            )}
           >
             {isLoading ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <Send className="w-3.5 h-3.5" />
+              <Send className="h-4 w-4" />
             )}
-          </button>
+          </Button>
         </div>
 
         {/* Quick suggestion chips when there are messages */}
         {messages.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-1.5">
+          <div className="flex flex-wrap gap-1.5 mt-2">
             {prompts.slice(0, 3).map((p, i) => (
               <button
                 key={i}
                 onClick={() => handleSuggestionClick(p)}
                 disabled={isLoading}
-                className={cn(
-                  "text-[9px] px-2 py-0.5 rounded-full transition-colors",
-                  isDark
-                    ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-amber-300"
-                    : "bg-slate-100 text-slate-500 hover:bg-primary/10 hover:text-primary",
-                  "disabled:opacity-50"
-                )}
+                className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[10px] font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-50"
               >
                 {p.label}
               </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useIndustry } from "@/hooks/use-industry";
 import { useStandardFlux } from "./hooks/use-standard-flux";
@@ -75,8 +75,20 @@ export default function StandardFluxPage() {
   const state = useStandardFlux();
   const { config: industryConfig, isDemoMode } = useIndustry();
   const [aiSheetOpen, setAiSheetOpen] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
   const [driversSheetOpen, setDriversSheetOpen] = useState(false);
   const [alertsExpanded, setAlertsExpanded] = useState(false);
+
+  const toggleAiPanel = useCallback(() => {
+    setAiPanelOpen((prev) => !prev);
+  }, []);
+
+  // Listen for AI toggle from WorkbenchSwitcher
+  useEffect(() => {
+    const handler = () => toggleAiPanel();
+    window.addEventListener("meeru-toggle-ai", handler);
+    return () => window.removeEventListener("meeru-toggle-ai", handler);
+  }, [toggleAiPanel]);
 
   if (state.fluxLoading) {
     return (
@@ -345,34 +357,9 @@ export default function StandardFluxPage() {
       {/* ╔══════════════════════════════════════════════════════════╗
           ║  DESKTOP LAYOUT (xl+, 1280px)                          ║
           ╚══════════════════════════════════════════════════════════╝ */}
-      <div className="hidden xl:flex flex-col h-full min-h-0">
-        {/* Title with alert icon */}
-        <div className="flex items-center justify-between px-5 pt-3 pb-1 bg-slate-50">
-          <div>
-            <h1 className="text-sm font-semibold text-slate-900">
-              {isDemoMode ? `${industryConfig.label} — Flux Intelligence` : "Standard Flux"}
-            </h1>
-            <p className="text-[11px] text-slate-500">
-              {isDemoMode
-                ? `${industryConfig.revenueTerm} variance analysis \u2014 AI commentary, driver attribution & close workflow`
-                : "Variance workbench \u2014 AI-driven analysis, driver attribution & close workflow"}
-            </p>
-          </div>
-          {BANNERS.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setAlertsExpanded(true)}
-              className="relative rounded-lg p-2 text-slate-500 hover:bg-slate-100 transition-colors"
-              title={`${BANNERS.length} alerts`}
-            >
-              <ShieldAlert className="h-4.5 w-4.5" />
-              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-white">
-                {BANNERS.length}
-              </span>
-            </button>
-          )}
-        </div>
-
+      <div className="hidden xl:flex h-full min-h-0">
+        {/* LEFT: KPIs + toolbar + content */}
+        <div className="flex-1 flex flex-col min-w-0 min-h-0">
         {/* Header KPIs */}
         <div data-tour-id="sf-kpis">
         <WorkbenchHeader
@@ -434,9 +421,9 @@ export default function StandardFluxPage() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-auto" style={{ minHeight: 0 }}>
-          <div className="space-y-3 px-5 py-3">
-            <div className="grid grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_440px] gap-3">
+        <div className="flex-1 flex overflow-hidden" style={{ minHeight: 0 }}>
+          <div className="flex-1 overflow-y-auto space-y-3 px-5 py-3 min-w-0">
+            <div className="space-y-3">
               {/* LEFT */}
               <div className="min-w-0 space-y-3" data-tour-id="sf-worklist">
                 <div className="bg-white rounded-lg border border-slate-200">
@@ -475,42 +462,48 @@ export default function StandardFluxPage() {
                 <FluxTopDriversTable drivers={state.topDrivers} baseRevenue={state.kpiRevenue?.base ?? 48.2} />
               </div>
 
-              {/* RIGHT: AI */}
-              <aside className="min-w-0 space-y-3" data-tour-id="sf-ai-panel">
-                <StandardFluxAiPanel
-                  scopedRow={state.detailRow}
-                  aiPrompt={state.aiPrompt}
-                  onAiPromptChange={state.setAiPrompt}
-                  aiResponses={state.aiResponses}
-                  aiIsThinking={state.aiIsThinking}
-                  aiPendingQuestion={state.aiPendingQuestion}
-                  aiThinkingSteps={state.aiThinkingSteps}
-                  showAutocomplete={state.showAiAutocomplete}
-                  autocompleteSuggestions={state.autocompleteSuggestions}
-                  onAsk={state.handleAsk}
-                  onSelectSuggestion={state.handleSelectPromptSuggestion}
-                  onNewChat={state.handleNewChat}
-                />
-                <StandardFluxAiExplanations
-                  explanations={state.explanationCards}
-                  onAssignOwner={state.handleExplanationAssignOwner}
-                  onAddEvidence={state.handleExplanationAddEvidence}
-                  onMarkClosed={state.handleExplanationMarkClosed}
-                  onFollowUp={state.handleExplanationFollowUp}
-                />
-                <FluxSensitivityPanel
-                  priceSlider={state.priceSlider}
-                  onPriceChange={state.setPriceSlider}
-                  volumeSlider={state.volumeSlider}
-                  onVolumeChange={state.setVolumeSlider}
-                  fxSlider={state.fxSlider}
-                  onFxChange={state.setFxSlider}
-                  projectedDelta={state.projectedDelta}
-                />
-              </aside>
             </div>
           </div>
         </div>
+        </div>{/* close left column */}
+
+        {/* RIGHT: AI Panel — spans full height */}
+        {aiPanelOpen && (
+          <aside className="w-[380px] 2xl:w-[420px] flex-shrink-0 border-l border-slate-200 bg-white flex flex-col min-h-0" data-tour-id="sf-ai-panel">
+            <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0">
+            <StandardFluxAiPanel
+                scopedRow={state.detailRow}
+                aiPrompt={state.aiPrompt}
+                onAiPromptChange={state.setAiPrompt}
+                aiResponses={state.aiResponses}
+                aiIsThinking={state.aiIsThinking}
+                aiPendingQuestion={state.aiPendingQuestion}
+                aiThinkingSteps={state.aiThinkingSteps}
+                showAutocomplete={state.showAiAutocomplete}
+                autocompleteSuggestions={state.autocompleteSuggestions}
+                onAsk={state.handleAsk}
+                onSelectSuggestion={state.handleSelectPromptSuggestion}
+                onNewChat={state.handleNewChat}
+              />
+              <StandardFluxAiExplanations
+                explanations={state.explanationCards}
+                onAssignOwner={state.handleExplanationAssignOwner}
+                onAddEvidence={state.handleExplanationAddEvidence}
+                onMarkClosed={state.handleExplanationMarkClosed}
+                onFollowUp={state.handleExplanationFollowUp}
+              />
+              <FluxSensitivityPanel
+                priceSlider={state.priceSlider}
+                onPriceChange={state.setPriceSlider}
+                volumeSlider={state.volumeSlider}
+                onVolumeChange={state.setVolumeSlider}
+                fxSlider={state.fxSlider}
+                onFxChange={state.setFxSlider}
+                projectedDelta={state.projectedDelta}
+              />
+            </div>
+          </aside>
+        )}
       </div>
 
       {/* ── Alerts Side Sheet (shared) ── */}
@@ -566,6 +559,8 @@ export default function StandardFluxPage() {
         onSubmitCommentary={state.handleSubmitCommentary}
         onApproveCommentary={state.handleApproveCommentary}
       />
+
+      {/* AI panel is now inline above */}
     </div>
   );
 }

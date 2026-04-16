@@ -549,16 +549,15 @@ const STYLES = `
 /* Top Bar */
 .uf-topbar {
   background: var(--surface);
-  padding: 8px 20px;
+  padding: 6px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
-.uf-topbar-left { display: flex; align-items: center; gap: 12px; }
-.uf-logo { font-size: 13px; font-weight: 600; color: var(--text); }
-.uf-logo span { color: var(--gold); font-weight: 600; }
+.uf-title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.2; }
+.uf-subtitle { font-size: 10px; color: var(--muted); }
 .uf-week-badge {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -581,12 +580,12 @@ const STYLES = `
 .uf-metric-toggle {
   display: flex; align-items: center; gap: 2px;
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 6px; padding: 3px;
+  border-radius: 6px; padding: 2px;
 }
 .uf-metric-btn {
-  padding: 4px 11px; border-radius: 4px;
-  font-size: 11px; font-weight: 600; cursor: pointer;
-  font-family: 'DM Mono', monospace; letter-spacing: 0.5px;
+  padding: 3px 10px; border-radius: 4px;
+  font-size: 10px; font-weight: 500; cursor: pointer;
+  font-family: 'Inter', sans-serif;
   color: var(--muted); transition: all 0.15s;
   border: none; background: transparent;
 }
@@ -626,38 +625,44 @@ const STYLES = `
 
 /* Main Layout */
 .uf-main {
-  display: grid;
-  grid-template-columns: 220px 1fr;
+  display: flex;
   flex: 1;
   min-height: 0;
   overflow: hidden;
 }
+/* (AI panel is now inline via .uf-ai-right) */
 
 /* Sidebar */
 .uf-sidebar {
   background: var(--surfaceLt);
   border-right: 1px solid var(--border);
-  padding: 10px 0;
+  padding: 0;
   overflow-y: auto;
   width: 200px;
   flex-shrink: 0;
+  flex-shrink: 0;
 }
-.uf-nav-section { margin-bottom: 14px; }
-.uf-nav-label {
-  font-size: 9px; font-weight: 600; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--muted);
-  padding: 0 14px; margin-bottom: 4px;
+.uf-sb-group { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.uf-sb-glabel {
+  padding: 3px 16px 5px; font-size: 9px; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
   font-family: 'Inter', sans-serif;
 }
-.uf-nav-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 6px 14px; font-size: 12px; cursor: pointer;
-  color: var(--muted); transition: all 0.1s; user-select: none;
+.uf-sb-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 16px; font-size: 12px; cursor: pointer;
+  color: var(--muted); transition: all 0.15s; user-select: none;
   border: none; background: none; width: 100%; text-align: left;
+  border-left: 2px solid transparent;
   font-family: 'Inter', sans-serif;
 }
-.uf-nav-item:hover { background: var(--surface); color: var(--text); }
-.uf-nav-item.active { background: var(--surface); color: var(--text); border-left: 2px solid var(--gold); }
+.uf-sb-item:hover { color: var(--text); background: rgba(0,0,0,0.03); }
+.uf-sb-item.active { color: var(--gold); background: rgba(30,64,175,0.08); border-left-color: var(--gold); font-weight: 500; }
+.uf-sb-icon { font-size: 13px; width: 18px; text-align: center; flex-shrink: 0; }
+.uf-sb-header { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.uf-sb-title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.uf-sb-subtitle { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.uf-sb-controls { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
 .uf-nav-pill {
   font-size: 9px; border-radius: 4px; padding: 2px 6px;
   font-family: 'Inter', sans-serif; font-weight: 500;
@@ -667,10 +672,23 @@ const STYLES = `
 .pill-green { background: rgba(22,163,74,0.2); color: #2ECC71; }
 .pill-blue { background: rgba(37,99,235,0.2); color: #3498DB; }
 
-/* Centre */
+/* Centre wrapper — holds content + AI side by side */
+.uf-centre-wrap {
+  flex: 1; min-width: 0;
+  display: flex;
+  overflow: hidden;
+}
 .uf-centre {
+  flex: 1; min-width: 0;
   overflow-y: auto; padding: 14px 18px;
   display: flex; flex-direction: column; gap: 12px;
+}
+.uf-ai-right {
+  width: 380px; flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  background: var(--surface);
+  display: flex; flex-direction: column;
+  min-height: 0;
 }
 
 /* Signal Banner */
@@ -867,13 +885,13 @@ const STYLES = `
 /* AI Panel — slide-over on all screen sizes */
 .uf-ai-panel {
   position: fixed; right: 0; top: 0; bottom: 0; z-index: 200;
-  width: 340px; transform: translateX(100%);
+  width: 360px; transform: translateX(100%);
   transition: transform 0.25s ease;
-  background: var(--navy);
-  border-left: 1px solid var(--border);
+  background: var(--theme-surface, #ffffff);
+  border-left: 1px solid var(--theme-border, #e2e8f0);
   display: flex; flex-direction: column;
   min-height: 0;
-  box-shadow: -8px 0 30px rgba(0,0,0,0.10);
+  box-shadow: -4px 0 20px rgba(0,0,0,0.08);
 }
 .uf-ai-panel.open { transform: translateX(0); }
 .uf-ai-overlay {
@@ -1215,6 +1233,18 @@ export default function FluxPlusPage() {
 
   const aiMessagesRef = useRef<HTMLDivElement>(null)
   const typingRef = useRef<ReturnType<typeof setTimeout>>()
+  const centreScrollRef = useRef<HTMLDivElement>(null)
+
+  const toggleAiPanel = useCallback(() => {
+    setAiPanelOpen((prev) => !prev)
+  }, [])
+
+  // Listen for AI toggle from WorkbenchSwitcher
+  useEffect(() => {
+    const handler = () => toggleAiPanel()
+    window.addEventListener("meeru-toggle-ai", handler)
+    return () => window.removeEventListener("meeru-toggle-ai", handler)
+  }, [toggleAiPanel])
 
   // ── Industry data overlay ──
   const { config: industryConfig, isDemoMode } = useIndustry()
@@ -1534,12 +1564,12 @@ export default function FluxPlusPage() {
     { key: "healthcare", label: "Healthcare", pillCls: "pill-blue", pill: "−$0.3M" },
   ]
 
-  const tabs: { key: TabType; label: string }[] = [
-    { key: "analysis", label: "Analysis" },
-    { key: "drilldown", label: "Drill-Down" },
-    { key: "exceptions", label: "Exceptions" },
-    { key: "signals", label: "Signals" },
-    { key: "history", label: "History" },
+  const tabs: { key: TabType; label: string; icon: string }[] = [
+    { key: "analysis", icon: "◈", label: "Analysis" },
+    { key: "drilldown", icon: "⊞", label: "Drill-Down" },
+    { key: "exceptions", icon: "⚡", label: "Exceptions" },
+    { key: "signals", icon: "◎", label: "Signals" },
+    { key: "history", icon: "⟋", label: "History" },
   ]
 
   // ═════════════════════════════════════════════════════
@@ -1551,49 +1581,6 @@ export default function FluxPlusPage() {
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
       <div className="uf-app">
-        {/* ── Top Bar ── */}
-        <div className="uf-topbar" data-tour-id="uf-topbar">
-          <div className="uf-topbar-left">
-            <button className="uf-sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} title="Navigation">☰</button>
-            <div className="uf-logo">
-              {isDemoMode ? <>{industryConfig.revenueShort} <span>Workbench</span></> : <>Variance <span>Workbench</span></>}
-            </div>
-            <div className="uf-week-badge">{regData.week} · Generated 08:38 AM</div>
-          </div>
-          <div className="uf-topbar-right">
-            <div className="uf-metric-toggle">
-              {(["Revenue", "Orders"] as MetricType[]).map((m) => (
-                <button key={m} className={`uf-metric-btn ${metric === m ? "active" : ""}`} onClick={() => handleMetricToggle(m)}>
-                  {isDemoMode && m === "Revenue" ? industryConfig.revenueShort : m}
-                </button>
-              ))}
-            </div>
-            <div className="uf-status-dot" />
-            <div className="uf-status-text">All sources reconciled · 9/9</div>
-            <button className="uf-ai-toggle" data-tour-id="uf-ai-toggle" onClick={() => setAiPanelOpen(!aiPanelOpen)} title="AI Assistant">✦</button>
-            <div className="uf-avatar">JO</div>
-          </div>
-        </div>
-
-        {/* ── Tabs ── */}
-        <div className="uf-tabs">
-          {tabs.map((t) => (
-            <button key={t.key} className={`uf-tab ${tab === t.key ? "active" : ""}`} onClick={() => setTab(t.key)}>
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* ── Metric Strip ── */}
-        <div className="uf-metric-strip">
-          <span className="uf-metric-strip-label">Viewing</span>
-          <span className="uf-metric-strip-value">{metric}</span>
-          <span className="uf-metric-strip-sep">·</span>
-          <span className="uf-metric-strip-sub">
-            {metric === "Orders" ? "Showing Order volume — operational fulfillment metrics" : "Click Orders above to switch to Order volume view"}
-          </span>
-        </div>
-
         {/* ── Main ── */}
         <div className="uf-main">
           {/* Sidebar overlay for mobile/tablet */}
@@ -1601,27 +1588,41 @@ export default function FluxPlusPage() {
 
           {/* ── Left Sidebar ── */}
           <div className={`uf-sidebar ${sidebarOpen ? "open" : ""}`}>
-            <div className="uf-nav-section">
-              <div className="uf-nav-label">Regions</div>
+            {/* Sidebar header — just the title */}
+            {/* Views group */}
+            <div className="uf-sb-group">
+              <div className="uf-sb-glabel">Overview</div>
+              {tabs.map((t) => (
+                <button key={t.key} className={`uf-sb-item ${tab === t.key ? "active" : ""}`} onClick={() => setTab(t.key)}>
+                  <span className="uf-sb-icon">{t.icon}</span>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+            {/* Regions group */}
+            <div className="uf-sb-group">
+              <div className="uf-sb-glabel">Regions</div>
               {regionItems.map((r) => (
-                <button key={r.key} className={`uf-nav-item ${region === r.key ? "active" : ""}`} onClick={() => handleRegionClick(r.key)}>
+                <button key={r.key} className={`uf-sb-item ${region === r.key ? "active" : ""}`} onClick={() => handleRegionClick(r.key)}>
                   {r.label}
                   <span className={`uf-nav-pill ${regionPillColorMap[r.key]}`}>{regionPillMap[r.key]}</span>
                 </button>
               ))}
             </div>
-            <div className="uf-nav-section">
-              <div className="uf-nav-label">Comparison</div>
+            {/* Comparison group */}
+            <div className="uf-sb-group">
+              <div className="uf-sb-glabel">Comparison</div>
               {comparisonItems.map((c) => (
-                <button key={c.key} className={`uf-nav-item ${comparison === c.key ? "active" : ""}`} onClick={() => handleComparisonClick(c.key)}>
+                <button key={c.key} className={`uf-sb-item ${comparison === c.key ? "active" : ""}`} onClick={() => handleComparisonClick(c.key)}>
                   {c.label}
                 </button>
               ))}
             </div>
-            <div className="uf-nav-section">
-              <div className="uf-nav-label">Segments</div>
+            {/* Segments group */}
+            <div className="uf-sb-group">
+              <div className="uf-sb-glabel">Segments</div>
               {segmentNavItems.map((s) => (
-                <button key={s.key} className="uf-nav-item" onClick={() => handleSegmentNav(s.key)}>
+                <button key={s.key} className="uf-sb-item" onClick={() => handleSegmentNav(s.key)}>
                   {s.label}
                   <span className={`uf-nav-pill ${s.pillCls}`}>{s.pill}</span>
                 </button>
@@ -1630,7 +1631,8 @@ export default function FluxPlusPage() {
           </div>
 
           {/* ── Centre Panel ── */}
-          <div className="uf-centre">
+          <div className="uf-centre-wrap">
+          <div className="uf-centre" ref={centreScrollRef}>
             {/* ANALYSIS TAB */}
             {tab === "analysis" && (
               <div className="uf-fade-in" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -1929,18 +1931,19 @@ export default function FluxPlusPage() {
             )}
           </div>
 
-          {/* AI OVERLAY */}
-          <div className={`uf-ai-overlay ${aiPanelOpen ? "open" : ""}`} onClick={() => setAiPanelOpen(false)} />
+          {/* ── Inline AI Panel (right column) ── */}
+          {aiPanelOpen && (
+            <div className="uf-ai-right">
+              <CommandCenterPanel
+                workbenchContext="uberflux"
+                isOpen={aiPanelOpen}
+                onClose={() => setAiPanelOpen(false)}
+                theme="light"
+              />
+            </div>
+          )}
+          </div>{/* close uf-centre-wrap */}
 
-          {/* ── Right AI Panel (Command Center) ── */}
-          <div className={`uf-ai-panel ${aiPanelOpen ? "open" : ""}`}>
-            <CommandCenterPanel
-              workbenchContext="uberflux"
-              isOpen={aiPanelOpen}
-              onClose={() => setAiPanelOpen(false)}
-              theme="dark"
-            />
-          </div>
         </div>
 
         {/* ── Bottom Bar ── */}

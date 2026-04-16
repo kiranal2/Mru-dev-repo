@@ -350,8 +350,10 @@ const STYLES = `
   height: 100%;
   min-height: 0;
   display: flex;
+  flex-direction: column;
 }
 .ff-root * { box-sizing: border-box; margin: 0; padding: 0; }
+.ff-body { display: flex; flex: 1; min-height: 0; }
 
 /* SIDEBAR */
 .ff-sidebar {
@@ -382,15 +384,27 @@ const STYLES = `
 
 /* MAIN */
 .ff-main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.ff-content-wrap { flex: 1; display: flex; min-height: 0; overflow: hidden; }
+.ff-ai-right {
+  width: 380px; flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  background: var(--bg-white);
+  display: flex; flex-direction: column;
+  min-height: 0;
+}
 
 /* TOPBAR */
 .ff-topbar {
-  padding: 8px 20px; background: var(--bg); border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  padding: 6px 16px; background: var(--bg); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
 }
-.ff-tb-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-.ff-tb-title em { font-style: normal; color: var(--teal); }
-.ff-tb-right { display: flex; align-items: center; gap: 7px; }
+.ff-tb-title { font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.2; }
+.ff-tb-subtitle { font-size: 10px; color: var(--text-muted); }
+/* (AI panel is now inline via .ff-ai-right) */
+.ff-tb-right { display: flex; align-items: center; gap: 8px; }
+.ff-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.ff-status-text { font-size: 10px; color: var(--text-muted); }
 .ff-btn {
   display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 6px;
   font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.15s;
@@ -404,8 +418,6 @@ const STYLES = `
 
 /* PAGE */
 .ff-page { flex: 1; overflow-y: auto; padding: 18px 20px 40px; }
-@keyframes ffFadeUp { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
-.ff-page { animation: ffFadeUp 0.22s ease; }
 
 /* CARD */
 .ff-card { background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; box-shadow: var(--sh-sm); }
@@ -601,8 +613,8 @@ const STYLES = `
 
 /* AI CHAT PANEL — base styles (positioning handled by toggle section above) */
 .ff-ai-panel {
-  background: var(--navy-dark);
-  border-left: 1px solid var(--border);
+  background: var(--theme-surface, #ffffff);
+  border-left: 1px solid var(--theme-border, #e2e8f0);
   display: flex; flex-direction: column; min-height: 0;
 }
 .ff-ai-header {
@@ -691,8 +703,8 @@ const STYLES = `
 /* AI panel: slide-over on ALL screen sizes */
 .ff-ai-panel {
   position: fixed; right: 0; top: 0; bottom: 0; z-index: 200;
-  width: 340px; transform: translateX(100%);
-  transition: transform 0.25s ease; box-shadow: -8px 0 30px rgba(0,0,0,0.08);
+  width: 360px; transform: translateX(100%);
+  transition: transform 0.25s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.08);
 }
 .ff-ai-panel.open { transform: translateX(0); }
 
@@ -1111,6 +1123,19 @@ export default function FormFactorPage() {
   const [insightCollapsed, setInsightCollapsed] = useState(false)
   const aiRef = useRef<HTMLDivElement>(null)
   const aiTypingRef = useRef<ReturnType<typeof setTimeout>>()
+  const pageScrollRef = useRef<HTMLDivElement>(null)
+
+  // Preserve scroll position when AI panel toggles
+  const toggleAiPanel = useCallback(() => {
+    setAiPanelOpen((prev) => !prev)
+  }, [])
+
+  // Listen for AI toggle from WorkbenchSwitcher
+  useEffect(() => {
+    const handler = () => toggleAiPanel()
+    window.addEventListener("meeru-toggle-ai", handler)
+    return () => window.removeEventListener("meeru-toggle-ai", handler)
+  }, [toggleAiPanel])
 
   // ── Industry data overlay ──
   const { config: industryConfig, isDemoMode } = useIndustry()
@@ -1883,85 +1908,61 @@ export default function FormFactorPage() {
     <div className="ff-root">
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
-      {/* SIDEBAR OVERLAY */}
-      <div className={`ff-sidebar-overlay ${sidebarOpen ? "open" : ""}`} onClick={() => setSidebarOpen(false)} />
-
-      {/* SIDEBAR */}
-      <nav className={`ff-sidebar ${sidebarOpen ? "open" : ""}`} data-tour-id="ff-sidebar">
-        <div className="ff-sb-logo">
-          <div className="ff-sb-sub">{isDemoMode ? `${industryConfig.label} — Margin Intelligence` : "Margin Intelligence"}</div>
-        </div>
-
-        {sidebarItems.map((group) => (
-          <div key={group.group} className="ff-sb-group">
-            <div className="ff-sb-glabel">{group.group}</div>
-            {group.items.map((item) => (
-              <button
-                key={item.id}
-                className={`ff-sb-item ${page === item.id ? "active" : ""}`}
-                onClick={() => { setPage(item.id); setSidebarOpen(false); }}
-              >
-                <span className="ff-sb-icon">{item.icon}</span>
-                {item.label}
-              </button>
-            ))}
-          </div>
-        ))}
-
-        <div className="ff-sb-foot">
-          <div className="ff-fresh-row">
-            <span className="ff-dot-live" />
-            Refreshed today, 07:14 AM
-          </div>
-          <div className="ff-fresh-src">Actuals · Forecast · Proxy v2.3</div>
-        </div>
-      </nav>
-
-      {/* MAIN */}
-      <main className="ff-main">
-        {/* TOPBAR */}
-        <div className="ff-topbar" data-tour-id="ff-topbar">
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <button className="ff-sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} title="Navigation">☰</button>
-            <div className="ff-tb-title">
-              {PAGE_TITLES[page].split(" ").slice(0, -1).join(" ")}{" "}
-              <em>{PAGE_TITLES[page].split(" ").pop()}</em>
+      {/* BODY — sidebar + main side by side */}
+      <div className="ff-body">
+        {/* LEFT SIDEBAR */}
+        <nav className="ff-sidebar" data-tour-id="ff-sidebar">
+          {sidebarItems.map((group) => (
+            <div key={group.group} className="ff-sb-group">
+              <div className="ff-sb-glabel">{group.group}</div>
+              {group.items.map((item) => (
+                <button
+                  key={item.id}
+                  className={`ff-sb-item ${page === item.id ? "active" : ""}`}
+                  onClick={() => setPage(item.id)}
+                >
+                  <span className="ff-sb-icon">{item.icon}</span>
+                  {item.label}
+                </button>
+              ))}
             </div>
+          ))}
+          <div className="ff-sb-foot">
+            <div className="ff-fresh-row">
+              <span className="ff-dot-live" />
+              Refreshed today, 07:14 AM
+            </div>
+            <div className="ff-fresh-src">Actuals · Forecast · Proxy v2.3</div>
           </div>
-          <div className="ff-tb-right">
-            <button className="ff-btn" onClick={() => setPeriodIdx((i) => (i + 1) % PERIODS.length)}>
-              ⊙ &nbsp;<span className="ff-pval">{PERIODS[periodIdx]}</span>&nbsp; ▾
-            </button>
-            <button className="ff-btn primary" onClick={() => setPage("compare")}>
-              ⇄ Period Comparison
-            </button>
-            <button className="ff-ai-toggle" onClick={() => setAiPanelOpen(!aiPanelOpen)} title="AI Assistant">✦</button>
+        </nav>
+
+        {/* MAIN */}
+        <main className="ff-main">
+          <div className="ff-content-wrap">
+            {/* PAGE CONTENT */}
+            <div className="ff-page" key={page} ref={pageScrollRef} data-tour-id="ff-content">
+              {page === "exec" && renderExec()}
+              {page === "trend" && renderTrend()}
+              {page === "actfcst" && renderAvf()}
+              {page === "drivers" && renderDrivers()}
+              {page === "compare" && renderCompare()}
+              {page === "forward" && renderForward()}
+            </div>
+
+            {/* ── Inline AI Panel (right column) ── */}
+            {aiPanelOpen && (
+              <div className="ff-ai-right">
+                <CommandCenterPanel
+                  workbenchContext="form-factor"
+                  isOpen={aiPanelOpen}
+                  onClose={() => setAiPanelOpen(false)}
+                  theme="light"
+                />
+              </div>
+            )}
           </div>
-        </div>
-
-        {/* PAGE CONTENT */}
-        <div className="ff-page" key={page} data-tour-id="ff-content">
-          {page === "exec" && renderExec()}
-          {page === "trend" && renderTrend()}
-          {page === "actfcst" && renderAvf()}
-          {page === "drivers" && renderDrivers()}
-          {page === "compare" && renderCompare()}
-          {page === "forward" && renderForward()}
-        </div>
-      </main>
-
-      {/* AI OVERLAY */}
-      <div className={`ff-ai-overlay ${aiPanelOpen ? "open" : ""}`} onClick={() => setAiPanelOpen(false)} />
-
-      {/* AI CHAT PANEL (Command Center) */}
-      <aside className={`ff-ai-panel ${aiPanelOpen ? "open" : ""}`}>
-        <CommandCenterPanel
-          workbenchContext="form-factor"
-          isOpen={aiPanelOpen}
-          onClose={() => setAiPanelOpen(false)}
-          theme="dark"
-        />
-      </aside>
+        </main>
+      </div>{/* close ff-body */}
     </div>
   )
 }
