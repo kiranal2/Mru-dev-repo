@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import { CommandCenterPanel } from "@/components/ai"
+import { useIndustry } from "@/hooks/use-industry"
 
 // ═══════════════════════════════════════════════════════
 //  TYPES
@@ -541,39 +542,35 @@ const STYLES = `
   display: flex;
   flex-direction: column;
   background: var(--navy);
-  border-radius: 10px;
   overflow: hidden;
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-  margin: 6px;
   min-height: 0;
 }
 
 /* Top Bar */
 .uf-topbar {
-  background: var(--navy);
-  padding: 12px 20px;
+  background: var(--surface);
+  padding: 8px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
-.uf-topbar-left { display: flex; align-items: center; gap: 14px; }
-.uf-logo { font-size: 16px; font-weight: 700; }
-.uf-logo span { color: var(--gold); }
+.uf-topbar-left { display: flex; align-items: center; gap: 12px; }
+.uf-logo { font-size: 13px; font-weight: 600; color: var(--text); }
+.uf-logo span { color: var(--gold); font-weight: 600; }
 .uf-week-badge {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 5px;
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 3px 8px;
+  font-size: 10px;
   font-family: 'DM Mono', monospace;
   color: var(--muted);
 }
-.uf-topbar-right { display: flex; align-items: center; gap: 10px; }
-.uf-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
-.uf-status-text { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.uf-topbar-right { display: flex; align-items: center; gap: 8px; }
+.uf-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.uf-status-text { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
 .uf-avatar {
   width: 28px; height: 28px; border-radius: 50%; background: var(--navyLt);
   display: flex; align-items: center; justify-content: center;
@@ -598,13 +595,13 @@ const STYLES = `
 /* Tabs */
 .uf-tabs {
   display: flex; gap: 0;
-  background: var(--navy);
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 0 20px;
   flex-shrink: 0;
 }
 .uf-tab {
-  padding: 10px 18px; font-size: 12px; font-weight: 500;
+  padding: 8px 14px; font-size: 11px; font-weight: 500;
   color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent;
   transition: all 0.15s; user-select: none;
   background: none; border-top: none; border-left: none; border-right: none;
@@ -640,19 +637,21 @@ const STYLES = `
 .uf-sidebar {
   background: var(--surfaceLt);
   border-right: 1px solid var(--border);
-  padding: 16px 0;
+  padding: 10px 0;
   overflow-y: auto;
+  width: 200px;
+  flex-shrink: 0;
 }
-.uf-nav-section { margin-bottom: 20px; }
+.uf-nav-section { margin-bottom: 14px; }
 .uf-nav-label {
-  font-size: 9px; font-weight: 600; letter-spacing: 2px;
+  font-size: 9px; font-weight: 600; letter-spacing: 1.5px;
   text-transform: uppercase; color: var(--muted);
-  padding: 0 16px; margin-bottom: 6px;
-  font-family: 'DM Mono', monospace;
+  padding: 0 14px; margin-bottom: 4px;
+  font-family: 'Inter', sans-serif;
 }
 .uf-nav-item {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 7px 16px; font-size: 12px; cursor: pointer;
+  padding: 6px 14px; font-size: 12px; cursor: pointer;
   color: var(--muted); transition: all 0.1s; user-select: none;
   border: none; background: none; width: 100%; text-align: left;
   font-family: 'Inter', sans-serif;
@@ -660,8 +659,8 @@ const STYLES = `
 .uf-nav-item:hover { background: var(--surface); color: var(--text); }
 .uf-nav-item.active { background: var(--surface); color: var(--text); border-left: 2px solid var(--gold); }
 .uf-nav-pill {
-  font-size: 9px; border-radius: 3px; padding: 2px 6px;
-  font-family: 'DM Mono', monospace; font-weight: 500;
+  font-size: 9px; border-radius: 4px; padding: 2px 6px;
+  font-family: 'Inter', sans-serif; font-weight: 500;
 }
 .pill-red { background: rgba(220,38,38,0.2); color: #E74C3C; }
 .pill-amber { background: rgba(217,119,6,0.2); color: #F39C12; }
@@ -670,8 +669,8 @@ const STYLES = `
 
 /* Centre */
 .uf-centre {
-  overflow-y: auto; padding: 18px;
-  display: flex; flex-direction: column; gap: 14px;
+  overflow-y: auto; padding: 14px 18px;
+  display: flex; flex-direction: column; gap: 12px;
 }
 
 /* Signal Banner */
@@ -1217,6 +1216,14 @@ export default function FluxPlusPage() {
   const aiMessagesRef = useRef<HTMLDivElement>(null)
   const typingRef = useRef<ReturnType<typeof setTimeout>>()
 
+  // ── Industry data overlay ──
+  const { config: industryConfig, isDemoMode } = useIndustry()
+  const indRegion = useMemo(() => {
+    // Map the current region index to industry region data
+    const regionIdx = ["national", "northeast", "southeast", "midwest", "west", "southwest"].indexOf(region)
+    return industryConfig.regions[Math.min(regionIdx, industryConfig.regions.length - 1)] || industryConfig.regions[0]
+  }, [industryConfig, region])
+
   // ── Derived data ──
   const regData = DATA.regions[region]
   const compData = DATA.comparisons[comparison]
@@ -1448,7 +1455,7 @@ export default function FluxPlusPage() {
     const bars = regData.chart.bars
     const chartTitle = regData.chart.title + (metric === "Orders" ? " (Orders)" : " (Revenue)")
     return (
-      <div className="uf-chart-area">
+      <div className="uf-chart-area" data-tour-id="uf-chart">
         <div className="uf-chart-header">
           <div className="uf-chart-title">{chartTitle}</div>
           <div className="uf-chart-legend">
@@ -1545,11 +1552,11 @@ export default function FluxPlusPage() {
 
       <div className="uf-app">
         {/* ── Top Bar ── */}
-        <div className="uf-topbar">
+        <div className="uf-topbar" data-tour-id="uf-topbar">
           <div className="uf-topbar-left">
             <button className="uf-sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} title="Navigation">☰</button>
             <div className="uf-logo">
-              Variance <span>Workbench</span>
+              {isDemoMode ? <>{industryConfig.revenueShort} <span>Workbench</span></> : <>Variance <span>Workbench</span></>}
             </div>
             <div className="uf-week-badge">{regData.week} · Generated 08:38 AM</div>
           </div>
@@ -1557,13 +1564,13 @@ export default function FluxPlusPage() {
             <div className="uf-metric-toggle">
               {(["Revenue", "Orders"] as MetricType[]).map((m) => (
                 <button key={m} className={`uf-metric-btn ${metric === m ? "active" : ""}`} onClick={() => handleMetricToggle(m)}>
-                  {m}
+                  {isDemoMode && m === "Revenue" ? industryConfig.revenueShort : m}
                 </button>
               ))}
             </div>
             <div className="uf-status-dot" />
             <div className="uf-status-text">All sources reconciled · 9/9</div>
-            <button className="uf-ai-toggle" onClick={() => setAiPanelOpen(!aiPanelOpen)} title="AI Assistant">✦</button>
+            <button className="uf-ai-toggle" data-tour-id="uf-ai-toggle" onClick={() => setAiPanelOpen(!aiPanelOpen)} title="AI Assistant">✦</button>
             <div className="uf-avatar">JO</div>
           </div>
         </div>
@@ -1633,54 +1640,81 @@ export default function FluxPlusPage() {
                     {regData.signal.icon} Show insight — {compData.label} · {metric} · {regData.label} ▾
                   </button>
                 ) : (
-                  <div className={`uf-signal-banner ${regData.signal.positive ? "positive" : ""}`}>
+                  <div className={`uf-signal-banner ${(isDemoMode ? indRegion.signalPositive : regData.signal.positive) ? "positive" : ""}`}>
                     <div className="uf-signal-icon">{regData.signal.icon}</div>
                     <div className="uf-signal-text">
                       <strong>
-                        {compData.label} · {metric} · {regData.label}
+                        {compData.label} · {isDemoMode ? industryConfig.revenueShort : metric} · {isDemoMode ? indRegion.label : regData.label}
                       </strong>
-                      {compData.signal || regData.signal.body}
+                      {isDemoMode ? indRegion.signalBody : (compData.signal || regData.signal.body)}
                     </div>
                     <button className="uf-signal-dismiss" onClick={() => setSignalDismissed(true)}>Hide</button>
                   </div>
                 )}
 
                 {/* Stat Cards */}
-                <div className="uf-stat-row">
-                  <div className="uf-stat-card" onClick={() => handleStatCardClick("variance")}>
-                    <div className="uf-stat-label">Total Variance</div>
-                    <div className={`uf-stat-value uf-${totalColor}`}>{totalVariance}</div>
-                    <div className={`uf-stat-delta uf-${totalColor}`}>
-                      {totalColor === "up" ? "▲" : "▼"} {compData.label}
-                    </div>
-                  </div>
-                  <div className="uf-stat-card" onClick={() => handleStatCardClick("flagged")}>
-                    <div className="uf-stat-label">Segments Flagged</div>
-                    <div className="uf-stat-value uf-warn">{metricData.flagged}</div>
-                    <div className="uf-stat-delta uf-warn">{metricData.flaggedDetail}</div>
-                  </div>
-                  <div className="uf-stat-card" onClick={() => handleStatCardClick("driver")}>
-                    <div className="uf-stat-label">Top Driver</div>
-                    <div className="uf-stat-value" style={{ fontSize: 13, paddingTop: 3 }}>
-                      {metricData.driver}
-                    </div>
-                    <div className="uf-stat-delta uf-down">{metricData.driverDetail}</div>
-                  </div>
-                  <div className="uf-stat-card">
-                    <div className="uf-stat-label">Commentary</div>
-                    <div className="uf-stat-value uf-up" style={{ fontSize: 14, paddingTop: 3 }}>
-                      Ready
-                    </div>
-                    <div className="uf-stat-delta" style={{ color: "var(--muted)" }}>
-                      08:38 AM ✓
-                    </div>
-                  </div>
+                <div className="uf-stat-row" data-tour-id="uf-stats">
+                  {isDemoMode ? (
+                    <>
+                      <div className="uf-stat-card" onClick={() => handleStatCardClick("variance")}>
+                        <div className="uf-stat-label">{industryConfig.kpis.metric1.label}</div>
+                        <div className={`uf-stat-value uf-${industryConfig.kpis.metric1.deltaDir === "up" ? "up" : "down"}`}>{industryConfig.kpis.metric1.value}</div>
+                        <div className={`uf-stat-delta uf-${industryConfig.kpis.metric1.deltaDir === "up" ? "up" : "down"}`}>{industryConfig.kpis.metric1.delta}</div>
+                      </div>
+                      <div className="uf-stat-card" onClick={() => handleStatCardClick("flagged")}>
+                        <div className="uf-stat-label">{industryConfig.kpis.metric2.label}</div>
+                        <div className={`uf-stat-value uf-${industryConfig.kpis.metric2.deltaDir === "up" ? "up" : "warn"}`}>{industryConfig.kpis.metric2.value}</div>
+                        <div className={`uf-stat-delta uf-${industryConfig.kpis.metric2.deltaDir === "up" ? "up" : "warn"}`}>{industryConfig.kpis.metric2.delta}</div>
+                      </div>
+                      <div className="uf-stat-card" onClick={() => handleStatCardClick("driver")}>
+                        <div className="uf-stat-label">{industryConfig.kpis.metric3.label}</div>
+                        <div className={`uf-stat-value uf-${industryConfig.kpis.metric3.deltaDir === "up" ? "up" : "down"}`} style={{ fontSize: 14, paddingTop: 3 }}>{industryConfig.kpis.metric3.value}</div>
+                        <div className={`uf-stat-delta uf-${industryConfig.kpis.metric3.deltaDir === "up" ? "up" : "down"}`}>{industryConfig.kpis.metric3.delta}</div>
+                      </div>
+                      <div className="uf-stat-card">
+                        <div className="uf-stat-label">{industryConfig.kpis.metric4.label}</div>
+                        <div className={`uf-stat-value uf-${industryConfig.kpis.metric4.deltaDir === "up" ? "up" : "down"}`} style={{ fontSize: 14, paddingTop: 3 }}>{industryConfig.kpis.metric4.value}</div>
+                        <div className={`uf-stat-delta uf-${industryConfig.kpis.metric4.deltaDir === "up" ? "up" : "down"}`}>{industryConfig.kpis.metric4.delta}</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="uf-stat-card" onClick={() => handleStatCardClick("variance")}>
+                        <div className="uf-stat-label">Total Variance</div>
+                        <div className={`uf-stat-value uf-${totalColor}`}>{totalVariance}</div>
+                        <div className={`uf-stat-delta uf-${totalColor}`}>
+                          {totalColor === "up" ? "▲" : "▼"} {compData.label}
+                        </div>
+                      </div>
+                      <div className="uf-stat-card" onClick={() => handleStatCardClick("flagged")}>
+                        <div className="uf-stat-label">Segments Flagged</div>
+                        <div className="uf-stat-value uf-warn">{metricData.flagged}</div>
+                        <div className="uf-stat-delta uf-warn">{metricData.flaggedDetail}</div>
+                      </div>
+                      <div className="uf-stat-card" onClick={() => handleStatCardClick("driver")}>
+                        <div className="uf-stat-label">Top Driver</div>
+                        <div className="uf-stat-value" style={{ fontSize: 13, paddingTop: 3 }}>
+                          {metricData.driver}
+                        </div>
+                        <div className="uf-stat-delta uf-down">{metricData.driverDetail}</div>
+                      </div>
+                      <div className="uf-stat-card">
+                        <div className="uf-stat-label">Commentary</div>
+                        <div className="uf-stat-value uf-up" style={{ fontSize: 14, paddingTop: 3 }}>
+                          Ready
+                        </div>
+                        <div className="uf-stat-delta" style={{ color: "var(--muted)" }}>
+                          08:38 AM ✓
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Commentary */}
-                <div className="uf-commentary">
+                <div className="uf-commentary" data-tour-id="uf-content">
                   <div className="uf-commentary-header">
-                    <div className="uf-commentary-title">AI-Generated Commentary — Ranked by Revenue Impact</div>
+                    <div className="uf-commentary-title">AI-Generated Commentary — Ranked by {isDemoMode ? industryConfig.revenueShort : "Revenue"} Impact</div>
                     <div className="uf-commentary-meta">
                       {metric} · {compData.label} · Validated · 12 segments · 5 comparison types
                     </div>

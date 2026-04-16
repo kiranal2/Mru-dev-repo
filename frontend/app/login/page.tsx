@@ -4,12 +4,12 @@ export const dynamic = "force-dynamic";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, Loader2 } from "lucide-react";
+import { Lock, Mail, Loader2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Persona, getPersonaLandingRoute } from "@/lib/persona-context";
+import { Persona } from "@/lib/persona-context";
 
 // Try to import session APIs (may not exist in all setups)
 let removeSessionState: any = null;
@@ -66,10 +66,9 @@ function LoginPage() {
     const match = EMAIL_PERSONA_MAP[trimmed];
     if (match) {
       try {
-        localStorage.setItem("meeru-demo-config", JSON.stringify(match));
+        localStorage.setItem("meeru-demo-config", JSON.stringify({ persona: match.persona, industry: null }));
       } catch { /* ignore */ }
-      const route = getPersonaLandingRoute(match.persona);
-      router.push(route);
+      router.push("/onboarding");
     } else {
       setIsLoading(false);
       setError("Unrecognized email. Use cfo@meeru.ai, cao@meeru.ai, or controller@meeru.ai");
@@ -87,56 +86,69 @@ function LoginPage() {
   }, [handleLogin]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
-      <div className="w-full max-w-md">
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ background: "var(--theme-bg, #F8FAFC)" }}
+    >
+      <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl tracking-tight text-slate-800 mb-1">
-            Meeru<span className="text-primary font-bold">AI</span>
-          </h1>
-          <p className="text-xs text-slate-500">
-            AI-powered financial analysis platform
+          <div className="flex items-center justify-center gap-1.5 mb-1.5">
+            <img src="/meeru-logo.png" alt="Meeru AI" className="h-6 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+            <span className="text-2xl font-semibold tracking-tight" style={{ color: "var(--theme-text)" }}>
+              Meeru<span className="text-primary font-bold">AI</span>
+            </span>
+          </div>
+          <p className="text-[11px]" style={{ color: "var(--theme-text-muted)" }}>
+            Decision Intelligence for Finance
           </p>
         </div>
 
-        {/* SSO Card */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-          <div className="text-center mb-6">
-            <h2 className="text-xl font-bold text-slate-900 mb-1">
+        {/* Card */}
+        <div
+          className="rounded-xl p-6"
+          style={{
+            background: "var(--theme-surface, #ffffff)",
+            border: "1px solid var(--theme-border)",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+          }}
+        >
+          <div className="text-center mb-5">
+            <h2 className="text-lg font-semibold mb-0.5" style={{ color: "var(--theme-text)" }}>
               Sign In
             </h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-xs" style={{ color: "var(--theme-text-muted)" }}>
               Enter your email to access the platform
             </p>
           </div>
 
           {/* Security notice */}
-          <div className="mb-5 rounded-lg border border-primary/20 bg-primary/5 p-3">
+          <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-2.5">
             <div className="flex items-start gap-2">
-              <Lock className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-              <p className="text-xs text-primary/80">
-                Sign in with your corporate email to access the Meeru AI platform.
+              <Lock className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+              <p className="text-[11px] text-primary/80">
+                Sign in with your corporate email to access the platform.
               </p>
             </div>
           </div>
 
           <form
             onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}
-            className="space-y-4"
+            className="space-y-3"
           >
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-slate-700">
-                Email <span className="text-red-500">*</span>
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="text-xs font-medium" style={{ color: "var(--theme-text-secondary)" }}>
+                Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--theme-text-muted)" }} />
                 <Input
                   id="email"
                   type="email"
                   placeholder="cfo@meeru.ai"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setError(""); }}
-                  className={cn("pl-10 h-10", error && "border-red-400")}
+                  className={cn("pl-10 h-9 text-sm", error && "border-red-400")}
                   disabled={isLoading}
                   autoFocus
                   onKeyDown={(e) => {
@@ -145,15 +157,15 @@ function LoginPage() {
                 />
               </div>
               {error && (
-                <Alert variant="destructive" className="py-2">
-                  <AlertDescription className="text-xs">{error}</AlertDescription>
+                <Alert variant="destructive" className="py-1.5">
+                  <AlertDescription className="text-[11px]">{error}</AlertDescription>
                 </Alert>
               )}
             </div>
 
             <Button
               type="submit"
-              className="w-full h-10"
+              className="w-full h-9 text-sm"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -163,17 +175,17 @@ function LoginPage() {
                 </>
               ) : (
                 <>
-                  <Lock className="w-4 h-4 mr-2" />
                   Sign in with SSO
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </>
               )}
             </Button>
           </form>
 
           {/* Demo accounts */}
-          <div className="mt-5 pt-4 border-t border-slate-100">
-            <p className="text-[10px] text-slate-400 text-center mb-2.5 uppercase tracking-wider font-medium">
-              Demo Accounts
+          <div className="mt-4 pt-3" style={{ borderTop: "1px solid var(--theme-border)" }}>
+            <p className="text-[10px] text-center mb-2 uppercase tracking-wider font-medium" style={{ color: "var(--theme-text-muted)" }}>
+              Quick Access
             </p>
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -186,10 +198,23 @@ function LoginPage() {
                   type="button"
                   onClick={() => handleDemoClick(account.email)}
                   disabled={isLoading}
-                  className="text-center px-2 py-2.5 rounded-lg border border-slate-200 bg-white hover:border-primary/30 hover:bg-primary/5 transition-colors disabled:opacity-50"
+                  className="text-center px-2 py-2 rounded-lg transition-all duration-150 disabled:opacity-50"
+                  style={{
+                    background: "var(--theme-surface-alt, #f1f5f9)",
+                    border: "1px solid var(--theme-border)",
+                    color: "var(--theme-text)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "hsl(var(--primary) / 0.4)";
+                    e.currentTarget.style.background = "hsl(var(--primary) / 0.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "var(--theme-border)";
+                    e.currentTarget.style.background = "var(--theme-surface-alt, #f1f5f9)";
+                  }}
                 >
-                  <div className="text-xs font-semibold text-slate-700">{account.label}</div>
-                  <div className="text-[9px] text-slate-400 mt-0.5">{account.email}</div>
+                  <div className="text-xs font-semibold">{account.label}</div>
+                  <div className="text-[9px] mt-0.5" style={{ color: "var(--theme-text-muted)" }}>{account.email}</div>
                 </button>
               ))}
             </div>
@@ -197,8 +222,8 @@ function LoginPage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 text-center">
-          <p className="text-xs text-slate-400">
+        <div className="mt-5 text-center">
+          <p className="text-[10px]" style={{ color: "var(--theme-text-muted)" }}>
             Meeru AI &copy; {new Date().getFullYear()} &middot; All rights reserved
           </p>
         </div>

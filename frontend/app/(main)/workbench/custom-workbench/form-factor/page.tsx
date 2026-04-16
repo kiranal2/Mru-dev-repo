@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import { CommandCenterPanel } from "@/components/ai"
+import { useIndustry } from "@/hooks/use-industry"
 
 // ═══════════════════════════════════════════════════════
 //  TYPES
@@ -354,20 +355,20 @@ const STYLES = `
 
 /* SIDEBAR */
 .ff-sidebar {
-  width: 232px; flex-shrink: 0; background: var(--navy-dark);
+  width: 200px; flex-shrink: 0; background: var(--navy-dark);
   display: flex; flex-direction: column; border-right: 1px solid var(--border);
   overflow-y: auto;
 }
-.ff-sb-logo { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); }
-.ff-sb-wordmark { font-family: var(--wordmark); font-size: 20px; font-weight: 700; color: var(--teal); letter-spacing: -0.3px; }
-.ff-sb-sub { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; }
-.ff-sb-group { padding: 10px 0; border-bottom: 1px solid var(--border); }
-.ff-sb-glabel { padding: 4px 18px 7px; font-size: 10px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase; color: var(--text-muted); }
+.ff-sb-logo { padding: 12px 16px 10px; border-bottom: 1px solid var(--border); }
+.ff-sb-wordmark { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--teal); letter-spacing: -0.2px; }
+.ff-sb-sub { font-size: 9px; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-top: 1px; }
+.ff-sb-group { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.ff-sb-glabel { padding: 3px 16px 5px; font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
 .ff-sb-item {
-  display: flex; align-items: center; gap: 9px; padding: 9px 18px;
-  cursor: pointer; color: var(--text-secondary); font-size: 13px; font-weight: 400;
+  display: flex; align-items: center; gap: 8px; padding: 7px 16px;
+  cursor: pointer; color: var(--text-secondary); font-size: 12px; font-weight: 400;
   border: none; background: none; width: 100%; text-align: left;
-  border-left: 3px solid transparent; transition: all 0.15s; user-select: none;
+  border-left: 2px solid transparent; transition: all 0.15s; user-select: none;
   font-family: var(--sans);
 }
 .ff-sb-item:hover { color: var(--text-primary); background: rgba(0,0,0,0.03); }
@@ -384,15 +385,15 @@ const STYLES = `
 
 /* TOPBAR */
 .ff-topbar {
-  padding: 13px 28px; background: var(--bg-white); border-bottom: 1px solid var(--border);
+  padding: 8px 20px; background: var(--bg); border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
 }
-.ff-tb-title { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+.ff-tb-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
 .ff-tb-title em { font-style: normal; color: var(--teal); }
-.ff-tb-right { display: flex; align-items: center; gap: 9px; }
+.ff-tb-right { display: flex; align-items: center; gap: 7px; }
 .ff-btn {
-  display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px;
-  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 6px;
+  font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.15s;
   border: 1px solid var(--border); background: var(--bg-white); color: var(--text-secondary);
   font-family: var(--sans);
 }
@@ -402,7 +403,7 @@ const STYLES = `
 .ff-pval { color: var(--teal); font-weight: 600; }
 
 /* PAGE */
-.ff-page { flex: 1; overflow-y: auto; padding: 22px 28px 52px; }
+.ff-page { flex: 1; overflow-y: auto; padding: 18px 20px 40px; }
 @keyframes ffFadeUp { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
 .ff-page { animation: ffFadeUp 0.22s ease; }
 
@@ -1111,6 +1112,9 @@ export default function FormFactorPage() {
   const aiRef = useRef<HTMLDivElement>(null)
   const aiTypingRef = useRef<ReturnType<typeof setTimeout>>()
 
+  // ── Industry data overlay ──
+  const { config: industryConfig, isDemoMode } = useIndustry()
+
   const WEEKS = WD_ALL.map((d) => d.w)
   const SEGMENTS: TrendSeg[] = ["All Segments", "North America", "APAC", "EMEA", "LatAm"]
 
@@ -1296,7 +1300,7 @@ export default function FormFactorPage() {
           <span className="ff-ibanner-ico">ℹ</span>
           Outputs optimized for directional insight. Proxy-derived figures carry confidence labels. Not for audit or statutory reporting.
         </div>
-        <div className="ff-narr">
+        <div className="ff-narr" data-tour-id="ff-narrative">
           <div className="ff-narr-toggle" onClick={() => setInsightCollapsed(!insightCollapsed)}>
             <div className="ff-narr-chip">✦ AI Insight</div>
             <button className="ff-narr-toggle-btn" type="button">
@@ -1304,19 +1308,25 @@ export default function FormFactorPage() {
             </button>
           </div>
           <div className={`ff-narr-content ${insightCollapsed ? "collapsed" : "expanded"}`}>
-          <div className="ff-narr-head">
-            Revenue grew +4.2% week-over-week, but standard margin compressed 130bps — driven by an unfavorable mix shift toward lower-margin APAC accounts.
-          </div>
-          <div className="ff-narr-body">
-            <strong>Volume (+$2.3M)</strong> was the largest positive driver as total shipments grew. <strong>Mix (–$1.8M)</strong> offset this as
-            high-margin North America products underperformed their forecast share. <strong>Price realization</strong> held flat. A{" "}
-            <strong>Cost headwind of –$0.6M</strong> persists, largely proxy-estimated for Product Group B. Q2 QTD standard margin stands at{" "}
-            <strong>31.4%</strong>, tracking 90bps below Q2 plan.
-          </div>
+          {isDemoMode ? (
+            <div className="ff-narr-body" dangerouslySetInnerHTML={{ __html: industryConfig.narratives.formFactorInsight }} />
+          ) : (
+            <>
+              <div className="ff-narr-head">
+                Revenue grew +4.2% week-over-week, but standard margin compressed 130bps — driven by an unfavorable mix shift toward lower-margin APAC accounts.
+              </div>
+              <div className="ff-narr-body">
+                <strong>Volume (+$2.3M)</strong> was the largest positive driver as total shipments grew. <strong>Mix (–$1.8M)</strong> offset this as
+                high-margin North America products underperformed their forecast share. <strong>Price realization</strong> held flat. A{" "}
+                <strong>Cost headwind of –$0.6M</strong> persists, largely proxy-estimated for Product Group B. Q2 QTD standard margin stands at{" "}
+                <strong>31.4%</strong>, tracking 90bps below Q2 plan.
+              </div>
+            </>
+          )}
           </div>
         </div>
 
-        <div className="ff-sg">
+        <div className="ff-sg" data-tour-id="ff-stats">
           <div className="ff-sc t">
             <div className="ff-sc-label">Std. Margin % · WTD</div>
             <div className="ff-sc-val teal">31.4%</div>
@@ -1877,9 +1887,9 @@ export default function FormFactorPage() {
       <div className={`ff-sidebar-overlay ${sidebarOpen ? "open" : ""}`} onClick={() => setSidebarOpen(false)} />
 
       {/* SIDEBAR */}
-      <nav className={`ff-sidebar ${sidebarOpen ? "open" : ""}`}>
+      <nav className={`ff-sidebar ${sidebarOpen ? "open" : ""}`} data-tour-id="ff-sidebar">
         <div className="ff-sb-logo">
-          <div className="ff-sb-sub">Margin Intelligence</div>
+          <div className="ff-sb-sub">{isDemoMode ? `${industryConfig.label} — Margin Intelligence` : "Margin Intelligence"}</div>
         </div>
 
         {sidebarItems.map((group) => (
@@ -1910,7 +1920,7 @@ export default function FormFactorPage() {
       {/* MAIN */}
       <main className="ff-main">
         {/* TOPBAR */}
-        <div className="ff-topbar">
+        <div className="ff-topbar" data-tour-id="ff-topbar">
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <button className="ff-sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} title="Navigation">☰</button>
             <div className="ff-tb-title">
@@ -1930,7 +1940,7 @@ export default function FormFactorPage() {
         </div>
 
         {/* PAGE CONTENT */}
-        <div className="ff-page" key={page}>
+        <div className="ff-page" key={page} data-tour-id="ff-content">
           {page === "exec" && renderExec()}
           {page === "trend" && renderTrend()}
           {page === "actfcst" && renderAvf()}

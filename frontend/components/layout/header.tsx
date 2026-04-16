@@ -136,7 +136,7 @@ export default function Header({ loadingState, isSidebarHidden, onToggleSidebar,
             <Bell size={18} />
             <span className="absolute top-1 right-1 xl:top-1.5 xl:right-1.5 w-1.5 h-1.5 xl:w-2 xl:h-2 rounded-full animate-breathing" style={{ background: 'var(--theme-notification-dot)' }} />
           </button>
-          <span className="hidden xl:block" data-tour-id="theme-toggle"><ThemeSwitcher /></span>
+          <span data-tour-id="theme-toggle"><ThemeSwitcher /></span>
           <div className="hidden xl:block w-px h-5 mx-0.5" style={{ background: 'var(--theme-border)' }} />
           <UserMenu />
         </div>

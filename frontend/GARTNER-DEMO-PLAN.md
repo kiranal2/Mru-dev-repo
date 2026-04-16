@@ -1,345 +1,344 @@
-# Gartner Demo — Implementation Plan & Progress Tracker
+# Gartner Demo — Master Implementation Plan
 
-**Created:** 2026-04-15
-**Last Updated:** 2026-04-15
-**Branch:** `gartner-demo` (to be created from `main`)
-
----
-
-## Overview
-
-Two product categories to showcase at Gartner:
-
-| Category | Theme | Workbenches | Personas |
-|----------|-------|-------------|----------|
-| **Decision Intelligence** | Dark mode | UberFlux, Form Factor | CFO, FP&A |
-| **Close Intelligence** | Light mode | Standard Flux (flagship), Close, Recon | Controller, CAO |
-
-**Technology industry** as the primary vertical for the demo.
+**Created:** 2026-04-15  
+**Last Updated:** 2026-04-15  
+**Source:** All meeting transcripts + Shawn's demo HTML v2.5 + Flux Primer HTML + previous implementation work
 
 ---
 
-## Phase 1: Foundation & Infrastructure
+## Executive Summary
 
-### 1.1 Create gartner-demo branch
-- **Status:** PENDING
-- **Files:** Git operations only
-- **Details:** Cut branch from main. All Gartner work goes here.
-
-### 1.2 Simplify demo login — persona-card-only selection
-- **Status:** DONE
-- **Files:**
-  - `app/login/page.tsx` — Remove email/password, show 3 persona cards
-  - `app/(onboarding)/onboarding/page.tsx` — Skip persona step if already selected from login
-- **Details:** For demo: no email/password fields. Just 3 large clickable persona cards (CFO, CAO, Controller) that route to industry selection, then to dashboard. Per Neetu: "Let's not have the login, let's only have the role."
-
-### 1.3 Dashboard quick-nav cards per persona
-- **Status:** DONE
-- **Files:**
-  - `app/(main)/home/dashboard/dashboards/cfo-home.tsx` — Link to UberFlux + Form Factor
-  - `app/(main)/home/dashboard/dashboards/cao-home.tsx` — Link to Standard Flux + Close
-  - `app/(main)/home/dashboard/dashboards/controller-home.tsx` — Link to Standard Flux + Recon
-- **Details:** Prominent "Launch Workbench" cards on each dashboard that navigate directly to the primary workbench for that persona.
+A focused, immersive demo experience for the Gartner conference. No sidebar navigation — users stay inside the workbench they selected. Three personas, three industries, three workbenches. Dark mode for Decision Intelligence, light mode for Close Intelligence. Guided tour highlights actual UI elements. Industry data switches in real-time.
 
 ---
 
-## Phase 2: Standard Flux — Close Intelligence (Flagship)
+## Architecture: How The Demo Works
 
-### 2.1 Add expectedness classification to flux rows
-- **Status:** DONE
-- **Files:**
-  - `lib/data/types/flux-analysis.ts` — Add `expectedness` field to FluxRow type
-  - `app/(main)/reports/analysis/flux-analysis/constants.ts` — Add EXPECTEDNESS_OPTIONS, assign defaults per account
-  - `components/standard-flux/worklist-table.tsx` — Add expectedness badge column
-  - `app/(main)/reports/analysis/flux-analysis/helpers.ts` — Add expectednessClass() helper
-- **Details:** Per the flux primer, every flagged account needs an expectedness classification: Expected, Seasonal, Anomalous, or One-time. This is Component 04 from the primer.
+```
+┌─ Onboarding (3 steps) ───────────────────────────────┐
+│  Step 1: Role (CFO / CAO / Controller)                │
+│  Step 2: Analysis Type → determines workbench         │
+│          - Performance Intelligence → UberFlux (dark)  │
+│          - Margin Intelligence → Form Factor (dark)    │
+│          - Flux Intelligence → Standard Flux (light)   │
+│  Step 3: Industry (Technology / Healthcare / Retail)   │
+│  Launch Screen → "Enter Workbench"                     │
+└───────────────────────────────────────────────────────┘
+                        ↓
+┌─ Demo Experience (NO SIDEBAR) ────────────────────────┐
+│                                                        │
+│  ┌─ Demo Context Bar (36px, fixed top) ─────────────┐ │
+│  │ MeeruAI · CFO · Technology · Performance Intel    │ │
+│  │                    [Switch Context] [Tour] [Reset] │ │
+│  └──────────────────────────────────────────────────-┘ │
+│                                                        │
+│  ┌─ Workbench (full screen, no sidebar) ────────────┐ │
+│  │                                                    │ │
+│  │  UberFlux (dark) OR Form Factor (dark)            │ │
+│  │  OR Standard Flux (light)                          │ │
+│  │                                                    │ │
+│  └──────────────────────────────────────────────────-┘ │
+│                                                        │
+│  ┌─ Guided Tour Overlay ────────────────────────────┐ │
+│  │ Backdrop dim → Target element elevated above      │ │
+│  │ Gold highlight ring → Dark callout bubble          │ │
+│  │ Persona-aware content · Skip/Next · Progress bar   │ │
+│  └──────────────────────────────────────────────────-┘ │
+│                                                        │
+│  ┌─ Context Switcher (bottom-left popup) ───────────┐ │
+│  │ Role / Industry / Workbench dropdowns              │ │
+│  │ "Apply & Restart Tour"                             │ │
+│  └──────────────────────────────────────────────────-┘ │
+└────────────────────────────────────────────────────────┘
+```
 
-### 2.2 Add commentary composer to detail drawer
-- **Status:** DONE
-- **Files:**
-  - `lib/data/types/flux-analysis.ts` — Add `commentary`, `commentaryStatus`, `approvedBy`, `approvedAt` to FluxRow
-  - `components/standard-flux/detail-drawer.tsx` — Add commentary section with textarea, AI generate button, status workflow
-  - `app/(main)/workbench/record-to-report/standard-flux/hooks/use-standard-flux.ts` — Add commentary state management, generate handler
-  - `app/(main)/reports/analysis/flux-analysis/constants.ts` — Add COMMENTARY_TEMPLATES per account
-- **Details:** The flagship demo feature. Shows human-in-the-loop: AI generates structured commentary (4 components from primer), user reviews/edits, submits for approval. Shawn: "If customer is all AI, we write the commentary. If more human-in-the-loop, commentary field is blank but you see the drivers."
-
-### 2.3 Filter bar UX — KPI-card-driven expand/collapse
-- **Status:** DONE
-- **Files:**
-  - `components/standard-flux/workbench-header.tsx` — Make KPI cards clickable with active state
-  - `components/standard-flux/toolbar.tsx` — Remove Filters popover, add FilterBar component
-  - `components/standard-flux/filter-bar.tsx` — NEW FILE: Collapsible filter bar with content driven by selected KPI card
-  - `app/(main)/workbench/record-to-report/standard-flux/page.tsx` — Add activeKpiCard and filterBarExpanded state
-  - `app/(main)/workbench/record-to-report/standard-flux/hooks/use-standard-flux.ts` — Add filter bar state
-- **Details:** Per Neetu: "Get rid of the filter button at the top. Have a bar where you can expand or minimise. Values driven by the blue card you select."
-  - Net Variance card → Comparison mode, Materiality, Exclude noise
-  - Top Drivers card → Driver category filter, Confidence level
-  - Review Progress card → Status filter, Owner filter
-  - Needs Attention card → Quick filters (Missing Evidence, Unassigned, High Impact)
-
-### 2.4 AI "Generate Commentary" flow with thinking animation
-- **Status:** DONE (included in 2.2)
-- **Files:**
-  - `components/standard-flux/detail-drawer.tsx` — Generate button triggers thinking animation then populates textarea
-  - `app/(main)/reports/analysis/flux-analysis/constants.ts` — Add COMMENTARY_TEMPLATES keyed by account
-  - `app/(main)/reports/analysis/flux-analysis/helpers.ts` — Add generateCommentary() function
-- **Details:** 
-  1. User clicks "Generate AI Draft" in drawer
-  2. Thinking animation shows 4 steps (from primer: Understanding variance → Analyzing drivers → Gathering evidence → Drafting commentary)
-  3. Textarea populates with structured commentary (Variance statement + Driver attribution + Context + Classification)
-  4. User can edit, then click "Submit for Review" → status changes
-  5. Controller persona can "Approve" → status = Approved with name + timestamp
+**Key principle (Shawn):** "I don't want the side left nav. Once you go in, that's all you're going to focus on. After the guided tour, they can play with whatever they want within the workbench, but we're not going to let them click around and find something they're not supposed to."
 
 ---
 
-## Phase 3: Dark Mode — Decision Intelligence
+## The Three Workbenches
 
-### 3.1 Create custom-workbench layout with dark theme wrapper
-- **Status:** DONE
-- **Files:**
-  - `app/(main)/workbench/custom-workbench/layout.tsx` — NEW FILE: Applies dark class/bg to all child routes
-- **Details:** Shawn: "Dark mode feels more serious, high-end" for Decision Intelligence. Light mode for Close Intelligence.
-
-### 3.2 Dark mode color tokens + accessibility fix
-- **Status:** DONE
-- **Files:**
-  - `app/globals.css` — Add/verify dark mode semantic tokens for custom workbench
-- **Details:** Per Neetu: colors can be different between themes but semantically close. Red on dark fails WCAG — use `text-red-400` (#f87171) instead of `text-red-600` on dark backgrounds. Contrast ratio: 5.2:1 (passes AA) vs 3.1:1 (fails).
-  - Light → Dark mappings:
-    - bg-slate-50 → bg-slate-950
-    - bg-white → bg-slate-900
-    - border-slate-200 → border-slate-800
-    - text-slate-900 → text-slate-100
-    - text-emerald-600 → text-emerald-400
-    - text-red-600 → text-red-400
-
-### 3.3 Form Factor page — apply dark theme
-- **Status:** DONE
-- **Files:**
-  - `app/(main)/workbench/custom-workbench/form-factor/page.tsx` — Convert all color classes to dark variants
-- **Details:** ~1,957 lines. Systematic find/replace of color tokens plus manual review of border/text/bg classes.
-
-### 3.4 UberFlux page — apply dark theme
-- **Status:** DONE
-- **Files:**
-  - `app/(main)/workbench/custom-workbench/uberflux/page.tsx` — Convert all color classes to dark variants
-- **Details:** ~1,933 lines. Same approach as Form Factor.
-
-### 3.5 AI Command Center — dark theme support
-- **Status:** DONE (via CSS variable inheritance from layout)
-- **Files:**
-  - `components/ai/command-center-panel.tsx` — Ensure dark theme prop is passed in custom-workbench context
-- **Details:** Component already has theme prop. Just needs wiring.
+| Workbench | Category | Theme | Primary Persona | What It Shows |
+|-----------|----------|-------|-----------------|---------------|
+| **UberFlux** (Performance Intelligence) | Decision Intelligence | Dark | CFO | Weekly regional performance, revenue/margin by segment, AI signals, exception flags |
+| **Form Factor** (Margin Intelligence) | Decision Intelligence | Dark | CFO / VP Finance | Margin bridge (waterfall), price/volume/mix decomposition, forecast vs actual |
+| **Standard Flux** (Flux Intelligence) | Close Intelligence | Light | CAO / Controller | IS/BS/CF flux table, AI commentary with human-in-the-loop, driver attribution, close workflow |
 
 ---
 
-## Phase 4: Design Cohesion
+## The Three Personas
 
-### 4.1 Shared workbench shell component
-- **Status:** PENDING
-- **Files:**
-  - `components/workbench/workbench-shell.tsx` — NEW FILE: Shared wrapper with title, KPI slot, toolbar slot, content slot
-- **Details:** Ensures Form Factor, UberFlux, Standard Flux, Close, Recon all share the same structural skeleton. Accepts theme: 'light' | 'dark' prop.
+| Persona | Title | Default Workbench | Focus |
+|---------|-------|-------------------|-------|
+| **CFO** | Chief Financial Officer | Performance Intelligence (UberFlux) | Strategic, board-level — "What's the headline?" |
+| **VP Finance / CAO** | VP Finance | Margin Intelligence (Form Factor) | Operating performance — "What's driving margin?" |
+| **CAO / Controller** | Controller | Flux Intelligence (Standard Flux) | Close management — "Is the commentary done?" |
 
-### 4.2 Cross-workbench design consistency pass
-- **Status:** PENDING
-- **Files:** All workbench pages
-- **Details:** Ensure consistent:
-  - Title area: text-sm font-semibold + text-[11px] subtitle
-  - KPI stat chips: same pill style
-  - Tab buttons: same active state pattern
-  - Table headers: same text-[11px] uppercase tracking-wide
-  - Status badges: same colored-dot pattern
+**Fake profiles for demo:**
+- CFO: "Sarah Chen, CFO" 
+- CAO: "Michael Torres, CAO"
+- Controller: "David Park, Controller"
 
 ---
 
-## Phase 5: Demo Polish & Recording
+## The Three Industries
 
-### 5.1 User journey walkthrough testing
-- **Status:** PENDING
-- **Details:** Test all 3 persona flows end-to-end:
-  - CFO → Dashboard → UberFlux → Form Factor
-  - CAO → Dashboard → Standard Flux → Close
-  - Controller → Dashboard → Standard Flux → Recon
+Each industry changes: KPI labels, line item names, driver terminology, AI suggestions, chart data.
 
-### 5.2 Demo recording with captions
-- **Status:** PENDING
-- **Details:** Record Mac screen (no URLs visible). Add captions/text overlays. Per Shawn: "At the very least there should be some captions to tell you what's happening."
+| Industry | Revenue Term | Key Metrics | Segments |
+|----------|-------------|-------------|----------|
+| **Technology** | ARR / SaaS Revenue | NRR, Churn, Expansion, Cloud spend | Enterprise, Mid-Market, SMB |
+| **Healthcare** | Net Patient Revenue | Inpatient, Outpatient, CMI, NRPPD | Medical, Surgical, Emergency |
+| **Retail** | Net Sales | Comp Store, AUR, Basket Size, Traffic | Footwear, Apparel, Accessories |
 
-### 5.3 Process documentation
-- **Status:** PENDING
-- **Files:**
-  - `BRANCHING-PROCESS.md` — NEW FILE: How dev/stage/demo branches work, tool flexibility, promotion workflow
-- **Details:** Per Shawn: "Document the process so the whole team understands how this is going to work."
+---
+
+## Implementation Phases
+
+### Phase 1: Demo Shell (No Sidebar Mode)
+
+**Goal:** When in demo mode, hide the sidebar navigation entirely. User sees only the demo context bar + full-screen workbench.
+
+| Task | Files | Details |
+|------|-------|---------|
+| **1.1 Demo mode flag** | `lib/persona-context.tsx` | Add `demoMode: boolean` to config. Set from onboarding. |
+| **1.2 Hide sidebar in demo mode** | `components/layout/app-shell.tsx` | When `demoMode=true`: hide sidebar, hide nav panel, remove left padding. Workbench fills entire screen below the demo bar. |
+| **1.3 Demo context bar** | `components/demo/demo-context-bar.tsx` (NEW) | Fixed 36px dark bar at top. Shows: MeeruAI logo, persona chip, industry chip, workbench chip, green pulse dot. Actions: Switch Context, Restart Tour, Reset Demo. Matches Shawn's HTML design. |
+| **1.4 Context switcher popup** | `components/demo/context-switcher.tsx` (NEW) | Bottom-left popup (or triggered from bar). Dropdowns for Role, Industry, Workbench. "Apply & Restart Tour" button. Changes data without going back to onboarding. |
+| **1.5 Offset workbench content** | CSS | When demo bar active, workbench content starts 36px from top. |
+
+### Phase 2: Onboarding Flow (3 Steps)
+
+**Goal:** Match Shawn's HTML v2.5 onboarding — elegant, minimal, serif typography.
+
+| Task | Files | Details |
+|------|-------|---------|
+| **2.1 Add "Analysis Type" step** | `app/(onboarding)/onboarding/page.tsx` | Step 2 between Role and Industry. Options: Performance Intelligence, Margin Intelligence, Flux Intelligence. This determines which workbench loads. |
+| **2.2 Launch screen** | `app/(onboarding)/onboarding/page.tsx` | After step 3: "Finance finally has a system that explains the business." Shows chips for selected role + analysis + industry. "Enter Workbench →" button. |
+| **2.3 Route to workbench** | `lib/persona-context.tsx`, `lib/demo-routing.ts` | After launch, route directly to the selected workbench (not dashboard). UberFlux for Performance, Form Factor for Margin, Standard Flux for Flux. |
+| **2.4 Design: serif headings** | Onboarding CSS | Use Cormorant Garamond or Georgia for questions. Gold (#C8A96E) accent for emphasis. Parchment (#F4F3EF) background. Minimal progress dots. Match Shawn's HTML aesthetic. |
+
+### Phase 3: Route-Based Theming
+
+**Goal:** Decision Intelligence pages always dark, Close Intelligence pages always light. Not a user toggle.
+
+| Task | Files | Details |
+|------|-------|---------|
+| **3.1 Route-based theme switching** | `components/layout/app-shell.tsx` or `lib/theme-context.tsx` | Auto-set theme based on current route. `/workbench/custom-workbench/*` → dark. `/workbench/record-to-report/*` → light. No manual toggle in demo mode. |
+| **3.2 Dark mode for DI workbenches** | `form-factor/page.tsx`, `uberflux/page.tsx` | CSS variables already reference `var(--theme-*)`. When `[data-theme="dark"]` is set, they auto-switch. Verify all hardcoded colors are gone. |
+| **3.3 Light mode for CI workbenches** | `standard-flux/page.tsx`, `close/page.tsx`, `reconciliations/page.tsx` | These should always use light theme tokens. Already do. |
+| **3.4 Demo bar always dark** | `components/demo/demo-context-bar.tsx` | Bar itself is always dark ink background regardless of workbench theme. |
+
+### Phase 4: Guided Tour (Spotlight Style)
+
+**Goal:** Match Shawn's HTML v2.5 callout system — dark bubble, gold accent, target element elevated above backdrop.
+
+| Task | Files | Details |
+|------|-------|---------|
+| **4.1 Adopt Shawn's callout design** | `components/guided-tour/guided-tour-overlay.tsx` | Dark ink background bubble (not white). Gold (#C8A96E) accent for step label and "Next" button. Directional arrows. `.tour-elevated` class lifts target above backdrop. |
+| **4.2 Persona-aware tour content** | `components/guided-tour/tour-steps.ts` | Tour body text changes based on role + industry. CFO sees "board-ready summary", Controller sees "evidence status and close readiness". Use `bodyFn()` pattern from Shawn's HTML. |
+| **4.3 Tour targets per workbench** | `data-tour-id` attributes | Each workbench needs `data-tour-id` on: AI panel, KPI area, main table/chart, driver panel, alert area. 5-6 steps per workbench. |
+| **4.4 Tour auto-starts on entry** | `PersonaDashboardContainer.tsx` or workbench page | Tour triggers automatically on first visit. Can be skipped. "Restart Tour" button in demo bar and bottom-right corner. |
+| **4.5 Progress bar in callout** | Tour overlay | Segmented progress (not dots) — each segment fills as you advance. Matches Shawn's HTML. |
+
+### Phase 5: Industry Data Switching
+
+**Goal:** When user switches industry via context switcher, all data in the workbench changes.
+
+| Task | Files | Details |
+|------|-------|---------|
+| **5.1 Industry data configs** | `lib/industry-data.ts` (NEW) | Three complete datasets — Technology, Healthcare, Retail. Each has: KPI labels, IS line items, BS accounts, drivers, AI suggestions, chart values. Based on Shawn's `INDUSTRY_DATA` from HTML v2.5. |
+| **5.2 Data injection into workbenches** | Form Factor, UberFlux, Standard Flux | Each workbench reads industry from context/localStorage and renders industry-specific labels, data, and AI content. |
+| **5.3 Real-time switching** | Context switcher | Changing industry in the switcher updates the workbench immediately without page reload. |
+
+### Phase 6: AI Commentary (Standard Flux Flagship)
+
+**Goal:** The Close Intelligence showcase — AI generates structured commentary with human-in-the-loop approval.
+
+| Task | Files | Status |
+|------|-------|--------|
+| **6.1 Expectedness classification** | Types, constants, worklist table | **DONE** — Expected/Seasonal/Anomalous/One-time badges on each row |
+| **6.2 Commentary composer in drawer** | Detail drawer, hook | **DONE** — Textarea, "Generate AI Draft" button, thinking animation, Draft/Submitted/Approved workflow |
+| **6.3 KPI-card-driven filter bar** | Header, filter bar, toolbar | **DONE** — Click a KPI card to expand contextual filters |
+| **6.4 Alert icon (not banner)** | Page layout | **DONE** — Shield icon with badge count, opens side sheet |
+| **6.5 Commentary templates per industry** | Constants file | NEEDS UPDATE for Healthcare and Retail terminology |
+
+### Phase 7: CFO Flow — End to End Polish
+
+**Goal:** One persona, completely clean, no visual inconsistencies.
+
+| Task | Details |
+|------|---------|
+| **7.1 Consistent branding** | No cream-to-dark jumps. Onboarding → dark workbench transition should feel smooth. |
+| **7.2 Fake user profile** | "Sarah Chen, CFO" with avatar initials in demo bar and any user menu. |
+| **7.3 Responsive** | Works on both laptop (1440px) and tablet (1024px). |
+| **7.4 No dead-end clicks** | Every button does something or is visually disabled. No error pages reachable. |
+| **7.5 Performance** | Workbench loads in <2s. Tour animations smooth at 60fps. |
+
+### Phase 8: Future / Nice-to-Have
+
+| Task | Details | Source |
+|------|---------|--------|
+| **Problem-based onboarding** | Instead of "Pick a persona", show "What's your biggest challenge?" — maps to persona behind the scenes | Neetu |
+| **Gamification / crisis scenario** | "The board needs a decision by Friday. Your company just discovered a $2.3M variance..." → enter workbench | Shawn |
+| **Flux Forecast workbench** | Third DI workbench — forecast vs actuals with command center | Original scope |
+| **Demo recording** | Loom or CapCut for screen recordings with captions | Team decision |
+| **Workbench naming** | Finalize names: "Performance Workbench", "Margin Workbench", "Flux Workbench" vs current | Shawn |
+
+---
+
+## What's Already Done vs. What's Needed
+
+### DONE (from previous sessions)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| SSO login page with demo accounts | Done | Email field + 3 quick-select buttons |
+| Onboarding (Role + Industry) | Done | Missing "Analysis Type" step |
+| Persona dashboards (3) | Done | But may not be shown in demo mode |
+| Decision Intelligence + Close Intelligence in navigation | Done | But sidebar will be hidden in demo |
+| UberFlux page | Done | CSS vars reference theme tokens |
+| Form Factor page | Done | CSS vars reference theme tokens |
+| Standard Flux with AI commentary | Done | Expectedness, commentary composer, filter bar, alert icon |
+| Close Workbench | Done | Existing page |
+| Reconciliations | Done | Existing page |
+| Guided tour (spotlight) | Done | But needs design upgrade to match Shawn's dark bubble style |
+| Light/dark theme system | Done | But needs to become route-based, not toggle |
+| `data-tour-id` attributes on sidebar/header | Done | Need to add to workbench page elements too |
+
+### NEEDS BUILDING
+
+| Feature | Priority | Effort |
+|---------|----------|--------|
+| **Hide sidebar in demo mode** | P0 | Medium — app-shell conditional rendering |
+| **Demo context bar** | P0 | Medium — new component |
+| **Add "Analysis Type" onboarding step** | P0 | Small — one more step in wizard |
+| **Route-based dark/light (not toggle)** | P0 | Small — auto-set theme from pathname |
+| **Context switcher popup** | P1 | Medium — new component |
+| **Tour design upgrade** (dark bubble, gold accent) | P1 | Medium — restyle overlay |
+| **Industry data switching** | P1 | Large — 3 full datasets + injection |
+| **Fake user profiles** | P2 | Small — config |
+| **Workbench `data-tour-id` targets** | P2 | Small — add attributes |
+| **Problem-based onboarding** | P3 | Medium — new step logic |
+| **Gamification / crisis intro** | P3 | Large — new feature |
+
+---
+
+## Priority Order for Implementation
+
+### Sprint 1 (Immediate — CFO flow)
+
+1. Hide sidebar in demo mode
+2. Demo context bar (dark, fixed top)
+3. Route-based dark/light theming
+4. Add "Analysis Type" to onboarding
+5. Route to workbench (not dashboard) after onboarding
+6. Fake user profile for CFO
+
+### Sprint 2 (Tour + Switching)
+
+7. Upgrade tour to dark bubble / gold accent style
+8. Add `data-tour-id` to workbench elements
+9. Persona-aware tour content
+10. Context switcher popup
+11. Industry data for Technology (complete)
+
+### Sprint 3 (Multi-Industry + Polish)
+
+12. Healthcare industry data
+13. Retail industry data
+14. Real-time industry switching
+15. Responsive testing (laptop + tablet)
+16. Dead-end click audit
+17. Demo recording
+
+---
+
+## Key Design Tokens (from Shawn's HTML)
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--ink` | `#1A1F2E` | Dark text, callout bubble bg, demo bar bg |
+| `--parchment` | `#F4F3EF` | Onboarding bg, callout text |
+| `--gold` | `#C8A96E` | Accent — onboarding, callout labels, highlight ring, "Next" button |
+| `--serif` | Cormorant Garamond | Onboarding headings, callout titles |
+| `--sans` | DM Sans | Body text |
+| `--mono` | DM Mono | Labels, chips, step indicators |
+
+---
+
+## File Reference
+
+| File | Role |
+|------|------|
+| `GARTNER-DEMO-PLAN.md` | This document — master plan + progress tracker |
+| `meeruai_demo_experience Gartner_v2_5.html` | Shawn's reference HTML — onboarding + tour + 3 workbenches |
+| `public/standard-flux.html` | Static HTML version of Standard Flux (reference) |
+| `lib/persona-context.tsx` | Persona/industry/demoMode state |
+| `lib/demo-routing.ts` | Route-to-rail mapping, persona visibility |
+| `lib/theme-context.tsx` | Light/dark theme provider |
+| `components/layout/app-shell.tsx` | Main layout — sidebar hiding, route-based theme |
+| `components/guided-tour/` | Tour overlay, steps, hooks |
+| `components/demo/` | Demo bar, context switcher (TO BE CREATED) |
+| `app/(onboarding)/onboarding/page.tsx` | 3-step onboarding wizard |
+| `app/login/page.tsx` | SSO login + demo accounts |
 
 ---
 
 ## Progress Log
 
-### 2026-04-15
+### 2026-04-15 — Session 1
 
-**Task 1: Simplify demo login (DONE)**
-- Rewrote `app/login/page.tsx` — removed email/password, now shows 3 large persona cards (CFO/CAO/Controller) with keywords, gradients, and hover states
-- Updated `app/(onboarding)/onboarding/page.tsx` — auto-detects persona from login, skips step 1, "Back" routes to `/login`
-- Lint: clean
+**Completed:**
+- Login page (SSO + demo accounts)
+- Onboarding (Role + Industry, 2 steps)
+- Expectedness classification in Standard Flux
+- Commentary composer with AI draft + approval workflow
+- KPI-card-driven filter bar
+- Dashboard quick-nav cards per persona
+- Dark mode CSS vars for Form Factor + UberFlux
+- Unified light/dark theme system
+- Decision Intelligence + Close Intelligence as sidebar rails
+- Guided tour (spotlight style, 7 steps per persona)
+- Alert icon (replaces inline banners)
+- Sidebar `forwardRef` fix
+- Root page always redirects to login
+- Persona-based rail filtering with localStorage fallback
 
-**Task 2: Add expectedness classification (DONE)**
-- Added `Expectedness` and `CommentaryStatus` types to `lib/data/types/flux-analysis.ts`
-- Added `EXPECTEDNESS_OPTIONS`, `ACCOUNT_EXPECTEDNESS` mapping (33 accounts), `COMMENTARY_TEMPLATES` (6 accounts with full structured commentary) to `constants.ts`
-- Updated `makeIsRow()` to auto-populate expectedness/commentary from account maps
-- Added BS rows with expectedness/commentary fields
-- Added `expectednessClass()`, `expectednessIcon()`, `commentaryStatusClass()` helpers
-- Updated worklist table: new "Classification" and "Support" column groups, Expectedness badge + Commentary status badge columns in desktop view
-- Lint: clean
+**Pending (from this plan):**
+- Sprint 1: Demo shell (no sidebar), demo bar, route-based theme, analysis type step
+- Sprint 2: Tour redesign, context switcher, workbench tour targets
+- Sprint 3: Multi-industry data, polish, recording
 
-**Task 3: Add commentary composer to detail drawer (DONE)**
-- Added commentary state management to `use-standard-flux.ts`: `commentaryOverrides`, `commentaryIsGenerating`, `commentaryThinkingSteps`
-- Added 4 handlers: `handleGenerateCommentary` (AI draft with thinking animation), `handleUpdateCommentary`, `handleSubmitCommentary`, `handleApproveCommentary`
-- Applied commentary overrides in `applyOverrides()` function alongside row overrides
-- Rewrote `detail-drawer.tsx` with 6 sections (was 5): Variance Summary → Commentary Composer (NEW) → AI Explanation → Owner & Status → Evidence → Activity
-- Commentary section has: empty state with "Generate AI Draft" button, thinking animation (4 steps), editable textarea, Draft/Submitted/Approved workflow, Regenerate button, Approve button with reviewer name
-- Wired all props through `page.tsx` → `StandardFluxDrawer`
-- Lint: clean
+### 2026-04-15 — Session 2
 
-**Task 4: KPI-card-driven filter bar UX (DONE)**
-- Added `activeKpiCard` and `filterBarExpanded` state to `use-standard-flux.ts`
-- Added `handleKpiCardClick` handler — toggles card selection and filter bar visibility
-- Created new `components/standard-flux/filter-bar.tsx`: collapsible inline filter bar with content driven by selected KPI card
-  - Variance card → Comparison mode pills, Materiality select, Exclude noise checkbox
-  - Drivers card → Driver category filter buttons
-  - Progress card → Status select, Owner select
-  - Attention card → Quick filter pills (Missing Evidence, High Impact, Unresolved)
-- Updated `workbench-header.tsx` — all 4 KPI cards now clickable with `cursor-pointer`, active ring highlight (`ring-2 ring-primary/10`), hover shadow
-- Exported `FilterBar` from barrel `index.ts`
-- Wired `FilterBar` into `page.tsx` between WorkbenchHeader and StandardFluxToolbar
-- Lint: clean
+**Sprint 1 — Demo Shell: COMPLETE**
+- Onboarding rewritten: 4-step wizard (Role → Analysis Type → Industry → Launch Screen)
+- Saves `demoMode: true`, `analysisType`, routes to correct workbench
+- Demo Context Bar (`components/demo/demo-context-bar.tsx`): dark 36px bar with persona/industry/workbench chips, Switch Context, Tour, Reset actions
+- Context Switcher (`components/demo/context-switcher.tsx`): dark popup with role/analysis/industry selectors, Apply & Restart Tour
+- AppShell demo mode: hides sidebar/header, renders demo bar + full-screen workbench offset 36px
+- Route-based theming: `/workbench/custom-workbench/*` → dark, `/workbench/record-to-report/*` → light, auto-set from pathname
 
-**Task 5: Dashboard quick-nav cards per persona (DONE)**
-- Updated `cfo-home.tsx`: Added "Launch Workbench" section with 2 prominent cards (UberFlux + Form Factor) with gradient icons and arrows. Moved Standard Flux to Quick Navigation.
-- Updated `cao-home.tsx`: Added "Launch Workbench" section (Standard Flux + Close Workbench). Added `cn` import. Updated Quick Nav to include Reconciliations.
-- Updated `controller-home.tsx`: Added "Launch Workbench" section (Standard Flux + Reconciliations). Updated Quick Nav to include Close, Flux Analysis, Trial Balance.
-- All dashboards now have consistent "Launch Workbench" → "Quick Navigation" hierarchy
-- Lint: clean (only pre-existing warnings)
+**Sprint 2 — Tour + Context Switching: COMPLETE**
+- Tour overlay redesigned: dark ink bubble (#1A1F2E), gold (#C8A96E) accent, segmented progress bar
+- Workbench-specific tour steps: UberFlux (7), Form Factor (6), Standard Flux (6) — persona-aware descriptions
+- `data-tour-id` attributes added to all three workbenches (topbar, KPIs, content, chart, AI, sidebar, toolbar, worklist)
+- Tour auto-starts on workbench entry in demo mode (`DemoTourWrapper`)
+- "Restart Tour" wired via custom event from demo bar
 
-**Task 6: Dark mode for Decision Intelligence workbenches (DONE)**
-- Created `app/(main)/workbench/custom-workbench/layout.tsx` — dark theme wrapper (`bg-slate-950 text-slate-100`)
-- **Form Factor** (`form-factor/page.tsx`): Swapped all 33 CSS custom property values to dark equivalents:
-  - `--bg: #020617` (slate-950), `--bg-white: #0f172a` (slate-900), `--bg-subtle: #1e293b` (slate-800)
-  - `--border: #1e293b`, `--text-primary: #f1f5f9`, `--text-secondary: #94a3b8`, `--text-muted: #64748b`
-  - `--green: #4ade80` (green-400), `--red: #f87171` (red-400) — passes WCAG AA on dark backgrounds
-  - Shadows increased to `rgba(0,0,0,0.30)` for dark mode depth
-- **UberFlux** (`uberflux/page.tsx`): Swapped 13 CSS variables + fixed 12 hardcoded `#ffffff`/light-color references to use CSS variables instead:
-  - `.uf-topbar`, `.uf-tabs`, `.uf-sidebar`, `.uf-ai-panel`, `.uf-bottombar`, `.uf-bar-tooltip` all converted to `var(--navy)` or `var(--surfaceLt)`
-  - `.uf-msg.user .uf-msg-avatar` converted to variable refs
-  - Chart data colors: `#16a34a` → `#4ade80`, `#dc2626` → `#f87171`, `#94a3b8` → `#64748b`
-  - All shadows updated for dark mode depth
-- Lint: clean on all files
+**Sprint 3 — Industry Data: COMPLETE**
+- `lib/industry-data.ts`: 3 complete datasets (Technology, Healthcare, Retail) — KPIs, regions, segments, drivers, IS/BS line items, narratives, AI suggestions
+- `hooks/use-industry.ts`: hook reading industry from localStorage, listens for config change events
+- UberFlux: industry-aware title, metric toggle, signal banner, KPI cards, commentary header
+- Form Factor: industry-aware sidebar label, executive narrative text
+- Standard Flux: industry-aware title and subtitle
 
----
+**Phase 7 — Polish: COMPLETE**
+- Fixed "Manufacturing" → "Retail" display in INDUSTRIES array + onboarding icon (Factory → ShoppingBag)
+- Onboarding → workbench transition: fade-out animation (500ms opacity transition + 600ms delay before navigate)
+- Dead-end click audit: all 3 workbenches self-contained (no router.push). Alert banner links go to valid pages that render in demo shell. Tour steps don't navigate away.
+- Responsive demo bar: logo text hidden on small screens, persona full name hidden below lg, analysis type hidden below md, button labels collapse to icons on tablet. Min-width overflow protection.
 
-## Phase 1-3 COMPLETE ✓
-
-**All 6 tasks implemented:**
-
-| # | Task | Status |
-|---|------|--------|
-| 1 | Simplify demo login | Done |
-| 2 | Expectedness classification | Done |
-| 3 | Commentary composer | Done |
-| 4 | KPI-card filter bar | Done |
-| 5 | Dashboard quick-nav | Done |
-| 6 | Dark mode for Decision Intelligence | Done |
-
-**Files modified (21 files):**
-- `app/login/page.tsx` (rewritten)
-- `app/(onboarding)/onboarding/page.tsx` (enhanced)
-- `lib/data/types/flux-analysis.ts` (new types)
-- `app/(main)/reports/analysis/flux-analysis/constants.ts` (expectedness + commentary data)
-- `app/(main)/reports/analysis/flux-analysis/helpers.ts` (new helpers)
-- `components/standard-flux/worklist-table.tsx` (new columns)
-- `components/standard-flux/detail-drawer.tsx` (rewritten with commentary)
-- `components/standard-flux/workbench-header.tsx` (clickable KPI cards)
-- `components/standard-flux/filter-bar.tsx` (new file)
-- `components/standard-flux/index.ts` (barrel export updated)
-- `app/(main)/workbench/record-to-report/standard-flux/page.tsx` (wired new features)
-- `app/(main)/workbench/record-to-report/standard-flux/hooks/use-standard-flux.ts` (commentary + filter state)
-- `app/(main)/home/dashboard/dashboards/cfo-home.tsx` (launch workbench cards)
-- `app/(main)/home/dashboard/dashboards/cao-home.tsx` (launch workbench cards)
-- `app/(main)/home/dashboard/dashboards/controller-home.tsx` (launch workbench cards)
-- `app/(main)/workbench/custom-workbench/layout.tsx` (new file — dark theme)
-- `app/(main)/workbench/custom-workbench/form-factor/page.tsx` (dark theme)
-- `app/(main)/workbench/custom-workbench/uberflux/page.tsx` (dark theme)
-
-**Task 7: Consolidate to one light + one dark theme (DONE)**
-- Replaced 3 themes (default/uberflux/formfactor) with 2 (light/dark) in `globals.css`
-- Added `[data-theme="dark"]` block with full slate-900/950 dark palette, blue accent, WCAG-passing green-400/red-400
-- Rewrote `lib/theme-context.tsx`: `AppTheme = "light" | "dark"`, added `toggleTheme()`, `isDark` boolean, migration for old theme values
-- Simplified `components/layout/theme-switcher.tsx` to Sun/Moon toggle button
-- Updated `components/layout/header.tsx`: `isDark` instead of `theme === "default"`
-- Simplified `custom-workbench/layout.tsx` to passthrough (no forced dark)
-- **Form Factor**: All 33 CSS vars now reference `var(--theme-*)` tokens with fallbacks
-- **UberFlux**: All 13 CSS vars now reference `var(--theme-*)` tokens; reverted 12+ hardcoded colors to `var(--green)`, `var(--red)`, `var(--muted)` refs; reverted shadows to normal values
-- Both pages now automatically respond to platform light/dark toggle
-
-**Task 8: Decision Intelligence & Close Intelligence in navigation (DONE)**
-- Restructured `lib/navigation.ts` workbench rail: "Decision Intelligence" (FluxPlus, Form Factor, Variance Drivers) and "Close Intelligence" (Standard Flux, Close, Reconciliations) are now the first two groups, followed by Operations (O2C, P2P, etc.)
-- Navigation panel renders these as labeled group headers (uppercase, with icons)
-- **CFO dashboard**: "Decision Intelligence" section (Sparkles icon, blue label) with FluxPlus + Form Factor cards, "Close Intelligence" section (Activity icon, emerald label) with Standard Flux + Close + Recon
-- **CAO dashboard**: "Close Intelligence" primary with Standard Flux + Close cards, "Decision Intelligence" secondary with FluxPlus + analysis links
-- **Controller dashboard**: "Close Intelligence" primary with Standard Flux + Recon cards, Quick Navigation for other tools
-- All dashboards use consistent section headers with colored icons + uppercase labels
-
----
-
-## ALL TASKS COMPLETE
-
-| # | Task | Status |
-|---|------|--------|
-| 1 | Simplify demo login | Done |
-| 2 | Expectedness classification | Done |
-| 3 | Commentary composer | Done |
-| 4 | KPI-card filter bar | Done |
-| 5 | Dashboard quick-nav | Done |
-| 6 | Dark mode for Decision Intelligence | Done (superseded by Task 7) |
-| 7 | Unified light/dark theme | Done |
-| 8 | Decision Intelligence / Close Intelligence categories | Done |
-
-**Task 9: Decision Intelligence & Close Intelligence as sidebar rails (DONE)**
-- Added `"decision-intelligence"` and `"close-intelligence"` as new `RailItem` types
-- Added full navigation sections for both in `NAVIGATION_STRUCTURE`:
-  - **Decision Intelligence**: Workbenches (FluxPlus, Form Factor, Variance Drivers) + Analysis (Flux Analysis, One-Click Variance)
-  - **Close Intelligence**: Workbenches (Standard Flux, Close, Reconciliations) + Reports (Balance Sheet, Income Statement, Trial Balance, Account Activity)
-- Added to `RAIL_CONFIG`: Decision (Sparkles icon), Close (FileCheck icon)
-- Added to `ALL_RAILS` in correct order after Home
-- Updated `demo-routing.ts`: All personas see both new rails. Controller sees Close first, then Decision.
-- Updated `navigation-panel.tsx`: Panel header now maps rail IDs to proper display labels ("Decision Intelligence", "Close Intelligence")
-- Updated `app-shell.tsx`: Replaced hardcoded rail ID list with `ALL_RAILS.includes()` for localStorage restore
-- Updated dead `app-layout.tsx` to match new RailItem type
-- Lint: clean
-
-**Task 9: Guided walkthrough after login (DONE)**
-- Created `hooks/use-guided-tour.ts` — tracks first-visit state per persona in localStorage (`meeru-tour-completed`), auto-triggers 800ms after dashboard loads, provides `completeTour`/`skipTour`/`resetTour` handlers
-- Created `components/guided-tour/tour-steps.ts` — persona-specific step definitions:
-  - **CFO** (7 steps): Welcome → Navigation → Decision Intelligence (FluxPlus, Form Factor, Variance Drivers) → Close Intelligence (Standard Flux, Close, Reports) → AI Command Center → Theme Toggle → Ready
-  - **CAO** (7 steps): Welcome → Navigation → Close Intelligence (Standard Flux, Close, Recon) → Decision Intelligence (FluxPlus, Flux Analysis) → AI → Theme → Ready
-  - **Controller** (7 steps): Welcome → Navigation → Close Intelligence (Standard Flux, Close, Recon) → AI Commentary deep-dive (4 components) → AI → Theme → Ready
-  - Each step has title, description, bullets, icon, and optional "Try it" route link
-- Created `components/guided-tour/guided-tour-overlay.tsx` — full-screen overlay with:
-  - Backdrop blur + dark overlay
-  - Card with gradient icon header, step counter, description, bullet points
-  - Progress bar (gradient blue) at top
-  - "Try it" CTA buttons that close tour and navigate to the workbench
-  - Step dot navigation (clickable), Back/Next buttons, Skip (X) button
-  - Enter/exit animations (scale + opacity)
-- Integrated into `PersonaDashboardContainer.tsx` — tour triggers automatically on first visit per persona
-- Barrel export at `components/guided-tour/index.ts`
-- Lint: clean on all 5 new/modified files
-
-**Remaining polish (not blocking demo):**
-- Flux Forecast page (third Decision Intelligence workbench)
-- Shared workbench shell component
-- Cross-workbench design consistency pass
-- User journey walkthrough testing
-- Demo recording with captions
-- Process documentation (BRANCHING-PROCESS.md)
-
+**Pending:**
+- Phase 8: Nice-to-have (problem-based onboarding, gamification, forecast workbench)

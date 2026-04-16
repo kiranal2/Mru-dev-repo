@@ -39,13 +39,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY) as AppTheme | null
-      if (saved && (saved === "light" || saved === "dark")) {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved === "light" || saved === "dark") {
         setThemeState(saved)
         document.documentElement.setAttribute("data-theme", saved)
-      }
-      // Migrate old theme values
-      if (saved === "default") {
+      } else if (saved === "default") {
+        // Migrate old theme values
         setThemeState("light")
         document.documentElement.setAttribute("data-theme", "light")
         localStorage.setItem(STORAGE_KEY, "light")

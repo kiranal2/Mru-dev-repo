@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useIndustry } from "@/hooks/use-industry";
 import { useStandardFlux } from "./hooks/use-standard-flux";
 import {
   WorkbenchHeader,
@@ -69,7 +71,9 @@ const BANNERS = [
 ];
 
 export default function StandardFluxPage() {
+  const router = useRouter();
   const state = useStandardFlux();
+  const { config: industryConfig, isDemoMode } = useIndustry();
   const [aiSheetOpen, setAiSheetOpen] = useState(false);
   const [driversSheetOpen, setDriversSheetOpen] = useState(false);
   const [alertsExpanded, setAlertsExpanded] = useState(false);
@@ -336,47 +340,41 @@ export default function StandardFluxPage() {
           </SheetContent>
         </Sheet>
 
-        {/* ── Alerts Side Sheet ── */}
-        <Sheet open={alertsExpanded} onOpenChange={setAlertsExpanded}>
-          <SheetContent side="right" className="w-[340px] sm:w-[400px] p-0 overflow-hidden">
-            <div className="flex h-full flex-col">
-              <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <ShieldAlert className="h-4 w-4 text-amber-600" />
-                  <SheetTitle className="text-sm font-semibold">Alerts &amp; Actions</SheetTitle>
-                  <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-700">{BANNERS.length}</span>
-                </div>
-              </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {BANNERS.map((b) => (
-                  <CrossModuleBanner key={b.scenarioTitle} {...b} />
-                ))}
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
       </div>
 
       {/* ╔══════════════════════════════════════════════════════════╗
           ║  DESKTOP LAYOUT (xl+, 1280px)                          ║
           ╚══════════════════════════════════════════════════════════╝ */}
       <div className="hidden xl:flex flex-col h-full min-h-0">
-        {/* Title */}
-        <div className="px-5 pt-3 pb-1 bg-slate-50">
-          <h1 className="text-sm font-semibold text-slate-900">Standard Flux</h1>
-          <p className="text-[11px] text-slate-500">
-            Variance workbench &mdash; AI-driven analysis, driver attribution &amp; close workflow
-          </p>
-        </div>
-
-        {/* Banners */}
-        <div className="space-y-2">
-          {BANNERS.map((b) => (
-            <CrossModuleBanner key={b.scenarioTitle} {...b} />
-          ))}
+        {/* Title with alert icon */}
+        <div className="flex items-center justify-between px-5 pt-3 pb-1 bg-slate-50">
+          <div>
+            <h1 className="text-sm font-semibold text-slate-900">
+              {isDemoMode ? `${industryConfig.label} — Flux Intelligence` : "Standard Flux"}
+            </h1>
+            <p className="text-[11px] text-slate-500">
+              {isDemoMode
+                ? `${industryConfig.revenueTerm} variance analysis \u2014 AI commentary, driver attribution & close workflow`
+                : "Variance workbench \u2014 AI-driven analysis, driver attribution & close workflow"}
+            </p>
+          </div>
+          {BANNERS.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setAlertsExpanded(true)}
+              className="relative rounded-lg p-2 text-slate-500 hover:bg-slate-100 transition-colors"
+              title={`${BANNERS.length} alerts`}
+            >
+              <ShieldAlert className="h-4.5 w-4.5" />
+              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-white">
+                {BANNERS.length}
+              </span>
+            </button>
+          )}
         </div>
 
         {/* Header KPIs */}
+        <div data-tour-id="sf-kpis">
         <WorkbenchHeader
           totalVariance={state.totalVariance}
           topDrivers={state.headerTopDrivers}
@@ -385,6 +383,7 @@ export default function StandardFluxPage() {
           activeKpiCard={state.activeKpiCard}
           onKpiCardClick={state.handleKpiCardClick}
         />
+        </div>
 
         {/* KPI-card-driven filter bar */}
         <FilterBar
@@ -408,6 +407,7 @@ export default function StandardFluxPage() {
         />
 
         {/* Toolbar */}
+        <div data-tour-id="sf-toolbar">
         <StandardFluxToolbar
           activeView={state.activeView}
           onViewChange={state.setActiveView}
@@ -431,13 +431,14 @@ export default function StandardFluxPage() {
           onExport={() => window.print()}
           onOpenWatch={state.handleOpenWatchDialog}
         />
+        </div>
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto" style={{ minHeight: 0 }}>
           <div className="space-y-3 px-5 py-3">
             <div className="grid grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_440px] gap-3">
               {/* LEFT */}
-              <div className="min-w-0 space-y-3">
+              <div className="min-w-0 space-y-3" data-tour-id="sf-worklist">
                 <div className="bg-white rounded-lg border border-slate-200">
                   {(state.activeView === "is" || state.activeView === "bs") && (
                     <>
@@ -475,7 +476,7 @@ export default function StandardFluxPage() {
               </div>
 
               {/* RIGHT: AI */}
-              <aside className="min-w-0 space-y-3">
+              <aside className="min-w-0 space-y-3" data-tour-id="sf-ai-panel">
                 <StandardFluxAiPanel
                   scopedRow={state.detailRow}
                   aiPrompt={state.aiPrompt}
@@ -511,6 +512,26 @@ export default function StandardFluxPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Alerts Side Sheet (shared) ── */}
+      <Sheet open={alertsExpanded} onOpenChange={setAlertsExpanded}>
+        <SheetContent side="right" className="w-[340px] sm:w-[400px] p-0 overflow-hidden">
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="h-4 w-4 text-amber-600" />
+                <SheetTitle className="text-sm font-semibold">Alerts &amp; Actions</SheetTitle>
+                <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-700">{BANNERS.length}</span>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {BANNERS.map((b) => (
+                <CrossModuleBanner key={b.scenarioTitle} {...b} />
+              ))}
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* ── Shared dialogs/drawers ── */}
       <FluxEvidenceDialog

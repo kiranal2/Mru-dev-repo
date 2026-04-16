@@ -17,6 +17,8 @@ import { Home, RefreshCw, BarChart3, LayoutGrid, Shield } from "lucide-react";
 // UI Components
 import LivePinModal from "@/components/ui/live-pin-modal";
 import { CreateWatchModal } from "@/components/ui/create-watch-modal";
+import { WorkbenchSwitcher } from "@/components/demo/workbench-switcher";
+import { DemoTourWrapper } from "@/components/demo/demo-tour-wrapper";
 
 // Navigation
 import { NAVIGATION_STRUCTURE, ALL_RAILS, RAIL_CONFIG, RailItem } from "@/lib/navigation";
@@ -36,14 +38,14 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   const [loadingState, setLoadingState] = useState<LoadingState>("loading");
   const [selectedRailItem, setSelectedRailItem] = useState<RailItem | null>("home");
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState(true);
   const [isMenuHovered, setIsMenuHovered] = useState(false);
   const [hoveredRailItem, setHoveredRailItem] = useState<RailItem | null>(null);
   const [isPanelHovered, setIsPanelHovered] = useState(false);
   const [isLivePinModalOpen, setIsLivePinModalOpen] = useState(false);
   const [isCreateWatchModalOpen, setIsCreateWatchModalOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [isSidebarHidden, setIsSidebarHidden] = useState(false);
+  const [isSidebarHidden, setIsSidebarHidden] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [tabletPanelOpen, setTabletPanelOpen] = useState(false);
@@ -52,7 +54,21 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
   const hoverClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Persona-based navigation filtering
-  const { persona } = usePersona();
+  const { persona: contextPersona } = usePersona();
+
+  // Also read persona directly from localStorage as fallback
+  const [localPersona, setLocalPersona] = useState<string | null>(null);
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("meeru-demo-config");
+      if (stored) {
+        const config = JSON.parse(stored);
+        if (config.persona) setLocalPersona(config.persona);
+      }
+    } catch { /* ignore */ }
+  }, [pathname]);
+
+  const persona = contextPersona || (localPersona as any) || null;
 
   const visibleRails = useMemo(() => {
     return ALL_RAILS.filter((rail) => isRailRelevant(persona, rail));
@@ -110,20 +126,31 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  /** Map a route path to the appropriate sidebar rail */
+  const routeToRail = (route: string): RailItem | null => {
+    if (route.startsWith("/home/")) return "home";
+    if (route.startsWith("/automation/")) return "automation";
+    if (route.startsWith("/admin/")) return "admin";
+    // Decision Intelligence routes
+    if (route.startsWith("/workbench/custom-workbench/")) return "decision-intelligence";
+    if (route.startsWith("/workbench/fpa/")) return "decision-intelligence";
+    // Close Intelligence routes
+    if (route.startsWith("/workbench/record-to-report/")) return "close-intelligence";
+    // Analysis reports → Decision Intelligence
+    if (route.startsWith("/reports/analysis/")) return "decision-intelligence";
+    // Financial reports → Close Intelligence
+    if (route.startsWith("/reports/sec/") || route.startsWith("/reports/financials/")) return "close-intelligence";
+    // Fallback for remaining workbench routes (O2C, P2P, etc.)
+    if (route.startsWith("/workbench/")) return "workbench";
+    if (route.startsWith("/reports/")) return "reports";
+    return null;
+  };
+
   // Sync selected rail item with current route
   useEffect(() => {
     if (pathname) {
-      if (pathname.startsWith("/home/")) {
-        setSelectedRailItem("home");
-      } else if (pathname.startsWith("/automation/")) {
-        setSelectedRailItem("automation");
-      } else if (pathname.startsWith("/reports/")) {
-        setSelectedRailItem("reports");
-      } else if (pathname.startsWith("/workbench/")) {
-        setSelectedRailItem("workbench");
-      } else if (pathname.startsWith("/admin/")) {
-        setSelectedRailItem("admin");
-      }
+      const rail = routeToRail(pathname);
+      if (rail) setSelectedRailItem(rail);
     }
   }, [pathname]);
 
@@ -153,57 +180,46 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     }
 
     setSelectedRailItem(item);
-    // Set hoveredRailItem to show panel immediately when clicking
+    // Set hoveredRailItem to show the nav panel immediately
     setHoveredRailItem(item);
-    const defaultRoutes: Record<RailItem, string> = {
+
+    // Rails that have a nav panel — just open the panel, don't navigate
+    const panelRails: RailItem[] = ["decision-intelligence", "close-intelligence", "automation", "reports", "workbench", "admin"];
+    if (panelRails.includes(item)) {
+      // Panel opens via hoveredRailItem — no default route needed
+      return;
+    }
+
+    // Rails with a direct default route
+    const defaultRoutes: Partial<Record<RailItem, string>> = {
       home: "/home/dashboard",
-      automation: "/automation/data-templates",
-      reports: "/reports/sec/balance-sheet",
-      workbench: "/workbench/order-to-cash/cash-application",
-      admin: "/admin/users",
     };
     const route = defaultRoutes[item];
-    startTransition(() => {
-      router.push(route);
-    });
+    if (route) {
+      startTransition(() => {
+        router.push(route);
+      });
+    }
   };
 
   const getRailItemSelectedState = (railItem: RailItem) => {
     if (hoveredRailItem === railItem) return true;
     if (selectedRailItem === railItem) return true;
-    return activeRoute.startsWith(`/${railItem}`);
+    // Check if active route maps to this rail
+    return routeToRail(activeRoute) === railItem;
   };
 
   const handleNavigationItemClick = (route: string) => {
     // Determine which rail item this route belongs to and set it as selected
-    let railItem: RailItem | null = null;
-    if (route.startsWith("/home/")) {
-      railItem = "home";
-      setSelectedRailItem("home");
-    } else if (route.startsWith("/automation/")) {
-      railItem = "automation";
-      setSelectedRailItem("automation");
-    } else if (route.startsWith("/reports/")) {
-      railItem = "reports";
-      setSelectedRailItem("reports");
-    } else if (route.startsWith("/workbench/")) {
-      railItem = "workbench";
-      setSelectedRailItem("workbench");
-    } else if (route.startsWith("/admin/")) {
-      railItem = "admin";
-      setSelectedRailItem("admin");
-    }
-
-    // Keep the hoveredRailItem set to the clicked rail item to maintain panel visibility
-    // This prevents the panel from switching back to the previous rail item
+    const railItem = routeToRail(route);
     if (railItem) {
-      setHoveredRailItem(railItem);
+      setSelectedRailItem(railItem);
     }
 
-    // Close tablet panel after navigation
+    // Close panel after navigation
+    setHoveredRailItem(null);
     if (isTablet) {
       setTabletPanelOpen(false);
-      setHoveredRailItem(null);
     }
 
     startTransition(() => {
@@ -317,6 +333,7 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
     };
   }, []);
 
+  // ─── Full app shell with sidebar + header ───
   return (
     <TooltipProvider>
       <div className="min-h-screen font-[Inter,system-ui,sans-serif]" style={{ background: 'var(--theme-bg)' }}>
@@ -345,13 +362,19 @@ export default function AppShell({ children, activeRoute }: AppShellProps) {
             />
           )}
 
-          <MainContent
-            loadingState={hasInitiallyLoaded ? "loaded" : loadingState}
-            activeRoute={activeRoute}
-          >
-            {children}
-          </MainContent>
+          <div className="flex flex-col flex-1 min-w-0">
+            <WorkbenchSwitcher />
+            <MainContent
+              loadingState={hasInitiallyLoaded ? "loaded" : loadingState}
+              activeRoute={activeRoute}
+            >
+              {children}
+            </MainContent>
+          </div>
         </div>
+
+        {/* Guided tour — auto-starts on first workbench visit */}
+        <DemoTourWrapper />
 
         {/* Navigation Panel Overlay (desktop hover + tablet click) */}
         {!isSidebarHidden && !isMobile && (

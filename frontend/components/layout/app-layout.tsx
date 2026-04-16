@@ -44,6 +44,8 @@ interface NavigationItem {
 }
 
 const NAVIGATION_STRUCTURE: Record<RailItem, NavigationItem[]> = {
+  "decision-intelligence": [],
+  "close-intelligence": [],
   home: [
     {
       id: "command-center",

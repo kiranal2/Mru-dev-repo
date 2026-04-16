@@ -3,9 +3,9 @@ import type { RailItem, NavigationItem } from "@/lib/navigation";
 
 /** Rails each persona should see (others are hidden) */
 const PERSONA_RAILS: Record<Persona, RailItem[]> = {
-  cfo: ["home", "decision-intelligence", "close-intelligence", "reports", "workbench"],
-  "cao": ["home", "decision-intelligence", "close-intelligence", "reports", "workbench"],
-  "cao-controller": ["home", "close-intelligence", "decision-intelligence", "reports", "workbench", "automation"],
+  cfo: ["home", "decision-intelligence", "close-intelligence", "admin"],
+  "cao": ["home", "decision-intelligence", "close-intelligence", "admin"],
+  "cao-controller": ["home", "close-intelligence", "decision-intelligence", "automation", "admin"],
 };
 
 /** Primary rail for each persona (auto-selected on login) */
@@ -24,23 +24,20 @@ const PERSONA_NAV_ITEMS: Record<Persona, Partial<Record<RailItem, string[] | nul
     home: null,
     "decision-intelligence": null,
     "close-intelligence": null,
-    reports: null,
-    workbench: null,
+    admin: null,
   },
   "cao": {
     home: null,
     "decision-intelligence": null,
     "close-intelligence": null,
-    reports: null,
-    workbench: null,
+    admin: null,
   },
   "cao-controller": {
     home: null,
     "close-intelligence": null,
     "decision-intelligence": null,
     automation: null,
-    reports: null,
-    workbench: null,
+    admin: null,
   },
 };
 
@@ -56,7 +53,20 @@ export function getPersonaPrimaryRail(persona: Persona): RailItem {
 
 /** Check if a rail is relevant for the given persona */
 export function isRailRelevant(persona: Persona | null, rail: RailItem): boolean {
-  if (!persona) return true;
+  if (!persona) {
+    // If no persona yet, try reading from localStorage directly
+    try {
+      const stored = localStorage.getItem("meeru-demo-config");
+      if (stored) {
+        const config = JSON.parse(stored);
+        if (config.persona && PERSONA_RAILS[config.persona as Persona]) {
+          return PERSONA_RAILS[config.persona as Persona].includes(rail);
+        }
+      }
+    } catch { /* ignore */ }
+    // Fallback: show minimal set
+    return ["home", "decision-intelligence", "close-intelligence", "admin"].includes(rail);
+  }
   return PERSONA_RAILS[persona].includes(rail);
 }
 
@@ -66,8 +76,18 @@ export function filterNavigationItems(
   rail: RailItem,
   items: NavigationItem[]
 ): NavigationItem[] {
-  if (!persona) return items;
-  const allowedIds = PERSONA_NAV_ITEMS[persona]?.[rail];
+  let effectivePersona = persona;
+  if (!effectivePersona) {
+    try {
+      const stored = localStorage.getItem("meeru-demo-config");
+      if (stored) {
+        const config = JSON.parse(stored);
+        if (config.persona) effectivePersona = config.persona as Persona;
+      }
+    } catch { /* ignore */ }
+  }
+  if (!effectivePersona) return items;
+  const allowedIds = PERSONA_NAV_ITEMS[effectivePersona]?.[rail];
   if (allowedIds === null || allowedIds === undefined) return items;
   return items.filter((item) => allowedIds.includes(item.id));
 }
