@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useAuth, type UserRole } from "@/lib/auth-context";
 
 export type ActionKind =
   | "slack"
@@ -70,12 +71,44 @@ const QUICK_ACTIONS: WorkbenchAction[] = [
   { kind: "share", label: "Share copy" },
 ];
 
+/**
+ * Priority order of action kinds per role.
+ * CFO/APPROVER/CONTROLLER → email (approve) + pin + share first.
+ * PREPARER → IM/slack (investigate) + reminder first.
+ * REVIEWER → email + IM first.
+ * Kinds not in the list appear after, in their original order.
+ */
+const ROLE_ORDER: Record<UserRole, ActionKind[]> = {
+  CFO:        ["email", "pin", "share", "slack", "im", "reminder"],
+  APPROVER:   ["email", "pin", "share", "slack", "im", "reminder"],
+  CONTROLLER: ["email", "pin", "slack", "share", "im", "reminder"],
+  REVIEWER:   ["email", "im",  "slack", "reminder", "pin", "share"],
+  PREPARER:   ["im",   "slack","reminder", "email", "pin", "share"],
+  ADMIN:      ["slack", "email", "im", "pin", "reminder", "share"],
+};
+
+function orderByRole(actions: WorkbenchAction[], role: UserRole | undefined): WorkbenchAction[] {
+  if (!role) return actions;
+  const order = ROLE_ORDER[role];
+  const rank = new Map(order.map((k, i) => [k, i]));
+  // stable sort — preserves relative order for equal-rank items
+  return [...actions]
+    .map((a, i) => ({ a, i, r: rank.get(a.kind) ?? order.length }))
+    .sort((x, y) => x.r - y.r || x.i - y.i)
+    .map(({ a }) => a);
+}
+
 export function WorkbenchActionStrip({
   contextualActions = [],
   contextTitle,
   className,
 }: WorkbenchActionStripProps) {
   const [openAction, setOpenAction] = useState<WorkbenchAction | null>(null);
+  const { user } = useAuth();
+  const role = user?.role;
+
+  const orderedContextual = orderByRole(contextualActions, role);
+  const orderedQuick = orderByRole(QUICK_ACTIONS, role);
 
   const handleAction = (action: WorkbenchAction) => {
     setOpenAction(action);
@@ -95,8 +128,8 @@ export function WorkbenchActionStrip({
         </div>
         <div className="h-4 w-px bg-slate-200 shrink-0" />
 
-        {/* Contextual action cards (from chat) */}
-        {contextualActions.map((a, i) => {
+        {/* Contextual action cards (from chat, ordered by role) */}
+        {orderedContextual.map((a, i) => {
           const meta = KIND_META[a.kind];
           const Icon = meta.icon;
           return (
@@ -115,12 +148,12 @@ export function WorkbenchActionStrip({
           );
         })}
 
-        {contextualActions.length > 0 && (
+        {orderedContextual.length > 0 && (
           <div className="h-4 w-px bg-slate-200 shrink-0" />
         )}
 
-        {/* Quick actions */}
-        {QUICK_ACTIONS.map((a) => {
+        {/* Quick actions (ordered by role) */}
+        {orderedQuick.map((a) => {
           const meta = KIND_META[a.kind];
           const Icon = meta.icon;
           return (

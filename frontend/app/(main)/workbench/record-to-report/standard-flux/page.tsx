@@ -29,6 +29,7 @@ import {
   WorkbenchActionStrip,
   type WorkbenchAction,
 } from "@/components/shared/workbench-action-strip";
+import { deriveChatActions, resolveChatActions } from "@/lib/derive-chat-actions";
 import {
   Sheet,
   SheetContent,
@@ -94,8 +95,49 @@ export default function StandardFluxPage() {
     return () => window.removeEventListener("meeru-toggle-ai", handler);
   }, [toggleAiPanel]);
 
-  /* ─── Contextual actions driven by AI state ─── */
+  /* ─── Chat-derived actions ─── */
+  const [chatActions, setChatActions] = useState<WorkbenchAction[]>([]);
+
+  // Watch aiResponses — when a new AI response arrives, derive action cards from it.
+  useEffect(() => {
+    const last = state.aiResponses[state.aiResponses.length - 1];
+    if (!last) return;
+    const text = [last.summary, ...(last.bullets ?? [])].filter(Boolean).join(" ");
+    if (!text) return;
+
+    // Map matched prompt → explicit action cards (structured hints).
+    const ownerName = state.detailRow?.owner ?? "Owner";
+    const snippet = text.slice(0, 140);
+    const emailCfo: WorkbenchAction = { kind: "email", label: "Email CFO summary", recipient: "CFO", body: snippet, contextual: true };
+    const slackOwner: WorkbenchAction = { kind: "slack", label: `Slack ${ownerName}`, recipient: ownerName, body: snippet, contextual: true };
+    const chaseExc: WorkbenchAction = { kind: "reminder", label: "Chase exception owners", contextual: true };
+    const pin = (label = "Pin this insight"): WorkbenchAction => ({ kind: "pin", label, contextual: true });
+
+    const byPrompt: Record<string, WorkbenchAction[]> = {
+      "What are the top 5 movers this period?": [emailCfo, pin("Pin top movers"), { kind: "share", label: "Share copy", contextual: true }],
+      "Which accounts need attention first?": [chaseExc, slackOwner, emailCfo, pin()],
+      "Show expense variance breakdown": [emailCfo, slackOwner, pin("Pin expense breakdown")],
+      "Explain COGS increase drivers": [emailCfo, slackOwner, { kind: "im", label: "IM teammate for context", body: snippet, contextual: true }, pin()],
+      "Show accounts missing evidence": [chaseExc, slackOwner, pin()],
+      "Which accounts are still open?": [chaseExc, slackOwner, emailCfo],
+      "What are the highest risk items?": [emailCfo, chaseExc, slackOwner, pin("Pin risk items")],
+      "Explain why gross margin declined": [emailCfo, slackOwner, pin("Pin margin decline")],
+      "What if FX rates were flat?": [{ kind: "slack", label: "Slack treasury", recipient: "Treasury", body: snippet, contextual: true }, emailCfo, pin("Pin FX scenario")],
+      "Summarize period close readiness": [emailCfo, pin("Pin close readiness"), { kind: "share", label: "Share copy", contextual: true }],
+    };
+
+    const structured = last.matchedPrompt ? byPrompt[last.matchedPrompt] : undefined;
+    setChatActions(
+      resolveChatActions(
+        { text, actions: structured },
+        { pageTitle: "Flux Intelligence", owner: state.detailRow?.owner ?? undefined },
+      ),
+    );
+  }, [state.aiResponses, state.detailRow]);
+
+  /* ─── Contextual actions: chat-driven first, fallback to state-driven ─── */
   const contextualActions = useMemo<WorkbenchAction[]>(() => {
+    if (chatActions.length > 0) return chatActions;
     const actions: WorkbenchAction[] = [];
     if (state.detailRow) {
       actions.push({
@@ -120,11 +162,40 @@ export default function StandardFluxPage() {
       });
     }
     return actions;
-  }, [state.detailRow, state.exceptionCount]);
+  }, [chatActions, state.detailRow, state.exceptionCount]);
 
   const contextTitle = state.detailRow
     ? `${state.detailRow.name} — ${state.comparisonMode}`
     : `Flux Intelligence — ${state.comparisonMode}`;
+
+  const closedPct = state.reviewStats.total
+    ? Math.round((state.reviewStats.closed / state.reviewStats.total) * 100)
+    : 0;
+
+  // ── AI panel insights feed ──
+  const feedItems = useMemo(() => [
+    {
+      id: "sf-f1",
+      tone: "down" as const,
+      headline: "AR variance $250K unreconciled",
+      detail: "2 items — unapplied cash Acme $175K, posting error GlobalTech $75K",
+      timestamp: "just now",
+    },
+    {
+      id: "sf-f2",
+      tone: "warn" as const,
+      headline: "Intercompany mismatch $150K",
+      detail: "Meeru US → Europe mirror entry missing for shared services",
+      timestamp: "12m ago",
+    },
+    {
+      id: "sf-f3",
+      tone: "info" as const,
+      headline: `Flux review ${closedPct}% complete`,
+      detail: `${state.reviewStats.closed}/${state.reviewStats.total} items closed · ${state.reviewStats.inReview} in review`,
+      timestamp: "30m ago",
+    },
+  ], [closedPct, state.reviewStats.closed, state.reviewStats.total, state.reviewStats.inReview]);
 
   if (state.fluxLoading) {
     return (
@@ -141,10 +212,6 @@ export default function StandardFluxPage() {
       </div>
     );
   }
-
-  const closedPct = state.reviewStats.total
-    ? Math.round((state.reviewStats.closed / state.reviewStats.total) * 100)
-    : 0;
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-slate-50">
@@ -337,12 +404,6 @@ export default function StandardFluxPage() {
           </div>
         </div>
 
-        {/* ── Mobile action strip ── */}
-        <WorkbenchActionStrip
-          contextualActions={contextualActions}
-          contextTitle={contextTitle}
-        />
-
         {/* ── AI Bottom Sheet ── */}
         <Sheet open={aiSheetOpen} onOpenChange={setAiSheetOpen}>
           <SheetContent side="bottom" className="h-[75vh] rounded-t-2xl p-0 overflow-hidden">
@@ -365,6 +426,13 @@ export default function StandardFluxPage() {
                   showAutocomplete={state.showAiAutocomplete}
                   autocompleteSuggestions={state.autocompleteSuggestions}
                   defaultSuggestions={state.defaultPromptSuggestions}
+                  feedItems={feedItems}
+                  actionStrip={
+                    <WorkbenchActionStrip
+                      contextualActions={contextualActions}
+                      contextTitle={contextTitle}
+                    />
+                  }
                   onAsk={state.handleAsk}
                   onSelectSuggestion={state.handleSelectPromptSuggestion}
                   onNewChat={state.handleNewChat}
@@ -514,12 +582,6 @@ export default function StandardFluxPage() {
                 <FluxTopDriversTable drivers={state.topDrivers} baseRevenue={state.kpiRevenue?.base ?? 48.2} />
               </div>
             </div>
-
-            {/* Bottom adaptive-UI action strip */}
-            <WorkbenchActionStrip
-              contextualActions={contextualActions}
-              contextTitle={contextTitle}
-            />
           </div>
 
           {/* RIGHT: AI Panel — spans full height */}
@@ -537,6 +599,13 @@ export default function StandardFluxPage() {
                   showAutocomplete={state.showAiAutocomplete}
                   autocompleteSuggestions={state.autocompleteSuggestions}
                   defaultSuggestions={state.defaultPromptSuggestions}
+                  feedItems={feedItems}
+                  actionStrip={
+                    <WorkbenchActionStrip
+                      contextualActions={contextualActions}
+                      contextTitle={contextTitle}
+                    />
+                  }
                   onAsk={state.handleAsk}
                   onSelectSuggestion={state.handleSelectPromptSuggestion}
                   onNewChat={state.handleNewChat}

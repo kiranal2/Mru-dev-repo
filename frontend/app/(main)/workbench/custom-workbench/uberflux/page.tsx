@@ -1,11 +1,19 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react"
-import { WorkbenchAiPanel } from "@/components/shared/workbench-ai-panel"
+import {
+  WorkbenchAiPanel,
+  type AiFeedItem,
+} from "@/components/shared/workbench-ai-panel"
 import {
   WorkbenchActionStrip,
   type WorkbenchAction,
 } from "@/components/shared/workbench-action-strip"
+import {
+  deriveChatActions,
+  resolveChatActions,
+  type AiResponsePayload,
+} from "@/lib/derive-chat-actions"
 import { useIndustry } from "@/hooks/use-industry"
 
 // ═══════════════════════════════════════════════════════
@@ -549,6 +557,20 @@ const STYLES = `
   overflow: hidden;
   min-height: 0;
 }
+.uf-content-row {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.uf-left-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
 
 /* Top Bar */
 .uf-topbar {
@@ -638,22 +660,22 @@ const STYLES = `
 
 /* Sidebar */
 .uf-sidebar {
-  background: var(--surfaceLt);
+  background: var(--surface);
   border-right: 1px solid var(--border);
   padding: 0;
   overflow-y: auto;
   width: 200px;
   flex-shrink: 0;
-  flex-shrink: 0;
 }
-.uf-sb-group { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.uf-sb-group { padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+.uf-sb-group:last-child { border-bottom: none; }
 .uf-sb-glabel {
   padding: 3px 16px 5px; font-size: 9px; font-weight: 600;
   letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
   font-family: 'Inter', sans-serif;
 }
 .uf-sb-item {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 7px 16px; font-size: 12px; cursor: pointer;
   color: var(--muted); transition: all 0.15s; user-select: none;
   border: none; background: none; width: 100%; text-align: left;
@@ -1233,6 +1255,7 @@ export default function FluxPlusPage() {
   const [chatInput, setChatInput] = useState("")
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [aiPanelOpen, setAiPanelOpen] = useState(true)
+  const [chatActions, setChatActions] = useState<WorkbenchAction[]>([])
   const [signalDismissed, setSignalDismissed] = useState(false)
 
   const aiMessagesRef = useRef<HTMLDivElement>(null)
@@ -1541,27 +1564,100 @@ export default function FluxPlusPage() {
     )
   }
 
-  const generateAIResponse = useCallback((query: string): string => {
+  const generateAIResponse = useCallback((query: string): AiResponsePayload => {
     const q = query.toLowerCase()
-    // Context-aware response generation based on keywords
-    if (q.includes("risk") || q.includes("concern") || q.includes("watch"))
-      return `<strong>Risk assessment for ${regData.label}:</strong><br><br>${regData.signal.body}<br><br><strong>Key flags:</strong> ${metricData.flagged} segments flagged (${metricData.flaggedDetail}). Top driver: <strong>${metricData.driver}</strong> — ${metricData.driverDetail}.`
-    if (q.includes("action") || q.includes("recommend") || q.includes("should") || q.includes("do"))
-      return `<strong>Recommended actions — ${regData.label}:</strong><br><br>${regData.ai.messages.filter((m) => m.role === "ai").pop()?.html || regData.signal.body}`
-    if (q.includes("variance") || q.includes("gap") || q.includes("miss"))
-      return `<strong>Variance breakdown — ${regData.label} · ${compData.label}:</strong><br><br>Total variance: <strong>${totalVariance}</strong>. ${compData.signal || regData.signal.body}`
-    if (q.includes("driver") || q.includes("cause") || q.includes("why"))
-      return `<strong>Top driver: ${metricData.driver}</strong> — ${metricData.driverDetail}.<br><br>This factor accounts for approximately 50–65% of the total ${compData.label} variance in ${regData.label}. ${regData.signal.body}`
-    if (q.includes("forecast") || q.includes("next week") || q.includes("predict") || q.includes("w11"))
-      return `<strong>Forward outlook — ${regData.label}:</strong><br><br>${regData.signal.body}<br><br><strong>Confidence:</strong> Based on ${metricData.flagged} flagged segments and current ${metric} trajectory.`
-    if (q.includes("compare") || q.includes("vs") || q.includes("prior"))
-      return `<strong>${compData.label} analysis — ${regData.label}:</strong><br><br>${compData.aiA}`
-    if (q.includes("segment") || q.includes("breakdown"))
-      return `<strong>Segment breakdown — ${regData.label}:</strong><br><br>${segments.map((s) => `<strong>${s.name}</strong>: ${s.variance} — ${s.text.substring(0, 120)}...`).join("<br><br>")}`
-    if (q.includes("summary") || q.includes("overview") || q.includes("status"))
-      return `<strong>${regData.label} · ${compData.label} · ${metric}:</strong><br><br>Total variance: <strong>${totalVariance}</strong>. Segments flagged: <strong>${metricData.flagged}</strong> (${metricData.flaggedDetail}). Top driver: <strong>${metricData.driver}</strong>.<br><br>${compData.signal || regData.signal.body}`
-    // Default contextual response
-    return `<strong>Analysis for "${query}":</strong><br><br>Analyzing for <em>${regData.label}</em> — ${metric} · ${compData.label}.<br><br>Total variance: <strong>${totalVariance}</strong>. ${metricData.flagged} segments flagged (${metricData.flaggedDetail}). Primary driver: <strong>${metricData.driver}</strong> — ${metricData.driverDetail}.<br><br>${regData.signal.body}`
+    const regionLbl = regData.label
+    const summary = `${regData.label} · ${metric} · ${compData.label} — variance ${totalVariance}, driver ${metricData.driver}`
+
+    const emailCfo = (body: string) => ({
+      kind: "email" as const,
+      label: "Email CFO summary",
+      recipient: "CFO",
+      body,
+      contextual: true,
+    })
+    const slackOps = (body?: string) => ({
+      kind: "slack" as const,
+      label: `Slack ${regionLbl} ops lead`,
+      recipient: `${regionLbl} Ops`,
+      body,
+      contextual: true,
+    })
+    const remindMe = (label: string) => ({
+      kind: "reminder" as const,
+      label,
+      contextual: true,
+    })
+    const pinInsight = (label = "Pin this insight") => ({
+      kind: "pin" as const,
+      label,
+      contextual: true,
+    })
+    const imTeammate = (body?: string) => ({
+      kind: "im" as const,
+      label: "IM teammate for context",
+      body,
+      contextual: true,
+    })
+
+    if (q.includes("risk") || q.includes("concern") || q.includes("watch")) {
+      return {
+        text: `<strong>Risk assessment for ${regData.label}:</strong><br><br>${regData.signal.body}<br><br><strong>Key flags:</strong> ${metricData.flagged} segments flagged (${metricData.flaggedDetail}). Top driver: <strong>${metricData.driver}</strong> — ${metricData.driverDetail}.`,
+        actions: [remindMe("Remind me before next run"), emailCfo(summary), slackOps(summary), pinInsight(`Pin ${regionLbl} risk`)],
+      }
+    }
+    if (q.includes("action") || q.includes("recommend") || q.includes("should") || q.includes("do")) {
+      return {
+        text: `<strong>Recommended actions — ${regData.label}:</strong><br><br>${regData.ai.messages.filter((m) => m.role === "ai").pop()?.html || regData.signal.body}`,
+        actions: [slackOps(summary), emailCfo(summary), imTeammate(summary), pinInsight()],
+      }
+    }
+    if (q.includes("variance") || q.includes("gap") || q.includes("miss")) {
+      return {
+        text: `<strong>Variance breakdown — ${regData.label} · ${compData.label}:</strong><br><br>Total variance: <strong>${totalVariance}</strong>. ${compData.signal || regData.signal.body}`,
+        actions: [emailCfo(summary), slackOps(summary), pinInsight(`Pin ${compData.label} variance`)],
+      }
+    }
+    if (q.includes("driver") || q.includes("cause") || q.includes("why")) {
+      return {
+        text: `<strong>Top driver: ${metricData.driver}</strong> — ${metricData.driverDetail}.<br><br>This factor accounts for approximately 50–65% of the total ${compData.label} variance in ${regData.label}. ${regData.signal.body}`,
+        actions: [slackOps(`Top driver: ${metricData.driver}`), emailCfo(summary), imTeammate(summary), pinInsight()],
+      }
+    }
+    if (q.includes("forecast") || q.includes("next week") || q.includes("predict") || q.includes("w11")) {
+      return {
+        text: `<strong>Forward outlook — ${regData.label}:</strong><br><br>${regData.signal.body}<br><br><strong>Confidence:</strong> Based on ${metricData.flagged} flagged segments and current ${metric} trajectory.`,
+        actions: [remindMe("Remind me next week"), emailCfo(summary), pinInsight("Pin forecast")],
+      }
+    }
+    if (q.includes("compare") || q.includes("vs") || q.includes("prior")) {
+      return {
+        text: `<strong>${compData.label} analysis — ${regData.label}:</strong><br><br>${compData.aiA}`,
+        actions: [emailCfo(summary), pinInsight(`Pin ${compData.label} comparison`), { kind: "share", label: "Share copy", contextual: true }],
+      }
+    }
+    if (q.includes("exception") || q.includes("flagged") || q.includes("anomal")) {
+      return {
+        text: `<strong>Exceptions — ${regData.label}:</strong><br><br>${metricData.flagged} segments flagged (${metricData.flaggedDetail}). ${regData.signal.body}`,
+        actions: [remindMe("Chase exception owners"), slackOps(summary), emailCfo(summary), pinInsight()],
+      }
+    }
+    if (q.includes("segment") || q.includes("breakdown")) {
+      return {
+        text: `<strong>Segment breakdown — ${regData.label}:</strong><br><br>${segments.map((s) => `<strong>${s.name}</strong>: ${s.variance} — ${s.text.substring(0, 120)}...`).join("<br><br>")}`,
+        actions: [slackOps(summary), imTeammate(summary), pinInsight("Pin segments")],
+      }
+    }
+    if (q.includes("summary") || q.includes("overview") || q.includes("status")) {
+      return {
+        text: `<strong>${regData.label} · ${compData.label} · ${metric}:</strong><br><br>Total variance: <strong>${totalVariance}</strong>. Segments flagged: <strong>${metricData.flagged}</strong> (${metricData.flaggedDetail}). Top driver: <strong>${metricData.driver}</strong>.<br><br>${compData.signal || regData.signal.body}`,
+        actions: [emailCfo(summary), pinInsight("Pin overview"), { kind: "share", label: "Share copy", contextual: true }],
+      }
+    }
+    // Default contextual response — no explicit actions, falls back to keyword derivation
+    return {
+      text: `<strong>Analysis for "${query}":</strong><br><br>Analyzing for <em>${regData.label}</em> — ${metric} · ${compData.label}.<br><br>Total variance: <strong>${totalVariance}</strong>. ${metricData.flagged} segments flagged (${metricData.flaggedDetail}). Primary driver: <strong>${metricData.driver}</strong> — ${metricData.driverDetail}.<br><br>${regData.signal.body}`,
+    }
   }, [regData, compData, metricData, metric, totalVariance, segments])
 
   const handleChatSubmit = useCallback(() => {
@@ -1569,7 +1665,7 @@ export default function FluxPlusPage() {
     if (!text || isTyping) return
     setChatInput("")
     addUserMsg(text)
-    addAIMsg(generateAIResponse(text), 900)
+    addAIMsg(generateAIResponse(text).text, 900)
   }, [chatInput, isTyping, addUserMsg, addAIMsg, generateAIResponse])
 
   const handleChatKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -1680,40 +1776,68 @@ export default function FluxPlusPage() {
   ]
 
   // ── Contextual action cards (drive the bottom adaptive-UI strip) ──
-  const contextualActions: WorkbenchAction[] = []
   const regionLabel = isDemoMode ? indRegion.label : regData.label
-  const isUnderperforming = totalColor === "down"
-  if (isUnderperforming) {
-    contextualActions.push({
-      kind: "slack",
-      label: `Slack ${regionLabel} ops lead`,
-      recipient: `${regionLabel} Ops`,
-      contextual: true,
-    })
-    contextualActions.push({
-      kind: "email",
-      label: "Email CFO summary",
-      recipient: "CFO",
-      body: `${regionLabel} is underperforming (${totalVariance}) vs ${compData.label}. Key driver: ${metricData.driver}.`,
-      contextual: true,
-    })
-  }
-  if (tab === "exceptions" && effectiveExceptions.length > 0) {
-    contextualActions.push({
-      kind: "reminder",
-      label: `Chase ${effectiveExceptions.length} exception${effectiveExceptions.length > 1 ? "s" : ""}`,
-      contextual: true,
-    })
-  }
-  if (tab === "signals" && effectiveSignals.length > 0) {
-    contextualActions.push({
-      kind: "pin",
-      label: `Pin top signal to workspace`,
-      contextual: true,
-    })
+  const contextualActions: WorkbenchAction[] = [...chatActions]
+  if (chatActions.length === 0) {
+    // Fallback defaults before any chat interaction
+    const isUnderperforming = totalColor === "down"
+    if (isUnderperforming) {
+      contextualActions.push({
+        kind: "slack",
+        label: `Slack ${regionLabel} ops lead`,
+        recipient: `${regionLabel} Ops`,
+        contextual: true,
+      })
+      contextualActions.push({
+        kind: "email",
+        label: "Email CFO summary",
+        recipient: "CFO",
+        body: `${regionLabel} is underperforming (${totalVariance}) vs ${compData.label}. Key driver: ${metricData.driver}.`,
+        contextual: true,
+      })
+    }
+    if (tab === "exceptions" && effectiveExceptions.length > 0) {
+      contextualActions.push({
+        kind: "reminder",
+        label: `Chase ${effectiveExceptions.length} exception${effectiveExceptions.length > 1 ? "s" : ""}`,
+        contextual: true,
+      })
+    }
+    if (tab === "signals" && effectiveSignals.length > 0) {
+      contextualActions.push({
+        kind: "pin",
+        label: `Pin top signal to workspace`,
+        contextual: true,
+      })
+    }
   }
 
   const contextTitle = `${regionLabel} · ${metric} · ${compData.label}`
+
+  // ── AI panel insights feed (shown before any user chat) ──
+  const feedItems: AiFeedItem[] = [
+    {
+      id: "f1",
+      tone: totalColor === "down" ? "down" : "up",
+      headline: `${regionLabel} ${metric}: ${totalVariance}`,
+      detail: `vs ${compData.label} · primary driver ${metricData.driver}`,
+      timestamp: "just now",
+    },
+    {
+      id: "f2",
+      tone: "warn",
+      headline: `${effectiveExceptions.length} exceptions flagged`,
+      detail: "3 critical · 2 warning · 2 positive",
+      timestamp: "2m ago",
+    },
+    {
+      id: "f3",
+      tone: "info",
+      headline: `${effectiveSignals.length} ML signals active`,
+      detail: regData.signal.body.slice(0, 80) + (regData.signal.body.length > 80 ? "…" : ""),
+      timestamp: "5m ago",
+    },
+  ]
 
   // ═════════════════════════════════════════════════════
   //  JSX
@@ -1724,6 +1848,9 @@ export default function FluxPlusPage() {
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
       <div className="uf-app">
+        {/* ── Content row: left column (tabs + main) + AI panel spanning full height ── */}
+        <div className="uf-content-row">
+        <div className="uf-left-col">
         {/* ── Top Nav: view categories ── */}
         <div className="uf-tabs" role="tablist" aria-label="Workbench view">
           {tabs.map((t) => (
@@ -2086,33 +2213,47 @@ export default function FluxPlusPage() {
             )}
           </div>
 
-          {/* ── Inline AI Panel (right column) ── */}
-          {aiPanelOpen && (
-            <aside className="w-[380px] flex-shrink-0 border-l border-slate-200 bg-white flex flex-col min-h-0" style={{ borderLeft: '1px solid var(--border)' }}>
-              <div className="flex-1 overflow-y-auto p-3 min-h-0">
-                <WorkbenchAiPanel
-                  title="AI Analysis"
-                  suggestions={isDemoMode ? industryConfig.aiSuggestions : [
-                    "What are the most significant exceptions this week?",
-                    "Which region has the highest variance?",
-                    "Explain the top driver impact",
-                    "What should we watch before Thursday?",
-                    "Compare W10 to prior week",
-                  ]}
-                  generateResponse={generateAIResponse}
-                />
-              </div>
-            </aside>
-          )}
           </div>{/* close uf-centre-wrap */}
 
         </div>
+        </div>{/* close uf-left-col */}
 
-        {/* ── Bottom adaptive-UI action strip ── */}
-        <WorkbenchActionStrip
-          contextualActions={contextualActions}
-          contextTitle={contextTitle}
-        />
+        {/* ── AI Panel — spans full content-row height (from top of tabs to bottom) ── */}
+        {aiPanelOpen && (
+          <aside className="w-[380px] flex-shrink-0 border-l bg-white flex flex-col min-h-0" style={{ borderLeft: '1px solid var(--border)' }}>
+            <div className="flex-1 min-h-0 flex flex-col">
+              <WorkbenchAiPanel
+                title="AI Analysis"
+                suggestions={isDemoMode ? industryConfig.aiSuggestions : [
+                  "What are the most significant exceptions this week?",
+                  "Which region has the highest variance?",
+                  "Explain the top driver impact",
+                  "What should we watch before Thursday?",
+                  "Compare W10 to prior week",
+                ]}
+                generateResponse={generateAIResponse}
+                feedItems={feedItems}
+                onAiResponse={(payload) =>
+                  setChatActions(
+                    payload.text
+                      ? resolveChatActions(payload, {
+                          pageTitle: "Uberflux",
+                          region: regionLabel,
+                        })
+                      : [],
+                  )
+                }
+                actionStrip={
+                  <WorkbenchActionStrip
+                    contextualActions={contextualActions}
+                    contextTitle={contextTitle}
+                  />
+                }
+              />
+            </div>
+          </aside>
+        )}
+        </div>{/* close uf-content-row */}
 
         {/* ── Bottom Bar ── */}
         <div className="uf-bottombar">

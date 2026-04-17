@@ -1,12 +1,32 @@
 "use client";
 
-import { RotateCcw, Send, Sparkles, Target } from "lucide-react";
+import {
+  AlertTriangle,
+  Info,
+  RotateCcw,
+  Send,
+  Sparkles,
+  Target,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { FluxRow, AiResponse, PromptSuggestion } from "@/lib/data/types/flux-analysis";
 import { metricToneClass } from "@/app/(main)/reports/analysis/flux-analysis/helpers";
+import type { AiFeedItem, AiFeedTone } from "@/components/shared/workbench-ai-panel";
+
+const FEED_TONE_META: Record<
+  AiFeedTone,
+  { icon: typeof Sparkles; bgCls: string }
+> = {
+  up: { icon: TrendingUp, bgCls: "bg-emerald-50 text-emerald-700" },
+  down: { icon: TrendingDown, bgCls: "bg-red-50 text-red-700" },
+  warn: { icon: AlertTriangle, bgCls: "bg-amber-50 text-amber-700" },
+  info: { icon: Info, bgCls: "bg-blue-50 text-blue-700" },
+};
 
 interface StandardFluxAiPanelProps {
   scopedRow: FluxRow | null;
@@ -19,6 +39,9 @@ interface StandardFluxAiPanelProps {
   showAutocomplete: boolean;
   autocompleteSuggestions: PromptSuggestion[];
   defaultSuggestions?: PromptSuggestion[];
+  feedItems?: AiFeedItem[];
+  /** Optional adaptive-UI strip rendered directly above the chat input. */
+  actionStrip?: React.ReactNode;
   onAsk: (prompt?: string) => void;
   onSelectSuggestion: (prompt: string) => void;
   onNewChat: () => void;
@@ -35,6 +58,8 @@ export function StandardFluxAiPanel({
   showAutocomplete,
   autocompleteSuggestions,
   defaultSuggestions = [],
+  feedItems = [],
+  actionStrip,
   onAsk,
   onSelectSuggestion,
   onNewChat,
@@ -108,13 +133,49 @@ export function StandardFluxAiPanel({
 
         {!hasAiConversation && !scopedRow ? (
           <div className="space-y-4">
-            {/* Empty state */}
-            <div className="flex flex-col items-center py-6 text-center">
-              <div className="mb-3 rounded-full bg-slate-100 p-3">
-                <Sparkles className="h-6 w-6 text-slate-400" />
+            {/* Insights feed */}
+            {feedItems.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="border-b border-slate-100 bg-slate-50 px-3 py-2 -mx-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                  Insights feed
+                </div>
+                <div className="space-y-1.5">
+                  {feedItems.map((item) => {
+                    const meta = FEED_TONE_META[item.tone];
+                    const Icon = meta.icon;
+                    return (
+                      <div
+                        key={item.id}
+                        className="flex items-start gap-2 rounded-md border border-slate-100 bg-white px-2.5 py-2 hover:border-slate-200 transition-colors"
+                      >
+                        <div className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md", meta.bgCls)}>
+                          <Icon className="h-3.5 w-3.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-1.5">
+                            <p className="text-[12px] font-semibold text-slate-800 truncate">{item.headline}</p>
+                            {item.timestamp && (
+                              <span className="text-[10px] text-slate-400 shrink-0">{item.timestamp}</span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{item.detail}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <p className="text-xs text-slate-500">Ask a question or click a row to scope the AI</p>
-            </div>
+            )}
+
+            {/* Empty state (only when no feed) */}
+            {feedItems.length === 0 && (
+              <div className="flex flex-col items-center py-6 text-center">
+                <div className="mb-3 rounded-full bg-slate-100 p-3">
+                  <Sparkles className="h-6 w-6 text-slate-400" />
+                </div>
+                <p className="text-xs text-slate-500">Ask a question or click a row to scope the AI</p>
+              </div>
+            )}
 
             {/* Default suggestions */}
             {defaultSuggestions.length > 0 && (
@@ -211,6 +272,13 @@ export function StandardFluxAiPanel({
           </div>
         )}
       </div>
+
+      {/* Adaptive-UI action strip — sits directly above the chat input */}
+      {actionStrip && (
+        <div className="shrink-0">
+          {actionStrip}
+        </div>
+      )}
 
       {/* Input area */}
       <div className="shrink-0 border-t border-slate-200 p-3">

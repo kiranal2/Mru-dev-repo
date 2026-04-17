@@ -1,11 +1,19 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react"
-import { WorkbenchAiPanel } from "@/components/shared/workbench-ai-panel"
+import {
+  WorkbenchAiPanel,
+  type AiFeedItem,
+} from "@/components/shared/workbench-ai-panel"
 import {
   WorkbenchActionStrip,
   type WorkbenchAction,
 } from "@/components/shared/workbench-action-strip"
+import {
+  deriveChatActions,
+  resolveChatActions,
+  type AiResponsePayload,
+} from "@/lib/derive-chat-actions"
 import { useIndustry } from "@/hooks/use-industry"
 import { getFormFactorData } from "@/lib/industry-form-factor-data"
 
@@ -390,14 +398,15 @@ const STYLES = `
 
 /* SIDEBAR */
 .ff-sidebar {
-  width: 200px; flex-shrink: 0; background: var(--navy-dark);
+  width: 200px; flex-shrink: 0; background: var(--bg-white);
   display: flex; flex-direction: column; border-right: 1px solid var(--border);
   overflow-y: auto;
 }
 .ff-sb-logo { padding: 12px 16px 10px; border-bottom: 1px solid var(--border); }
 .ff-sb-wordmark { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--teal); letter-spacing: -0.2px; }
 .ff-sb-sub { font-size: 9px; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-top: 1px; }
-.ff-sb-group { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.ff-sb-group { padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+.ff-sb-group:last-of-type { border-bottom: none; }
 .ff-sb-glabel { padding: 3px 16px 5px; font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
 .ff-sb-item {
   display: flex; align-items: center; gap: 8px; padding: 7px 16px;
@@ -1153,6 +1162,7 @@ export default function FormFactorPage() {
   const [isAiTyping, setIsAiTyping] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [aiPanelOpen, setAiPanelOpen] = useState(true)
+  const [chatActions, setChatActions] = useState<WorkbenchAction[]>([])
   const [insightCollapsed, setInsightCollapsed] = useState(false)
   const aiRef = useRef<HTMLDivElement>(null)
   const aiTypingRef = useRef<ReturnType<typeof setTimeout>>()
@@ -1987,36 +1997,102 @@ export default function FormFactorPage() {
   // ── Contextual action cards (drive bottom adaptive-UI strip) ──
   const pageLabel =
     sidebarItems.flatMap((g) => g.items).find((i) => i.id === page)?.label ?? "Margin Intelligence"
-  const contextualActions: WorkbenchAction[] = [
-    {
-      kind: "slack",
-      label: "Slack finance lead",
-      recipient: "Finance Lead",
-      contextual: true,
-    },
-    {
-      kind: "email",
-      label: "Email CFO summary",
-      recipient: "CFO",
-      body: `Sharing ${pageLabel} view for review.`,
-      contextual: true,
-    },
-  ]
-  if (page === "drivers" || page === "compare") {
-    contextualActions.push({
-      kind: "pin",
-      label: `Pin ${pageLabel} to workspace`,
-      contextual: true,
-    })
-  }
-  if (page === "forward") {
-    contextualActions.push({
-      kind: "reminder",
-      label: "Remind me before forecast cutoff",
-      contextual: true,
-    })
+  const contextualActions: WorkbenchAction[] = [...chatActions]
+  if (chatActions.length === 0) {
+    // Fallback defaults before any chat interaction
+    contextualActions.push(
+      {
+        kind: "email",
+        label: "Email CFO summary",
+        recipient: "CFO",
+        body: `Sharing ${pageLabel} view for review.`,
+        contextual: true,
+      },
+      {
+        kind: "slack",
+        label: "Slack finance lead",
+        recipient: "Finance Lead",
+        contextual: true,
+      },
+    )
+    if (page === "drivers" || page === "compare") {
+      contextualActions.push({
+        kind: "pin",
+        label: `Pin ${pageLabel} to workspace`,
+        contextual: true,
+      })
+    }
+    if (page === "forward") {
+      contextualActions.push({
+        kind: "reminder",
+        label: "Remind me before forecast cutoff",
+        contextual: true,
+      })
+    }
   }
   const contextTitle = `Margin Intelligence · ${pageLabel}`
+
+  // Structured action hints per Form Factor prompt branch
+  const ffActionsFor = (query: string, responseText: string): WorkbenchAction[] | undefined => {
+    const q = query.toLowerCase()
+    const snippet = responseText.replace(/<[^>]+>/g, " ").slice(0, 140)
+    const emailCfo: WorkbenchAction = { kind: "email", label: "Email CFO summary", recipient: "CFO", body: snippet, contextual: true }
+    const slackFinance: WorkbenchAction = { kind: "slack", label: "Slack finance lead", recipient: "Finance Lead", body: snippet, contextual: true }
+    const imTeammate: WorkbenchAction = { kind: "im", label: "IM teammate for context", body: snippet, contextual: true }
+    const pin = (label = "Pin this insight"): WorkbenchAction => ({ kind: "pin", label, contextual: true })
+    const remind = (label: string): WorkbenchAction => ({ kind: "reminder", label, contextual: true })
+
+    if (q.includes("margin") && (q.includes("compress") || q.includes("w8") || q.includes("drop") || q.includes("dip"))) {
+      return [emailCfo, slackFinance, imTeammate, pin("Pin W8 margin compression")]
+    }
+    if (q.includes("apac")) {
+      return [slackFinance, emailCfo, pin("Pin APAC analysis"), imTeammate]
+    }
+    if (q.includes("na") || q.includes("north america") || q.includes("emea")) {
+      return [emailCfo, pin(`Pin ${pageLabel} segment`), imTeammate]
+    }
+    if (q.includes("forecast") || q.includes("plan") || q.includes("track")) {
+      return [remind("Remind me before forecast cutoff"), emailCfo, pin("Pin Q2 forecast")]
+    }
+    if (q.includes("risk") || q.includes("concern") || q.includes("watch")) {
+      return [remind("Chase proxy data owners"), emailCfo, slackFinance, pin("Pin W9 risk watch")]
+    }
+    if (q.includes("cost") || q.includes("driver")) {
+      return [slackFinance, emailCfo, imTeammate, pin("Pin driver breakdown")]
+    }
+    if (q.includes("proxy")) {
+      return [slackFinance, imTeammate, pin("Pin proxy coverage")]
+    }
+    if (q.includes("recover") || q.includes("gap") || q.includes("scenario")) {
+      return [emailCfo, pin("Pin recovery scenarios"), { kind: "share", label: "Share copy", contextual: true }]
+    }
+    return undefined // fall through to keyword derivation
+  }
+
+  // ── AI panel insights feed ──
+  const feedItems: AiFeedItem[] = [
+    {
+      id: "ff-f1",
+      tone: "down",
+      headline: "Margin compression — W8",
+      detail: "APAC segment -2.3pp vs forecast, 3rd consecutive week",
+      timestamp: "just now",
+    },
+    {
+      id: "ff-f2",
+      tone: "warn",
+      headline: "Driver shift: Volume → Mix",
+      detail: "Mix impact now 54% of variance (was 31% last month)",
+      timestamp: "1h ago",
+    },
+    {
+      id: "ff-f3",
+      tone: "up",
+      headline: "NA segment outperforming",
+      detail: "+$1.2M vs plan driven by enterprise tier expansion",
+      timestamp: "2h ago",
+    },
+  ]
 
   // ═════════════════════════════════════════════════════
   //  JSX
@@ -2088,7 +2164,7 @@ export default function FormFactorPage() {
             {/* ── Inline AI Panel (right column) ── */}
             {aiPanelOpen && (
               <aside className="w-[380px] flex-shrink-0 border-l border-slate-200 bg-white flex flex-col min-h-0">
-                <div className="flex-1 overflow-y-auto p-3 min-h-0">
+                <div className="flex-1 min-h-0 flex flex-col">
                   <WorkbenchAiPanel
                     title="AI Analysis"
                     suggestions={isDemoMode ? industryConfig.aiSuggestions : [
@@ -2098,18 +2174,30 @@ export default function FormFactorPage() {
                       "Top 3 cost drivers by impact",
                       "Explain the APAC performance shift",
                     ]}
-                    generateResponse={generateAiResponse}
+                    generateResponse={(q) => {
+                      const text = generateAiResponse(q)
+                      const actions = ffActionsFor(q, text)
+                      return actions ? { text, actions } : text
+                    }}
+                    feedItems={feedItems}
+                    onAiResponse={(payload) =>
+                      setChatActions(
+                        payload.text
+                          ? resolveChatActions(payload, { pageTitle: pageLabel })
+                          : [],
+                      )
+                    }
+                    actionStrip={
+                      <WorkbenchActionStrip
+                        contextualActions={contextualActions}
+                        contextTitle={contextTitle}
+                      />
+                    }
                   />
                 </div>
               </aside>
             )}
           </div>
-
-          {/* Bottom adaptive-UI action strip — scoped to main (not sidebar) */}
-          <WorkbenchActionStrip
-            contextualActions={contextualActions}
-            contextTitle={contextTitle}
-          />
         </main>
       </div>{/* close ff-body */}
     </div>
