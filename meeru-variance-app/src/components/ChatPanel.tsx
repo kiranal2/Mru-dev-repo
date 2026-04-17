@@ -1,7 +1,7 @@
 import { useRef, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useChat, useSettings, useToasts, useMission } from '../store';
-import { INSIGHTS, SUGGESTIONS, UNIVERSAL_ACTIONS, CHAT_RESPONSES } from '../data';
+import { INSIGHTS, NEW_INSIGHTS_POOL, SUGGESTIONS, UNIVERSAL_ACTIONS, CHAT_RESPONSES } from '../data';
 import { Icon, getActionIcon } from '../icons';
 import { usePersona } from './AppShell';
 import { ShareModal, FactCheckModal } from './ChatReplyModals';
@@ -30,17 +30,20 @@ function scorePrompt(prompt: string, query: string): number {
 }
 
 // ---------- Insights (compact + expanded) ----------
-function InsightRow({ i }: { i: typeof INSIGHTS[number] }) {
+function InsightRow({ i, isNew }: { i: { ico: 'neg' | 'warn' | 'info'; title: string; text: string; when: string }; isNew?: boolean }) {
   const wrapCls = i.ico === 'neg' ? 'bg-negative-weak text-negative' : i.ico === 'warn' ? 'bg-warning-weak text-warning' : 'bg-brand-tint text-brand';
   const Ic = i.ico === 'neg' ? Icon.DownRight : i.ico === 'warn' ? Icon.Alert : Icon.Info;
   return (
-    <div className="flex gap-2.5 p-2.5 rounded-lg border border-rule bg-surface-alt hover:bg-surface-soft transition-colors cursor-pointer">
+    <div className={`flex gap-2.5 p-2.5 rounded-lg border border-rule bg-surface-alt hover:bg-surface-soft transition-colors cursor-pointer relative ${isNew ? 'flash-new' : ''}`}>
       <div className={`w-7 h-7 rounded-full grid place-items-center shrink-0 ${wrapCls}`}>
         <Ic className="w-3.5 h-3.5" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex justify-between gap-2 items-start">
-          <div className="text-[12px] font-semibold text-ink truncate">{i.title}</div>
+          <div className="text-[12px] font-semibold text-ink truncate flex items-center gap-1.5">
+            {i.title}
+            {isNew && <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-brand text-white">New</span>}
+          </div>
           <div className="text-[10px] text-faint whitespace-nowrap">{i.when}</div>
         </div>
         <div className="text-[11px] text-muted leading-relaxed mt-0.5">{i.text}</div>
@@ -168,6 +171,39 @@ function SuggestionChip({ text, onClick, dataKey }: { text: ReactNode; onClick: 
     >
       {text}
     </button>
+  );
+}
+
+// ---------- Typing indicator (shown while AI is preparing a reply) ----------
+function ThinkingBubble() {
+  const phrases = [
+    'Meeru is analyzing',
+    'Scanning sources',
+    'Checking the variance model',
+    'Pulling latest data',
+  ];
+  const [phrase, setPhrase] = useState(phrases[0]);
+  useEffect(() => {
+    let i = 0;
+    const id = setInterval(() => {
+      i = (i + 1) % phrases.length;
+      setPhrase(phrases[i]);
+    }, 1200);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <div className="flex flex-col gap-1 anim-fade-up">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted">Meeru AI</div>
+      <div className="text-[12px] leading-relaxed text-ink p-2.5 rounded-lg border bg-surface-alt border-rule inline-flex items-center gap-2 max-w-max">
+        <span className="flex gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-brand dot-pulse" style={{ animationDelay: '0ms' }} />
+          <span className="w-1.5 h-1.5 rounded-full bg-brand dot-pulse" style={{ animationDelay: '180ms' }} />
+          <span className="w-1.5 h-1.5 rounded-full bg-brand dot-pulse" style={{ animationDelay: '360ms' }} />
+        </span>
+        <span className="text-muted text-[11px]">{phrase}…</span>
+      </div>
+    </div>
   );
 }
 
@@ -383,7 +419,7 @@ function orderByRole(cards: ActionCard[], order: string[]): ActionCard[] {
 // Main ChatPanel
 // ==================================================================
 export function ChatPanel() {
-  const { msgs, send, reset, scope, contextual, followUps, clearContextual } = useChat();
+  const { msgs, send, reset, scope, contextual, followUps, clearContextual, thinking } = useChat();
   const { settings } = useSettings();
   const persona = usePersona();
   const [input, setInput] = useState('');
@@ -419,6 +455,27 @@ export function ChatPanel() {
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: 'smooth' });
   }, [msgs, contextual]);
 
+  // ---- Live insights — new items rotate in from the agent's activity stream ----
+  type LiveInsight = { id: string; ico: 'neg' | 'warn' | 'info'; title: string; text: string; when: string; isNew: boolean };
+  const [liveInsights, setLiveInsights] = useState<LiveInsight[]>(() =>
+    INSIGHTS.map((i, idx) => ({ id: `init-${idx}`, ...i, isNew: false }))
+  );
+  useEffect(() => {
+    // Periodically inject a new insight from the pool — clear the "NEW" flag after 3s.
+    let idx = 0;
+    const id = setInterval(() => {
+      const src = NEW_INSIGHTS_POOL[idx % NEW_INSIGHTS_POOL.length];
+      idx++;
+      const item: LiveInsight = { id: `live-${Date.now()}`, ...src, when: 'just now', isNew: true };
+      setLiveInsights(prev => [item, ...prev].slice(0, 8));
+      // De-emphasize after 3 seconds
+      setTimeout(() => {
+        setLiveInsights(prev => prev.map(p => p.id === item.id ? { ...p, isNew: false, when: 'moments ago' } : p));
+      }, 3000);
+    }, 18000); // every 18 seconds — slow enough to feel natural
+    return () => clearInterval(id);
+  }, []);
+
   const onSend = () => {
     if (!input.trim()) return;
     send(input);
@@ -429,8 +486,8 @@ export function ChatPanel() {
     setInput('');
   };
 
-  const insightsCount = INSIGHTS.length;
-  const insightsCritical = INSIGHTS.filter(i => i.ico === 'neg').length;
+  const insightsCount = liveInsights.length;
+  const insightsCritical = liveInsights.filter(i => i.ico === 'neg').length;
 
   // Full pool of queryable prompts (defaults + every follow-up in every response)
   const allPrompts = useMemo(() => {
@@ -473,10 +530,15 @@ export function ChatPanel() {
   return (
     <>
       {/* ========== HEADER ========== */}
-      <div className="px-3.5 py-2.5 border-b border-rule flex justify-between items-center shrink-0">
-        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-ink">
-          <Icon.Sparkle className="w-3.5 h-3.5 text-brand" />
+      <div className="px-3.5 py-2.5 border-b border-rule flex justify-between items-center shrink-0 relative overflow-hidden">
+        {thinking && <div className="absolute inset-0 shimmer-bg pointer-events-none" />}
+        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-ink relative z-10">
+          <Icon.Sparkle className={`w-3.5 h-3.5 text-brand ${thinking ? 'dot-pulse' : ''}`} />
           <span>AI Analysis</span>
+          <span className="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-positive-weak text-positive text-[9px] font-semibold uppercase tracking-wider">
+            <span className="w-1 h-1 rounded-full bg-positive live-dot" />
+            Live
+          </span>
         </div>
         <button onClick={reset} className="text-[11px] text-muted hover:text-brand inline-flex items-center gap-1">
           <Icon.Refresh className="w-3 h-3" />
@@ -496,7 +558,7 @@ export function ChatPanel() {
                     <button onClick={() => setInsightsOpen(false)} className="text-[10px] text-faint hover:text-muted">Collapse</button>
                   )}
                 </div>
-                {INSIGHTS.map((i, idx) => <InsightRow key={idx} i={i} />)}
+                {liveInsights.map(i => <InsightRow key={i.id} i={i} isNew={i.isNew} />)}
               </>
             ) : (
               <CollapsedInsights count={insightsCount} critical={insightsCritical} onExpand={() => setInsightsOpen(true)} />
@@ -539,6 +601,8 @@ export function ChatPanel() {
             </div>
           );
         })}
+
+        {thinking && <ThinkingBubble />}
       </div>
 
       {/* ========== FOOTER: NBA + Suggestions + Input ========== */}

@@ -23,18 +23,15 @@ export function TopNav({ tabs, active, onChange, dots = {} }: Props) {
               }`}
             >
               <span>{TOP_TAB_LABELS[k] ?? k}</span>
-              {count && count > 0 && <span className="w-1.5 h-1.5 rounded-full bg-negative" title={`${count} flagged`} />}
+              {count && count > 0 && (
+                <span className="relative flex">
+                  <span className="w-1.5 h-1.5 rounded-full bg-negative alert-pulse" title={`${count} flagged`} />
+                </span>
+              )}
               {isActive && <span className="absolute bottom-0 left-2.5 right-2.5 h-0.5 bg-brand rounded-full" />}
             </button>
           );
         })}
-      </div>
-      <div className="hidden lg:flex items-center gap-2 text-[11px] text-muted">
-        <span className="num">Sources 9/9</span>
-        <span className="text-faint">·</span>
-        <span className="num">Segments 12</span>
-        <span className="text-faint">·</span>
-        <span>Generated 08:38 AM</span>
       </div>
     </div>
   );

@@ -1,11 +1,32 @@
 import type { ReactNode } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { WORKBENCHES } from '../data';
 import { Icon } from '../icons';
 import { ActionStrip } from './ActionStrip';
 import { ChatSidebar, ChatShowButton } from './ChatSidebar';
 import { useChat, useSettings } from '../store';
+
+/** "Xs ago" ticking counter — lives in the workbench-tabs row. */
+function LiveTimer() {
+  const [sec, setSec] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setSec(s => s + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const label =
+    sec < 60
+      ? `${sec}s ago`
+      : sec < 3600
+      ? `${Math.floor(sec / 60)}m ${sec % 60}s ago`
+      : `${Math.floor(sec / 3600)}h ago`;
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span className="w-1.5 h-1.5 rounded-full bg-positive live-dot" />
+      <span className="num">Live · updated {label}</span>
+    </span>
+  );
+}
 
 interface Props {
   /** The workbench key we're currently on */
@@ -92,9 +113,15 @@ function WorkbenchTabs({ active }: { active: string }) {
           </Link>
         );
       })}
+      {/* Right-side meta — data-source summary + ticking "live updated" */}
+      <div className="flex-1" />
+      <div className="hidden lg:flex items-center gap-2 text-[11px] text-muted pr-4">
+        <span className="num">Sources 9/9</span>
+        <span className="text-faint">·</span>
+        <span className="num">Segments 12</span>
+        <span className="text-faint">·</span>
+        <LiveTimer />
+      </div>
     </div>
   );
 }
-
-// Note: "Sources / Segments / Generated" metadata now lives only in TopNav
-// (directly below the workbench-tab row) to avoid duplication.

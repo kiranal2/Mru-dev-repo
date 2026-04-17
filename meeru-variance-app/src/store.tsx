@@ -101,6 +101,7 @@ interface ChatCtx {
   followUps: string[];
   sent: Set<string>;
   scope: string;
+  thinking: boolean;
   setScope: (s: string) => void;
   send: (q: string) => void;
   regenerate: () => void;
@@ -234,16 +235,22 @@ export function AppProviders({ children }: { children: ReactNode }) {
   useEffect(() => { try { localStorage.setItem('meeru.pinnedReplies', JSON.stringify(pinned)); } catch {} }, [pinned]);
   useEffect(() => { try { localStorage.setItem('meeru.savedReplies', JSON.stringify(saved)); } catch {} }, [saved]);
 
+  const [thinking, setThinking] = useState(false);
+
   const sendChat = useCallback((q: string) => {
     if (!q.trim()) return;
     setMsgs(prev => [...prev, { role: 'user', text: q }]);
+    setThinking(true);
     const resp = CHAT_RESPONSES.find(r => r.match.test(q)) ?? FALLBACK_RESPONSE;
+    // Slight variable delay for more realistic feel
+    const delay = 900 + Math.random() * 500;
     setTimeout(() => {
       setMsgs(prev => [...prev, { role: 'ai', html: resp.text }]);
       setContextual(resp.actions);
       setFollowUps(resp.followUps ?? []);
       setSent(new Set());
-    }, 420);
+      setThinking(false);
+    }, delay);
   }, []);
 
   const regenerate = useCallback(() => {
@@ -260,12 +267,14 @@ export function AppProviders({ children }: { children: ReactNode }) {
       const sliced = [...prev.slice(0, realIdx), ...prev.slice(realIdx + 1)];
       return sliced;
     });
+    setThinking(true);
     setTimeout(() => {
       setMsgs(prev => [...prev, { role: 'ai', html: resp.text + '<br/><em style="color:var(--text-muted);font-size:11px">↻ regenerated with latest data</em>' }]);
       setContextual(resp.actions);
       setFollowUps(resp.followUps ?? []);
       setSent(new Set());
-    }, 480);
+      setThinking(false);
+    }, 900 + Math.random() * 500);
   }, [msgs]);
 
   const resetChat = useCallback(() => {
@@ -300,10 +309,10 @@ export function AppProviders({ children }: { children: ReactNode }) {
     mission, step, start, advance, skip, end: endMission, currentBeat, ended, dismissEnded
   }), [mission, step, start, advance, skip, endMission, currentBeat, ended, dismissEnded]);
   const chatV = useMemo(() => ({
-    msgs, contextual, followUps, sent, scope, setScope,
+    msgs, contextual, followUps, sent, scope, thinking, setScope,
     send: sendChat, regenerate, reset: resetChat, markSent, clearContextual,
     pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved,
-  }), [msgs, contextual, followUps, sent, scope, sendChat, regenerate, resetChat, markSent, clearContextual, pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved]);
+  }), [msgs, contextual, followUps, sent, scope, thinking, sendChat, regenerate, resetChat, markSent, clearContextual, pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved]);
 
   return (
     <AuthContext.Provider value={auth}>

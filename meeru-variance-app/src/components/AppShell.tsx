@@ -76,6 +76,7 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
         )}
         <div className="h-4 w-px bg-rule mx-2" />
         <span className="text-[10px] font-semibold tracking-wider uppercase text-muted">{crumb}</span>
+        <AgentStatusPill />
       </div>
       <div className="flex items-center gap-2.5">
         <button onClick={onStartMission} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold text-white" style={{ background: 'linear-gradient(135deg,#F59E0B,#D97706)' }} title="Start the guided mission">
@@ -294,6 +295,98 @@ function MenuItem({ onClick, icon, label, hint }: { onClick: () => void; icon: R
       <span className="flex-1">{label}</span>
       {hint && <span className="text-[10px] text-faint font-mono">{hint}</span>}
     </button>
+  );
+}
+
+// ==========================================================
+// AgentStatusPill — pulsing "agent active" chip with activity log
+// ==========================================================
+const AGENT_ACTIVITY: { ts: string; text: string; kind: 'scan' | 'flag' | 'forecast' | 'update' }[] = [
+  { ts: 'just now', text: 'Scanning 312 accounts for churn risk',                   kind: 'scan' },
+  { ts: '12s ago',  text: 'Flagged CA Retail labor drift — -2.8pp margin',          kind: 'flag' },
+  { ts: '45s ago',  text: 'Re-ran NRR projection with cohort weights',               kind: 'forecast' },
+  { ts: '1m ago',   text: 'Updated ML confidence on Voltair renewal (→ 28%)',       kind: 'update' },
+  { ts: '2m ago',   text: 'Refreshed 9 connected sources',                           kind: 'update' },
+  { ts: '4m ago',   text: 'Detected anomaly: cloud egress +18% WoW',                kind: 'flag' },
+];
+
+function AgentStatusPill() {
+  const [open, setOpen] = useState(false);
+  const [tick, setTick] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Tick every second to animate the "updated Xs ago" counter
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => (t + 1) % 240), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, [open]);
+
+  const secondsAgo = tick;
+  const label = secondsAgo < 60 ? `${secondsAgo}s ago` : `${Math.floor(secondsAgo / 60)}m ago`;
+
+  const kindMeta = (k: string) =>
+    k === 'flag'     ? { Ic: Icon.Alert,    cls: 'text-warning bg-warning-weak'  } :
+    k === 'forecast' ? { Ic: Icon.Trend,    cls: 'text-brand   bg-brand-tint'    } :
+    k === 'update'   ? { Ic: Icon.Refresh,  cls: 'text-muted   bg-surface-soft'  } :
+                       { Ic: Icon.Search,   cls: 'text-positive bg-positive-weak' };
+
+  return (
+    <div className="relative ml-2" ref={ref}>
+      <button
+        onClick={() => setOpen(v => !v)}
+        title="Agent activity"
+        className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full border border-rule hover:border-positive bg-surface-alt transition-colors"
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-positive live-dot" />
+        <span className="text-[10px] font-semibold text-ink uppercase tracking-wider">Agent active</span>
+        <span className="text-[10px] text-faint hidden xl:inline">· {label}</span>
+      </button>
+
+      {open && (
+        <div className="absolute left-0 top-full mt-1 w-[320px] bg-surface border border-rule rounded-xl shadow-e3 z-[60] overflow-hidden anim-fade-up">
+          <div className="px-3.5 py-2.5 border-b border-rule bg-gradient-to-br from-positive-weak to-transparent flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-positive live-dot" />
+            <div className="flex-1">
+              <div className="text-[12px] font-semibold text-ink">Agent active</div>
+              <div className="text-[10px] text-muted">9 sources connected · last tick {label}</div>
+            </div>
+          </div>
+          <div className="px-3.5 py-2 border-b border-rule flex items-center justify-between text-[10px]">
+            <span className="text-faint font-semibold tracking-wider uppercase">Recent activity</span>
+            <span className="text-faint">live</span>
+          </div>
+          <div className="max-h-[280px] overflow-y-auto">
+            {AGENT_ACTIVITY.map((a, i) => {
+              const m = kindMeta(a.kind);
+              return (
+                <div key={i} className="flex items-start gap-2.5 px-3.5 py-2 hover:bg-surface-soft border-b border-rule/50 last:border-b-0">
+                  <span className={`w-6 h-6 shrink-0 rounded grid place-items-center ${m.cls}`}>
+                    <m.Ic className="w-3 h-3" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[11px] text-ink leading-snug">{a.text}</div>
+                    <div className="text-[10px] text-faint mt-0.5">{a.ts}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="px-3.5 py-2 bg-surface-alt border-t border-rule text-[10px] text-muted flex items-center justify-between">
+            <span>Confidence 94% · continuous</span>
+            <button className="text-brand hover:underline">Open full log</button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

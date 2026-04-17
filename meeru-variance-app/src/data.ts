@@ -256,6 +256,18 @@ export const FLUX_CHART: ChartBar[] = [
 // ==========================================================
 // CHAT SUGGESTIONS + INSIGHTS + RESPONSES
 // ==========================================================
+/** Insights surfaced by the agent over time. The first entry is the newest.
+ *  Additional insights rotate in on an interval to give a "live" feel. */
+export const NEW_INSIGHTS_POOL: { ico: 'neg' | 'warn' | 'info'; title: string; text: string }[] = [
+  { ico: 'warn', title: 'FX drift flagged',              text: 'USD/EUR moved 0.8% in the last hour — re-scoring hedge exposure.' },
+  { ico: 'info', title: 'Expansion opportunity · Cinder', text: 'Seat utilization crossed 95% for the 3rd day — candidate for outreach.' },
+  { ico: 'neg',  title: 'Cloud egress anomaly',          text: 'Customer data exports up 2.1× vs 14-day baseline — investigating.' },
+  { ico: 'warn', title: 'At-risk update · Meridian',     text: 'Competitive RFP extended by 2 weeks — retention score updated to 34%.' },
+  { ico: 'info', title: 'NRR forecast refreshed',        text: 'Q2 projection now 110% (was 109%) with updated cohort weights.' },
+  { ico: 'neg',  title: 'Threshold breached',            text: 'CA Retail margin now -2.9pp — crossed -2.5pp threshold.' },
+  { ico: 'info', title: 'Recon auto-match complete',     text: '27 of 32 reconciliations matched · 5 variances above materiality.' },
+];
+
 export const INSIGHTS = [
   { ico: 'neg' as const,  title: 'Global Revenue: −$3.2M',  when: 'just now', text: 'vs Plan · primary driver Labor' },
   { ico: 'warn' as const, title: '5 exceptions flagged',    when: '2m ago',   text: '3 critical · 2 warning · 2 positive' },
