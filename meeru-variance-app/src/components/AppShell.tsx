@@ -59,8 +59,13 @@ function Header() {
   return (
     <header className="flex items-center justify-between px-4 bg-surface border-b border-rule shrink-0" style={{ height: 44 }}>
       <div className="flex items-center gap-2.5">
-        <div className="w-6 h-6 rounded-md bg-brand text-white grid place-items-center font-bold text-[13px]">M</div>
-        <div className="font-semibold text-[14px] text-ink tracking-tight">MeeruAI</div>
+        {theme === 'light' ? (
+          <img src="/meeru-logo.png" alt="MeeruAI" className="h-5 w-auto object-contain select-none" draggable={false} />
+        ) : (
+          <span className="text-[16px] font-bold tracking-tight leading-none text-white">
+            Meeru<span style={{ color: 'var(--primary)' }}>AI</span>
+          </span>
+        )}
         <div className="h-4 w-px bg-rule mx-2" />
         <span className="text-[10px] font-semibold tracking-wider uppercase text-muted">{crumb}</span>
       </div>

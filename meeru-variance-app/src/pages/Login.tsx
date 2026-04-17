@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../store';
+import { useAuth, useTheme } from '../store';
 import { PERSONAS } from '../data';
 import type { Role } from '../types';
 import { Icon } from '../icons';
 
 export default function Login() {
   const { login } = useAuth();
+  const { theme } = useTheme();
   const nav = useNavigate();
 
   const pick = (role: Role) => {
@@ -22,11 +23,18 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-alt p-6">
       <div className="max-w-[900px] w-full">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-brand text-white grid place-items-center font-bold text-[18px]">M</div>
+        <div className="flex items-center gap-4 mb-8">
+          {theme === 'light' ? (
+            <img src="/meeru-logo.png" alt="MeeruAI" className="h-8 w-auto object-contain select-none" draggable={false} />
+          ) : (
+            <span className="text-[28px] font-bold tracking-tight leading-none text-ink">
+              Meeru<span style={{ color: 'var(--primary)' }}>AI</span>
+            </span>
+          )}
+          <div className="h-8 w-px bg-rule" />
           <div>
-            <div className="text-[22px] font-semibold text-ink tracking-tight">MeeruAI</div>
-            <div className="text-[12px] text-muted">Variance Workbench — pick a persona to explore</div>
+            <div className="text-[14px] font-semibold text-ink">Variance Workbench</div>
+            <div className="text-[12px] text-muted">Pick a persona to explore</div>
           </div>
         </div>
 
