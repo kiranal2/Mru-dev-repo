@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #0F172A;
+  --text-muted: #475569;
+  --text-faint: #94A3B8;
+  --rule: #E2E8F0;
+  --surface: #FFFFFF;
+  --surface-alt: #F8FAFC;
+  --surface-soft: #F1F5F9;
+  --primary: #1E40AF;
+  --primary-weak: #DBEAFE;
+  --primary-tint: #EFF6FF;
+  --positive: #16A34A;
+  --positive-weak: #DCFCE7;
+  --warning: #D97706;
+  --warning-weak: #FEF3C7;
+  --negative: #DC2626;
+  --negative-weak: #FEE2E2;
+}
+[data-theme='dark'] {
+  --ink: #F1F5F9;
+  --text-muted: #CBD5E1;
+  --text-faint: #64748B;
+  --rule: #334155;
+  --surface: #0F172A;
+  --surface-alt: #1E293B;
+  --surface-soft: #0B1220;
+  --primary: #3B82F6;
+  --primary-weak: #1E3A8A;
+  --primary-tint: #172554;
+  --positive: #22C55E;
+  --positive-weak: #14532D;
+  --warning: #F59E0B;
+  --warning-weak: #78350F;
+  --negative: #F87171;
+  --negative-weak: #7F1D1D;
+}
+
+html, body, #root { height: 100%; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--surface-alt);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+/* Utility: glow highlight for mission focus */
+.glow { position: relative; z-index: 30; }
+.glow::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 12px;
+  border: 2px solid var(--primary);
+  animation: pulse2 1.5s infinite;
+  pointer-events: none;
+  z-index: 40;
+}
+@keyframes pulse2 {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+@keyframes slide-in {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes fade-up {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.anim-slide-in { animation: slide-in 0.25s ease-out; }
+.anim-fade-up { animation: fade-up 0.3s ease-out; }
+
+/* Numeric alignment */
+.num { font-variant-numeric: tabular-nums; }
+
+/* Focus ring defaults — only on bare buttons and links.
+   Inputs / selects / textareas get focus styling from their
+   container wrappers (focus-within:border-brand + halo), so
+   the inner element should have no competing outline. */
+button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+input, select, textarea {
+  outline: none;
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: none;
+}
+
+/* Status chip hues */
+.chip-neg  { background: var(--negative-weak); color: var(--negative); }
+.chip-pos  { background: var(--positive-weak); color: var(--positive); }
+.chip-warn { background: var(--warning-weak); color: var(--warning); }
+.chip-info { background: var(--primary-tint);  color: var(--primary); }

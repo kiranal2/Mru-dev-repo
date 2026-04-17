@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(npm run:*)",
+      "Bash(find:*)",
+      "Bash(npx tsc:*)",
+      "Bash(xargs sed:*)",
+      "Bash(xargs -I {} find {} -maxdepth 2 -type d)",
+      "Bash(grep -E \"\\\\.ts$|\\\\.tsx$\")",
+      "Bash(rm -rf /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/frontend/app/\\\\\\(public\\\\\\))",
+      "Bash(rm -rf /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/frontend/components/marketing)",
+      "WebFetch(domain:localhost)",
+      "Bash(grep -E \"\\(page\\\\.tsx|layout\\\\.tsx|\\\\.tsx$|\\\\.ts$\\)\")",
+      "Bash(npx --yes tsc --noEmit)",
+      "Bash(npx next:*)",
+      "Bash(curl:*)",
+      "Bash(lsof -ti:3000)"
+    ]
+  }
+}
