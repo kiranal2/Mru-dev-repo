@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { WORKBENCHES } from '../data';
 import { Icon } from '../icons';
 import { ChatPanel } from './ChatPanel';
@@ -64,7 +64,6 @@ export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLab
 }
 
 function WorkbenchTabs({ active }: { active: string }) {
-  const loc = useLocation();
   return (
     <div className="bg-surface border-b border-rule flex items-stretch h-10">
       {Object.values(WORKBENCHES).map(wb => {
@@ -85,11 +84,9 @@ function WorkbenchTabs({ active }: { active: string }) {
           </Link>
         );
       })}
-      <div className="flex-1" />
-      <div className="hidden xl:flex items-center gap-2 px-3 text-[11px] text-faint">
-        <span className="num">Sources 9/9</span>·<span className="num">Segments 12</span>·<span>Generated 08:38 AM</span>
-        <span className="text-muted">{loc.pathname.split('/').pop()}</span>
-      </div>
     </div>
   );
 }
+
+// Note: "Sources / Segments / Generated" metadata now lives only in TopNav
+// (directly below the workbench-tab row) to avoid duplication.

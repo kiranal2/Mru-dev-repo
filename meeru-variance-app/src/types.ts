@@ -11,6 +11,17 @@ export interface Persona {
   role: string;
   email: string;
   order: ActionKind[]; // preferred action-kind order
+  /** Extended profile fields — used in the header profile menu */
+  department?: string;
+  reportsTo?: string;
+  teamSize?: number;
+  location?: string;
+  timezone?: string;
+  phone?: string;
+  focusAreas?: string[];
+  quickStat?: { label: string; value: string; tone?: 'pos' | 'neg' | 'warn' };
+  todayAgenda?: string[];
+  permissions?: string[];
 }
 
 export type WorkbenchKey = 'performance' | 'margin' | 'flux';
