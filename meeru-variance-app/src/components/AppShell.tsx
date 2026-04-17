@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { useAuth, useTheme, useMission } from '../store';
+import { useAuth, useTheme, useMission, useSettings, useChat } from '../store';
 import { Icon } from '../icons';
 import { ToastHost } from './Toast';
 import { MarinGuide, MissionEndCard } from './MarinGuide';
@@ -90,6 +90,7 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
             <option value="PREPARER">Preparer · Maya</option>
           </select>
         </div>
+        <ChatToggleButton />
         <button onClick={toggle} className="w-7 h-7 rounded-md grid place-items-center text-muted hover:bg-surface-soft hover:text-ink" title="Toggle theme">
           {theme === 'light' ? <Icon.Moon className="w-4 h-4" /> : <Icon.Sun className="w-4 h-4" />}
         </button>
@@ -105,6 +106,7 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
 function ProfileMenu() {
   const { user, logout } = useAuth();
   const { theme, toggle } = useTheme();
+  const { pinned, saved } = useChat();
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -233,6 +235,12 @@ function ProfileMenu() {
 
           {/* Quick actions */}
           <div className="py-1.5">
+            <MenuItem
+              onClick={() => { setOpen(false); nav('/notebook'); }}
+              icon={<Icon.File className="w-3.5 h-3.5" />}
+              label="Notebook"
+              hint={saved.length + pinned.length > 0 ? `${saved.length + pinned.length}` : undefined}
+            />
             <MenuItem onClick={() => { setOpen(false); nav('/settings'); }} icon={<Icon.Settings className="w-3.5 h-3.5" />} label="Settings & preferences" />
             <MenuItem onClick={() => { toggle(); }} icon={theme === 'light' ? <Icon.Moon className="w-3.5 h-3.5" /> : <Icon.Sun className="w-3.5 h-3.5" />} label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'} />
             <MenuItem onClick={() => { setOpen(false); alert('Keyboard shortcuts:\n\n/ — focus chat\n⌘K — command palette\nEsc — close menu'); }} icon={<Icon.Info className="w-3.5 h-3.5" />} label="Keyboard shortcuts" hint="⌘/" />
@@ -285,6 +293,23 @@ function MenuItem({ onClick, icon, label, hint }: { onClick: () => void; icon: R
       <span className="text-muted shrink-0">{icon}</span>
       <span className="flex-1">{label}</span>
       {hint && <span className="text-[10px] text-faint font-mono">{hint}</span>}
+    </button>
+  );
+}
+
+// ==========================================================
+// ChatToggleButton — show / hide the AI chat side panel
+// ==========================================================
+function ChatToggleButton() {
+  const { settings, update } = useSettings();
+  const hidden = settings.chatHidden;
+  return (
+    <button
+      onClick={() => update({ chatHidden: !hidden })}
+      title={hidden ? 'Show AI panel' : 'Hide AI panel'}
+      className={`w-7 h-7 rounded-md grid place-items-center transition-colors ${hidden ? 'text-faint hover:bg-surface-soft hover:text-ink' : 'text-brand bg-brand-tint hover:bg-brand-weak'}`}
+    >
+      <Icon.Sparkle className="w-4 h-4" />
     </button>
   );
 }

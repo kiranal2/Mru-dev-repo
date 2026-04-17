@@ -1,9 +1,9 @@
 import { useMemo, useState, useEffect } from 'react';
 import { RECONS } from '../data';
 import { Card, StatusChip } from '../components/ui';
-import { ChatPanel } from '../components/ChatPanel';
 import { ActionStrip } from '../components/ActionStrip';
-import { useChat, useToasts } from '../store';
+import { ChatSidebar, ChatShowButton } from '../components/ChatSidebar';
+import { useChat, useToasts, useSettings } from '../store';
 import { Icon } from '../icons';
 
 function fmt(n: number) {
@@ -15,6 +15,7 @@ function fmt(n: number) {
 export default function Recons() {
   const { setScope } = useChat();
   const { push } = useToasts();
+  const { settings } = useSettings();
   const [filter, setFilter] = useState<'all' | 'material' | 'variance' | 'matched'>('all');
 
   useEffect(() => { setScope('Reconciliations · Q1 FY26'); }, [setScope]);
@@ -34,8 +35,12 @@ export default function Recons() {
     totalVar: RECONS.reduce((s, r) => s + Math.abs(r.variance), 0),
   }), []);
 
+  const gridCols = settings.chatHidden ? '1fr' : `1fr ${settings.chatWidth}px`;
+  const gridAreas = settings.chatHidden ? `"main" "strip"` : `"main chat" "strip chat"`;
+
   return (
-    <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: '1fr 344px', gridTemplateRows: '1fr 48px', gridTemplateAreas: `"main chat" "strip chat"` }}>
+    <>
+    <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: gridCols, gridTemplateRows: '1fr 48px', gridTemplateAreas: gridAreas }}>
       <div style={{ gridArea: 'main' }} className="overflow-auto p-6 bg-surface-alt">
         <div className="max-w-[1080px] mx-auto">
           <div className="flex justify-between items-center mb-5">
@@ -102,7 +107,9 @@ export default function Recons() {
         </div>
       </div>
       <div style={{ gridArea: 'strip' }} className="bg-surface border-t border-rule overflow-x-auto"><ActionStrip /></div>
-      <aside style={{ gridArea: 'chat' }} className="bg-surface border-l border-rule flex flex-col overflow-hidden"><ChatPanel /></aside>
+      <ChatSidebar style={{ gridArea: 'chat' }} />
     </div>
+    <ChatShowButton />
+    </>
   );
 }

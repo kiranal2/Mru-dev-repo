@@ -90,6 +90,25 @@ export interface ChatMsg {
   html?: string;
 }
 
+/** A pinned or saved AI reply. Same shape for both lists. */
+export interface SavedReply {
+  id: string;
+  question: string;   // the user query that produced this reply
+  answerText: string; // plain-text version of the reply
+  answerHtml: string; // original HTML
+  scope: string;      // workbench context at the time
+  persona: string;    // persona role
+  timestamp: string;  // ISO string
+}
+
+export interface SourceCitation {
+  title: string;
+  source: 'GL' | 'Report' | 'ERP' | 'Dashboard' | 'Prior Quarter' | 'ML Model';
+  detail: string;
+  confidence: number; // 0-100
+  asOf: string;
+}
+
 export interface Toast {
   id: number;
   kind: 'ok' | 'warn' | 'info';

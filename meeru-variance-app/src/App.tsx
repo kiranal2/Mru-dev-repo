@@ -9,6 +9,7 @@ import Flux from './pages/Flux';
 import Close from './pages/Close';
 import Recons from './pages/Recons';
 import Settings from './pages/Settings';
+import Notebook from './pages/Notebook';
 
 function RequireAuth({ children }: { children: JSX.Element }) {
   const { user } = useAuth();
@@ -31,6 +32,7 @@ function AppRoutes() {
         <Route path="/close" element={<Close />} />
         <Route path="/reconciliations" element={<Recons />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/notebook" element={<Notebook />} />
         <Route path="*" element={<Navigate to="/workspace" replace />} />
       </Route>
     </Routes>

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
-import type { Role, Persona, ActionKind, Toast, Mission, MissionBeat, ChatMsg, ActionCard } from './types';
+import type { Role, Persona, ActionKind, Toast, Mission, MissionBeat, ChatMsg, ActionCard, SavedReply } from './types';
 import { PERSONAS } from './data';
 
 // ==================================================================
@@ -42,6 +42,8 @@ interface Settings {
   showInsightsFeed: boolean;
   autoOpenChat: boolean;
   pinnedActions: ActionKind[];
+  chatHidden: boolean;
+  chatWidth: number; // pixels (clamped 300–640)
 }
 interface SettingsCtx {
   settings: Settings;
@@ -101,9 +103,19 @@ interface ChatCtx {
   scope: string;
   setScope: (s: string) => void;
   send: (q: string) => void;
+  regenerate: () => void;
   reset: () => void;
   markSent: (id: string) => void;
   clearContextual: () => void;
+  /** Pinned and saved replies — persisted across sessions */
+  pinned: SavedReply[];
+  saved: SavedReply[];
+  isPinned: (id: string) => boolean;
+  isSaved: (id: string) => boolean;
+  togglePin: (item: SavedReply) => void;
+  toggleSave: (item: SavedReply) => void;
+  removePinned: (id: string) => void;
+  removeSaved: (id: string) => void;
 }
 const ChatContext = createContext<ChatCtx | null>(null);
 export const useChat = () => {
@@ -146,12 +158,20 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const toggleTheme = useCallback(() => setTheme(t => t === 'light' ? 'dark' : 'light'), []);
 
   // SETTINGS
+  const defaults: Settings = {
+    density: 'comfortable',
+    showInsightsFeed: true,
+    autoOpenChat: true,
+    pinnedActions: ['pin', 'remind', 'share'],
+    chatHidden: false,
+    chatWidth: 344,
+  };
   const [settings, setSettings] = useState<Settings>(() => {
     try {
       const raw = localStorage.getItem('meeru.settings');
-      if (raw) return JSON.parse(raw);
+      if (raw) return { ...defaults, ...JSON.parse(raw) };
     } catch {}
-    return { density: 'comfortable', showInsightsFeed: true, autoOpenChat: true, pinnedActions: ['pin', 'remind', 'share'] };
+    return defaults;
   });
   const updateSettings = useCallback((patch: Partial<Settings>) => {
     setSettings(s => {
@@ -204,6 +224,16 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [sent, setSent] = useState<Set<string>>(new Set());
   const [scope, setScope] = useState('Variance Workbench');
+  const [pinned, setPinned] = useState<SavedReply[]>(() => {
+    try { return JSON.parse(localStorage.getItem('meeru.pinnedReplies') ?? '[]'); } catch { return []; }
+  });
+  const [saved, setSaved] = useState<SavedReply[]>(() => {
+    try { return JSON.parse(localStorage.getItem('meeru.savedReplies') ?? '[]'); } catch { return []; }
+  });
+  // Persist pinned and saved on change
+  useEffect(() => { try { localStorage.setItem('meeru.pinnedReplies', JSON.stringify(pinned)); } catch {} }, [pinned]);
+  useEffect(() => { try { localStorage.setItem('meeru.savedReplies', JSON.stringify(saved)); } catch {} }, [saved]);
+
   const sendChat = useCallback((q: string) => {
     if (!q.trim()) return;
     setMsgs(prev => [...prev, { role: 'user', text: q }]);
@@ -215,6 +245,29 @@ export function AppProviders({ children }: { children: ReactNode }) {
       setSent(new Set());
     }, 420);
   }, []);
+
+  const regenerate = useCallback(() => {
+    // Find the last user message and re-run the pipeline
+    const lastUserMsg = [...msgs].reverse().find(m => m.role === 'user');
+    if (!lastUserMsg || !lastUserMsg.text) return;
+    const q = lastUserMsg.text;
+    const resp = CHAT_RESPONSES.find(r => r.match.test(q)) ?? FALLBACK_RESPONSE;
+    // Remove the last AI message if any, then append a new one (simulating re-run)
+    setMsgs(prev => {
+      const idx = [...prev].reverse().findIndex(m => m.role === 'ai');
+      if (idx === -1) return prev;
+      const realIdx = prev.length - 1 - idx;
+      const sliced = [...prev.slice(0, realIdx), ...prev.slice(realIdx + 1)];
+      return sliced;
+    });
+    setTimeout(() => {
+      setMsgs(prev => [...prev, { role: 'ai', html: resp.text + '<br/><em style="color:var(--text-muted);font-size:11px">↻ regenerated with latest data</em>' }]);
+      setContextual(resp.actions);
+      setFollowUps(resp.followUps ?? []);
+      setSent(new Set());
+    }, 480);
+  }, [msgs]);
+
   const resetChat = useCallback(() => {
     setMsgs([]); setContextual([]); setFollowUps([]); setSent(new Set());
   }, []);
@@ -222,6 +275,21 @@ export function AppProviders({ children }: { children: ReactNode }) {
     setSent(prev => { const n = new Set(prev); n.add(id); return n; });
   }, []);
   const clearContextual = useCallback(() => { setContextual([]); setSent(new Set()); }, []);
+
+  const isPinned = useCallback((id: string) => pinned.some(p => p.id === id), [pinned]);
+  const isSaved  = useCallback((id: string) => saved.some(s => s.id === id),  [saved]);
+  const togglePin = useCallback((item: SavedReply) => {
+    setPinned(prev => prev.some(p => p.id === item.id)
+      ? prev.filter(p => p.id !== item.id)
+      : [item, ...prev]);
+  }, []);
+  const toggleSave = useCallback((item: SavedReply) => {
+    setSaved(prev => prev.some(s => s.id === item.id)
+      ? prev.filter(s => s.id !== item.id)
+      : [item, ...prev]);
+  }, []);
+  const removePinned = useCallback((id: string) => setPinned(prev => prev.filter(p => p.id !== id)), []);
+  const removeSaved  = useCallback((id: string) => setSaved(prev  => prev.filter(s => s.id !== id)),  []);
 
   // ------ Provide values ------
   const auth = useMemo(() => ({ user, login, logout }), [user, login, logout]);
@@ -232,8 +300,10 @@ export function AppProviders({ children }: { children: ReactNode }) {
     mission, step, start, advance, skip, end: endMission, currentBeat, ended, dismissEnded
   }), [mission, step, start, advance, skip, endMission, currentBeat, ended, dismissEnded]);
   const chatV = useMemo(() => ({
-    msgs, contextual, followUps, sent, scope, setScope, send: sendChat, reset: resetChat, markSent, clearContextual
-  }), [msgs, contextual, followUps, sent, scope, sendChat, resetChat, markSent, clearContextual]);
+    msgs, contextual, followUps, sent, scope, setScope,
+    send: sendChat, regenerate, reset: resetChat, markSent, clearContextual,
+    pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved,
+  }), [msgs, contextual, followUps, sent, scope, sendChat, regenerate, resetChat, markSent, clearContextual, pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved]);
 
   return (
     <AuthContext.Provider value={auth}>

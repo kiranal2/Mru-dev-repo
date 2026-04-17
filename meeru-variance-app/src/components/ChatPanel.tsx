@@ -4,6 +4,7 @@ import { useChat, useSettings, useToasts, useMission } from '../store';
 import { INSIGHTS, SUGGESTIONS, UNIVERSAL_ACTIONS, CHAT_RESPONSES } from '../data';
 import { Icon, getActionIcon } from '../icons';
 import { usePersona } from './AppShell';
+import { ShareModal, FactCheckModal } from './ChatReplyModals';
 import type { ActionCard } from '../types';
 
 // ---------- Typeahead helpers ----------
@@ -59,6 +60,104 @@ function CollapsedInsights({ count, critical, onExpand }: { count: number; criti
   );
 }
 
+// ---------- Welcome card (first-time intro) ----------
+function ChatWelcomeCard({
+  personaFirstName,
+  onDismiss,
+  onPickSuggestion,
+}: {
+  personaFirstName: string;
+  onDismiss: () => void;
+  onPickSuggestion: (s: string) => void;
+}) {
+  const features: { icon: ReactNode; title: string; body: string }[] = [
+    {
+      icon: <Icon.Search className="w-3.5 h-3.5" />,
+      title: 'Ask in plain English',
+      body: 'Variance, drivers, cohorts, at-risk accounts — I answer in the context of the workbench you\'re on.',
+    },
+    {
+      icon: <Icon.Flag className="w-3.5 h-3.5" />,
+      title: 'Get one-click actions',
+      body: 'Every answer generates Next Best Action cards — Slack, email, pin, run a What-If — ranked for your role.',
+    },
+    {
+      icon: <Icon.Pin className="w-3.5 h-3.5" />,
+      title: 'Save, share, fact-check',
+      body: 'Pin a reply to your workspace, copy it, share a link, or trace claims back to sources.',
+    },
+    {
+      icon: <Icon.Sparkle className="w-3.5 h-3.5" />,
+      title: 'Guided missions',
+      body: 'Try the Start Mission button in the header for a 3-minute walkthrough of the full close-loop.',
+    },
+  ];
+
+  const quickPrompts = [
+    'Why did Enterprise churn spike this quarter?',
+    "What's happening with California Retail labor costs?",
+    'When will margins recover?',
+  ];
+
+  return (
+    <div className="relative rounded-xl border border-brand-weak bg-gradient-to-br from-brand-tint via-surface to-surface shadow-e1 p-3.5 anim-fade-up">
+      <button
+        onClick={onDismiss}
+        className="absolute top-2 right-2 w-5 h-5 rounded grid place-items-center text-faint hover:text-ink hover:bg-surface-soft"
+        title="Dismiss"
+        aria-label="Dismiss welcome message"
+      >
+        <Icon.X className="w-3 h-3" />
+      </button>
+      <div className="flex items-center gap-2 mb-2">
+        <div className="w-7 h-7 rounded-full bg-brand text-white grid place-items-center">
+          <Icon.Sparkle className="w-4 h-4" />
+        </div>
+        <div>
+          <div className="text-[13px] font-semibold text-ink leading-tight">Welcome, {personaFirstName}.</div>
+          <div className="text-[11px] text-muted leading-tight">Here&apos;s what I can help with on this workbench.</div>
+        </div>
+      </div>
+
+      <ul className="space-y-1.5 mt-2.5">
+        {features.map((f, i) => (
+          <li key={i} className="flex gap-2 p-1.5 rounded-md hover:bg-surface-soft">
+            <span className="w-6 h-6 rounded grid place-items-center bg-brand-tint text-brand shrink-0">{f.icon}</span>
+            <div className="min-w-0">
+              <div className="text-[11px] font-semibold text-ink">{f.title}</div>
+              <div className="text-[11px] text-muted leading-relaxed">{f.body}</div>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-3 pt-2.5 border-t border-rule/70">
+        <div className="text-[10px] font-semibold tracking-wider uppercase text-faint mb-1.5">Try asking</div>
+        <div className="flex flex-wrap gap-1.5">
+          {quickPrompts.map((p, i) => (
+            <button
+              key={i}
+              onClick={() => { onPickSuggestion(p); onDismiss(); }}
+              className="text-left px-2.5 py-1 rounded-full border border-rule bg-surface text-[11px] text-ink hover:bg-brand hover:text-white hover:border-brand transition-colors"
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-3 flex justify-end">
+        <button
+          onClick={onDismiss}
+          className="text-[11px] font-medium text-brand hover:underline"
+        >
+          Got it — let me explore
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ---------- Suggestion chip ----------
 function SuggestionChip({ text, onClick, dataKey }: { text: ReactNode; onClick: () => void; dataKey?: string }) {
   return (
@@ -73,58 +172,91 @@ function SuggestionChip({ text, onClick, dataKey }: { text: ReactNode; onClick: 
 }
 
 // ---------- Message-level toolbar (appears below each AI reply) ----------
-function MessageToolbar({ text }: { text: string }) {
+function MessageToolbar({ text, html, msgId, question }: {
+  text: string; html: string; msgId: string; question: string;
+}) {
   const { push } = useToasts();
+  const { isPinned, isSaved, togglePin, toggleSave, regenerate, scope } = useChat();
+  const persona = usePersona();
+  const [shareOpen, setShareOpen] = useState(false);
+  const [factOpen, setFactOpen] = useState(false);
 
-  const actions: { key: string; label: string; icon: ReactNode; onClick: () => void }[] = [
-    {
-      key: 'pin',    label: 'Pin',    icon: <Icon.Pin className="w-3 h-3" />,
-      onClick: () => push({ kind: 'ok', title: 'Pinned to workspace', sub: 'Find it in My Workspace → Live Pins' }),
-    },
-    {
-      key: 'save',   label: 'Save',   icon: <Icon.File className="w-3 h-3" />,
-      onClick: () => push({ kind: 'ok', title: 'Saved to notebook', sub: 'Appended to Q1 Variance notebook' }),
-    },
-    {
-      key: 'share',  label: 'Share',  icon: <Icon.Share className="w-3 h-3" />,
-      onClick: () => push({ kind: 'ok', title: 'Link copied', sub: 'Share this thread with anyone on your team' }),
-    },
-    {
-      key: 'copy',   label: 'Copy',   icon: <Icon.Check className="w-3 h-3" />,
-      onClick: () => {
-        try { navigator.clipboard?.writeText(text); } catch { /* ignore */ }
-        push({ kind: 'ok', title: 'Copied', sub: `${text.length} characters` });
-      },
-    },
-    {
-      key: 'regen',  label: 'Regenerate', icon: <Icon.Refresh className="w-3 h-3" />,
-      onClick: () => push({ kind: 'info', title: 'Re-running analysis', sub: 'Will refresh with latest data' }),
-    },
-    {
-      key: 'fact',   label: 'Fact-check', icon: <Icon.Search className="w-3 h-3" />,
-      onClick: () => push({ kind: 'info', title: 'Fact-check', sub: 'Opens source citations in the right drawer' }),
-    },
+  const item = {
+    id: msgId,
+    question,
+    answerText: text,
+    answerHtml: html,
+    scope,
+    persona: persona.role,
+    timestamp: new Date().toISOString(),
+  };
+  const pinned = isPinned(msgId);
+  const saved  = isSaved(msgId);
+
+  const onPin = () => {
+    togglePin(item);
+    push({
+      kind: pinned ? 'info' : 'ok',
+      title: pinned ? 'Unpinned' : 'Pinned to workspace',
+      sub: pinned ? 'Removed from My Workspace → Pinned' : 'Find it in My Workspace → Pinned',
+    });
+  };
+  const onSave = () => {
+    toggleSave(item);
+    push({
+      kind: saved ? 'info' : 'ok',
+      title: saved ? 'Removed from notebook' : 'Saved to notebook',
+      sub: saved ? 'Item removed from Notebook' : 'Open Notebook from the profile menu',
+    });
+  };
+  const onCopy = () => {
+    try { navigator.clipboard?.writeText(text); } catch { /* ignore */ }
+    push({ kind: 'ok', title: 'Copied', sub: `${text.length} characters copied` });
+  };
+  const onRegenerate = () => {
+    regenerate();
+    push({ kind: 'info', title: 'Re-running analysis', sub: 'Refreshing with latest data' });
+  };
+
+  const actions: { key: string; label: string; icon: ReactNode; onClick: () => void; active?: boolean }[] = [
+    { key: 'pin',   label: pinned ? 'Pinned' : 'Pin',    icon: <Icon.Pin   className="w-3 h-3" />, onClick: onPin,          active: pinned },
+    { key: 'save',  label: saved  ? 'Saved'  : 'Save',   icon: <Icon.File  className="w-3 h-3" />, onClick: onSave,         active: saved },
+    { key: 'share', label: 'Share',                      icon: <Icon.Share className="w-3 h-3" />, onClick: () => setShareOpen(true) },
+    { key: 'copy',  label: 'Copy',                       icon: <Icon.Check className="w-3 h-3" />, onClick: onCopy },
+    { key: 'regen', label: 'Regenerate',                 icon: <Icon.Refresh className="w-3 h-3" />, onClick: onRegenerate },
+    { key: 'fact',  label: 'Fact-check',                 icon: <Icon.Search className="w-3 h-3" />, onClick: () => setFactOpen(true) },
   ];
 
   return (
-    <div className="flex flex-wrap gap-0.5 mt-0.5 ml-1">
-      {actions.map(a => (
-        <button
-          key={a.key}
-          onClick={a.onClick}
-          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] text-faint hover:text-brand hover:bg-brand-tint transition-colors"
-          title={a.label}
-        >
-          {a.icon}
-          <span>{a.label}</span>
-        </button>
-      ))}
-    </div>
+    <>
+      <div className="flex flex-wrap gap-0.5 mt-0.5 ml-1">
+        {actions.map(a => (
+          <button
+            key={a.key}
+            onClick={a.onClick}
+            className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] transition-colors ${a.active ? 'text-brand bg-brand-tint font-semibold' : 'text-faint hover:text-brand hover:bg-brand-tint'}`}
+            title={a.label}
+          >
+            {a.icon}
+            <span>{a.label}</span>
+          </button>
+        ))}
+      </div>
+      {shareOpen && <ShareModal answerText={text} question={question} onClose={() => setShareOpen(false)} />}
+      {factOpen  && <FactCheckModal answerText={text} question={question} onClose={() => setFactOpen(false)} />}
+    </>
   );
 }
 
 function stripHtml(s: string): string {
   return s.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+}
+
+/** Deterministic short hash of a string — stable per-text so pin/save state persists across renders. */
+function hashStr(s: string): string {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i);
+  return (h >>> 0).toString(36);
 }
 
 /**
@@ -259,6 +391,9 @@ export function ChatPanel() {
   const [suggestionsOpen, setSuggestionsOpen] = useState<boolean>(() => {
     try { return localStorage.getItem('meeru.suggestionsOpen') !== '0'; } catch { return true; }
   });
+  const [welcomeDismissed, setWelcomeDismissed] = useState<boolean>(() => {
+    try { return localStorage.getItem('meeru.chatWelcomeSeen') === '1'; } catch { return false; }
+  });
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const toggleSuggestions = () => {
@@ -267,6 +402,11 @@ export function ChatPanel() {
       try { localStorage.setItem('meeru.suggestionsOpen', next ? '1' : '0'); } catch {}
       return next;
     });
+  };
+
+  const dismissWelcome = () => {
+    setWelcomeDismissed(true);
+    try { localStorage.setItem('meeru.chatWelcomeSeen', '1'); } catch {}
   };
 
   // Auto-collapse insights once conversation is active (only on first message)
@@ -364,18 +504,38 @@ export function ChatPanel() {
           </>
         )}
 
+        {msgs.length === 0 && !welcomeDismissed && (
+          <ChatWelcomeCard
+            personaFirstName={persona.name.split(' ')[0]}
+            onDismiss={dismissWelcome}
+            onPickSuggestion={(s) => send(s)}
+          />
+        )}
+
         {msgs.map((m, idx) => {
           const who = m.role === 'user' ? persona.name.split(' ')[0] : 'Meeru AI';
           const bubbleCls = m.role === 'user' ? 'bg-brand-tint border-brand-weak' : 'bg-surface-alt border-rule';
           const whoCls    = m.role === 'user' ? 'text-brand' : 'text-muted';
+          // For AI replies, use the immediately preceding user message as the "question"
+          const prevUser = m.role === 'ai' ? [...msgs.slice(0, idx)].reverse().find(p => p.role === 'user') : undefined;
+          const rawHtml  = m.html ?? m.text ?? '';
+          // Deterministic id for this reply so pin/save state is stable per-text
+          const msgId = `reply-${hashStr(rawHtml)}`;
           return (
             <div key={idx} className="flex flex-col gap-1">
               <div className={`text-[10px] font-semibold uppercase tracking-wider ${whoCls}`}>{who}</div>
               <div
                 className={`text-[12px] leading-relaxed text-ink p-2.5 rounded-lg border ${bubbleCls}`}
-                dangerouslySetInnerHTML={{ __html: m.html ?? m.text ?? '' }}
+                dangerouslySetInnerHTML={{ __html: rawHtml }}
               />
-              {m.role === 'ai' && <MessageToolbar text={stripHtml(m.html ?? m.text ?? '')} />}
+              {m.role === 'ai' && (
+                <MessageToolbar
+                  text={stripHtml(rawHtml)}
+                  html={rawHtml}
+                  msgId={msgId}
+                  question={prevUser?.text ?? 'Untitled'}
+                />
+              )}
             </div>
           );
         })}

@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { WORKBENCHES } from '../data';
 import { Icon } from '../icons';
-import { ChatPanel } from './ChatPanel';
 import { ActionStrip } from './ActionStrip';
-import { useChat } from '../store';
+import { ChatSidebar, ChatShowButton } from './ChatSidebar';
+import { useChat, useSettings } from '../store';
 
 interface Props {
   /** The workbench key we're currently on */
@@ -35,31 +35,39 @@ interface Props {
  */
 export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLabel }: Props) {
   const { setScope } = useChat();
+  const { settings } = useSettings();
   useEffect(() => {
     if (scopeLabel) setScope(scopeLabel);
   }, [scopeLabel, setScope]);
 
+  const chatCol = settings.chatHidden ? '' : ` ${settings.chatWidth}px`;
+  const gridCols = `200px 1fr${chatCol}`;
+  const gridAreas = settings.chatHidden
+    ? `"wb wb" "left topnav" "left main" "strip strip"`
+    : `"wb wb chat" "left topnav chat" "left main chat" "strip strip chat"`;
+
   return (
-    <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: '200px 1fr 344px', gridTemplateRows: '40px 48px 1fr 48px', gridTemplateAreas: `"wb wb chat" "left topnav chat" "left main chat" "strip strip chat"` }}>
-      <div style={{ gridArea: 'wb' }}>
-        <WorkbenchTabs active={workbench} />
+    <>
+      <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: gridCols, gridTemplateRows: '40px 48px 1fr 48px', gridTemplateAreas: gridAreas }}>
+        <div style={{ gridArea: 'wb' }}>
+          <WorkbenchTabs active={workbench} />
+        </div>
+        <aside style={{ gridArea: 'left' }} className="bg-surface border-r border-rule overflow-y-auto p-2.5">
+          {leftRail}
+        </aside>
+        <div style={{ gridArea: 'topnav' }} className="bg-surface border-b border-rule">
+          {topNav}
+        </div>
+        <main style={{ gridArea: 'main' }} className="overflow-auto p-5">
+          {children}
+        </main>
+        <div style={{ gridArea: 'strip' }} className="bg-surface border-t border-rule overflow-x-auto">
+          <ActionStrip />
+        </div>
+        <ChatSidebar style={{ gridArea: 'chat' }} />
       </div>
-      <aside style={{ gridArea: 'left' }} className="bg-surface border-r border-rule overflow-y-auto p-2.5">
-        {leftRail}
-      </aside>
-      <div style={{ gridArea: 'topnav' }} className="bg-surface border-b border-rule">
-        {topNav}
-      </div>
-      <main style={{ gridArea: 'main' }} className="overflow-auto p-5">
-        {children}
-      </main>
-      <div style={{ gridArea: 'strip' }} className="bg-surface border-t border-rule overflow-x-auto" >
-        <ActionStrip />
-      </div>
-      <aside style={{ gridArea: 'chat' }} className="bg-surface border-l border-rule flex flex-col overflow-hidden">
-        <ChatPanel />
-      </aside>
-    </div>
+      <ChatShowButton />
+    </>
   );
 }
 

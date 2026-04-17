@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react';
 import { CLOSE_TASKS } from '../data';
 import type { CloseTask } from '../data';
 import { Card, StatusChip } from '../components/ui';
-import { ChatPanel } from '../components/ChatPanel';
 import { ActionStrip } from '../components/ActionStrip';
-import { useChat } from '../store';
+import { ChatSidebar, ChatShowButton } from '../components/ChatSidebar';
+import { useChat, useSettings } from '../store';
 import { useEffect } from 'react';
 import { Icon } from '../icons';
 
@@ -17,6 +17,7 @@ const STATUS_META: Record<CloseTask['status'], { label: string; cls: string }> =
 
 export default function Close() {
   const { setScope } = useChat();
+  const { settings } = useSettings();
   const [filter, setFilter] = useState<'all' | CloseTask['status']>('all');
 
   useEffect(() => { setScope('Close Workbench · Day 4 / 5'); }, [setScope]);
@@ -34,8 +35,12 @@ export default function Close() {
     total: CLOSE_TASKS.length,
   }), []);
 
+  const gridCols = settings.chatHidden ? '1fr' : `1fr ${settings.chatWidth}px`;
+  const gridAreas = settings.chatHidden ? `"main" "strip"` : `"main chat" "strip chat"`;
+
   return (
-    <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: '1fr 344px', gridTemplateRows: '1fr 48px', gridTemplateAreas: `"main chat" "strip chat"` }}>
+    <>
+    <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: gridCols, gridTemplateRows: '1fr 48px', gridTemplateAreas: gridAreas }}>
       <div style={{ gridArea: 'main' }} className="overflow-auto p-6 bg-surface-alt">
         <div className="max-w-[1080px] mx-auto">
           <div className="flex justify-between items-center mb-5">
@@ -118,9 +123,9 @@ export default function Close() {
         <ActionStrip />
       </div>
 
-      <aside style={{ gridArea: 'chat' }} className="bg-surface border-l border-rule flex flex-col overflow-hidden">
-        <ChatPanel />
-      </aside>
+      <ChatSidebar style={{ gridArea: 'chat' }} />
     </div>
+    <ChatShowButton />
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { LIVE_PINS, WATCHLIST, ACTIVITY, MISSIONS } from '../data';
-import { useAuth, useMission, useToasts } from '../store';
+import { useAuth, useMission, useToasts, useChat } from '../store';
 import { StatusChip, Card, Eyebrow } from '../components/ui';
 import { Icon } from '../icons';
 
@@ -26,6 +26,7 @@ export default function Workspace() {
   const { user } = useAuth();
   const { start } = useMission();
   const { push } = useToasts();
+  const { pinned, removePinned } = useChat();
   const nav = useNavigate();
 
   const greetingHour = new Date().getHours();
@@ -117,6 +118,42 @@ export default function Workspace() {
             </div>
           </Card>
         </div>
+
+        {/* Pinned AI replies */}
+        {pinned.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <Eyebrow>Pinned from AI</Eyebrow>
+              <Link to="/notebook" className="text-[11px] text-brand hover:underline">View all →</Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {pinned.slice(0, 4).map(p => (
+                <Card key={p.id} className="p-3.5 hover:shadow-e2 transition-all">
+                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                    <div className="text-[11px] font-semibold text-ink line-clamp-1 flex-1">{p.question}</div>
+                    <button
+                      onClick={() => removePinned(p.id)}
+                      title="Remove"
+                      className="p-0.5 rounded text-faint hover:text-negative hover:bg-negative-weak shrink-0"
+                    >
+                      <Icon.X className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <div
+                    className="text-[11px] text-muted leading-relaxed line-clamp-2"
+                    dangerouslySetInnerHTML={{ __html: p.answerHtml }}
+                  />
+                  <div className="flex items-center gap-2 text-[10px] text-faint mt-2">
+                    <Icon.Pin className="w-2.5 h-2.5 text-warning" />
+                    <span>{p.scope}</span>
+                    <span>·</span>
+                    <span>{p.persona}</span>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Quick-access */}
         <Eyebrow>Jump to workbench</Eyebrow>
