@@ -3,6 +3,8 @@ import { RECONS } from '../data';
 import { Card, StatusChip } from '../components/ui';
 import { ActionStrip } from '../components/ActionStrip';
 import { ChatSidebar, ChatShowButton } from '../components/ChatSidebar';
+import { TableSkeleton, RefreshingOverlay } from '../components/Skeletons';
+import { useAsyncData } from '../hooks/useAsyncData';
 import { useChat, useToasts, useSettings } from '../store';
 import { Icon } from '../icons';
 
@@ -20,12 +22,17 @@ export default function Recons() {
 
   useEffect(() => { setScope('Reconciliations · Q1 FY26'); }, [setScope]);
 
-  const filtered = useMemo(() => {
-    if (filter === 'all') return RECONS;
-    if (filter === 'material') return RECONS.filter(r => r.material);
-    if (filter === 'variance') return RECONS.filter(r => r.status === 'variance');
-    return RECONS.filter(r => r.status === 'matched');
-  }, [filter]);
+  const reconsAsync = useAsyncData(
+    () => {
+      if (filter === 'all') return RECONS;
+      if (filter === 'material') return RECONS.filter(r => r.material);
+      if (filter === 'variance') return RECONS.filter(r => r.status === 'variance');
+      return RECONS.filter(r => r.status === 'matched');
+    },
+    [filter],
+    { delayMs: 380, keepPrevious: true },
+  );
+  const filtered = reconsAsync.data ?? [];
 
   const counts = useMemo(() => ({
     matched: RECONS.filter(r => r.status === 'matched').length,
@@ -71,6 +78,11 @@ export default function Recons() {
             ))}
           </div>
 
+          <div className="relative">
+          {reconsAsync.refreshing && <RefreshingOverlay />}
+          {reconsAsync.initialLoading ? (
+            <TableSkeleton rows={8} cols={6} />
+          ) : (
           <Card className="p-0 overflow-hidden">
             <table className="w-full text-[12px]">
               <thead>
@@ -104,6 +116,8 @@ export default function Recons() {
               </tbody>
             </table>
           </Card>
+          )}
+          </div>
         </div>
       </div>
       <div style={{ gridArea: 'strip' }} className="bg-surface border-t border-rule overflow-x-auto"><ActionStrip /></div>

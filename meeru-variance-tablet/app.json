@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "MeeruAI Variance",
+    "slug": "meeru-variance-tablet",
+    "version": "0.1.0",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#1E40AF",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "requireFullScreen": false,
+      "bundleIdentifier": "ai.meeru.variance.tablet"
+    },
+    "android": {
+      "package": "ai.meeru.variance.tablet",
+      "adaptiveIcon": {
+        "backgroundColor": "#1E40AF"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": ["expo-font"]
+  }
+}

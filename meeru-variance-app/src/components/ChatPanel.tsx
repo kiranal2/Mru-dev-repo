@@ -30,11 +30,47 @@ function scorePrompt(prompt: string, query: string): number {
 }
 
 // ---------- Insights (compact + expanded) ----------
-function InsightRow({ i, isNew }: { i: { ico: 'neg' | 'warn' | 'info'; title: string; text: string; when: string }; isNew?: boolean }) {
+/**
+ * Map an insight (title + body) to the most relevant pre-authored chat question.
+ * Clicking the insight auto-sends this question so the AI deep-dives on it.
+ */
+function insightToQuery(title: string, text: string): string {
+  const blob = (title + ' ' + text).toLowerCase();
+  if (blob.includes('california') || blob.includes('labor') || blob.includes('ca retail')) return "What's happening with California Retail labor costs?";
+  if (blob.includes('cloud') || blob.includes('egress'))                                   return "What's driving cloud cost increase?";
+  if (blob.includes('churn') || blob.includes('logo'))                                      return 'Why did Enterprise churn spike this quarter?';
+  if (blob.includes('at-risk') || blob.includes('at risk') || blob.includes('voltair') || blob.includes('meridian')) return 'Which accounts are at risk for next quarter?';
+  if (blob.includes('nrr') || blob.includes('retention') || blob.includes('cohort'))        return 'Compare NRR trend to prior 4 quarters';
+  if (blob.includes('recon') || blob.includes('variance'))                                   return 'Show me open reconciliations';
+  if (blob.includes('expansion') || blob.includes('cinder') || blob.includes('seat'))       return 'Show expansion ARR by segment';
+  if (blob.includes('close') || blob.includes('blocker'))                                   return "What's the close blocker today?";
+  if (blob.includes('exception') || blob.includes('flagged'))                                return 'Summarize the flagged exceptions';
+  return `Tell me more about: ${title}`;
+}
+
+function InsightRow({
+  i,
+  isNew,
+  onAsk,
+  onDismiss,
+  onPin,
+}: {
+  i: { id?: string; ico: 'neg' | 'warn' | 'info'; title: string; text: string; when: string };
+  isNew?: boolean;
+  onAsk: () => void;
+  onDismiss: () => void;
+  onPin: () => void;
+}) {
   const wrapCls = i.ico === 'neg' ? 'bg-negative-weak text-negative' : i.ico === 'warn' ? 'bg-warning-weak text-warning' : 'bg-brand-tint text-brand';
   const Ic = i.ico === 'neg' ? Icon.DownRight : i.ico === 'warn' ? Icon.Alert : Icon.Info;
   return (
-    <div className={`flex gap-2.5 p-2.5 rounded-lg border border-rule bg-surface-alt hover:bg-surface-soft transition-colors cursor-pointer relative ${isNew ? 'flash-new' : ''}`}>
+    <div
+      onClick={onAsk}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onAsk(); } }}
+      className={`group flex gap-2.5 p-2.5 rounded-lg border border-rule bg-surface-alt hover:bg-brand-tint hover:border-brand-weak transition-colors cursor-pointer relative ${isNew ? 'flash-new' : ''}`}
+    >
       <div className={`w-7 h-7 rounded-full grid place-items-center shrink-0 ${wrapCls}`}>
         <Ic className="w-3.5 h-3.5" />
       </div>
@@ -47,6 +83,28 @@ function InsightRow({ i, isNew }: { i: { ico: 'neg' | 'warn' | 'info'; title: st
           <div className="text-[10px] text-faint whitespace-nowrap">{i.when}</div>
         </div>
         <div className="text-[11px] text-muted leading-relaxed mt-0.5">{i.text}</div>
+        {/* Hover hint: the row IS the ask button; this nudges the user */}
+        <div className="mt-1 text-[10px] text-brand opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-1">
+          <Icon.Sparkle className="w-2.5 h-2.5" />
+          <span>Click to ask AI about this →</span>
+        </div>
+      </div>
+      {/* Hover-revealed quick actions */}
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-0.5 shrink-0">
+        <button
+          onClick={(e) => { e.stopPropagation(); onPin(); }}
+          className="w-5 h-5 rounded grid place-items-center text-faint hover:text-warning hover:bg-warning-weak"
+          title="Pin this insight"
+        >
+          <Icon.Pin className="w-3 h-3" />
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); onDismiss(); }}
+          className="w-5 h-5 rounded grid place-items-center text-faint hover:text-negative hover:bg-negative-weak"
+          title="Dismiss this insight"
+        >
+          <Icon.X className="w-3 h-3" />
+        </button>
       </div>
     </div>
   );
@@ -419,7 +477,8 @@ function orderByRole(cards: ActionCard[], order: string[]): ActionCard[] {
 // Main ChatPanel
 // ==================================================================
 export function ChatPanel() {
-  const { msgs, send, reset, scope, contextual, followUps, clearContextual, thinking } = useChat();
+  const { msgs, send, reset, scope, contextual, followUps, clearContextual, thinking, togglePin } = useChat();
+  const { push: pushToast } = useToasts();
   const { settings } = useSettings();
   const persona = usePersona();
   const [input, setInput] = useState('');
@@ -558,7 +617,36 @@ export function ChatPanel() {
                     <button onClick={() => setInsightsOpen(false)} className="text-[10px] text-faint hover:text-muted">Collapse</button>
                   )}
                 </div>
-                {liveInsights.map(i => <InsightRow key={i.id} i={i} isNew={i.isNew} />)}
+                {liveInsights.map(i => (
+                  <InsightRow
+                    key={i.id}
+                    i={i}
+                    isNew={i.isNew}
+                    onAsk={() => {
+                      const q = insightToQuery(i.title, i.text);
+                      send(q);
+                      // Collapse insights after the user engages so the
+                      // conversation can take over the real estate.
+                      setInsightsOpen(false);
+                    }}
+                    onPin={() => {
+                      togglePin({
+                        id: `insight-${i.id}`,
+                        question: `Insight: ${i.title}`,
+                        answerText: i.text,
+                        answerHtml: `<strong>${i.title}</strong><br/>${i.text}`,
+                        scope,
+                        persona: persona.role,
+                        timestamp: new Date().toISOString(),
+                      });
+                      pushToast({ kind: 'ok', title: 'Insight pinned', sub: 'Find it in your Notebook' });
+                    }}
+                    onDismiss={() => {
+                      setLiveInsights(prev => prev.filter(x => x.id !== i.id));
+                      pushToast({ kind: 'info', title: 'Insight dismissed', sub: i.title });
+                    }}
+                  />
+                ))}
               </>
             ) : (
               <CollapsedInsights count={insightsCount} critical={insightsCritical} onExpand={() => setInsightsOpen(true)} />
@@ -675,26 +763,126 @@ export function ChatPanel() {
         })()}
 
         {/* Input */}
-        <div className="px-3 pt-1.5 pb-2.5">
-          <div className="flex items-center gap-1.5 bg-surface border border-rule rounded-lg px-2 py-1.5 transition-shadow focus-within:border-brand focus-within:shadow-[0_0_0_2px_var(--primary-tint)]">
-            <input
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') onSend(); }}
-              placeholder="Ask about this workbench…"
-              className="flex-1 bg-transparent border-none outline-none text-[12px] text-ink placeholder:text-faint"
-            />
-            <button onClick={onSend} disabled={!input.trim()} className="w-7 h-7 rounded-md bg-brand text-white grid place-items-center hover:opacity-90 disabled:opacity-40">
-              <Icon.Send className="w-3.5 h-3.5" />
-            </button>
-          </div>
-          <div className="mt-1 flex justify-between text-[10px] text-faint">
-            <span className="truncate">{scope}</span>
-            <span>{persona.role.split(' ').slice(-1)[0]} view</span>
-          </div>
-        </div>
+        <ChatInputArea
+          input={input}
+          setInput={setInput}
+          onSend={onSend}
+          scope={scope}
+          personaShort={persona.role.split(' ').slice(-1)[0] ?? 'User'}
+        />
       </div>
     </>
+  );
+}
+
+// ==================================================================
+// ChatInputArea — rotating placeholder + resizable textarea
+// ==================================================================
+const ROTATING_PROMPTS = [
+  'Ask about this workbench…',
+  'Why did revenue dip last week?',
+  'Who are the top at-risk accounts?',
+  "What's driving margin compression?",
+  'Show me the NRR trend',
+  'Summarize the flagged exceptions',
+  'Compare this quarter to last',
+  'What should I brief the board on?',
+  'Find anomalies in cloud spend',
+  'When will margins recover?',
+  'Which recons need my attention?',
+  'Explain the California labor surge',
+];
+
+function ChatInputArea({
+  input, setInput, onSend, scope, personaShort,
+}: {
+  input: string;
+  setInput: (v: string) => void;
+  onSend: () => void;
+  scope: string;
+  personaShort: string;
+}) {
+  const [placeholderIdx, setPlaceholderIdx] = useState(0);
+  const [focused, setFocused] = useState(false);
+  const taRef = useRef<HTMLTextAreaElement>(null);
+
+  // Rotate placeholder every 3s (only when empty + not focused)
+  useEffect(() => {
+    if (focused || input.length > 0) return;
+    const id = setInterval(() => {
+      setPlaceholderIdx(i => (i + 1) % ROTATING_PROMPTS.length);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [focused, input]);
+
+  const currentPlaceholder = ROTATING_PROMPTS[placeholderIdx];
+  const showOverlayPlaceholder = !focused && input.length === 0;
+
+  // Auto-grow textarea while user types (up to max-height). Manual resize-y
+  // handle still lets the user drag it taller if they want.
+  const handleInput = (v: string) => {
+    setInput(v);
+    const el = taRef.current;
+    if (el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 220) + 'px';
+    }
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+      e.preventDefault();
+      if (input.trim()) {
+        onSend();
+        // Reset height after send
+        if (taRef.current) taRef.current.style.height = 'auto';
+      }
+    }
+  };
+
+  return (
+    <div className="px-3 pt-1.5 pb-2.5">
+      <div className="relative flex items-end gap-1.5 bg-surface border border-rule rounded-lg px-2 py-1.5 transition-shadow focus-within:border-brand focus-within:shadow-[0_0_0_2px_var(--primary-tint)]">
+        <div className="relative flex-1">
+          <textarea
+            ref={taRef}
+            value={input}
+            onChange={e => handleInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            rows={1}
+            // Empty placeholder; we draw our own animated one below
+            placeholder=" "
+            className="w-full bg-transparent border-none outline-none text-[12px] text-ink resize-y overflow-y-auto leading-relaxed py-0.5 min-h-[22px] max-h-[220px]"
+            style={{ height: 'auto' }}
+          />
+          {showOverlayPlaceholder && (
+            <div
+              key={currentPlaceholder}
+              className="absolute inset-0 pointer-events-none flex items-start text-[12px] text-faint anim-fade-up py-0.5"
+            >
+              <span className="truncate block">{currentPlaceholder}</span>
+            </div>
+          )}
+        </div>
+        <button
+          onClick={() => { if (input.trim()) onSend(); }}
+          disabled={!input.trim()}
+          className="w-7 h-7 shrink-0 rounded-md bg-brand text-white grid place-items-center hover:opacity-90 disabled:opacity-40 self-end"
+          title="Send (Enter) · Shift+Enter for newline"
+        >
+          <Icon.Send className="w-3.5 h-3.5" />
+        </button>
+      </div>
+      <div className="mt-1 flex justify-between items-center text-[10px] text-faint">
+        <span className="truncate">{scope}</span>
+        <span className="flex items-center gap-2 shrink-0">
+          <span className="hidden xl:inline">Enter to send · Shift+Enter newline · drag ↕ to resize</span>
+          <span>{personaShort} view</span>
+        </span>
+      </div>
+    </div>
   );
 }
 

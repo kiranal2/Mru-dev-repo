@@ -5,6 +5,7 @@ import { useAuth, useTheme, useMission, useSettings, useChat } from '../store';
 import { Icon } from '../icons';
 import { ToastHost } from './Toast';
 import { MarinGuide, MissionEndCard } from './MarinGuide';
+import { LoadingBar } from './Skeletons';
 import { PERSONAS, MISSIONS } from '../data';
 import type { Role } from '../types';
 
@@ -428,6 +429,7 @@ export default function AppShell({ children }: { children?: ReactNode }) {
           {children ?? <Outlet />}
         </div>
       </div>
+      <LoadingBar />
       <ToastHost />
       <MarinGuide />
       <MissionEndCard />

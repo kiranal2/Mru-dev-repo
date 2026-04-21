@@ -124,6 +124,12 @@ body {
 }
 .ticker-track { animation: ticker 40s linear infinite; }
 
+/* Top-of-page loading sweep */
+@keyframes loading-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
 /* Numeric alignment */
 .num { font-variant-numeric: tabular-nums; }
 

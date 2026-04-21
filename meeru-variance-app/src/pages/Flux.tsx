@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { WorkbenchShell } from '../components/WorkbenchShell';
 import { RailGroup } from '../components/LeftRail';
 import { TopNav } from '../components/TopNav';
 import { StatusChip } from '../components/ui';
 import { FluxTable, FluxSummary } from '../components/subviews';
+import { KpiRowSkeleton, TableSkeleton, RefreshingOverlay } from '../components/Skeletons';
+import { useAsyncData } from '../hooks/useAsyncData';
 import {
   FLUX_COMPARES, FLUX_MATERIALITY, FLUX_OWNERS, WORKBENCHES,
   FLUX_IS, FLUX_BS, FLUX_CF,
@@ -23,10 +25,20 @@ export default function Flux() {
   const ownerLabel       = FLUX_OWNERS.find(o => o.k === owner)?.n ?? 'All Owners';
   const comparePeriod    = fluxComparisonLabel(compare);
 
-  // --- Filtered rows per tab ---
-  const isRows = useMemo(() => filterFluxRows(FLUX_IS, materiality, owner), [materiality, owner]);
-  const bsRows = useMemo(() => filterFluxRows(FLUX_BS, materiality, owner), [materiality, owner]);
-  const cfRows = useMemo(() => filterFluxRows(FLUX_CF, materiality, owner), [materiality, owner]);
+  // Filtered rows — async so filter changes show a real "fetching" state
+  const rowsData = useAsyncData(
+    () => ({
+      is: filterFluxRows(FLUX_IS, materiality, owner),
+      bs: filterFluxRows(FLUX_BS, materiality, owner),
+      cf: filterFluxRows(FLUX_CF, materiality, owner),
+    }),
+    [materiality, owner, compare],
+    { delayMs: 440, keepPrevious: true },
+  );
+
+  const isRows = rowsData.data?.is ?? [];
+  const bsRows = rowsData.data?.bs ?? [];
+  const cfRows = rowsData.data?.cf ?? [];
 
   const activeRows = topTab === 'is' ? isRows : topTab === 'bs' ? bsRows : cfRows;
   const totalRows  = topTab === 'is' ? FLUX_IS.length : topTab === 'bs' ? FLUX_BS.length : FLUX_CF.length;
@@ -56,12 +68,12 @@ export default function Flux() {
           <p className="text-[11px] text-faint mt-0.5">{tabSub[topTab]} · {comparePeriod} · {persona.role}</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-faint">Showing {activeRows.length} of {totalRows} lines</span>
+          {rowsData.data && <span className="text-[11px] text-faint">Showing {activeRows.length} of {totalRows} lines</span>}
           <StatusChip kind="info">{materialityLabel} · {ownerLabel}</StatusChip>
         </div>
       </div>
 
-      {(materiality !== '1m' || owner !== 'all') && (
+      {(materiality !== '1m' || owner !== 'all') && !rowsData.initialLoading && (
         <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg border border-rule bg-brand-tint text-[12px]">
           <span className="text-muted">Filters:</span>
           <span className="font-semibold text-brand">{materialityLabel}</span>
@@ -70,50 +82,60 @@ export default function Flux() {
         </div>
       )}
 
-      {topTab === 'is' && (
-        <>
-          <FluxSummary
-            title={`Income Statement · ${comparePeriod}`}
-            kpis={[
-              { lbl: 'Total Revenue',    val: '+$38M', tone: 'pos' },
-              { lbl: 'Total OpEx',        val: '+$25M', tone: 'neg' },
-              { lbl: 'Operating Income', val: '-$15M', tone: 'neg' },
-              { lbl: 'Net Income',        val: '-$10M', tone: 'neg' },
-            ]}
-          />
-          {isRows.length > 0 ? <FluxTable rows={isRows} unitLabel="$M" /> : <EmptyFilter />}
-        </>
-      )}
-
-      {topTab === 'bs' && (
-        <>
-          <FluxSummary
-            title={`Balance Sheet · ${comparePeriod}`}
-            kpis={[
-              { lbl: 'Cash Δ',      val: '-$3.2B', tone: 'neg' },
-              { lbl: 'AR Δ',         val: '+$2.1B', tone: 'warn' },
-              { lbl: 'Inventory Δ',  val: '+$0.8B', tone: 'warn' },
-              { lbl: "Equity Δ",     val: '+$2.0B', tone: 'pos' },
-            ]}
-          />
-          {bsRows.length > 0 ? <FluxTable rows={bsRows} unitLabel="$M" /> : <EmptyFilter />}
-        </>
-      )}
-
-      {topTab === 'cf' && (
-        <>
-          <FluxSummary
-            title={`Cash Flow · ${comparePeriod}`}
-            kpis={[
-              { lbl: 'Ops CF',          val: '-$33M', tone: 'neg' },
-              { lbl: 'Capex Δ',          val: '-$14M', tone: 'neg' },
-              { lbl: 'Buybacks Δ',       val: '-$20M', tone: 'warn' },
-              { lbl: 'Free Cash Flow',   val: '-$47M', tone: 'neg' },
-            ]}
-          />
-          {cfRows.length > 0 ? <FluxTable rows={cfRows} unitLabel="$M" /> : <EmptyFilter />}
-        </>
-      )}
+      <div className="relative">
+        {rowsData.refreshing && <RefreshingOverlay />}
+        {rowsData.initialLoading || !rowsData.data ? (
+          <>
+            <KpiRowSkeleton />
+            <TableSkeleton rows={10} cols={8} />
+          </>
+        ) : (
+          <>
+            {topTab === 'is' && (
+              <>
+                <FluxSummary
+                  title={`Income Statement · ${comparePeriod}`}
+                  kpis={[
+                    { lbl: 'Total Revenue',    val: '+$38M', tone: 'pos' },
+                    { lbl: 'Total OpEx',        val: '+$25M', tone: 'neg' },
+                    { lbl: 'Operating Income', val: '-$15M', tone: 'neg' },
+                    { lbl: 'Net Income',        val: '-$10M', tone: 'neg' },
+                  ]}
+                />
+                {isRows.length > 0 ? <FluxTable rows={isRows} unitLabel="$M" /> : <EmptyFilter />}
+              </>
+            )}
+            {topTab === 'bs' && (
+              <>
+                <FluxSummary
+                  title={`Balance Sheet · ${comparePeriod}`}
+                  kpis={[
+                    { lbl: 'Cash Δ',      val: '-$3.2B', tone: 'neg' },
+                    { lbl: 'AR Δ',         val: '+$2.1B', tone: 'warn' },
+                    { lbl: 'Inventory Δ',  val: '+$0.8B', tone: 'warn' },
+                    { lbl: "Equity Δ",     val: '+$2.0B', tone: 'pos' },
+                  ]}
+                />
+                {bsRows.length > 0 ? <FluxTable rows={bsRows} unitLabel="$M" /> : <EmptyFilter />}
+              </>
+            )}
+            {topTab === 'cf' && (
+              <>
+                <FluxSummary
+                  title={`Cash Flow · ${comparePeriod}`}
+                  kpis={[
+                    { lbl: 'Ops CF',          val: '-$33M', tone: 'neg' },
+                    { lbl: 'Capex Δ',          val: '-$14M', tone: 'neg' },
+                    { lbl: 'Buybacks Δ',       val: '-$20M', tone: 'warn' },
+                    { lbl: 'Free Cash Flow',   val: '-$47M', tone: 'neg' },
+                  ]}
+                />
+                {cfRows.length > 0 ? <FluxTable rows={cfRows} unitLabel="$M" /> : <EmptyFilter />}
+              </>
+            )}
+          </>
+        )}
+      </div>
     </WorkbenchShell>
   );
 }

@@ -4,6 +4,8 @@ import type { CloseTask } from '../data';
 import { Card, StatusChip } from '../components/ui';
 import { ActionStrip } from '../components/ActionStrip';
 import { ChatSidebar, ChatShowButton } from '../components/ChatSidebar';
+import { TableSkeleton, RefreshingOverlay, Skeleton } from '../components/Skeletons';
+import { useAsyncData } from '../hooks/useAsyncData';
 import { useChat, useSettings } from '../store';
 import { useEffect } from 'react';
 import { Icon } from '../icons';
@@ -22,10 +24,12 @@ export default function Close() {
 
   useEffect(() => { setScope('Close Workbench · Day 4 / 5'); }, [setScope]);
 
-  const filtered = useMemo(() =>
-    filter === 'all' ? CLOSE_TASKS : CLOSE_TASKS.filter(t => t.status === filter),
-    [filter]
+  const tasksAsync = useAsyncData(
+    () => filter === 'all' ? CLOSE_TASKS : CLOSE_TASKS.filter(t => t.status === filter),
+    [filter],
+    { delayMs: 380, keepPrevious: true },
   );
+  const filtered = tasksAsync.data ?? [];
 
   const counts = useMemo(() => ({
     done: CLOSE_TASKS.filter(t => t.status === 'done').length,
@@ -81,6 +85,11 @@ export default function Close() {
             ))}
           </div>
 
+          <div className="relative">
+          {tasksAsync.refreshing && <RefreshingOverlay />}
+          {tasksAsync.initialLoading ? (
+            <TableSkeleton rows={10} cols={6} />
+          ) : (
           <Card className="p-0 overflow-hidden">
             <table className="w-full text-[12px]">
               <thead>
@@ -116,6 +125,8 @@ export default function Close() {
               </tbody>
             </table>
           </Card>
+          )}
+          </div>
         </div>
       </div>
 

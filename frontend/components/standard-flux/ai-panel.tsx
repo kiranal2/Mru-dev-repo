@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import {
   AlertTriangle,
+  ChevronDown,
+  ChevronUp,
   Info,
   RotateCcw,
   Send,
@@ -65,6 +68,7 @@ export function StandardFluxAiPanel({
   onNewChat,
 }: StandardFluxAiPanelProps) {
   const hasAiConversation = aiResponses.length > 0 || aiIsThinking;
+  const [feedCollapsed, setFeedCollapsed] = useState(false);
 
   // Row-specific quick suggestions
   const rowSuggestions = scopedRow
@@ -136,10 +140,22 @@ export function StandardFluxAiPanel({
             {/* Insights feed */}
             {feedItems.length > 0 && (
               <div className="space-y-1.5">
-                <div className="border-b border-slate-100 bg-slate-50 px-3 py-2 -mx-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                  Insights feed
-                </div>
-                <div className="space-y-1.5">
+                <button
+                  type="button"
+                  onClick={() => setFeedCollapsed((v) => !v)}
+                  className="flex w-full items-center justify-between border-b border-slate-100 bg-slate-50 px-3 py-2 -mx-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500 hover:bg-slate-100 transition-colors"
+                  aria-expanded={!feedCollapsed}
+                  aria-controls="sf-insights-feed"
+                >
+                  <span>Insights feed</span>
+                  {feedCollapsed ? (
+                    <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+                  ) : (
+                    <ChevronUp className="h-3.5 w-3.5 text-slate-400" />
+                  )}
+                </button>
+                {!feedCollapsed && (
+                <div id="sf-insights-feed" className="space-y-1.5">
                   {feedItems.map((item) => {
                     const meta = FEED_TONE_META[item.tone];
                     const Icon = meta.icon;
@@ -164,6 +180,7 @@ export function StandardFluxAiPanel({
                     );
                   })}
                 </div>
+                )}
               </div>
             )}
 

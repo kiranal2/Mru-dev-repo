@@ -57,6 +57,22 @@ export const useSettings = () => {
 };
 
 // ==================================================================
+// LOADING — global in-flight request counter, drives top-of-page bar
+// ==================================================================
+interface LoadingCtx {
+  inFlight: number;
+  isLoading: boolean;
+  begin: () => void;
+  end: () => void;
+}
+const LoadingContext = createContext<LoadingCtx | null>(null);
+export const useLoading = () => {
+  const c = useContext(LoadingContext);
+  if (!c) throw new Error('useLoading must be inside AppProviders');
+  return c;
+};
+
+// ==================================================================
 // TOASTS
 // ==================================================================
 interface ToastCtx {
@@ -308,6 +324,14 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const missionV = useMemo(() => ({
     mission, step, start, advance, skip, end: endMission, currentBeat, ended, dismissEnded
   }), [mission, step, start, advance, skip, endMission, currentBeat, ended, dismissEnded]);
+
+  // LOADING — ref counter so multiple concurrent fetches don't flicker the bar
+  const [inFlight, setInFlight] = useState(0);
+  const loadingBegin = useCallback(() => setInFlight(n => n + 1), []);
+  const loadingEnd   = useCallback(() => setInFlight(n => Math.max(0, n - 1)), []);
+  const loadingV = useMemo(() => ({
+    inFlight, isLoading: inFlight > 0, begin: loadingBegin, end: loadingEnd,
+  }), [inFlight, loadingBegin, loadingEnd]);
   const chatV = useMemo(() => ({
     msgs, contextual, followUps, sent, scope, thinking, setScope,
     send: sendChat, regenerate, reset: resetChat, markSent, clearContextual,
@@ -318,6 +342,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={auth}>
       <ThemeContext.Provider value={themeV}>
         <SettingsContext.Provider value={settingsV}>
+          <LoadingContext.Provider value={loadingV}>
           <ToastContext.Provider value={toastV}>
             <MissionContext.Provider value={missionV}>
               <ChatContext.Provider value={chatV}>
@@ -325,6 +350,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
               </ChatContext.Provider>
             </MissionContext.Provider>
           </ToastContext.Provider>
+          </LoadingContext.Provider>
         </SettingsContext.Provider>
       </ThemeContext.Provider>
     </AuthContext.Provider>

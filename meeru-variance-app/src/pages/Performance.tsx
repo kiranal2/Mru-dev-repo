@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { WorkbenchShell } from '../components/WorkbenchShell';
 import { RailGroup } from '../components/LeftRail';
 import { TopNav } from '../components/TopNav';
@@ -7,6 +7,11 @@ import { Commentary } from '../components/Commentary';
 import { VarianceChart } from '../components/VarianceChart';
 import { StatusChip } from '../components/ui';
 import { DrillDownView, ExceptionsView, SignalsView, HistoryView } from '../components/subviews';
+import {
+  KpiRowSkeleton, CommentarySkeleton, ChartSkeleton, TableSkeleton, ListCardSkeleton,
+  RefreshingOverlay,
+} from '../components/Skeletons';
+import { useAsyncData } from '../hooks/useAsyncData';
 import {
   PERF_REGIONS, PERF_COMPARES, PERF_DRIVERS,
   WORKBENCHES,
@@ -22,27 +27,61 @@ export default function Performance() {
   const [driver, setDriver] = useState<string | null>(null);
   const [topTab, setTopTab] = useState('analysis');
 
-  const regionLabel = PERF_REGIONS.find(r => r.k === region)?.n ?? 'Global';
-  const compareLabel = PERF_COMPARES.find(c => c.k === compare)?.n ?? 'vs Plan';
-  const driverLabel = driver ? (PERF_DRIVERS.find(d => d.k === driver)?.n ?? null) : null;
+  // ---- Analysis-tab data (reloads on region/compare/driver change) ----
+  const analysis = useAsyncData(
+    () => {
+      const slice = PERF_REGIONAL[region] ?? PERF_REGIONAL.global;
+      return {
+        regionLabel: PERF_REGIONS.find(r => r.k === region)?.n ?? 'Global',
+        compareLabel: PERF_COMPARES.find(c => c.k === compare)?.n ?? 'vs Plan',
+        driverLabel: driver ? (PERF_DRIVERS.find(d => d.k === driver)?.n ?? null) : null,
+        kpis: adjustKpisByCompare(slice.kpis, compare),
+        commentary: filterCommentaryByDriver(slice.commentary, driver),
+        statusChip: slice.statusChip,
+        chart: slice.chart,
+        chartTitle: slice.chartTitle,
+      };
+    },
+    [region, compare, driver],
+    { delayMs: 420, keepPrevious: true },
+  );
 
-  // --- Derived data that actually changes when the left rail changes ---
-  const slice = PERF_REGIONAL[region] ?? PERF_REGIONAL.global;
-  const kpis = useMemo(() => adjustKpisByCompare(slice.kpis, compare), [slice, compare]);
-  const commentary = useMemo(() => filterCommentaryByDriver(slice.commentary, driver), [slice, driver]);
+  // ---- Sub-tab data — faster refresh on tab change ----
+  const tabRows = useAsyncData(
+    () => {
+      switch (topTab) {
+        case 'drilldown': {
+          const map: Record<string, string> = { americas: 'Americas', emea: 'EMEA', apac: 'APAC', latam: 'LATAM' };
+          const regionName = map[region];
+          if (region === 'global') return { kind: 'drill' as const, rows: PERF_DRILLDOWN };
+          const filtered = PERF_DRILLDOWN.filter(r => r.region === regionName);
+          return { kind: 'drill' as const, rows: filtered.length ? filtered : PERF_DRILLDOWN };
+        }
+        case 'exceptions': return { kind: 'exceptions' as const, rows: PERF_EXCEPTIONS };
+        case 'signals':    return { kind: 'signals'    as const, rows: PERF_SIGNALS };
+        case 'history':    return { kind: 'history'    as const, rows: PERF_HISTORY };
+        default:           return { kind: 'none'       as const, rows: [] };
+      }
+    },
+    [topTab, region],
+    { delayMs: 340, keepPrevious: false },
+  );
 
-  // Drill-Down also responds to region: filter customer rows by region (best-effort)
-  const drillRows = useMemo(() => {
-    if (region === 'global') return PERF_DRILLDOWN;
-    const map: Record<string, string> = { americas: 'Americas', emea: 'EMEA', apac: 'APAC', latam: 'LATAM' };
-    const regionMatch = map[region];
-    const filtered = PERF_DRILLDOWN.filter(r => r.region === regionMatch);
-    return filtered.length ? filtered : PERF_DRILLDOWN;
-  }, [region]);
+  const regionLabel  = analysis.data?.regionLabel  ?? (PERF_REGIONS.find(r => r.k === region)?.n ?? 'Global');
+  const compareLabel = analysis.data?.compareLabel ?? (PERF_COMPARES.find(c => c.k === compare)?.n ?? 'vs Plan');
+  const driverLabel  = analysis.data?.driverLabel  ?? (driver ? (PERF_DRIVERS.find(d => d.k === driver)?.n ?? null) : null);
+
+  const personaChip = persona.key === 'PREPARER'
+    ? { kind: 'warn' as const, text: '3 tasks assigned · due today' }
+    : persona.key === 'CONTROLLER'
+    ? { kind: 'info' as const, text: 'Close Day 4 · 2 blockers open' }
+    : { kind: 'neg' as const, text: 'Variance flagged · action recommended' };
+
+  const chip = analysis.data?.statusChip ?? personaChip;
 
   const tabSub: Record<string, string> = {
     analysis: driverLabel ? `Filtered by driver: ${driverLabel}` : 'AI commentary · KPIs · variance trend',
-    drilldown: `${drillRows.length} customer${drillRows.length === 1 ? '' : 's'} in ${regionLabel}`,
+    drilldown: `Customer-level ARR · ${regionLabel}`,
     exceptions: '7 flagged items · 3 critical',
     signals: '5 active ML predictions',
     history: 'Rolling 8 quarters',
@@ -73,28 +112,51 @@ export default function Performance() {
           <h1 className="text-[18px] font-semibold text-ink tracking-tight">Performance Intelligence · Week 10 · {regionLabel}</h1>
           <p className="text-[11px] text-faint mt-0.5">{tabSub[topTab]} · {compareLabel} · {persona.role}</p>
         </div>
-        <StatusChip kind={slice.statusChip.kind}>{slice.statusChip.text}</StatusChip>
+        <StatusChip kind={chip.kind}>{chip.text}</StatusChip>
       </div>
 
       {topTab === 'analysis' && (
-        <>
-          {driverLabel && (
+        <div className="relative">
+          {analysis.refreshing && <RefreshingOverlay />}
+          {driverLabel && !analysis.initialLoading && (
             <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg border border-rule bg-brand-tint text-[12px]">
               <span className="text-muted">Driver filter:</span>
               <span className="font-semibold text-brand">{driverLabel}</span>
               <button onClick={() => setDriver(null)} className="ml-auto text-[11px] text-muted hover:text-brand">Clear</button>
             </div>
           )}
-          <KpiRow kpis={kpis} />
-          <Commentary items={commentary} title={driverLabel ? `Commentary — ${driverLabel}` : 'AI-Generated Commentary — Ranked by Impact'} />
-          <VarianceChart title={slice.chartTitle} bars={slice.chart} />
-        </>
+          {analysis.initialLoading || !analysis.data ? (
+            <>
+              <KpiRowSkeleton />
+              <CommentarySkeleton />
+              <ChartSkeleton />
+            </>
+          ) : (
+            <>
+              <KpiRow kpis={analysis.data.kpis} />
+              <Commentary items={analysis.data.commentary} title={driverLabel ? `Commentary — ${driverLabel}` : 'AI-Generated Commentary — Ranked by Impact'} />
+              <VarianceChart title={analysis.data.chartTitle} bars={analysis.data.chart} />
+            </>
+          )}
+        </div>
       )}
 
-      {topTab === 'drilldown'  && <DrillDownView rows={drillRows} />}
-      {topTab === 'exceptions' && <ExceptionsView items={PERF_EXCEPTIONS} />}
-      {topTab === 'signals'    && <SignalsView items={PERF_SIGNALS} />}
-      {topTab === 'history'    && <HistoryView rows={PERF_HISTORY} />}
+      {topTab === 'drilldown' && (
+        tabRows.loading || tabRows.data?.kind !== 'drill' ? <TableSkeleton rows={8} cols={8} />
+        : <DrillDownView rows={tabRows.data.rows} />
+      )}
+      {topTab === 'exceptions' && (
+        tabRows.loading || tabRows.data?.kind !== 'exceptions' ? <ListCardSkeleton items={5} />
+        : <ExceptionsView items={tabRows.data.rows} />
+      )}
+      {topTab === 'signals' && (
+        tabRows.loading || tabRows.data?.kind !== 'signals' ? <ListCardSkeleton items={5} />
+        : <SignalsView items={tabRows.data.rows} />
+      )}
+      {topTab === 'history' && (
+        tabRows.loading || tabRows.data?.kind !== 'history' ? <TableSkeleton rows={8} cols={8} />
+        : <HistoryView rows={tabRows.data.rows} />
+      )}
     </WorkbenchShell>
   );
 }
