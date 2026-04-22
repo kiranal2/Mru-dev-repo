@@ -45,6 +45,15 @@ export const Icon = {
   LogOut: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>),
   Menu: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>),
   Bell: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>),
+  ChevLeft: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><polyline points="15 18 9 12 15 6"/></svg>),
+  ChevRight: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><polyline points="9 18 15 12 9 6"/></svg>),
+  ChevDown: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><polyline points="6 9 12 15 18 9"/></svg>),
+  ChevUp: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><polyline points="18 15 12 9 6 15"/></svg>),
+  Pencil: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>),
+  Star: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>),
+  Bulb: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.7.5 1 1.3 1 2.1V18h6v-1.2c0-.8.3-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>),
+  History: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><path d="M3 3v5h5"/><path d="M3.05 13a9 9 0 1 0 2.13-6.36L3 8"/><polyline points="12 7 12 12 15.5 13.5"/></svg>),
+  Target: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>),
 };
 
 export function getActionIcon(kind: string) {

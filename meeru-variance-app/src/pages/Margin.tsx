@@ -89,6 +89,8 @@ export default function Margin() {
     <WorkbenchShell
       workbench="margin"
       scopeLabel={`${WORKBENCHES.margin.label} · ${periodLabel} · ${productLabel} · ${channelLabel}`}
+      commentary={waterfallData.data?.commentary}
+      commentaryHeadline={`Margin drivers · ${productLabel}`}
       leftRail={
         <>
           <RailGroup label="Product" items={MARGIN_PRODUCTS} active={product} onSelect={setProduct} groupKey="product" />

@@ -1,12 +1,12 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { useAuth, useTheme, useMission, useSettings, useChat } from '../store';
+import { useAuth, useTheme, useSettings, useChat } from '../store';
 import { Icon } from '../icons';
 import { ToastHost } from './Toast';
 import { MarinGuide, MissionEndCard } from './MarinGuide';
 import { LoadingBar } from './Skeletons';
-import { PERSONAS, MISSIONS } from '../data';
+import { PERSONAS } from '../data';
 import type { Role } from '../types';
 
 function Sidebar() {
@@ -32,8 +32,6 @@ function Sidebar() {
 function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; onToggleSidebar: () => void }) {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
-  const { start } = useMission();
-  const nav = useNavigate();
   const personaKey = user?.key;
   const loc = useLocation();
   const crumb = (() => {
@@ -44,12 +42,6 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
     if (loc.pathname.startsWith('/workspace')) return 'My Workspace';
     return 'MeeruAI';
   })();
-
-  const onStartMission = () => {
-    const m = MISSIONS.find(x => x.persona === personaKey) ?? MISSIONS[0];
-    if (m.startPath) nav(m.startPath);
-    start(m);
-  };
 
   const onPersonaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const r = e.target.value as Role;
@@ -80,10 +72,6 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
         <AgentStatusPill />
       </div>
       <div className="flex items-center gap-2.5">
-        <button onClick={onStartMission} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold text-white" style={{ background: 'linear-gradient(135deg,#F59E0B,#D97706)' }} title="Start the guided mission">
-          <Icon.Flag className="w-3 h-3" />
-          <span>Start Mission</span>
-        </button>
         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-rule bg-surface text-[12px]">
           <span className="text-muted">Persona</span>
           <select value={personaKey} onChange={onPersonaChange} className="bg-transparent text-ink text-[12px] outline-none cursor-pointer">

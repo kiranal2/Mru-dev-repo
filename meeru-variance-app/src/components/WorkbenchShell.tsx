@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { WORKBENCHES } from '../data';
+import { WORKBENCHES, PERF_COMMENTARY } from '../data';
+import type { CommentaryItem } from '../types';
 import { Icon } from '../icons';
-import { ActionStrip } from './ActionStrip';
-import { ChatSidebar, ChatShowButton } from './ChatSidebar';
+import { CommentaryPanel, CommentaryShowButton } from './CommentaryPanel';
 import { useChat, useSettings } from '../store';
+
+const RAIL_W_EXPANDED = 200;
+const RAIL_W_COLLAPSED = 36;
 
 /** "Xs ago" ticking counter — lives in the workbench-tabs row. */
 function LiveTimer() {
@@ -39,10 +42,14 @@ interface Props {
   children: ReactNode;
   /** Scope label shown at bottom of chat */
   scopeLabel?: string;
+  /** Commentary items to show in the right-side AI Commentary panel */
+  commentary?: CommentaryItem[];
+  /** Optional headline override for the commentary panel callout */
+  commentaryHeadline?: string;
 }
 
 /**
- * The canonical four-zone template:
+ * The canonical three-zone template:
  *
  *  [Workbench tabs row]
  *  ┌──────────┬──────────────────────┬──────────┐
@@ -50,31 +57,55 @@ interface Props {
  *  │ rail     ├──────────────────────┤  chat    │
  *  │          │ main                 │          │
  *  │          │                      │          │
- *  ├──────────┴──────────────────────┤          │
- *  │ action strip                    │          │
- *  └──────────────────────────────────┴──────────┘
+ *  └──────────┴──────────────────────┴──────────┘
+ *
+ * (The universal quick-action strip that used to live below `main`
+ * was removed — those actions are available via the chat panel toolbar
+ * per-reply, which avoided the stacked-widget crowding.)
  */
-export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLabel }: Props) {
+export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLabel, commentary, commentaryHeadline }: Props) {
   const { setScope } = useChat();
-  const { settings } = useSettings();
+  const { settings, update } = useSettings();
   useEffect(() => {
     if (scopeLabel) setScope(scopeLabel);
   }, [scopeLabel, setScope]);
 
+  const railW = settings.railCollapsed ? RAIL_W_COLLAPSED : RAIL_W_EXPANDED;
   const chatCol = settings.chatHidden ? '' : ` ${settings.chatWidth}px`;
-  const gridCols = `200px 1fr${chatCol}`;
+  const gridCols = `${railW}px 1fr${chatCol}`;
   const gridAreas = settings.chatHidden
-    ? `"wb wb" "left topnav" "left main" "strip strip"`
-    : `"wb wb chat" "left topnav chat" "left main chat" "strip strip chat"`;
+    ? `"wb wb" "left topnav" "left main"`
+    : `"wb wb chat" "left topnav chat" "left main chat"`;
+
+  const toggleRail = () => update({ railCollapsed: !settings.railCollapsed });
 
   return (
     <>
-      <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: gridCols, gridTemplateRows: '40px 48px 1fr 48px', gridTemplateAreas: gridAreas }}>
+      <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: gridCols, gridTemplateRows: '40px 48px 1fr', gridTemplateAreas: gridAreas }}>
         <div style={{ gridArea: 'wb' }}>
           <WorkbenchTabs active={workbench} />
         </div>
-        <aside style={{ gridArea: 'left' }} className="bg-surface border-r border-rule overflow-y-auto p-2.5">
-          {leftRail}
+        <aside
+          style={{ gridArea: 'left' }}
+          className={`bg-surface border-r border-rule overflow-y-auto overflow-x-hidden relative ${
+            settings.railCollapsed ? 'px-0 py-2' : 'p-2.5'
+          }`}
+        >
+          {settings.railCollapsed ? (
+            <CollapsedRail onExpand={toggleRail} />
+          ) : (
+            <>
+              {/* Collapse handle — pinned top-right of expanded rail */}
+              <button
+                onClick={toggleRail}
+                title="Collapse filters"
+                className="absolute top-1.5 right-1.5 w-5 h-5 rounded grid place-items-center text-faint hover:bg-surface-soft hover:text-ink transition-colors z-10"
+              >
+                <Icon.ChevLeft className="w-3 h-3" />
+              </button>
+              {leftRail}
+            </>
+          )}
         </aside>
         <div style={{ gridArea: 'topnav' }} className="bg-surface border-b border-rule">
           {topNav}
@@ -82,13 +113,40 @@ export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLab
         <main style={{ gridArea: 'main' }} className="overflow-auto p-5">
           {children}
         </main>
-        <div style={{ gridArea: 'strip' }} className="bg-surface border-t border-rule overflow-x-auto">
-          <ActionStrip />
-        </div>
-        <ChatSidebar style={{ gridArea: 'chat' }} />
+        <CommentaryPanel
+          style={{ gridArea: 'chat' }}
+          items={commentary ?? PERF_COMMENTARY}
+          scopeLabel={scopeLabel}
+          headline={commentaryHeadline}
+        />
       </div>
-      <ChatShowButton />
+      <CommentaryShowButton />
     </>
+  );
+}
+
+/**
+ * Narrow rail shown when the workbench filters are collapsed. A single chevron
+ * button restores the full rail. Rendered inside the same grid cell so the
+ * layout doesn't reflow.
+ */
+function CollapsedRail({ onExpand }: { onExpand: () => void }) {
+  return (
+    <div className="flex flex-col items-center gap-2 pt-1">
+      <button
+        onClick={onExpand}
+        title="Expand filters"
+        className="w-7 h-7 rounded grid place-items-center text-muted hover:bg-surface-soft hover:text-ink transition-colors"
+      >
+        <Icon.ChevRight className="w-3.5 h-3.5" />
+      </button>
+      <div
+        className="text-[9px] font-semibold tracking-wider uppercase text-faint"
+        style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+      >
+        Filters
+      </div>
+    </div>
   );
 }
 

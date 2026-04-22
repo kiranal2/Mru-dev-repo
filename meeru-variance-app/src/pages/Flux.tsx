@@ -9,7 +9,7 @@ import { KpiRowSkeleton, TableSkeleton, RefreshingOverlay } from '../components/
 import { useAsyncData } from '../hooks/useAsyncData';
 import {
   FLUX_COMPARES, FLUX_MATERIALITY, FLUX_OWNERS, WORKBENCHES,
-  FLUX_IS, FLUX_BS, FLUX_CF,
+  FLUX_IS, FLUX_BS, FLUX_CF, FLUX_COMMENTARY,
   filterFluxRows, fluxComparisonLabel,
 } from '../data';
 import { usePersona } from '../components/AppShell';
@@ -54,6 +54,8 @@ export default function Flux() {
     <WorkbenchShell
       workbench="flux"
       scopeLabel={`${WORKBENCHES.flux.label} · ${compareLabel} · ${ownerLabel}`}
+      commentary={FLUX_COMMENTARY}
+      commentaryHeadline={`Flux drivers · ${compareLabel}`}
       leftRail={
         <>
           <RailGroup label="Compare"     items={FLUX_COMPARES}      active={compare}     onSelect={setCompare}     groupKey="compare" />

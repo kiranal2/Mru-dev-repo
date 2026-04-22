@@ -44,6 +44,8 @@ interface Settings {
   pinnedActions: ActionKind[];
   chatHidden: boolean;
   chatWidth: number; // pixels (clamped 300–640)
+  /** Collapse the workbench left rail (Regions/Comparison/Drivers filters) to a narrow icon strip. */
+  railCollapsed: boolean;
 }
 interface SettingsCtx {
   settings: Settings;
@@ -182,6 +184,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
     pinnedActions: ['pin', 'remind', 'share'],
     chatHidden: false,
     chatWidth: 344,
+    railCollapsed: false,
   };
   const [settings, setSettings] = useState<Settings>(() => {
     try {
