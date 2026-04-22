@@ -2,9 +2,11 @@ import { View, Text, Pressable, Image } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 /**
- * Thin segmented control shown at the top of every Variance-stack screen so
- * users can move between Performance / Margin / Flux without using a tab icon.
- * Includes a white logo strip above the dark segmented control for brand presence.
+ * Unified top bar for Variance-stack screens:
+ *   [ MeeruAI logo ]   [ Performance | Margin | Flux ]
+ *
+ * Single light row — logo on the left, segmented switcher on the right.
+ * Matches the overall white/slate visual language of the app.
  */
 const ITEMS = [
   { route: 'Performance', label: 'Performance' },
@@ -17,31 +19,32 @@ export function VarianceSwitcher() {
   const route = useRoute();
 
   return (
-    <View>
-      {/* Logo strip */}
-      <View
-        style={{
-          backgroundColor: '#FFFFFF',
-          paddingHorizontal: 12,
-          paddingVertical: 8,
-          borderBottomWidth: 1,
-          borderBottomColor: '#E2E8F0',
-        }}
-      >
-        <Image
-          source={require('../../assets/meeru-logo.png')}
-          style={{ width: 96, height: 24, resizeMode: 'contain' }}
-        />
-      </View>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        backgroundColor: '#FFFFFF',
+        borderBottomWidth: 1,
+        borderBottomColor: '#E2E8F0',
+      }}
+    >
+      <Image
+        source={require('../../assets/meeru-logo.png')}
+        style={{ width: 88, height: 22, resizeMode: 'contain' }}
+      />
 
-      {/* Dark segmented control */}
       <View
         style={{
           flexDirection: 'row',
           gap: 4,
-          paddingHorizontal: 12,
-          paddingVertical: 8,
-          backgroundColor: '#0F172A',
+          padding: 3,
+          borderRadius: 8,
+          backgroundColor: '#F1F5F9',
+          borderWidth: 1,
+          borderColor: '#E2E8F0',
         }}
       >
         {ITEMS.map((it) => {
@@ -53,18 +56,23 @@ export function VarianceSwitcher() {
                 if (!active) navigation.navigate(it.route);
               }}
               style={{
-                flex: 1,
-                paddingVertical: 6,
+                paddingVertical: 5,
+                paddingHorizontal: 14,
                 borderRadius: 6,
-                alignItems: 'center',
-                backgroundColor: active ? '#1E40AF' : 'transparent',
+                backgroundColor: active ? '#FFFFFF' : 'transparent',
+                borderWidth: active ? 1 : 0,
+                borderColor: '#E2E8F0',
+                shadowColor: active ? '#0F172A' : 'transparent',
+                shadowOpacity: active ? 0.04 : 0,
+                shadowRadius: active ? 2 : 0,
+                shadowOffset: { width: 0, height: 1 },
               }}
             >
               <Text
                 style={{
                   fontSize: 12,
-                  fontWeight: active ? '700' : '500',
-                  color: active ? '#FFFFFF' : '#94A3B8',
+                  fontWeight: active ? '600' : '500',
+                  color: active ? '#1E40AF' : '#64748B',
                   letterSpacing: 0.2,
                 }}
               >

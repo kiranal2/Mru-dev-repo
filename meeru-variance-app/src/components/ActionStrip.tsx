@@ -20,9 +20,13 @@ const ACCENT: Record<string, string> = {
 };
 
 /**
- * Bottom strip — now slim, universal-only quick-action chips.
- * Contextual "Next Best Action" cards have moved into the ChatPanel
- * above the input box, where they sit right next to the AI reply.
+ * Bottom strip — slim universal quick-action chips.
+ * Contextual Next Best Action cards live in two other places, per Shawn:
+ *   1. Inside the chat panel (compact, above the input) — so users don't
+ *      have to look away from the conversation.
+ *   2. Inside the main content area (prominent, below the chart) — so
+ *      they "show up where we had charts" as Shawn described.
+ * The bottom strip stays narrow and carries only universal quick chips.
  */
 export function ActionStrip() {
   const persona = usePersona();

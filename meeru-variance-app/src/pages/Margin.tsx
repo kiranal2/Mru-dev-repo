@@ -4,6 +4,7 @@ import { RailGroup } from '../components/LeftRail';
 import { TopNav } from '../components/TopNav';
 import { KpiRow } from '../components/KpiRow';
 import { Commentary } from '../components/Commentary';
+import { NbaMainSection } from '../components/NbaMainSection';
 import { StatusChip } from '../components/ui';
 import { WaterfallView, ProductMixView, CostsView, SensitivityView } from '../components/subviews';
 import {
@@ -119,6 +120,7 @@ export default function Margin() {
               <KpiRow kpis={waterfallData.data.kpis} />
               <WaterfallView steps={waterfallData.data.waterfall} />
               <div className="mt-3"><Commentary items={waterfallData.data.commentary} title={`${productLabel} — ranked drivers`} /></div>
+              <NbaMainSection />
             </>
           )}
         </div>

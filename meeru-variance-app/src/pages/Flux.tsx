@@ -3,6 +3,7 @@ import { WorkbenchShell } from '../components/WorkbenchShell';
 import { RailGroup } from '../components/LeftRail';
 import { TopNav } from '../components/TopNav';
 import { StatusChip } from '../components/ui';
+import { NbaMainSection } from '../components/NbaMainSection';
 import { FluxTable, FluxSummary } from '../components/subviews';
 import { KpiRowSkeleton, TableSkeleton, RefreshingOverlay } from '../components/Skeletons';
 import { useAsyncData } from '../hooks/useAsyncData';
@@ -133,6 +134,7 @@ export default function Flux() {
                 {cfRows.length > 0 ? <FluxTable rows={cfRows} unitLabel="$M" /> : <EmptyFilter />}
               </>
             )}
+            <NbaMainSection />
           </>
         )}
       </div>

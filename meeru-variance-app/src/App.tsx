@@ -21,9 +21,9 @@ function AppRoutes() {
   const { user } = useAuth();
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to="/workspace" replace /> : <Login />} />
+      <Route path="/login" element={user ? <Navigate to="/variance/performance" replace /> : <Login />} />
       <Route element={<RequireAuth><AppShell /></RequireAuth>}>
-        <Route index element={<Navigate to="/workspace" replace />} />
+        <Route index element={<Navigate to="/variance/performance" replace />} />
         <Route path="/workspace" element={<Workspace />} />
         <Route path="/variance" element={<Navigate to="/variance/performance" replace />} />
         <Route path="/variance/performance" element={<Performance />} />
@@ -33,7 +33,7 @@ function AppRoutes() {
         <Route path="/reconciliations" element={<Recons />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/notebook" element={<Notebook />} />
-        <Route path="*" element={<Navigate to="/workspace" replace />} />
+        <Route path="*" element={<Navigate to="/variance/performance" replace />} />
       </Route>
     </Routes>
   );

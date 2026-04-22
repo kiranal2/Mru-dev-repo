@@ -5,6 +5,7 @@ import { TopNav } from '../components/TopNav';
 import { KpiRow } from '../components/KpiRow';
 import { Commentary } from '../components/Commentary';
 import { VarianceChart } from '../components/VarianceChart';
+import { NbaMainSection } from '../components/NbaMainSection';
 import { StatusChip } from '../components/ui';
 import { DrillDownView, ExceptionsView, SignalsView, HistoryView } from '../components/subviews';
 import {
@@ -136,6 +137,7 @@ export default function Performance() {
               <KpiRow kpis={analysis.data.kpis} />
               <Commentary items={analysis.data.commentary} title={driverLabel ? `Commentary — ${driverLabel}` : 'AI-Generated Commentary — Ranked by Impact'} />
               <VarianceChart title={analysis.data.chartTitle} bars={analysis.data.chart} />
+              <NbaMainSection />
             </>
           )}
         </div>
