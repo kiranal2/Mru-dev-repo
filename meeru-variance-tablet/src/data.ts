@@ -9,6 +9,7 @@ import type {
   DrillSegment, ExceptionItem, SignalItem, HistoryItem,
   WaterfallStep, ProductMixItem, CostDriver, SensitivityScenario,
   FluxRow, NotebookEntry,
+  RegionKey, ComparisonKey, RegionData, ComparisonData,
 } from './types';
 
 // -------- PERSONAS --------
@@ -134,6 +135,343 @@ export const PERF_DRILL_SEGMENTS: DrillSegment[] = [
   { id: 'ilmfg',     name: 'Illinois Manufacturing', region: 'Midwest',  variance: '−$0.5M', varTone: 'neg',  spark: [61, 60, 57, 53, 50], util: '94%', utilTone: 'neg',  trips: '$5.4M', tripsVsPlan: '−6.8%',  aiQ: 'How serious is the Illinois Manufacturing bottleneck?' },
   { id: 'watech',    name: 'Washington Tech',       region: 'West',      variance: '−$0.6M', varTone: 'neg',  spark: [58, 57, 55, 52, 49], util: '65%', utilTone: 'warn', trips: '$6.2M', tripsVsPlan: '−5.4%',  aiQ: 'What is happening with Washington Tech?' },
 ];
+
+// -------- PERFORMANCE — FluxPlus regions --------
+// Six US regions. The "national" key rolls the others up; the rest map 1:1
+// to a single DrillSegment (so drill-down filters down to that segment).
+//
+// Each region carries its own 4-KPI strip, 3 commentary items, 6-week
+// chart (last bar forecast), AI narrative, and suggested chat prompts.
+// The week label is shared across all regions — W10 · Mar 3–9 2026.
+
+export const FLUX_REGIONS: Record<RegionKey, RegionData> = {
+  national: {
+    key: 'national', label: 'National', week: 'W10 · Mar 3–9',
+    revenue: '$30.5M', orders: '−$3.2M vs plan',
+    signal:
+      'California Retail labor surge + Texas natural-gas swing are driving −$3.2M. Northeast advisory pipeline partially offsetting.',
+    aiIntro:
+      'Rolled across all six US regions this week: revenue $30.5M, variance −$3.2M vs plan. The top two drags are California Retail labor (−$1.2M) and Texas Energy commodity exposure (−$0.8M). New York Financial Services is the offsetter (+$0.7M). Model confidence on the weekly run: 88%.',
+    kpis: [
+      { lbl: 'Revenue (Wk)',   val: '$30.5M', delta: '▼ $3.2M vs plan',  tone: 'neg'  },
+      { lbl: 'Orders',         val: '4.82k',  delta: '▼ 6.4% vs plan',   tone: 'neg'  },
+      { lbl: 'Gross Margin',   val: '78.4%',  delta: '▼ 1.2pp vs prior', tone: 'neg'  },
+      { lbl: 'NRR',            val: '108%',   delta: '▼ 7pp vs prior Q', tone: 'neg'  },
+    ],
+    commentary: [
+      { rank: 1, name: 'California Retail', delta: '−$1.2M vs Plan',
+        text: 'Min-wage hike pushed overtime 18% above plan in LA/SF. Margin down 340bps, 3rd week of escalation.',
+        tags: [{ t: 'red', l: 'Labor' }, { t: 'red', l: '3 weeks' }, { t: 'blue', l: 'ML flag' }] },
+      { rank: 2, name: 'Texas Energy', delta: '−$0.8M vs Plan',
+        text: 'Henry Hub spot −18% WoW. Hedge covers 60% — unhedged 40% fully exposed. Forward curve suggests W12 stabilization.',
+        tags: [{ t: 'amber', l: 'Commodity' }, { t: 'amber', l: 'Unhedged' }] },
+      { rank: 3, name: 'New York Financial Svcs', delta: '+$0.7M vs Plan',
+        text: 'Equity desk +22% vs plan on elevated VIX. Advisory pipeline converting 3 weeks ahead of schedule.',
+        tags: [{ t: 'green', l: 'Positive' }, { t: 'green', l: 'Q1 momentum' }] },
+    ],
+    chart: [
+      { w: 'W6',   a: 34, p: 33, tone: 'pos' },
+      { w: 'W7',   a: 33, p: 33, tone: 'blue' },
+      { w: 'W8',   a: 32, p: 33, tone: 'warn' },
+      { w: 'W9',   a: 31, p: 33, tone: 'warn' },
+      { w: 'W10',  a: 30.5, p: 33.7, tone: 'neg' },
+      { w: 'W11▸', a: 31, p: 34, tone: 'neg', forecast: true },
+    ],
+    segments: ['caretail', 'txenergy', 'nyfinance', 'fltourism', 'ilmfg', 'watech'],
+    suggestions: [
+      'What are the top three drivers this week?',
+      "Which region is off plan the most?",
+      'Summarize signals by confidence',
+      "How bad is California Retail really?",
+      "Show me what Forecast looks like for W11",
+    ],
+  },
+  northeast: {
+    key: 'northeast', label: 'Northeast', week: 'W10 · Mar 3–9',
+    revenue: '$8.1M', orders: '+$0.7M vs plan',
+    signal:
+      'Only region beating plan this week. Equity desk and advisory pipeline driving the beat — structurally durable.',
+    aiIntro:
+      'Northeast is carrying the team this week. New York Financial Services revenue $8.1M, +$0.7M vs plan. Equity trading desk +22% on elevated VIX; advisory pipeline pulling forward by three weeks. Infrastructure upgrade giving a structural +15bps capture improvement that should persist through Q2.',
+    kpis: [
+      { lbl: 'Revenue (Wk)',   val: '$8.1M',  delta: '▲ $0.7M vs plan',  tone: 'pos' },
+      { lbl: 'Orders',         val: '1.12k',  delta: '▲ 4.8% vs plan',   tone: 'pos' },
+      { lbl: 'Capture Rate',   val: '62bps',  delta: '▲ 15bps QoQ',      tone: 'pos' },
+      { lbl: 'Pipeline Conv.', val: '71%',    delta: '▲ 3w pull-fwd',    tone: 'pos' },
+    ],
+    commentary: [
+      { rank: 1, name: 'Equity Trading Desk', delta: '+$0.4M vs Plan',
+        text: 'VIX elevated above 22 for third consecutive week. Trading desk +22% vs plan. Infrastructure upgrade providing structural lift even if vol normalizes.',
+        tags: [{ t: 'green', l: 'Trading beat' }, { t: 'blue', l: 'Structural' }] },
+      { rank: 2, name: 'Advisory Pipeline', delta: '+$0.2M vs Plan',
+        text: 'Pipeline converting 3 weeks ahead of schedule. $2.4M in W11–W13 committed closings. Win rate improving on larger deal sizes.',
+        tags: [{ t: 'green', l: 'Pipeline pull-fwd' }] },
+      { rank: 3, name: 'Wealth Management', delta: '+$0.1M vs Plan',
+        text: 'AUM fees tracking in-line. Net new money $340M, 2x prior quarter pace. Advisor attrition at 3-year low.',
+        tags: [{ t: 'green', l: 'AUM growth' }] },
+    ],
+    chart: [
+      { w: 'W6',   a: 7.6, p: 7.5, tone: 'pos' },
+      { w: 'W7',   a: 7.8, p: 7.6, tone: 'pos' },
+      { w: 'W8',   a: 7.9, p: 7.7, tone: 'pos' },
+      { w: 'W9',   a: 8.0, p: 7.4, tone: 'pos' },
+      { w: 'W10',  a: 8.1, p: 7.4, tone: 'pos' },
+      { w: 'W11▸', a: 8.3, p: 7.6, tone: 'pos', forecast: true },
+    ],
+    segments: ['nyfinance'],
+    suggestions: [
+      'Can we sustain the NY trading outperformance?',
+      "What's in the advisory pipeline for W11–W13?",
+      'Break down wealth management AUM by cohort',
+      "How does this compare to Q1 2024?",
+      'What structural vs cyclical in the NE beat?',
+    ],
+  },
+  southeast: {
+    key: 'southeast', label: 'Southeast', week: 'W10 · Mar 3–9',
+    revenue: '$2.9M', orders: '−$0.4M vs plan',
+    signal:
+      'Florida Tourism miss is a calendar shift — spring break moved to W11. Advance bookings +18%. Self-recovering.',
+    aiIntro:
+      'Southeast miss is timing, not demand. Spring break peak moved from W10 to W11 this year — hotel occupancy 71% vs 84% planned for W10, but W11 advance bookings are already tracking +18% above W10. Four of five historical spring-break calendar shifts showed full recovery in the following week.',
+    kpis: [
+      { lbl: 'Revenue (Wk)',   val: '$2.9M', delta: '▼ $0.4M vs plan',  tone: 'neg'  },
+      { lbl: 'Occupancy',      val: '71%',   delta: '▼ 13pp vs plan',   tone: 'neg'  },
+      { lbl: 'W11 Bookings',   val: '+18%',  delta: '▲ vs W10',         tone: 'pos'  },
+      { lbl: 'ADR',            val: '$218',  delta: '▲ 4% vs plan',     tone: 'pos'  },
+    ],
+    commentary: [
+      { rank: 1, name: 'Florida Tourism', delta: '−$0.4M vs Plan',
+        text: 'Spring break peak moved from W10 to W11. Hotel occupancy 71% vs 84% plan. W11 bookings tracking +18% above W10.',
+        tags: [{ t: 'amber', l: 'Calendar shift' }, { t: 'blue', l: 'Auto-recovering' }] },
+      { rank: 2, name: 'Hotel ADR', delta: '+$0.08M vs Plan',
+        text: 'Average daily rate $218 vs $210 planned. Pricing discipline holding despite soft occupancy — room for upside as W11 demand materializes.',
+        tags: [{ t: 'green', l: 'ADR strength' }] },
+      { rank: 3, name: 'Cruise Partnerships', delta: 'Flat',
+        text: 'Miami and Fort Lauderdale embarkations in-line. Pre-cruise hotel nights flat, no spring-break shift impact.',
+        tags: [{ t: 'blue', l: 'On plan' }] },
+    ],
+    chart: [
+      { w: 'W6',   a: 3.1, p: 3.1, tone: 'blue' },
+      { w: 'W7',   a: 3.2, p: 3.1, tone: 'pos' },
+      { w: 'W8',   a: 3.1, p: 3.1, tone: 'blue' },
+      { w: 'W9',   a: 3.0, p: 3.2, tone: 'warn' },
+      { w: 'W10',  a: 2.9, p: 3.3, tone: 'neg' },
+      { w: 'W11▸', a: 3.6, p: 3.1, tone: 'pos', forecast: true },
+    ],
+    segments: ['fltourism'],
+    suggestions: [
+      'What caused the Florida Tourism miss?',
+      'Should we take action on Florida tourism timing?',
+      'Compare W11 bookings to last year spring break',
+      "What's the ADR holding up despite soft occupancy?",
+      'Is the Florida miss auto-recovering?',
+    ],
+  },
+  midwest: {
+    key: 'midwest', label: 'Midwest', week: 'W10 · Mar 3–9',
+    revenue: '$5.4M', orders: '−$0.5M vs plan',
+    signal:
+      'Illinois Manufacturing capacity-constrained — Chicago hub at 94%. Rail car allocation from UP confirmed for W11.',
+    aiIntro:
+      'Midwest is supply-constrained, not demand-weak. Chicago hub at 94% capacity against our 90% stress threshold. Union Pacific confirmed a +15% rail car allocation starting W11. If delivery holds on historical UP accuracy (79%), the hub returns to 85% capacity by W12 and this variance unwinds.',
+    kpis: [
+      { lbl: 'Revenue (Wk)',   val: '$5.4M', delta: '▼ $0.5M vs plan',  tone: 'neg'  },
+      { lbl: 'Hub Utilization',val: '94%',   delta: '▲ 4pp over threshold', tone: 'neg' },
+      { lbl: 'Fulfill Days',   val: '8.2d',  delta: '▼ vs 5.5 target',  tone: 'neg'  },
+      { lbl: 'Rail Allocation',val: '+15%',  delta: '▲ W11 confirmed',  tone: 'pos'  },
+    ],
+    commentary: [
+      { rank: 1, name: 'Illinois Manufacturing', delta: '−$0.5M vs Plan',
+        text: 'Chicago hub at 94% capacity, above 90% stress threshold. Union Pacific rail car shortage. Fulfillment cycle 8.2 days vs 5.5 target.',
+        tags: [{ t: 'amber', l: 'Watch' }, { t: 'amber', l: 'Rail shortage' }] },
+      { rank: 2, name: 'Detroit Automotive', delta: 'Flat',
+        text: 'OEM schedules stable. Tier-1 supplier orders tracking plan. No material variance this week.',
+        tags: [{ t: 'blue', l: 'On plan' }] },
+      { rank: 3, name: 'Ohio Distribution', delta: '+$0.05M vs Plan',
+        text: 'Columbus hub running smooth at 81% utilization. Could absorb 6–8% of Chicago overflow if routing is reshaped.',
+        tags: [{ t: 'green', l: 'Capacity headroom' }] },
+    ],
+    chart: [
+      { w: 'W6',   a: 5.8, p: 5.8, tone: 'blue' },
+      { w: 'W7',   a: 5.8, p: 5.8, tone: 'blue' },
+      { w: 'W8',   a: 5.7, p: 5.8, tone: 'warn' },
+      { w: 'W9',   a: 5.6, p: 5.9, tone: 'warn' },
+      { w: 'W10',  a: 5.4, p: 5.9, tone: 'neg' },
+      { w: 'W11▸', a: 5.7, p: 5.9, tone: 'warn', forecast: true },
+    ],
+    segments: ['ilmfg'],
+    suggestions: [
+      'How serious is the Illinois Manufacturing bottleneck?',
+      'Can we re-route through Ohio Distribution?',
+      "What's Union Pacific's track record on committed allocations?",
+      'Model the W12 recovery scenario',
+      'Should we flag this on the board call?',
+    ],
+  },
+  west: {
+    key: 'west', label: 'West', week: 'W10 · Mar 3–9',
+    revenue: '$11.0M', orders: '−$1.8M vs plan',
+    signal:
+      'California Retail labor surge is this week\'s critical issue. Accelerating automation from W14 to W11 saves $0.4M/wk.',
+    aiIntro:
+      'West region is the biggest drag — California Retail labor (−$1.2M) plus Washington Tech AI training spend (−$0.6M). The lever is automation acceleration: self-checkout rolled to 38 of 120 target stores; pulling the rollout from W14 to W11 saves an estimated $0.4M/week and recovers ~2.3pp margin by W13. Confidence on that play: 92%.',
+    kpis: [
+      { lbl: 'Revenue (Wk)',   val: '$11.0M', delta: '▼ $1.8M vs plan',  tone: 'neg'  },
+      { lbl: 'OT Hours',       val: '+18%',   delta: '▲ vs plan',        tone: 'neg'  },
+      { lbl: 'Store Margin',   val: '−340bps',delta: '▼ 3 wks running',  tone: 'neg'  },
+      { lbl: 'Automation',     val: '38/120', delta: '▲ W14 → W11 saves $0.4M/wk', tone: 'warn' },
+    ],
+    commentary: [
+      { rank: 1, name: 'California Retail', delta: '−$1.2M vs Plan',
+        text: 'Min-wage hike driving OT 18% above plan in LA/SF. Store-level margin compressed 340bps. 3rd consecutive week of escalation.',
+        tags: [{ t: 'red', l: 'Critical' }, { t: 'red', l: 'Labor' }, { t: 'blue', l: 'ML flag' }] },
+      { rank: 2, name: 'Washington Tech', delta: '−$0.6M vs Plan',
+        text: 'AI workload training costs +28% MoM, compute utilization only 65%. FinOps reservation strategy in progress — $180K/mo recoverable.',
+        tags: [{ t: 'amber', l: 'Cloud' }, { t: 'green', l: 'Savings plan' }] },
+      { rank: 3, name: 'Oregon Clean Energy', delta: '+$0.2M vs Plan',
+        text: 'IRA subsidy tranche released W9. Solar installation revenue accelerating — Q2 pipeline $1.8M may pull forward 4–6 weeks.',
+        tags: [{ t: 'green', l: 'Subsidy release' }, { t: 'green', l: 'Growing' }] },
+    ],
+    chart: [
+      { w: 'W6',   a: 12.5, p: 12.6, tone: 'blue' },
+      { w: 'W7',   a: 12.3, p: 12.6, tone: 'warn' },
+      { w: 'W8',   a: 11.9, p: 12.7, tone: 'neg' },
+      { w: 'W9',   a: 11.4, p: 12.7, tone: 'neg' },
+      { w: 'W10',  a: 11.0, p: 12.8, tone: 'neg' },
+      { w: 'W11▸', a: 11.4, p: 12.8, tone: 'warn', forecast: true },
+    ],
+    segments: ['caretail', 'watech'],
+    suggestions: [
+      "What's happening with California Retail labor costs?",
+      'Model +120 FTE impact on CA margin',
+      "What's driving Washington Tech cloud costs?",
+      'Can Oregon subsidy pull-forward offset CA drag?',
+      'Compare to NY Q1 2024 wage event',
+    ],
+  },
+  southwest: {
+    key: 'southwest', label: 'Southwest', week: 'W10 · Mar 3–9',
+    revenue: '$3.2M', orders: '−$0.8M vs plan',
+    signal:
+      'Texas natural-gas spot price down 18% WoW. Unhedged 40% fully exposed. W12 forward curve suggests stabilization at $2.80/MMBtu.',
+    aiIntro:
+      'Southwest variance is commodity-driven. Henry Hub spot down 18% WoW to $2.62/MMBtu. Our hedge covers 60% of exposure; the unhedged 40% is taking the full hit. Forward curve projects stabilization at $2.80 by W12. Historical accuracy on similar storage-build scenarios: 74%. Recommend increasing hedge ratio before W11 close.',
+    kpis: [
+      { lbl: 'Revenue (Wk)',   val: '$3.2M', delta: '▼ $0.8M vs plan',  tone: 'neg'  },
+      { lbl: 'Henry Hub Spot', val: '$2.62', delta: '▼ 18% WoW',        tone: 'neg'  },
+      { lbl: 'Hedge Cover',    val: '60%',   delta: '▲ raise to 75%',   tone: 'warn' },
+      { lbl: 'W12 Forward',    val: '$2.80', delta: '▲ stabilization',  tone: 'pos'  },
+    ],
+    commentary: [
+      { rank: 1, name: 'Texas Energy', delta: '−$0.8M vs Plan',
+        text: 'Henry Hub spot price down 18% WoW. Hedge covers 60% — unhedged 40% fully exposed. Forward curve suggests W12 stabilization.',
+        tags: [{ t: 'amber', l: 'Commodity' }, { t: 'amber', l: 'Unhedged' }] },
+      { rank: 2, name: 'Arizona Solar', delta: '+$0.05M vs Plan',
+        text: 'Utility-scale installations on track. Phoenix + Tucson commercial projects ahead of schedule by 6 days.',
+        tags: [{ t: 'green', l: 'Execution' }] },
+      { rank: 3, name: 'New Mexico Logistics', delta: 'Flat',
+        text: 'Albuquerque distribution in-line. No material variance this week.',
+        tags: [{ t: 'blue', l: 'On plan' }] },
+    ],
+    chart: [
+      { w: 'W6',   a: 4.0, p: 4.0, tone: 'blue' },
+      { w: 'W7',   a: 3.9, p: 4.0, tone: 'warn' },
+      { w: 'W8',   a: 3.7, p: 4.0, tone: 'warn' },
+      { w: 'W9',   a: 3.5, p: 4.0, tone: 'neg' },
+      { w: 'W10',  a: 3.2, p: 4.0, tone: 'neg' },
+      { w: 'W11▸', a: 3.5, p: 4.0, tone: 'warn', forecast: true },
+    ],
+    segments: ['txenergy'],
+    suggestions: [
+      'Explain the Texas natural gas price impact',
+      'Should we raise the hedge ratio to 75%?',
+      'Model the W12 stabilization scenario',
+      "What's the Arizona Solar pipeline look like?",
+      'Historical accuracy on Henry Hub forward curves?',
+    ],
+  },
+};
+
+// -------- PERFORMANCE — FluxPlus comparisons --------
+// Five comparison modes. The default is 'plan' (vs Plan). Each mode rewrites
+// the headline variance figure and the narrative. segmentOverrides allow
+// Drill-Down to swap the variance per segment when the comparison changes.
+
+export const FLUX_COMPARISONS: Record<ComparisonKey, ComparisonData> = {
+  plan: {
+    key: 'plan', label: 'vs Plan', short: 'Plan',
+    description: 'Actuals vs budget (locked at FY start, revised Feb 1)',
+    totalVariance: '−$3.2M', totalVarianceTone: 'neg',
+    signal:
+      'Plan variance driven by West and Southwest. Northeast is the only region beating plan this week.',
+    pillTone: 'neg',
+  },
+  prior: {
+    key: 'prior', label: 'vs Prior Week', short: 'Prior Wk',
+    description: 'Week-over-week change · W10 (Mar 3–9) vs W9 (Feb 24–Mar 2)',
+    totalVariance: '−$1.2M', totalVarianceTone: 'neg',
+    signal:
+      'Most regions improved sequentially, but California Retail worsened for the 3rd straight week. WoW trend tightening except CA.',
+    pillTone: 'warn',
+    segmentOverrides: {
+      caretail:  { variance: '−$0.4M', varTone: 'neg' },
+      txenergy:  { variance: '−$0.3M', varTone: 'neg' },
+      nyfinance: { variance: '+$0.1M', varTone: 'pos' },
+      fltourism: { variance: '−$0.1M', varTone: 'neg' },
+      ilmfg:     { variance: '−$0.2M', varTone: 'neg' },
+      watech:    { variance: '−$0.3M', varTone: 'neg' },
+    },
+  },
+  yoy: {
+    key: 'yoy', label: 'vs Prior Year', short: 'YoY',
+    description: 'Year-over-year change · W10 FY26 vs W10 FY25',
+    totalVariance: '+$4.8M', totalVarianceTone: 'pos',
+    signal:
+      'Strong YoY growth despite plan miss. 6 of 6 regions positive YoY; FY25 comparison benefits from lapping a soft quarter.',
+    pillTone: 'pos',
+    segmentOverrides: {
+      caretail:  { variance: '+$0.2M', varTone: 'pos' },
+      txenergy:  { variance: '+$0.4M', varTone: 'pos' },
+      nyfinance: { variance: '+$1.6M', varTone: 'pos' },
+      fltourism: { variance: '+$0.3M', varTone: 'pos' },
+      ilmfg:     { variance: '+$0.9M', varTone: 'pos' },
+      watech:    { variance: '+$1.4M', varTone: 'pos' },
+    },
+  },
+  forecast: {
+    key: 'forecast', label: 'vs Forecast', short: 'Forecast',
+    description: 'Actuals vs rolling forecast · Forecast locked end of W9',
+    totalVariance: '−$0.4M', totalVarianceTone: 'warn',
+    signal:
+      'Forecast closer to reality than plan. CA Retail and TX Energy forecasts absorbed part of the plan gap, but CA still missed forecast.',
+    pillTone: 'warn',
+    segmentOverrides: {
+      caretail:  { variance: '−$0.3M', varTone: 'neg' },
+      txenergy:  { variance: '−$0.1M', varTone: 'warn' },
+      nyfinance: { variance: '+$0.3M', varTone: 'pos' },
+      fltourism: { variance: '+$0.0M', varTone: 'warn' },
+      ilmfg:     { variance: '−$0.2M', varTone: 'neg' },
+      watech:    { variance: '−$0.1M', varTone: 'warn' },
+    },
+  },
+  runrate: {
+    key: 'runrate', label: 'vs Run Rate', short: 'Run Rate',
+    description: 'Actuals vs rolling 13-week run rate (weeks W44 FY25 – W9 FY26)',
+    totalVariance: '−$2.1M', totalVarianceTone: 'neg',
+    signal:
+      'Run rate drifts below plan because recent quarters softened. Gap to run rate tells you whether this week is truly an outlier.',
+    pillTone: 'neg',
+    segmentOverrides: {
+      caretail:  { variance: '−$0.9M', varTone: 'neg' },
+      txenergy:  { variance: '−$0.5M', varTone: 'neg' },
+      nyfinance: { variance: '+$0.5M', varTone: 'pos' },
+      fltourism: { variance: '−$0.2M', varTone: 'neg' },
+      ilmfg:     { variance: '−$0.4M', varTone: 'neg' },
+      watech:    { variance: '−$0.4M', varTone: 'neg' },
+    },
+  },
+};
 
 // -------- PERFORMANCE — Exceptions tab --------
 export const PERF_EXCEPTIONS: ExceptionItem[] = [
@@ -358,11 +696,13 @@ export const NOTEBOOK_ENTRIES: NotebookEntry[] = [
 ];
 
 // -------- CHAT RESPONSES --------
+// Default suggestion list (used before a region is selected or as a fallback).
+// Region-specific suggestions live on FLUX_REGIONS[region].suggestions.
 export const SUGGESTIONS = [
-  'Why did Enterprise churn spike this quarter?',
+  'What are the top three drivers this week?',
   "What's happening with California Retail labor costs?",
-  'When will margins recover?',
-  "What's driving cloud cost increase?",
+  'Explain the Texas natural gas price impact',
+  'Can we sustain the NY trading outperformance?',
   'Which accounts are at risk for next quarter?',
 ];
 
@@ -388,6 +728,103 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
       { kind: 'remind', label: 'Remind: Thursday Prep', who: 'Calendar · Thu 8am',        body: 'Review West Coast margin before earnings prep meeting.' },
     ],
     followUps: ['Compare to NY Q1 2024 wage event', 'Show Americas margin weekly trend', "What's the OT distribution by store?"],
+  },
+  {
+    match: /top (three|3)|top drivers|drivers this week|top drag|which region|off plan the most/i,
+    text: '**Three drivers explain −$3.2M this week.** (1) California Retail labor OT up 18% — $1.2M hit. (2) Texas Energy natural-gas spot down 18% WoW, unhedged 40% exposed — $0.8M. (3) Washington Tech AI workload cloud spend — $0.6M. Northeast is the only region beating plan (+$0.7M from equity trading + advisory pipeline).',
+    actions: [
+      { kind: 'pin',    label: 'Pin to Board Deck',  who: 'Workspace · Q1 Board Prep', body: 'Top 3 weekly drivers — CA Labor, TX Energy, WA Tech.' },
+      { kind: 'share',  label: 'Share with Exec Team', who: 'Leadership chat',         body: 'W10 variance summary — 3 drivers accounting for 83% of miss.' },
+      { kind: 'open',   label: 'Open Drill-Down',    who: 'Performance · segments',    body: 'See segment-level detail for the three drivers.' },
+      { kind: 'whatif', label: 'What-If: Fix CA labor', who: 'Forecast · +120 FTE',     body: 'Model: +120 FTE reduces OT 62%, margin recovery +2.3pp by W13.' },
+    ],
+    followUps: ['How bad is California Retail really?', 'Should we raise the Texas hedge?', 'Can NE offset enough to save the week?'],
+  },
+  {
+    match: /texas|natural gas|henry hub|hedge|commodity/i,
+    text: '**Texas Energy is a commodity hit, not demand weakness.** Henry Hub spot −18% WoW to $2.62/MMBtu. Our hedge covers 60%; the unhedged 40% is fully exposed — $0.8M variance. Forward curve projects stabilization at $2.80 by W12 (74% historical accuracy on similar storage-build patterns). Raising hedge to 75% before W11 close locks in most of the recovery.',
+    actions: [
+      { kind: 'email',  label: 'Email Treasury',       who: 'Derek · Treasury',         body: 'Texas gas hedge — recommend raising from 60% to 75% before W11 close.' },
+      { kind: 'whatif', label: 'What-If: Hedge at 75%', who: 'Forecast · 75% cover',   body: 'Model: 75% hedge at $2.80 forward locks in $0.5M of $0.8M variance.' },
+      { kind: 'open',   label: 'Open Commodity Workbench', who: 'Workbench · Commodity', body: 'Review hedge book + forward curve detail.' },
+      { kind: 'pin',    label: 'Pin Forward Curve',    who: 'Workspace · Commodity',     body: 'Henry Hub forward curve + hedge coverage snapshot.' },
+    ],
+    followUps: ['Historical accuracy on Henry Hub forwards?', "What's Arizona Solar pipeline look like?", 'Model the W12 stabilization'],
+  },
+  {
+    match: /(new york|\bny\b|northeast|trading|advisory|equity desk)/i,
+    text: '**NY Financial Services is the offsetter this week — +$0.7M vs plan.** Equity desk +22% on elevated VIX. Advisory pipeline converting 3 weeks ahead of schedule with $2.4M in W11–W13 committed closings. Infrastructure upgrade provides a structural +15bps capture improvement even if VIX normalizes. Wealth management AUM fees +2x prior pace on net new money.',
+    actions: [
+      { kind: 'email',  label: 'Email NE Region Head', who: 'Maria · NE Region',       body: 'Great Q1 — want to document what\'s working for playbook replication.' },
+      { kind: 'share',  label: 'Share Wins with CEO',  who: 'Alex · CEO',              body: 'NE region +$0.7M this week. Trading + advisory + AUM all contributing.' },
+      { kind: 'whatif', label: 'What-If: Replicate NE Ops', who: 'Forecast · ops roll-out', body: 'Model: rolling NE\'s trading infra + advisory playbook to West adds +$0.3M/quarter.' },
+      { kind: 'pin',    label: 'Pin NE Trend',         who: 'Workspace · Region watch', body: 'NE weekly variance trend, structural vs cyclical breakdown.' },
+    ],
+    followUps: ['What structural vs cyclical in NE?', "What's in the advisory pipeline?", 'Compare to Q1 2024 NY event'],
+  },
+  {
+    match: /florida|tourism|spring break|calendar|occupancy/i,
+    text: '**Florida Tourism miss is a calendar shift, not demand weakness.** Spring break peak moved W10→W11 this year. Hotel occupancy 71% vs 84% planned for W10 — but W11 advance bookings are already tracking +18% above W10. ADR holding at $218 vs $210 planned (pricing discipline intact). Four of five historical spring-break calendar shifts showed full recovery the following week.',
+    actions: [
+      { kind: 'slack',  label: 'Slack SE Region Ops',  who: 'Ana · SE Region',        body: 'Florida spring break shift confirmed — W11 bookings +18%. No action needed, monitor recovery.' },
+      { kind: 'pin',    label: 'Pin Auto-Recovery',    who: 'Workspace · Seasonal',   body: 'FL tourism auto-recovery tracker for W11.' },
+      { kind: 'open',   label: 'Open Seasonal Workbench', who: 'Workbench · Seasonal', body: 'Review spring-break comparable events.' },
+      { kind: 'remind', label: 'Remind: Check W11',    who: 'Calendar · Mar 17',      body: 'Verify Florida W11 bookings materialized as forecast.' },
+    ],
+    followUps: ['Compare to last year spring break', "Why is ADR holding?", 'Should we flag this on the call?'],
+  },
+  {
+    match: /illinois|chicago|manufacturing|rail|union pacific|supply chain|hub capacity/i,
+    text: '**Illinois Manufacturing is supply-constrained, not demand-weak.** Chicago hub at 94% capacity — above our 90% stress threshold. Fulfillment cycle stretched to 8.2 days vs 5.5 target. Union Pacific confirmed a +15% rail car allocation starting W11. If delivery holds on UP\'s 79% historical accuracy, hub returns to 85% capacity by W12 and the variance unwinds. Ohio Distribution has headroom to absorb 6–8% of overflow.',
+    actions: [
+      { kind: 'slack',  label: 'Slack MW Region Ops',  who: 'Tom · Midwest Ops',      body: 'Chicago hub at 94% — can we shift 6–8% to Columbus this week?' },
+      { kind: 'email',  label: 'Email UP Liaison',     who: 'Derek · Rail Partnerships', body: 'Confirm W11 +15% allocation commitment — we need delivery on time.' },
+      { kind: 'whatif', label: 'What-If: Re-route via Ohio', who: 'Forecast · overflow', body: 'Model: shift 7% volume to Columbus recovers $0.15M this week, eases Chicago to 88%.' },
+      { kind: 'remind', label: 'Remind: UP Delivery',  who: 'Calendar · Mar 16',      body: 'Confirm Union Pacific W11 rail car delivery held.' },
+    ],
+    followUps: ["Can we re-route through Ohio?", 'Model W12 recovery scenario', 'Flag on board call?'],
+  },
+  {
+    match: /washington tech|\bwatech\b|\bai training\b|compute underutil/i,
+    text: '**Washington Tech is dragging $0.6M on AI training spend.** Training workloads +28% MoM; compute utilization only 65% vs 70% target. FinOps has a reservation strategy identified — $180K/mo recoverable. Separately, model-training efficiency work could cut training cost 15-20% with ~3 weeks of engineering. Recommend engaging FinOps + ML Ops jointly this week.',
+    actions: [
+      { kind: 'email',  label: 'Email CTO',             who: 'Jin · CTO',             body: 'WA Tech AI spend +28% MoM, utilization 65%. FinOps reservation recovers $180K/mo. Aligned?' },
+      { kind: 'open',   label: 'Open FinOps Workbench', who: 'Workbench · FinOps',    body: 'Review reservation recommendations.' },
+      { kind: 'whatif', label: 'What-If: Reservation + Training Eff.', who: 'Forecast · combined', body: 'Model: FinOps + ML-Ops efficiency combined recovers $0.35M/mo by W18.' },
+      { kind: 'remind', label: 'Remind: ML Ops sync',   who: 'Calendar · Thu 10am',   body: 'Training efficiency standup with ML Ops.' },
+    ],
+    followUps: ['Which AI workload is driving growth?', 'What are the reservation tiers?', 'Compare egress to last quarter'],
+  },
+  {
+    match: /oregon|clean energy|ira|subsidy|solar/i,
+    text: '**Oregon Clean Energy is a bright spot in the West — +$0.2M.** IRA subsidy tranche released W9, recognized W10. Solar installation revenue accelerating. Q2 pipeline of $1.8M may pull forward 4–6 weeks on incentive-driven demand (+30% above pre-IRA baseline). Team capacity is the constraint — a small expansion captures the pull-forward.',
+    actions: [
+      { kind: 'email',  label: 'Email Clean Energy Lead', who: 'Priya · Clean Energy', body: 'Oregon IRA demand strong. Want to scope a team-expansion proposal for Q2 pull-forward.' },
+      { kind: 'share',  label: 'Share with Strategy',    who: 'Strategy team',        body: 'IRA pull-forward — $1.8M pipeline may slide 4–6 weeks earlier.' },
+      { kind: 'whatif', label: 'What-If: +3 installers', who: 'Forecast · team +3',    body: 'Model: 3 additional installers capture 70% of pull-forward, +$1.3M Q2 revenue.' },
+      { kind: 'pin',    label: 'Pin OR Subsidy',         who: 'Workspace · Growth',    body: 'Oregon IRA subsidy acceleration tracker.' },
+    ],
+    followUps: ['What does Oregon mean for clean energy strategy?', 'Can we scale the team?', "What's the Q2 pipeline detail?"],
+  },
+  {
+    match: /\bforecast\b|W11|week 11|next week|what does (the )?forecast/i,
+    text: '**Forecast for W11 tightens the gap.** National −$2.1M vs plan (vs −$3.2M this week). Key assumptions: CA Retail labor holds flat (no acceleration), Texas gas stabilizes toward $2.80, Florida spring break materializes, Illinois rail car allocation ships on time. NE continues the trading beat. Three of the four risks are model-flagged at >75% confidence.',
+    actions: [
+      { kind: 'pin',    label: 'Pin W11 Forecast',     who: 'Workspace · Forecast',   body: 'W11 regional forecast with confidence scores.' },
+      { kind: 'whatif', label: 'What-If: Stress tests', who: 'Forecast · stress',     body: 'Model: if all three risks miss, W11 could be −$4.2M. Base case −$2.1M.' },
+      { kind: 'share',  label: 'Share with CFO',       who: 'Sarah · CFO',            body: 'W11 forecast — base case improvement, but three material risks outlined.' },
+    ],
+    followUps: ["What's the base case for W11?", 'Which risks have lowest confidence?', "How does this roll into Q2 guide?"],
+  },
+  {
+    match: /plan vs prior|prior year|yoy|year over year|run rate|comparison/i,
+    text: '**Comparison mode matters.** vs Plan: −$3.2M (budget miss). vs Prior Week: −$1.2M (trend tightening except CA). vs Prior Year: +$4.8M (YoY growth across 6 of 6 regions, lapping soft quarter). vs Forecast: −$0.4M (rolling forecast absorbed most of plan gap). vs Run Rate: −$2.1M (recent softness compressed run rate). The YoY story is the one to share externally; the plan story is the one to act on internally.',
+    actions: [
+      { kind: 'pin',    label: 'Pin Comparison View', who: 'Workspace · Variance',   body: 'Five-comparison matrix for W10.' },
+      { kind: 'share',  label: 'Share YoY with Board', who: 'Board prep',             body: '+$4.8M YoY headline for board communication.' },
+      { kind: 'open',   label: 'Open Drill-Down',     who: 'Performance · segments',  body: 'See how each segment moves across comparisons.' },
+    ],
+    followUps: ["Why is Run Rate so different from Plan?", 'What does Forecast say for W11?', 'Show YoY by region'],
   },
   {
     match: /cloud|infrastructure|cost/i,

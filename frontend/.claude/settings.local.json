@@ -15,7 +15,8 @@
       "Bash(npx --yes tsc --noEmit)",
       "Bash(npx next:*)",
       "Bash(curl:*)",
-      "Bash(lsof -ti:3000)"
+      "Bash(lsof -ti:3000)",
+      "Bash(npm install *)"
     ]
   }
 }

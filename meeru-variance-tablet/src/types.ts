@@ -81,6 +81,48 @@ export interface LivePin {
 
 export type TagTone = 'red' | 'green' | 'amber' | 'blue';
 
+// -------- FluxPlus — Weekly Variance Intelligence --------
+// Six US regions + five comparison modes. Mirrors the FluxPlus web prototype.
+
+export type RegionKey =
+  | 'national'
+  | 'northeast'
+  | 'southeast'
+  | 'midwest'
+  | 'west'
+  | 'southwest';
+
+export type ComparisonKey = 'plan' | 'prior' | 'yoy' | 'forecast' | 'runrate';
+
+export interface RegionData {
+  key: RegionKey;
+  label: string;          // "National", "Northeast", …
+  week: string;           // "W10 · Mar 3–9"
+  revenue: string;        // headline revenue figure for the region
+  orders: string;         // secondary headline
+  signal: string;         // one-line AI narrative for this region
+  aiIntro: string;        // detailed AI narrative used when chat opens
+  kpis: Kpi[];            // 4-KPI strip for Analysis tab
+  commentary: CommentaryItem[];   // top 3 drivers for this region
+  chart: ChartBar[];      // 6-week variance chart (last bar = forecast)
+  segments: string[];     // drill-segment ids (from PERF_DRILL_SEGMENTS)
+  suggestions: string[];  // region-specific chat suggestions
+}
+
+export interface ComparisonData {
+  key: ComparisonKey;
+  label: string;              // "vs Plan"
+  short: string;              // "Plan"
+  description: string;        // long-form label shown in subtitle
+  totalVariance: string;      // aggregate variance headline
+  totalVarianceTone: 'pos' | 'neg' | 'warn';
+  signal: string;             // AI narrative tied to this comparison
+  pillTone: 'pos' | 'neg' | 'warn' | 'blue';
+  // Optional per-segment variance override so the Drill-Down updates
+  // when the comparison changes. Keyed by DrillSegment.id.
+  segmentOverrides?: Record<string, { variance: string; varTone: 'pos' | 'neg' | 'warn' }>;
+}
+
 export interface DrillSegment {
   id: string;
   name: string;

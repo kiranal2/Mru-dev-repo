@@ -89,6 +89,7 @@ export default function Margin() {
     <WorkbenchShell
       workbench="margin"
       scopeLabel={`${WORKBENCHES.margin.label} · ${periodLabel} · ${productLabel} · ${channelLabel}`}
+      scopeRight={<><span>{periodLabel}</span><span className="text-faint">·</span><span>{productLabel}</span><span className="text-faint">·</span><span>{channelLabel}</span></>}
       commentary={waterfallData.data?.commentary}
       commentaryHeadline={`Margin drivers · ${productLabel}`}
       leftRail={

@@ -116,11 +116,6 @@ function DriverRow({
           <span className={`text-[11px] font-medium num shrink-0 ${deltaCls}`}>— {item.delta}</span>
         </div>
         <div className="text-[12px] text-muted leading-relaxed mt-0.5">{item.text}</div>
-        {item.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-1.5">
-            {item.tags.map((t, i) => <Badge key={i} tone={t.t}>{t.l}</Badge>)}
-          </div>
-        )}
         <div className="flex items-center gap-2 mt-2 text-[11px]">
           <button
             onClick={onDrill}
@@ -323,16 +318,12 @@ export function CommentaryPanel({
             <Icon.X className="w-3 h-3" />
           </button>
         </div>
-        {scopeLabel && (
-          <div className="text-[11px] text-faint mt-0.5 truncate">Scope · {scopeLabel}</div>
-        )}
       </div>
 
       <div className="flex-1 overflow-y-auto px-3.5 py-3">
-        {/* headline callout */}
-        <div className="mb-3">
-          <div className="text-[13px] font-semibold text-ink leading-tight">{headlineText}</div>
-          <div className="text-[11px] text-faint mt-0.5">{subHeadline}</div>
+        {/* headline — concise, single line */}
+        <div className="text-[13px] font-semibold text-ink leading-tight mb-3">
+          {headlineText}
         </div>
 
         {/* AI Insight — only when a prompt has landed */}
@@ -345,14 +336,6 @@ export function CommentaryPanel({
           />
         )}
 
-        {/* sort pills */}
-        <div className="flex items-center gap-1 mb-1 pb-2 border-b border-rule">
-          <span className="text-[10px] font-semibold text-faint uppercase tracking-wider mr-1">Sort</span>
-          <SortPill active={sort === 'impact'} onClick={() => setSort('impact')}>Impact $</SortPill>
-          <SortPill active={sort === 'severity'} onClick={() => setSort('severity')}>Severity</SortPill>
-          <SortPill active={sort === 'recency'} onClick={() => setSort('recency')}>Recency</SortPill>
-        </div>
-
         {/* ranked driver rows — same layout as main Commentary component */}
         <div>
           {visible.map((it, i) => (
@@ -360,7 +343,12 @@ export function CommentaryPanel({
               key={`${it.name}-${i}`}
               item={it}
               rank={i + 1}
-              onDrill={() => send(`Drill down into ${it.name}`)}
+              onDrill={() => {
+                // Dispatch to the host page so it can filter/navigate.
+                // Falls back to chat if nothing is listening.
+                const evt = new CustomEvent('meeru-drill', { detail: { itemName: it.name } });
+                window.dispatchEvent(evt);
+              }}
               onAsk={() => send(`Tell me more about ${it.name}`)}
               isLast={i === visible.length - 1}
             />

@@ -3,6 +3,7 @@ import { useAuth, useTheme } from '../store';
 import { PERSONAS } from '../data';
 import type { Role } from '../types';
 import { Icon } from '../icons';
+import meeruLogo from '../assets/meeru-logo.png';
 
 export default function Login() {
   const { login } = useAuth();
@@ -25,7 +26,7 @@ export default function Login() {
       <div className="max-w-[900px] w-full">
         <div className="flex items-center gap-4 mb-8">
           {theme === 'light' ? (
-            <img src="/meeru-logo.png" alt="MeeruAI" className="h-8 w-auto object-contain select-none" draggable={false} />
+            <img src={meeruLogo} alt="MeeruAI" className="h-8 w-auto object-contain select-none" draggable={false} />
           ) : (
             <span className="text-[28px] font-bold tracking-tight leading-none text-ink">
               Meeru<span style={{ color: 'var(--primary)' }}>AI</span>

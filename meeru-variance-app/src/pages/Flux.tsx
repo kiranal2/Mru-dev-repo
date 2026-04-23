@@ -54,6 +54,7 @@ export default function Flux() {
     <WorkbenchShell
       workbench="flux"
       scopeLabel={`${WORKBENCHES.flux.label} · ${compareLabel} · ${ownerLabel}`}
+      scopeRight={<><span>{compareLabel}</span><span className="text-faint">·</span><span>{comparePeriod}</span><span className="text-faint">·</span><span>{ownerLabel}</span></>}
       commentary={FLUX_COMMENTARY}
       commentaryHeadline={`Flux drivers · ${compareLabel}`}
       leftRail={

@@ -96,12 +96,14 @@ export const TOP_TAB_LABELS: Record<string, string> = {
 // ==========================================================
 // LEFT RAIL CONTENT
 // ==========================================================
+// FluxPlus — 6 US regions (National + 5 macro regions). Matches meeru-variance-tablet.
 export const PERF_REGIONS: LeftItem[] = [
-  { k: 'global',    n: 'Global',    d: '-$3.2M', tone: 'neg' },
-  { k: 'americas',  n: 'Americas',  d: '-$1.8M', tone: 'neg' },
-  { k: 'emea',      n: 'EMEA',      d: '+$0.2M', tone: 'pos' },
-  { k: 'apac',      n: 'APAC',      d: '-$0.5M', tone: 'neg' },
-  { k: 'latam',     n: 'LATAM',     d: '-$0.3M', tone: 'warn' },
+  { k: 'national',  n: 'National',  d: '-$3.2M', tone: 'neg' },
+  { k: 'northeast', n: 'Northeast', d: '+$0.7M', tone: 'pos' },
+  { k: 'southeast', n: 'Southeast', d: '-$0.4M', tone: 'warn' },
+  { k: 'midwest',   n: 'Midwest',   d: '-$0.5M', tone: 'warn' },
+  { k: 'west',      n: 'West',      d: '-$1.8M', tone: 'neg' },
+  { k: 'southwest', n: 'Southwest', d: '-$0.8M', tone: 'neg' },
 ];
 export const PERF_COMPARES: LeftItem[] = [
   { k: 'plan',     n: 'vs Plan' },
@@ -110,12 +112,14 @@ export const PERF_COMPARES: LeftItem[] = [
   { k: 'forecast', n: 'vs Forecast' },
   { k: 'runrate',  n: 'vs Run Rate' },
 ];
+// FluxPlus drivers. Named to match the per-region commentary drivers we surface.
 export const PERF_DRIVERS: LeftItem[] = [
-  { k: 'enterprise',  n: 'Enterprise Churn',     d: '-$2.1M', tone: 'neg' },
-  { k: 'midmarket',   n: 'Mid-Market New Logos', d: '+$1.2M', tone: 'pos' },
-  { k: 'expansion',   n: 'Expansion ARR',         d: '+$0.8M', tone: 'pos' },
-  { k: 'cloud',       n: 'Cloud Infrastructure',  d: '-$0.6M', tone: 'warn' },
-  { k: 'services',    n: 'Professional Services', d: '-$0.3M', tone: 'warn' },
+  { k: 'caretail',  n: 'California Retail',        d: '-$1.2M', tone: 'neg'  },
+  { k: 'txenergy',  n: 'Texas Energy',             d: '-$0.8M', tone: 'neg'  },
+  { k: 'nyfinance', n: 'NY Financial Services',    d: '+$0.7M', tone: 'pos'  },
+  { k: 'fltourism', n: 'Florida Tourism',          d: '-$0.4M', tone: 'warn' },
+  { k: 'ilmfg',     n: 'Illinois Manufacturing',   d: '-$0.5M', tone: 'warn' },
+  { k: 'watech',    n: 'Washington Tech',          d: '-$0.6M', tone: 'warn' },
 ];
 
 export const MARGIN_PRODUCTS: LeftItem[] = [
@@ -289,10 +293,14 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
     match: /enterprise|churn/i,
     text: '<strong>3 logo churns are the driver.</strong> Acme Corp ($800K ARR), GlobalTech ($750K), DataStar ($550K) — all cited pricing and product fit. Our renewal-risk model flags 2 more accounts ($1.1M combined) as high-risk before end of Q2. NRR dropped from 115% to 108%.<br/><br/>Expansion ARR in the installed base partially offset (+$600K), but the trend needs intervention before June renewals.',
     actions: [
-      { kind: 'email',  label: 'Email VP Sales',        who: 'Sue Park · VP Sales',     body: 'Flagging 3 enterprise churns ($2.1M ARR) — need renewal strategy for 2 more at-risk accounts before end of Q2.' },
-      { kind: 'slack',  label: 'Slack CS Lead',         who: 'Priya · CS Director',     body: 'Can we surface our churn findings at tomorrow\'s QBR? 5 accounts affected.' },
+      { kind: 'email',  label: 'Email VP Sales',        who: 'Sue Park · VP Sales',       body: 'Flagging 3 enterprise churns ($2.1M ARR) — need renewal strategy for 2 more at-risk accounts before end of Q2.' },
+      { kind: 'slack',  label: 'Slack CS Lead',         who: 'Priya · CS Director',       body: 'Can we surface our churn findings at tomorrow\'s QBR? 5 accounts affected.' },
       { kind: 'whatif', label: 'Run Retention What-If', who: 'Forecast · +10% retention', body: 'Model: retention +10% → NRR back to 114%, ARR delta +$1.8M.' },
       { kind: 'pin',    label: 'Pin to Board Deck',     who: 'Workspace · Q1 Board Prep', body: '3 churns + 2 at-risk accounts, NRR trend.' },
+      { kind: 'approve', label: 'Approve save plan',    who: 'Finance approval',          body: 'Green-light retention credits up to $400K for the 2 at-risk accounts.' },
+      { kind: 'open',   label: 'Open Account Drill',    who: 'Workbench · Accounts',      body: 'Drill into Acme, GlobalTech, DataStar account health scores.' },
+      { kind: 'remind', label: 'Remind: Pre-renewal',   who: 'Calendar · 2 weeks out',    body: 'Review at-risk account status 2 weeks before Q2 renewal close.' },
+      { kind: 'share',  label: 'Share with CFO',        who: 'CFO exec loop',             body: 'Churn summary + save plan for exec review.' },
     ],
     followUps: [
       'Which accounts are at risk next?',
@@ -304,10 +312,14 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
     match: /california|labor|west|staffing/i,
     text: '<strong>California Retail is the epicenter.</strong> LA and SF minimum-wage adjustments pushed overtime hours 18% above plan. Margin compression has accelerated for 3 consecutive weeks. ML model projects −2% to −4% additional margin erosion in W11 if staffing model is not adjusted before Thursday.<br/><br/>Comparable pattern to NY wage adjustment in Q1 2024 — automation rollout partially offset there, same playbook available here.',
     actions: [
-      { kind: 'slack',  label: 'Slack West Region Ops', who: 'Carlos · West Ops Lead',   body: 'CA Retail labor surge — need to review shift scheduling before Thursday. ML model projecting −2-4% more margin erosion.' },
+      { kind: 'slack',  label: 'Slack West Region Ops', who: 'Carlos · West Ops Lead',    body: 'CA Retail labor surge — need to review shift scheduling before Thursday. ML model projecting −2-4% more margin erosion.' },
       { kind: 'email',  label: 'Email Staffing Model',  who: 'Kai · Workforce Planning',  body: 'Pull current CA Retail staffing model and overtime distribution for LA + SF. Need before end of day.' },
       { kind: 'whatif', label: 'What-If: Add 120 FTEs', who: 'Forecast · +120 FTE',       body: 'Model: +120 FTE reduces OT 62%, margin recovery +2.3pp by W13.' },
       { kind: 'remind', label: 'Remind: Thursday Prep', who: 'Calendar · Thu 8am',        body: 'Review West Coast margin before earnings prep meeting.' },
+      { kind: 'im',     label: 'IM Store Managers',     who: 'LA + SF Store GMs',         body: 'Flagging OT spike — need store-level overtime review by EOD.' },
+      { kind: 'approve', label: 'Approve automation',   who: 'Capex approval',            body: 'Green-light automation rollout acceleration (W14 → W11).' },
+      { kind: 'pin',    label: 'Pin margin watch',      who: 'Workspace · W11 prep',      body: 'CA Retail labor + margin compression tracker.' },
+      { kind: 'open',   label: 'Open OT Dashboard',     who: 'Workbench · Labor',         body: 'See overtime distribution by store + shift.' },
     ],
     followUps: [
       'Compare to NY Q1 2024 wage event',
@@ -319,9 +331,13 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
     match: /cloud|infrastructure|cost/i,
     text: '<strong>Cloud spend ratio ticked up to 22% of revenue</strong>, driven by 3 primary items: (1) storage growth from new AI workloads (+$280K), (2) egress fees from customer data exports (+$140K), (3) compute utilization at 47% — 20pp below target.<br/><br/>FinOps team has a reservation strategy that could recover $180K/mo with 60-day commitment.',
     actions: [
-      { kind: 'email',  label: 'Email CTO',             who: 'Jin · CTO',                body: 'Cloud ratio at 22% — proposing FinOps reservation strategy. Need decision before month-end.' },
+      { kind: 'email',  label: 'Email CTO',             who: 'Jin · CTO',                 body: 'Cloud ratio at 22% — proposing FinOps reservation strategy. Need decision before month-end.' },
       { kind: 'open',   label: 'Open FinOps Workbench', who: 'Workbench · FinOps',        body: 'Review reservation recommendations and commitment model.' },
       { kind: 'share',  label: 'Share with Exec Team',  who: 'Leadership chat',           body: 'Cloud cost summary and FinOps plan.' },
+      { kind: 'whatif', label: 'Model 60-day commit',   who: 'Forecast · $180K/mo',       body: 'Projected savings if we commit to reservation strategy now.' },
+      { kind: 'slack',  label: 'Slack FinOps',          who: 'Dana · FinOps Lead',        body: 'Kicking off reservation commitment — need utilization data by Friday.' },
+      { kind: 'pin',    label: 'Pin cloud ratio',       who: 'Workspace · Watch list',    body: 'Track cloud/revenue ratio weekly against 20% target.' },
+      { kind: 'remind', label: 'Remind: month-end',     who: 'Calendar · last day Q1',    body: 'Finalize reservation commitment decision before month-end close.' },
     ],
     followUps: [
       'Which AI workload is driving storage growth?',
@@ -336,6 +352,10 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
       { kind: 'email',  label: 'Email VP Customer',     who: 'Priya · VP CS',             body: '2022 enterprise cohort renewal strategy — need deep-dive by Friday.' },
       { kind: 'pin',    label: 'Pin NRR Trend',         who: 'Workspace · Board Prep',    body: '4-quarter NRR trend with cohort breakdown.' },
       { kind: 'whatif', label: 'What-If: Renewal Push', who: 'Forecast · Renewal +15%',   body: 'Model: renewal program +15% → NRR 112% by Q2.' },
+      { kind: 'slack',  label: 'Slack CS Leaders',      who: '#cs-leads',                 body: 'Cohort deep-dive needed for 2022 enterprise renewals.' },
+      { kind: 'open',   label: 'Open cohort drill',     who: 'Workbench · Cohorts',       body: 'Compare 2021/2022/2023 enterprise cohorts side-by-side.' },
+      { kind: 'share',  label: 'Share with board',      who: 'Board prep email list',     body: 'NRR breakpoint + cohort findings snapshot.' },
+      { kind: 'remind', label: 'Remind: Friday review', who: 'Calendar · Fri 10am',       body: 'Block time for cohort retention deep-dive outcomes.' },
     ],
     followUps: [
       'Deep dive on 2022 enterprise cohort',
@@ -347,9 +367,14 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
     match: /risk|at[- ]?risk|account/i,
     text: '<strong>7 accounts flagged as at-risk</strong> for Q2 renewal, total ARR exposure $3.4M. Top 3 by size: Voltair ($680K, silent since W5), Meridian ($520K, competitive RFP), Parkline ($480K, sponsor churn). Retention model gives each &lt;30% probability.',
     actions: [
-      { kind: 'email',  label: 'Email Account Managers', who: '3 AM leads',                body: 'Top 3 at-risk accounts — need intervention plan before mid-Q2.' },
-      { kind: 'share',  label: 'Share with Sales Ops',   who: 'Sales Ops channel',         body: 'Full at-risk list ($3.4M exposure) with retention scores.' },
-      { kind: 'remind', label: 'Remind: Mid-Q2 Check',   who: 'Calendar · May 15',         body: 'Retention check-in on 7 flagged accounts.' },
+      { kind: 'email',  label: 'Email Account Managers', who: '3 AM leads',               body: 'Top 3 at-risk accounts — need intervention plan before mid-Q2.' },
+      { kind: 'share',  label: 'Share with Sales Ops',   who: 'Sales Ops channel',        body: 'Full at-risk list ($3.4M exposure) with retention scores.' },
+      { kind: 'remind', label: 'Remind: Mid-Q2 Check',   who: 'Calendar · May 15',        body: 'Retention check-in on 7 flagged accounts.' },
+      { kind: 'slack',  label: 'Slack Voltair AM',       who: 'Voltair Account Mgr',      body: 'Voltair silent since W5 — can we schedule a touchpoint this week?' },
+      { kind: 'whatif', label: 'What-If: Save all 7',    who: 'Forecast · 100% save',     body: 'Model: all 7 saved → ARR retained $3.4M, NRR +3pp.' },
+      { kind: 'open',   label: 'Open Retention Model',   who: 'Workbench · Retention',    body: 'See full at-risk list with probability scores.' },
+      { kind: 'pin',    label: 'Pin at-risk list',       who: 'Workspace · Watch list',   body: '7 accounts · $3.4M exposure · weekly review.' },
+      { kind: 'approve', label: 'Approve save credits',  who: 'Finance approval',         body: 'Green-light up to $400K in retention credits across top 3.' },
     ],
     followUps: [
       'Why is Voltair silent?',
@@ -364,6 +389,10 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
       { kind: 'slack',  label: 'Slack Product Lead',    who: 'Nina · VP Product',         body: 'Platform add-on attach at 22% — below 35% target. Need to revisit packaging or enablement?' },
       { kind: 'open',   label: 'Open Segment Drill',    who: 'Workbench · drill',         body: 'Drill into Mid-Market expansion by customer tier.' },
       { kind: 'pin',    label: 'Pin Gap Analysis',      who: 'Workspace · Board Prep',    body: 'Expansion ARR $0.7M gap vs target.' },
+      { kind: 'email',  label: 'Email VP Sales Ops',    who: 'Sarah · VP Sales Ops',      body: 'Mid-Market attach gap — need enablement review for platform add-on.' },
+      { kind: 'whatif', label: 'What-If: Attach +13pp', who: 'Forecast · 35% attach',     body: 'Model: attach hits 35% → Mid-Market +$0.6M, gap closes.' },
+      { kind: 'share',  label: 'Share with exec',       who: 'Exec leadership',           body: 'Expansion gap summary by segment.' },
+      { kind: 'remind', label: 'Remind: QBR prep',      who: 'Calendar · QBR week',       body: 'Finalize Mid-Market packaging proposal before QBR.' },
     ],
     followUps: [
       'Why is add-on attach so low?',
@@ -533,22 +562,22 @@ export interface DrillRow {
   lastActivity: string;
 }
 export const PERF_DRILLDOWN: DrillRow[] = [
-  { id: 'd1',  customer: 'Acme Corp',       segment: 'Enterprise', region: 'Americas', arr: 800_000,  deltaArr: -800_000, nrr: 0,   status: 'Churned',   lastActivity: '12 days ago' },
-  { id: 'd2',  customer: 'GlobalTech',      segment: 'Enterprise', region: 'EMEA',     arr: 750_000,  deltaArr: -750_000, nrr: 0,   status: 'Churned',   lastActivity: '9 days ago' },
-  { id: 'd3',  customer: 'DataStar',        segment: 'Enterprise', region: 'Americas', arr: 550_000,  deltaArr: -550_000, nrr: 0,   status: 'Churned',   lastActivity: '4 days ago' },
-  { id: 'd4',  customer: 'Voltair',         segment: 'Enterprise', region: 'Americas', arr: 680_000,  deltaArr: 0,        nrr: 95,  status: 'At Risk',   lastActivity: 'Silent 18d' },
-  { id: 'd5',  customer: 'Meridian',        segment: 'Enterprise', region: 'EMEA',     arr: 520_000,  deltaArr: 0,        nrr: 92,  status: 'At Risk',   lastActivity: 'RFP open' },
-  { id: 'd6',  customer: 'Parkline',        segment: 'Enterprise', region: 'Americas', arr: 480_000,  deltaArr: -50_000,  nrr: 90,  status: 'At Risk',   lastActivity: '2 days ago' },
-  { id: 'd7',  customer: 'Northbridge',     segment: 'Enterprise', region: 'APAC',     arr: 920_000,  deltaArr: 180_000,  nrr: 124, status: 'Expansion', lastActivity: '1 day ago' },
-  { id: 'd8',  customer: 'Solstice Labs',   segment: 'Enterprise', region: 'Americas', arr: 640_000,  deltaArr: 95_000,   nrr: 118, status: 'Expansion', lastActivity: '3 days ago' },
-  { id: 'd9',  customer: 'Reaktor',         segment: 'Mid-Market', region: 'EMEA',     arr: 260_000,  deltaArr: 42_000,   nrr: 119, status: 'Expansion', lastActivity: '2 days ago' },
-  { id: 'd10', customer: 'Finley Finance',  segment: 'Mid-Market', region: 'Americas', arr: 180_000,  deltaArr: 35_000,   nrr: 122, status: 'Expansion', lastActivity: '5 days ago' },
-  { id: 'd11', customer: 'Wavelength',      segment: 'Mid-Market', region: 'Americas', arr: 145_000,  deltaArr: 12_000,   nrr: 109, status: 'Healthy',   lastActivity: '6 days ago' },
-  { id: 'd12', customer: 'Cinder',          segment: 'Mid-Market', region: 'APAC',     arr: 210_000,  deltaArr: 28_000,   nrr: 115, status: 'Expansion', lastActivity: '1 day ago' },
-  { id: 'd13', customer: 'BrightRidge',     segment: 'Mid-Market', region: 'Americas', arr: 92_000,   deltaArr: -8_000,   nrr: 94,  status: 'At Risk',   lastActivity: '14 days ago' },
-  { id: 'd14', customer: 'Pinecone Group',  segment: 'Mid-Market', region: 'EMEA',     arr: 120_000,  deltaArr: 0,        nrr: 100, status: 'Healthy',   lastActivity: '4 days ago' },
-  { id: 'd15', customer: 'Lumen SMB',       segment: 'SMB',        region: 'Americas', arr: 14_400,   deltaArr: -800,     nrr: 95,  status: 'Healthy',   lastActivity: '7 days ago' },
-  { id: 'd16', customer: 'Kite Studio',     segment: 'SMB',        region: 'APAC',     arr: 9_600,    deltaArr: 1_200,    nrr: 113, status: 'Healthy',   lastActivity: '2 days ago' },
+  { id: 'd1',  customer: 'Acme Corp',       segment: 'Enterprise', region: 'West',      arr: 800_000,  deltaArr: -800_000, nrr: 0,   status: 'Churned',   lastActivity: '12 days ago' },
+  { id: 'd2',  customer: 'GlobalTech',      segment: 'Enterprise', region: 'Southwest', arr: 750_000,  deltaArr: -750_000, nrr: 0,   status: 'Churned',   lastActivity: '9 days ago' },
+  { id: 'd3',  customer: 'DataStar',        segment: 'Enterprise', region: 'West',      arr: 550_000,  deltaArr: -550_000, nrr: 0,   status: 'Churned',   lastActivity: '4 days ago' },
+  { id: 'd4',  customer: 'Voltair',         segment: 'Enterprise', region: 'Midwest',   arr: 680_000,  deltaArr: 0,        nrr: 95,  status: 'At Risk',   lastActivity: 'Silent 18d' },
+  { id: 'd5',  customer: 'Meridian',        segment: 'Enterprise', region: 'Northeast', arr: 520_000,  deltaArr: 0,        nrr: 92,  status: 'At Risk',   lastActivity: 'RFP open' },
+  { id: 'd6',  customer: 'Parkline',        segment: 'Enterprise', region: 'West',      arr: 480_000,  deltaArr: -50_000,  nrr: 90,  status: 'At Risk',   lastActivity: '2 days ago' },
+  { id: 'd7',  customer: 'Northbridge',     segment: 'Enterprise', region: 'Northeast', arr: 920_000,  deltaArr: 180_000,  nrr: 124, status: 'Expansion', lastActivity: '1 day ago' },
+  { id: 'd8',  customer: 'Solstice Labs',   segment: 'Enterprise', region: 'West',      arr: 640_000,  deltaArr: 95_000,   nrr: 118, status: 'Expansion', lastActivity: '3 days ago' },
+  { id: 'd9',  customer: 'Reaktor',         segment: 'Mid-Market', region: 'Midwest',   arr: 260_000,  deltaArr: 42_000,   nrr: 119, status: 'Expansion', lastActivity: '2 days ago' },
+  { id: 'd10', customer: 'Finley Finance',  segment: 'Mid-Market', region: 'Northeast', arr: 180_000,  deltaArr: 35_000,   nrr: 122, status: 'Expansion', lastActivity: '5 days ago' },
+  { id: 'd11', customer: 'Wavelength',      segment: 'Mid-Market', region: 'Southeast', arr: 145_000,  deltaArr: 12_000,   nrr: 109, status: 'Healthy',   lastActivity: '6 days ago' },
+  { id: 'd12', customer: 'Cinder',          segment: 'Mid-Market', region: 'West',      arr: 210_000,  deltaArr: 28_000,   nrr: 115, status: 'Expansion', lastActivity: '1 day ago' },
+  { id: 'd13', customer: 'BrightRidge',     segment: 'Mid-Market', region: 'Midwest',   arr: 92_000,   deltaArr: -8_000,   nrr: 94,  status: 'At Risk',   lastActivity: '14 days ago' },
+  { id: 'd14', customer: 'Pinecone Group',  segment: 'Mid-Market', region: 'Southwest', arr: 120_000,  deltaArr: 0,        nrr: 100, status: 'Healthy',   lastActivity: '4 days ago' },
+  { id: 'd15', customer: 'Lumen SMB',       segment: 'SMB',        region: 'Southeast', arr: 14_400,   deltaArr: -800,     nrr: 95,  status: 'Healthy',   lastActivity: '7 days ago' },
+  { id: 'd16', customer: 'Kite Studio',     segment: 'SMB',        region: 'West',      arr: 9_600,    deltaArr: 1_200,    nrr: 113, status: 'Healthy',   lastActivity: '2 days ago' },
 ];
 
 // ==========================================================
@@ -810,170 +839,281 @@ export interface RegionalSlice {
   chart: ChartBar[];
   chartTitle: string;
 }
+// FluxPlus — 6 US regions. Ported from meeru-variance-tablet FLUX_REGIONS.
 export const PERF_REGIONAL: Record<string, RegionalSlice> = {
-  global: {
-    statusChip: { kind: 'neg', text: 'Variance flagged · action recommended' },
+  national: {
+    statusChip: { kind: 'neg', text: 'Variance flagged' },
     kpis: [
-      { lbl: 'Net Revenue Retention', val: '108%',  delta: '▼ 7pp vs prior Q',    tone: 'neg' },
-      { lbl: 'New ARR',                val: '$4.2M', delta: '▲ 12% vs plan',       tone: 'pos' },
-      { lbl: 'Gross Margin',           val: '78.4%', delta: '▼ 1.2pp vs prior Q', tone: 'neg' },
-    ],
-    commentary: PERF_COMMENTARY,
-    chart: PERF_CHART,
-    chartTitle: 'Weekly Revenue Variance — Global',
-  },
-  americas: {
-    statusChip: { kind: 'neg', text: 'Epicenter · 3 Enterprise churns + CA labor' },
-    kpis: [
-      { lbl: 'Americas NRR',           val: '104%',   delta: '▼ 9pp vs prior Q', tone: 'neg' },
-      { lbl: 'Americas ARR Δ',         val: '-$1.8M', delta: '▼ $1.8M vs plan',  tone: 'neg' },
-      { lbl: 'Retail Margin',          val: '75.6%',  delta: '▼ 2.8pp QoQ',       tone: 'neg' },
+      { lbl: 'NRR',          val: '108%',   delta: '▼ 7pp vs prior Q',  tone: 'neg' },
+      { lbl: 'New ARR',      val: '$4.2M',  delta: '▲ 12% vs plan',     tone: 'pos' },
+      { lbl: 'Gross Margin', val: '78.4%',  delta: '▼ 1.2pp vs prior Q', tone: 'neg' },
     ],
     commentary: [
       {
-        rank: 1, name: 'California Retail', delta: '-$1.6M vs Plan',
-        text: 'Labor-cost surge in LA/SF markets following minimum-wage increase. Overtime hours 18% above plan. Margin compression accelerating — similar pattern to 2024 Q1 NY wage adjustment. Partial offset from productivity automation rollout.',
-        tags: [{ t: 'red', l: 'Labor cost surge' }, { t: 'amber', l: 'Historical match NY Q1 2024' }, { t: 'blue', l: 'Predictive flag' }],
+        rank: 1, name: 'California Retail', delta: '−$1.2M vs Plan',
+        text: 'Min-wage hike pushed overtime 18% above plan in LA/SF. Margin down 340bps, 3rd week of escalation.',
+        tags: [{ t: 'red', l: 'Labor' }, { t: 'red', l: '3 weeks' }, { t: 'blue', l: 'ML flag' }],
       },
       {
-        rank: 2, name: 'Enterprise churn cluster', delta: '-$1.35M vs Plan',
-        text: 'Acme Corp ($800K) + DataStar ($550K) churned in Q1. Both cited product-fit and pricing. Renewal risk model flags Voltair ($680K) + Parkline ($480K) as next.',
-        tags: [{ t: 'red', l: 'Churn spike' }, { t: 'blue', l: 'Predictive flag' }],
+        rank: 2, name: 'Texas Energy', delta: '−$0.8M vs Plan',
+        text: 'Henry Hub spot −18% WoW. Hedge covers 60% — unhedged 40% fully exposed. Forward curve suggests W12 stabilization.',
+        tags: [{ t: 'amber', l: 'Commodity' }, { t: 'amber', l: 'Unhedged' }],
       },
       {
-        rank: 3, name: 'Texas Energy', delta: '-$0.3M vs Plan',
-        text: 'Natural-gas spot price drop 18% WoW. Revenue per unit compressed across Permian Basin operations. Hedging program covered 60% of exposure.',
-        tags: [{ t: 'amber', l: 'Commodity exposure' }, { t: 'blue', l: 'Hedge partial cover' }],
+        rank: 3, name: 'New York Financial Svcs', delta: '+$0.7M vs Plan',
+        text: 'Equity desk +22% vs plan on elevated VIX. Advisory pipeline converting 3 weeks ahead of schedule.',
+        tags: [{ t: 'green', l: 'Positive' }, { t: 'green', l: 'Q1 momentum' }],
       },
     ],
     chart: [
-      { w: 'W6',   a: 54, p: 58, tone: 'warn' },
-      { w: 'W7',   a: 52, p: 58, tone: 'warn' },
-      { w: 'W8',   a: 48, p: 58, tone: 'neg' },
-      { w: 'W9',   a: 44, p: 58, tone: 'neg' },
-      { w: 'W10',  a: 40, p: 58, tone: 'neg' },
-      { w: 'W11▸', a: 38, p: 58, tone: 'neg', forecast: true },
+      { w: 'W6',   a: 34,   p: 33,   tone: 'pos'  },
+      { w: 'W7',   a: 33,   p: 33,   tone: 'blue' },
+      { w: 'W8',   a: 32,   p: 33,   tone: 'warn' },
+      { w: 'W9',   a: 31,   p: 33,   tone: 'warn' },
+      { w: 'W10',  a: 30.5, p: 33.7, tone: 'neg'  },
+      { w: 'W11▸', a: 31,   p: 34,   tone: 'neg', forecast: true },
     ],
-    chartTitle: 'Weekly Revenue Variance — Americas',
+    chartTitle: 'Weekly Revenue Variance — National',
   },
-  emea: {
-    statusChip: { kind: 'info', text: 'Mixed · GlobalTech churn offset by expansion' },
+  northeast: {
+    statusChip: { kind: 'pos', text: 'Beating plan' },
     kpis: [
-      { lbl: 'EMEA NRR',              val: '112%',   delta: '▼ 3pp vs prior Q', tone: 'warn' },
-      { lbl: 'EMEA ARR Δ',            val: '+$0.2M', delta: '▲ $0.2M vs plan',  tone: 'pos' },
-      { lbl: 'EMEA Gross Margin',     val: '79.8%',  delta: '▲ 0.4pp QoQ',       tone: 'pos' },
+      { lbl: 'NRR',          val: '115%',  delta: '▲ 3pp vs prior Q',    tone: 'pos' },
+      { lbl: 'New ARR',      val: '$1.8M', delta: '▲ 28% vs plan',       tone: 'pos' },
+      { lbl: 'Gross Margin', val: '80.2%', delta: '▲ 0.6pp vs prior Q',  tone: 'pos' },
     ],
     commentary: [
       {
-        rank: 1, name: 'UK Financial Services', delta: '+$0.7M vs Plan',
-        text: 'London trading desks captured volatility in W9–W10; Q1 advisory pipeline converting 3 weeks ahead of schedule. Northbridge-style seat expansion playbook working.',
-        tags: [{ t: 'green', l: 'Trading outperformance' }, { t: 'green', l: 'Pipeline acceleration' }],
+        rank: 1, name: 'Equity Trading Desk', delta: '+$0.4M vs Plan',
+        text: 'VIX elevated above 22 for third consecutive week. Trading desk +22% vs plan. Infrastructure upgrade providing structural lift even if vol normalizes.',
+        tags: [{ t: 'green', l: 'Trading beat' }, { t: 'blue', l: 'Structural' }],
       },
       {
-        rank: 2, name: 'GlobalTech churn', delta: '-$0.75M vs Plan',
-        text: 'Germany-based Enterprise account cited consolidation of vendor stack. No further at-risk German accounts flagged this quarter.',
-        tags: [{ t: 'red', l: 'Churn' }, { t: 'blue', l: 'Isolated' }],
+        rank: 2, name: 'Advisory Pipeline', delta: '+$0.2M vs Plan',
+        text: 'Pipeline converting 3 weeks ahead of schedule. $2.4M in W11–W13 committed closings. Win rate improving on larger deal sizes.',
+        tags: [{ t: 'green', l: 'Pipeline pull-fwd' }],
       },
       {
-        rank: 3, name: 'Nordics SMB', delta: '+$0.25M vs Plan',
-        text: 'Self-serve signups in Sweden and Finland 14% ahead of plan. Free-to-paid conversion steady at 4.4%.',
-        tags: [{ t: 'green', l: 'Self-serve' }, { t: 'blue', l: 'Conversion healthy' }],
+        rank: 3, name: 'Wealth Management', delta: '+$0.1M vs Plan',
+        text: 'AUM fees tracking in-line. Net new money $340M, 2x prior quarter pace. Advisor attrition at 3-year low.',
+        tags: [{ t: 'green', l: 'AUM growth' }],
       },
     ],
     chart: [
-      { w: 'W6',   a: 41, p: 40, tone: 'pos' },
-      { w: 'W7',   a: 42, p: 40, tone: 'pos' },
-      { w: 'W8',   a: 43, p: 40, tone: 'pos' },
-      { w: 'W9',   a: 44, p: 40, tone: 'pos' },
-      { w: 'W10',  a: 41, p: 40, tone: 'pos' },
-      { w: 'W11▸', a: 42, p: 40, tone: 'pos', forecast: true },
+      { w: 'W6',   a: 7.6, p: 7.5, tone: 'pos' },
+      { w: 'W7',   a: 7.8, p: 7.6, tone: 'pos' },
+      { w: 'W8',   a: 7.9, p: 7.7, tone: 'pos' },
+      { w: 'W9',   a: 8.0, p: 7.4, tone: 'pos' },
+      { w: 'W10',  a: 8.1, p: 7.4, tone: 'pos' },
+      { w: 'W11▸', a: 8.3, p: 7.6, tone: 'pos', forecast: true },
     ],
-    chartTitle: 'Weekly Revenue Variance — EMEA',
+    chartTitle: 'Weekly Revenue Variance — Northeast',
   },
-  apac: {
-    statusChip: { kind: 'pos', text: 'Expansion momentum · Northbridge leads' },
+  southeast: {
+    statusChip: { kind: 'warn', text: 'Calendar shift' },
     kpis: [
-      { lbl: 'APAC NRR',              val: '121%',   delta: '▲ 2pp vs prior Q', tone: 'pos' },
-      { lbl: 'APAC ARR Δ',            val: '-$0.5M', delta: '▼ $0.5M vs plan',  tone: 'warn' },
-      { lbl: 'APAC Gross Margin',     val: '80.1%',  delta: '▲ 1.1pp QoQ',       tone: 'pos' },
+      { lbl: 'NRR',          val: '106%',  delta: '▼ 4pp vs prior Q',    tone: 'neg' },
+      { lbl: 'New ARR',      val: '$0.6M', delta: '▼ $0.2M vs plan',     tone: 'neg' },
+      { lbl: 'Gross Margin', val: '77.5%', delta: '▼ 0.4pp vs prior Q',  tone: 'neg' },
     ],
     commentary: [
       {
-        rank: 1, name: 'Northbridge expansion', delta: '+$0.18M vs Plan',
-        text: 'Seat growth and new-module adoption. Pattern suggests 3 more APAC Enterprise accounts may follow. AM team briefed.',
-        tags: [{ t: 'green', l: 'Expansion' }, { t: 'green', l: 'Seat utilization' }],
+        rank: 1, name: 'Florida Tourism', delta: '−$0.4M vs Plan',
+        text: 'Spring break peak moved from W10 to W11. Hotel occupancy 71% vs 84% plan. W11 bookings tracking +18% above W10.',
+        tags: [{ t: 'amber', l: 'Calendar shift' }, { t: 'blue', l: 'Auto-recovering' }],
       },
       {
-        rank: 2, name: 'Singapore & Tokyo SaaS', delta: '+$0.32M vs Plan',
-        text: 'Regional cohort renewing at 127% NRR — best-performing Enterprise cohort in the portfolio. New-logo pipeline also strong.',
-        tags: [{ t: 'green', l: 'Renewal strength' }],
+        rank: 2, name: 'Hotel ADR', delta: '+$0.08M vs Plan',
+        text: 'Average daily rate $218 vs $210 planned. Pricing discipline holding despite soft occupancy — room for upside as W11 demand materializes.',
+        tags: [{ t: 'green', l: 'ADR strength' }],
       },
       {
-        rank: 3, name: 'APAC Pricing experiment', delta: '+$0.12M vs Plan',
-        text: 'SMB free-to-paid conversion in APAC trial at 4.8% (target 4.2%). If trend holds, segment beats plan by $0.3M.',
-        tags: [{ t: 'blue', l: 'Pricing test' }, { t: 'green', l: 'Early signal' }],
+        rank: 3, name: 'Cruise Partnerships', delta: 'Flat',
+        text: 'Miami and Fort Lauderdale embarkations in-line. Pre-cruise hotel nights flat, no spring-break shift impact.',
+        tags: [{ t: 'blue', l: 'On plan' }],
       },
     ],
     chart: [
-      { w: 'W6',   a: 22, p: 21, tone: 'pos' },
-      { w: 'W7',   a: 23, p: 21, tone: 'pos' },
-      { w: 'W8',   a: 22, p: 21, tone: 'pos' },
-      { w: 'W9',   a: 20, p: 21, tone: 'warn' },
-      { w: 'W10',  a: 19, p: 21, tone: 'warn' },
-      { w: 'W11▸', a: 24, p: 21, tone: 'pos', forecast: true },
+      { w: 'W6',   a: 3.1, p: 3.1, tone: 'blue' },
+      { w: 'W7',   a: 3.2, p: 3.1, tone: 'pos'  },
+      { w: 'W8',   a: 3.1, p: 3.1, tone: 'blue' },
+      { w: 'W9',   a: 3.0, p: 3.2, tone: 'warn' },
+      { w: 'W10',  a: 2.9, p: 3.3, tone: 'neg'  },
+      { w: 'W11▸', a: 3.6, p: 3.1, tone: 'pos', forecast: true },
     ],
-    chartTitle: 'Weekly Revenue Variance — APAC',
+    chartTitle: 'Weekly Revenue Variance — Southeast',
   },
-  latam: {
-    statusChip: { kind: 'warn', text: 'Timing-mixed · FX headwind' },
+  midwest: {
+    statusChip: { kind: 'warn', text: 'Supply constrained' },
     kpis: [
-      { lbl: 'LATAM NRR',              val: '106%',   delta: '▼ 5pp vs prior Q', tone: 'warn' },
-      { lbl: 'LATAM ARR Δ',            val: '-$0.3M', delta: '▼ $0.3M vs plan',  tone: 'warn' },
-      { lbl: 'LATAM Gross Margin',     val: '74.2%',  delta: '▼ 0.6pp QoQ',       tone: 'warn' },
+      { lbl: 'NRR',          val: '104%',  delta: '▼ 5pp vs prior Q',    tone: 'neg' },
+      { lbl: 'New ARR',      val: '$1.1M', delta: '▼ $0.3M vs plan',     tone: 'neg' },
+      { lbl: 'Gross Margin', val: '76.8%', delta: '▼ 1.8pp vs prior Q',  tone: 'neg' },
     ],
     commentary: [
       {
-        rank: 1, name: 'Brazil FX impact', delta: '-$0.2M vs Plan',
-        text: 'BRL devalued 6% over the period. USD-reporting revenue compressed despite strong local-currency growth. Hedge program covers 40% of exposure.',
-        tags: [{ t: 'amber', l: 'FX' }, { t: 'blue', l: 'Partial hedge' }],
+        rank: 1, name: 'Illinois Manufacturing', delta: '−$0.5M vs Plan',
+        text: 'Chicago hub at 94% capacity, above 90% stress threshold. Union Pacific rail car shortage. Fulfillment cycle 8.2 days vs 5.5 target.',
+        tags: [{ t: 'amber', l: 'Watch' }, { t: 'amber', l: 'Rail shortage' }],
       },
       {
-        rank: 2, name: 'Mexico SMB momentum', delta: '+$0.15M vs Plan',
-        text: 'Mexican peso stable; self-serve signups up 22% QoQ. Product-market fit strongest in mid-cap retail vertical.',
-        tags: [{ t: 'green', l: 'Self-serve' }],
+        rank: 2, name: 'Detroit Automotive', delta: 'Flat',
+        text: 'OEM schedules stable. Tier-1 supplier orders tracking plan. No material variance this week.',
+        tags: [{ t: 'blue', l: 'On plan' }],
       },
       {
-        rank: 3, name: 'Argentina stall', delta: '-$0.1M vs Plan',
-        text: 'Macro slowdown affecting enterprise budget approvals. Pipeline conversion from opportunity to closed-won dropped from 24% to 16%.',
-        tags: [{ t: 'amber', l: 'Macro' }, { t: 'red', l: 'Conversion drop' }],
+        rank: 3, name: 'Ohio Distribution', delta: '+$0.05M vs Plan',
+        text: 'Columbus hub running smooth at 81% utilization. Could absorb 6–8% of Chicago overflow if routing is reshaped.',
+        tags: [{ t: 'green', l: 'Capacity headroom' }],
       },
     ],
     chart: [
-      { w: 'W6',   a: 14, p: 15, tone: 'warn' },
-      { w: 'W7',   a: 13, p: 15, tone: 'warn' },
-      { w: 'W8',   a: 14, p: 15, tone: 'warn' },
-      { w: 'W9',   a: 13, p: 15, tone: 'warn' },
-      { w: 'W10',  a: 12, p: 15, tone: 'neg' },
-      { w: 'W11▸', a: 13, p: 15, tone: 'warn', forecast: true },
+      { w: 'W6',   a: 5.8, p: 5.8, tone: 'blue' },
+      { w: 'W7',   a: 5.8, p: 5.8, tone: 'blue' },
+      { w: 'W8',   a: 5.7, p: 5.8, tone: 'warn' },
+      { w: 'W9',   a: 5.6, p: 5.9, tone: 'warn' },
+      { w: 'W10',  a: 5.4, p: 5.9, tone: 'neg'  },
+      { w: 'W11▸', a: 5.7, p: 5.9, tone: 'warn', forecast: true },
     ],
-    chartTitle: 'Weekly Revenue Variance — LATAM',
+    chartTitle: 'Weekly Revenue Variance — Midwest',
+  },
+  west: {
+    statusChip: { kind: 'neg', text: 'Biggest drag' },
+    kpis: [
+      { lbl: 'NRR',          val: '101%',  delta: '▼ 9pp vs prior Q',    tone: 'neg' },
+      { lbl: 'New ARR',      val: '$2.4M', delta: '▼ $0.6M vs plan',     tone: 'neg' },
+      { lbl: 'Gross Margin', val: '75.2%', delta: '▼ 2.8pp vs prior Q',  tone: 'neg' },
+    ],
+    commentary: [
+      {
+        rank: 1, name: 'California Retail', delta: '−$1.2M vs Plan',
+        text: 'Min-wage hike driving OT 18% above plan in LA/SF. Store-level margin compressed 340bps. 3rd consecutive week of escalation.',
+        tags: [{ t: 'red', l: 'Critical' }, { t: 'red', l: 'Labor' }, { t: 'blue', l: 'ML flag' }],
+      },
+      {
+        rank: 2, name: 'Washington Tech', delta: '−$0.6M vs Plan',
+        text: 'AI workload training costs +28% MoM, compute utilization only 65%. FinOps reservation strategy in progress — $180K/mo recoverable.',
+        tags: [{ t: 'amber', l: 'Cloud' }, { t: 'green', l: 'Savings plan' }],
+      },
+      {
+        rank: 3, name: 'Oregon Clean Energy', delta: '+$0.2M vs Plan',
+        text: 'IRA subsidy tranche released W9. Solar installation revenue accelerating — Q2 pipeline $1.8M may pull forward 4–6 weeks.',
+        tags: [{ t: 'green', l: 'Subsidy release' }, { t: 'green', l: 'Growing' }],
+      },
+    ],
+    chart: [
+      { w: 'W6',   a: 12.5, p: 12.6, tone: 'blue' },
+      { w: 'W7',   a: 12.3, p: 12.6, tone: 'warn' },
+      { w: 'W8',   a: 11.9, p: 12.7, tone: 'neg'  },
+      { w: 'W9',   a: 11.4, p: 12.7, tone: 'neg'  },
+      { w: 'W10',  a: 11.0, p: 12.8, tone: 'neg'  },
+      { w: 'W11▸', a: 11.4, p: 12.8, tone: 'warn', forecast: true },
+    ],
+    chartTitle: 'Weekly Revenue Variance — West',
+  },
+  southwest: {
+    statusChip: { kind: 'neg', text: 'Commodity driven' },
+    kpis: [
+      { lbl: 'NRR',          val: '105%',  delta: '▼ 4pp vs prior Q',    tone: 'neg' },
+      { lbl: 'New ARR',      val: '$0.9M', delta: '▼ $0.1M vs plan',     tone: 'neg' },
+      { lbl: 'Gross Margin', val: '77.1%', delta: '▼ 1.4pp vs prior Q',  tone: 'neg' },
+    ],
+    commentary: [
+      {
+        rank: 1, name: 'Texas Energy', delta: '−$0.8M vs Plan',
+        text: 'Henry Hub spot price down 18% WoW. Hedge covers 60% — unhedged 40% fully exposed. Forward curve suggests W12 stabilization.',
+        tags: [{ t: 'amber', l: 'Commodity' }, { t: 'amber', l: 'Unhedged' }],
+      },
+      {
+        rank: 2, name: 'Arizona Solar', delta: '+$0.05M vs Plan',
+        text: 'Utility-scale installations on track. Phoenix + Tucson commercial projects ahead of schedule by 6 days.',
+        tags: [{ t: 'green', l: 'Execution' }],
+      },
+      {
+        rank: 3, name: 'New Mexico Logistics', delta: 'Flat',
+        text: 'Albuquerque distribution in-line. No material variance this week.',
+        tags: [{ t: 'blue', l: 'On plan' }],
+      },
+    ],
+    chart: [
+      { w: 'W6',   a: 4.0, p: 4.0, tone: 'blue' },
+      { w: 'W7',   a: 3.9, p: 4.0, tone: 'warn' },
+      { w: 'W8',   a: 3.7, p: 4.0, tone: 'warn' },
+      { w: 'W9',   a: 3.5, p: 4.0, tone: 'neg'  },
+      { w: 'W10',  a: 3.2, p: 4.0, tone: 'neg'  },
+      { w: 'W11▸', a: 3.5, p: 4.0, tone: 'warn', forecast: true },
+    ],
+    chartTitle: 'Weekly Revenue Variance — Southwest',
   },
 };
 
 // ==========================================================================
-// PERFORMANCE — comparison-aware delta labels
-// Adjusts only the `delta` string on each KPI based on the compare selection.
+// PERFORMANCE — comparison-aware KPI overrides
+// Adjusts `val`, `delta`, and `tone` so changing the Compare dropdown
+// produces a clearly visible shift (value changes, color flips, arrows flip).
 // ==========================================================================
-const COMPARE_DELTA_MAP: Record<string, (orig: string, kpiLabel: string) => string> = {
-  plan:     (orig) => orig, // default phrasing already says "vs plan"/"vs prior Q"
-  priorwk:  (_orig, lbl) => lbl.includes('NRR') ? '▲ 0.3pp WoW' : lbl.includes('ARR') ? '▲ 1.2% WoW' : '▼ 0.2pp WoW',
-  prioryr:  (_orig, lbl) => lbl.includes('NRR') ? '▼ 9pp YoY' : lbl.includes('ARR') ? '▼ 6% YoY' : '▼ 0.9pp YoY',
-  forecast: (_orig, lbl) => lbl.includes('NRR') ? '▲ 1pp vs forecast' : lbl.includes('ARR') ? '▲ $0.1M vs forecast' : 'in line with forecast',
-  runrate:  (_orig, lbl) => lbl.includes('NRR') ? '▼ 2pp vs run rate' : lbl.includes('ARR') ? '▼ 3% vs run rate' : '▼ 0.4pp vs run rate',
+type CompareOverride = { val?: string; delta: string; tone: 'pos' | 'neg' | 'warn' };
+type CompareFn = (orig: Kpi) => CompareOverride;
+
+function matchKpi(lbl: string): 'nrr' | 'arr' | 'gm' | 'other' {
+  const l = lbl.toLowerCase();
+  if (l.includes('nrr')) return 'nrr';
+  if (l.includes('arr')) return 'arr';
+  if (l.includes('gross margin') || l.includes('margin')) return 'gm';
+  return 'other';
+}
+
+const COMPARE_OVERRIDE_MAP: Record<string, CompareFn> = {
+  // vs Plan — keep the base numbers + original tone the region defined.
+  plan: (k) => ({ val: k.val, delta: k.delta, tone: k.tone }),
+
+  // vs Prior Week — WoW deltas, small moves, small color change.
+  priorwk: (k) => {
+    switch (matchKpi(k.lbl)) {
+      case 'nrr': return { delta: '▲ 0.3pp WoW',  tone: 'pos' };
+      case 'arr': return { delta: '▲ 1.2% WoW',   tone: 'pos' };
+      case 'gm':  return { delta: '▼ 0.2pp WoW',  tone: 'neg' };
+      default:    return { delta: k.delta,        tone: k.tone };
+    }
+  },
+
+  // vs Prior Year — large YoY degradation, everything red.
+  prioryr: (k) => {
+    switch (matchKpi(k.lbl)) {
+      case 'nrr': return { val: '108%',  delta: '▼ 9pp YoY',     tone: 'neg' };
+      case 'arr': return { val: '$4.2M', delta: '▼ $0.3M YoY',   tone: 'neg' };
+      case 'gm':  return { val: '78.4%', delta: '▼ 0.9pp YoY',   tone: 'neg' };
+      default:    return { delta: k.delta,       tone: k.tone };
+    }
+  },
+
+  // vs Forecast — closer to plan, mix of pos/warn.
+  forecast: (k) => {
+    switch (matchKpi(k.lbl)) {
+      case 'nrr': return { delta: '▲ 1pp vs forecast',       tone: 'pos'  };
+      case 'arr': return { delta: '▲ $0.1M vs forecast',     tone: 'pos'  };
+      case 'gm':  return { delta: 'in line with forecast',   tone: 'warn' };
+      default:    return { delta: k.delta,                   tone: k.tone };
+    }
+  },
+
+  // vs Run Rate — slight miss vs the trend.
+  runrate: (k) => {
+    switch (matchKpi(k.lbl)) {
+      case 'nrr': return { delta: '▼ 2pp vs run rate',   tone: 'neg' };
+      case 'arr': return { delta: '▼ 3% vs run rate',    tone: 'neg' };
+      case 'gm':  return { delta: '▼ 0.4pp vs run rate', tone: 'neg' };
+      default:    return { delta: k.delta,                tone: k.tone };
+    }
+  },
 };
+
 export function adjustKpisByCompare(kpis: Kpi[], compareKey: string): Kpi[] {
-  const fn = COMPARE_DELTA_MAP[compareKey] ?? COMPARE_DELTA_MAP.plan;
-  return kpis.map(k => ({ ...k, delta: fn(k.delta, k.lbl) }));
+  const fn = COMPARE_OVERRIDE_MAP[compareKey] ?? COMPARE_OVERRIDE_MAP.plan;
+  return kpis.map(k => {
+    const o = fn(k);
+    return { ...k, val: o.val ?? k.val, delta: o.delta, tone: o.tone };
+  });
 }
 
 // ==========================================================================
@@ -981,11 +1121,12 @@ export function adjustKpisByCompare(kpis: Kpi[], compareKey: string): Kpi[] {
 // Matches a driver key to a rough keyword search in commentary item names/tags.
 // ==========================================================================
 const DRIVER_KEYWORDS: Record<string, string[]> = {
-  enterprise: ['enterprise', 'churn'],
-  midmarket:  ['mid-market', 'midmarket'],
-  expansion:  ['expansion', 'northbridge', 'renewal'],
-  cloud:      ['cloud', 'infrastructure', 'cloud infrastructure'],
-  services:   ['professional services', 'services'],
+  caretail:  ['california retail', 'california', 'retail', 'labor', 'la/sf', 'wage'],
+  txenergy:  ['texas energy', 'texas', 'henry hub', 'natural gas', 'commodity', 'hedge'],
+  nyfinance: ['new york', 'nyfinance', 'financial services', 'equity', 'advisory', 'trading', 'wealth'],
+  fltourism: ['florida', 'tourism', 'hotel', 'occupancy', 'cruise', 'spring break'],
+  ilmfg:     ['illinois', 'manufacturing', 'chicago', 'rail', 'hub', 'detroit', 'ohio'],
+  watech:    ['washington', 'watech', 'cloud', 'ai workload', 'tech', 'oregon'],
 };
 export function filterCommentaryByDriver(items: CommentaryItem[], driverKey: string | null): CommentaryItem[] {
   if (!driverKey) return items;

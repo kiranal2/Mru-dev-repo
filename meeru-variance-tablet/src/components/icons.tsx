@@ -112,6 +112,42 @@ export const Icon = {
       <Line x1="21" y1="12" x2="9" y2="12" />
     </Svg>
   ),
+  // ----- Header controls for ChatSheet -----
+  // `fill` is optional so we can render an outline (default) or a solid star
+  // by passing `fill="currentColor"`-equivalent hex.
+  Star:    ({ color = '#64748B', size = 20, fill = 'none' }: P & { fill?: string }) => (
+    <Svg {...base(size)} stroke={color}>
+      <Polygon
+        fill={fill}
+        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+      />
+    </Svg>
+  ),
+  Pencil:  ({ color = '#475569', size = 20 }: P) => (
+    <Svg {...base(size)} stroke={color}>
+      <Path d="M12 20h9" />
+      <Path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z" />
+    </Svg>
+  ),
+  Maximize: ({ color = '#475569', size = 20 }: P) => (
+    <Svg {...base(size)} stroke={color}>
+      <Polyline points="15 3 21 3 21 9" />
+      <Polyline points="9 21 3 21 3 15" />
+      <Line x1="21" y1="3" x2="14" y2="10" />
+      <Line x1="3" y1="21" x2="10" y2="14" />
+    </Svg>
+  ),
+  Minimize: ({ color = '#475569', size = 20 }: P) => (
+    <Svg {...base(size)} stroke={color}>
+      <Polyline points="4 14 10 14 10 20" />
+      <Polyline points="20 10 14 10 14 4" />
+      <Line x1="14" y1="10" x2="21" y2="3" />
+      <Line x1="3" y1="21" x2="10" y2="14" />
+    </Svg>
+  ),
+  ChevDown: ({ color = '#475569', size = 20 }: P) => (
+    <Svg {...base(size)} stroke={color}><Polyline points="6 9 12 15 18 9" /></Svg>
+  ),
 };
 
 export function iconForActionKind(kind: string) {

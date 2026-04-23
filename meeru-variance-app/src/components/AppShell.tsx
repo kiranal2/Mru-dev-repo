@@ -8,6 +8,7 @@ import { MarinGuide, MissionEndCard } from './MarinGuide';
 import { LoadingBar } from './Skeletons';
 import { PERSONAS } from '../data';
 import type { Role } from '../types';
+import meeruLogo from '../assets/meeru-logo.png';
 
 function Sidebar() {
   const loc = useLocation();
@@ -30,25 +31,7 @@ function Sidebar() {
 }
 
 function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; onToggleSidebar: () => void }) {
-  const { user } = useAuth();
   const { theme, toggle } = useTheme();
-  const personaKey = user?.key;
-  const loc = useLocation();
-  const crumb = (() => {
-    if (loc.pathname.startsWith('/variance')) return 'Variance Workbench';
-    if (loc.pathname.startsWith('/close')) return 'Close Workbench';
-    if (loc.pathname.startsWith('/reconciliations')) return 'Reconciliations';
-    if (loc.pathname.startsWith('/settings')) return 'Settings';
-    if (loc.pathname.startsWith('/workspace')) return 'My Workspace';
-    return 'MeeruAI';
-  })();
-
-  const onPersonaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const r = e.target.value as Role;
-    localStorage.setItem('meeru.user', r);
-    // Force re-load via reload (simpler than re-plumbing auth)
-    window.location.reload();
-  };
 
   return (
     <header className="flex items-center justify-between px-3 bg-surface border-b border-rule shrink-0" style={{ height: 44 }}>
@@ -61,25 +44,14 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
           <Icon.Menu className="w-4 h-4" />
         </button>
         {theme === 'light' ? (
-          <img src="/meeru-logo.png" alt="MeeruAI" className="h-5 w-auto object-contain select-none" draggable={false} />
+          <img src={meeruLogo} alt="MeeruAI" className="h-5 w-auto object-contain select-none" draggable={false} />
         ) : (
           <span className="text-[16px] font-bold tracking-tight leading-none text-white">
             Meeru<span style={{ color: 'var(--primary)' }}>AI</span>
           </span>
         )}
-        <div className="h-4 w-px bg-rule mx-2" />
-        <span className="text-[10px] font-semibold tracking-wider uppercase text-muted">{crumb}</span>
-        <AgentStatusPill />
       </div>
       <div className="flex items-center gap-2.5">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-rule bg-surface text-[12px]">
-          <span className="text-muted">Persona</span>
-          <select value={personaKey} onChange={onPersonaChange} className="bg-transparent text-ink text-[12px] outline-none cursor-pointer">
-            <option value="CFO">CFO · Sarah</option>
-            <option value="CONTROLLER">Controller · Raj</option>
-            <option value="PREPARER">Preparer · Maya</option>
-          </select>
-        </div>
         <ChatToggleButton />
         <button onClick={toggle} className="w-7 h-7 rounded-md grid place-items-center text-muted hover:bg-surface-soft hover:text-ink" title="Toggle theme">
           {theme === 'light' ? <Icon.Moon className="w-4 h-4" /> : <Icon.Sun className="w-4 h-4" />}

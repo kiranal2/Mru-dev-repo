@@ -2,12 +2,13 @@ import { useRef, useState } from 'react';
 import { View, Text, ScrollView, Pressable, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Polyline, Circle, Rect } from 'react-native-svg';
-import { useAuth, useChat } from '../store';
+import * as Haptics from 'expo-haptics';
+import { useAuth, useChat, useToasts } from '../store';
 import {
-  PERF_KPIS, PERF_COMMENTARY, PERF_CHART,
   PERF_DRILL_SEGMENTS, PERF_EXCEPTIONS, PERF_SIGNALS, PERF_HISTORY,
+  FLUX_REGIONS, FLUX_COMPARISONS,
 } from '../data';
-import type { TagTone } from '../types';
+import type { TagTone, RegionKey, ComparisonKey } from '../types';
 import { KpiCard } from '../components/KpiCard';
 import { Commentary } from '../components/Commentary';
 import { VarianceChart } from '../components/VarianceChart';
@@ -73,12 +74,23 @@ function SparkBars({ data, color }: { data: number[]; color: string }) {
   );
 }
 
-const REGIONS = [
-  { k: 'global',   n: 'Global',   tone: 'neg'  as const },
-  { k: 'americas', n: 'Americas', tone: 'neg'  as const },
-  { k: 'emea',     n: 'EMEA',     tone: 'pos'  as const },
-  { k: 'apac',     n: 'APAC',     tone: 'neg'  as const },
-  { k: 'latam',    n: 'LATAM',    tone: 'warn' as const },
+// Six US regions — FluxPlus. National rolls the others up.
+const REGIONS: { k: RegionKey; n: string }[] = [
+  { k: 'national',  n: 'National'  },
+  { k: 'northeast', n: 'Northeast' },
+  { k: 'southeast', n: 'Southeast' },
+  { k: 'midwest',   n: 'Midwest'   },
+  { k: 'west',      n: 'West'      },
+  { k: 'southwest', n: 'Southwest' },
+];
+
+// Five comparison modes — FluxPlus.
+const COMPARISONS: { k: ComparisonKey; n: string }[] = [
+  { k: 'plan',     n: 'vs Plan'       },
+  { k: 'prior',    n: 'vs Prior Week' },
+  { k: 'yoy',      n: 'vs Prior Year' },
+  { k: 'forecast', n: 'vs Forecast'   },
+  { k: 'runrate',  n: 'vs Run Rate'   },
 ];
 
 const TABS = [
@@ -92,10 +104,46 @@ const TABS = [
 export default function PerformanceScreen() {
   const { user } = useAuth();
   const { send } = useChat();
+  const { push } = useToasts();
   const { width } = useWindowDimensions();
-  const [region, setRegion] = useState('global');
+  const [region, setRegion] = useState<RegionKey>('national');
+  const [comparison, setComparison] = useState<ComparisonKey>('plan');
   const [tab, setTab] = useState('analysis');
+  // Session-scoped favorites for ML signals. Keyed by signal name (unique
+  // within PERF_SIGNALS). Mirrors the web Command Center star behavior.
+  const [favoritedSignals, setFavoritedSignals] = useState<Set<string>>(new Set());
   const chatRef = useRef<ChatSheetRef>(null);
+
+  // Derive the current region + comparison context. Everything on the
+  // Analysis/Drill tabs is driven from these two selectors.
+  const regionData = FLUX_REGIONS[region];
+  const compData = FLUX_COMPARISONS[comparison];
+
+  // Apply comparison override (if any) to the headline variance figure
+  // in each drill segment. Falls back to the original plan-based variance.
+  const drillSegments = regionData.segments
+    .map((id) => PERF_DRILL_SEGMENTS.find((s) => s.id === id))
+    .filter(Boolean)
+    .map((s) => {
+      const override = compData.segmentOverrides?.[s!.id];
+      return override ? { ...s!, variance: override.variance, varTone: override.varTone } : s!;
+    });
+
+  const toggleSignalFavorite = (name: string) => {
+    setFavoritedSignals((prev) => {
+      const next = new Set(prev);
+      const isFav = next.has(name);
+      if (isFav) {
+        next.delete(name);
+        push({ kind: 'info', title: 'Removed from favorites', sub: name });
+      } else {
+        next.add(name);
+        push({ kind: 'ok', title: 'Added to favorites', sub: name });
+      }
+      Haptics.selectionAsync();
+      return next;
+    });
+  };
 
   // Tablet-aware breakpoints.
   const isWide = width >= 820;   // iPad portrait and up
@@ -165,7 +213,7 @@ export default function PerformanceScreen() {
               borderColor: '#E2E8F0',
             }}
           >
-            <Text style={{ fontSize: 10, color: '#64748B', letterSpacing: 0.4 }}>W10 · Mar 3–9</Text>
+            <Text style={{ fontSize: 10, color: '#64748B', letterSpacing: 0.4 }}>{regionData.week}</Text>
           </View>
           <Pressable onPress={() => chatRef.current?.expand()} hitSlop={8}>
             <Icon.Sparkle color="#1E40AF" size={22} />
@@ -252,24 +300,112 @@ export default function PerformanceScreen() {
         </ScrollView>
       </View>
 
+      {/* Comparison switcher strip — 5 comparison modes */}
+      <View style={{ backgroundColor: '#F8FAFC', borderTopWidth: 1, borderTopColor: '#E2E8F0' }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: isWide ? 20 : 16,
+            paddingVertical: 8,
+            alignItems: 'center',
+            gap: 6,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 9.5,
+              letterSpacing: 1,
+              textTransform: 'uppercase',
+              color: '#64748B',
+              fontWeight: '600',
+              marginRight: 6,
+            }}
+          >
+            Compare
+          </Text>
+          {COMPARISONS.map((c) => {
+            const active = c.k === comparison;
+            return (
+              <Pressable
+                key={c.k}
+                onPress={() => setComparison(c.k)}
+                style={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 4,
+                  borderRadius: 6,
+                  backgroundColor: active ? '#1E40AF' : '#FFFFFF',
+                  borderWidth: 1,
+                  borderColor: active ? '#1E40AF' : '#E2E8F0',
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontWeight: active ? '600' : '500',
+                    color: active ? '#FFFFFF' : '#475569',
+                  }}
+                >
+                  {c.n}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      </View>
+
       {/* ─────────── ANALYSIS tab ─────────── */}
       {tab === 'analysis' && (
         <ScrollView style={{ flex: 1 }}>
           <View style={pageStyle}>
+            {/* AI one-liner for the current region + comparison */}
+            <View
+              style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: 10,
+                padding: 12,
+                marginBottom: 10,
+                borderWidth: 1,
+                borderColor: '#E2E8F0',
+                borderLeftWidth: 3,
+                borderLeftColor: TONE_COLOR[compData.totalVarianceTone],
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <Icon.Sparkle color="#1E40AF" size={12} />
+                <Text style={{ fontSize: 10, fontWeight: '600', color: '#1E40AF', letterSpacing: 0.6 }}>
+                  {regionData.label.toUpperCase()} · {compData.label.toUpperCase()}
+                </Text>
+                <View style={{ flex: 1 }} />
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: '700',
+                    color: TONE_COLOR[compData.totalVarianceTone],
+                  }}
+                >
+                  {compData.totalVariance}
+                </Text>
+              </View>
+              <Text style={{ fontSize: 11, color: '#475569', lineHeight: 16 }}>
+                {compData.signal} {regionData.signal}
+              </Text>
+            </View>
+
             {/* 4-stat KPI strip — web `uf-stat-row` */}
             <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
-              {PERF_KPIS.map((k, i) => <KpiCard key={i} kpi={k} compact />)}
+              {regionData.kpis.map((k, i) => <KpiCard key={i} kpi={k} compact />)}
             </View>
 
             {/* On wide screens commentary + chart go side-by-side; on phones they stack. */}
             <View style={{ flexDirection: isXWide ? 'row' : 'column', gap: 12 }}>
               <View style={{ flex: isXWide ? 1.1 : undefined }}>
-                <Commentary items={PERF_COMMENTARY} />
+                <Commentary items={regionData.commentary} />
               </View>
               <View style={{ flex: isXWide ? 1 : undefined }}>
                 <VarianceChart
-                  title={`Weekly Revenue Variance — ${REGIONS.find((r) => r.k === region)?.n ?? 'Global'}`}
-                  bars={PERF_CHART}
+                  title={`Weekly Revenue Variance — ${regionData.label} · ${compData.short}`}
+                  bars={regionData.chart}
                 />
               </View>
             </View>
@@ -286,11 +422,11 @@ export default function PerformanceScreen() {
         <ScrollView style={{ flex: 1 }}>
           <View style={pageStyle}>
             <Text style={{ fontSize: 10, color: '#64748B', marginBottom: 8, letterSpacing: 1, fontWeight: '600' }}>
-              SEGMENT BREAKDOWN · W10
+              SEGMENT BREAKDOWN · {regionData.label.toUpperCase()} · {compData.short.toUpperCase()}
             </Text>
             {/* 2-column grid on wide, single column on phones — web `uf-drill-grid` */}
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-              {PERF_DRILL_SEGMENTS.map((s) => {
+              {drillSegments.map((s) => {
                 const varColor = TONE_COLOR[s.varTone];
                 const utilColor = TONE_COLOR[s.utilTone];
                 return (
@@ -420,15 +556,26 @@ export default function PerformanceScreen() {
       {tab === 'signals' && (
         <ScrollView style={{ flex: 1 }}>
           <View style={pageStyle}>
-            <Text style={{ fontSize: 10, color: '#64748B', marginBottom: 8, letterSpacing: 1, fontWeight: '600' }}>
-              ML SIGNALS · {PERF_SIGNALS.length} ACTIVE
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <Text style={{ fontSize: 10, color: '#64748B', letterSpacing: 1, fontWeight: '600' }}>
+                ML SIGNALS · {PERF_SIGNALS.length} ACTIVE
+              </Text>
+              {favoritedSignals.size > 0 && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Icon.Star color="#1E40AF" fill="#1E40AF" size={11} />
+                  <Text style={{ fontSize: 10, color: '#1E40AF', letterSpacing: 0.6, fontWeight: '600' }}>
+                    {favoritedSignals.size} FAVORITED
+                  </Text>
+                </View>
+              )}
+            </View>
             {PERF_SIGNALS.map((s, i) => {
               const typeColors = TAG_STYLES[s.typeTone];
               const confColor =
                 s.confidence >= 90 ? '#16A34A'
                 : s.confidence >= 75 ? '#1E40AF'
                 : '#D97706';
+              const isFavorite = favoritedSignals.has(s.name);
               return (
                 <View
                   key={i}
@@ -438,7 +585,7 @@ export default function PerformanceScreen() {
                     padding: 14,
                     marginBottom: 8,
                     borderWidth: 1,
-                    borderColor: '#E2E8F0',
+                    borderColor: isFavorite ? '#1E40AF' : '#E2E8F0',
                   }}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
@@ -454,7 +601,29 @@ export default function PerformanceScreen() {
                         >
                           <Text style={{ fontSize: 10, fontWeight: '600', color: typeColors.fg }}>{s.type}</Text>
                         </View>
-                        <Icon.Sparkle color="#1E40AF" size={11} />
+                        {/* Real favorite toggle — polygon fills when active.
+                            Keyed by signal name so state survives re-renders. */}
+                        <Pressable
+                          onPress={() => toggleSignalFavorite(s.name)}
+                          hitSlop={8}
+                          accessibilityLabel={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                          accessibilityRole="button"
+                          accessibilityState={{ selected: isFavorite }}
+                          style={{
+                            width: 22,
+                            height: 22,
+                            borderRadius: 4,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: isFavorite ? '#EFF6FF' : 'transparent',
+                          }}
+                        >
+                          <Icon.Star
+                            color={isFavorite ? '#1E40AF' : '#94A3B8'}
+                            fill={isFavorite ? '#1E40AF' : 'none'}
+                            size={14}
+                          />
+                        </Pressable>
                       </View>
                       <Text style={{ fontSize: 13, fontWeight: '600', color: '#0F172A' }}>{s.name}</Text>
                     </View>
@@ -543,7 +712,7 @@ export default function PerformanceScreen() {
         </ScrollView>
       )}
 
-      <ChatSheet ref={chatRef} />
+      <ChatSheet ref={chatRef} suggestions={regionData.suggestions} />
     </SafeAreaView>
   );
 }

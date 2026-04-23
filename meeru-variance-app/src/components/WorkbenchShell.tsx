@@ -42,6 +42,8 @@ interface Props {
   children: ReactNode;
   /** Scope label shown at bottom of chat */
   scopeLabel?: string;
+  /** Right-side scope indicator rendered in the top-nav row (e.g., "Week 10 · Global · Q1 FY2026") */
+  scopeRight?: ReactNode;
   /** Commentary items to show in the right-side AI Commentary panel */
   commentary?: CommentaryItem[];
   /** Optional headline override for the commentary panel callout */
@@ -63,7 +65,7 @@ interface Props {
  * was removed — those actions are available via the chat panel toolbar
  * per-reply, which avoided the stacked-widget crowding.)
  */
-export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLabel, commentary, commentaryHeadline }: Props) {
+export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLabel, scopeRight, commentary, commentaryHeadline }: Props) {
   const { setScope } = useChat();
   const { settings, update } = useSettings();
   useEffect(() => {
@@ -73,9 +75,11 @@ export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLab
   const railW = settings.railCollapsed ? RAIL_W_COLLAPSED : RAIL_W_EXPANDED;
   const chatCol = settings.chatHidden ? '' : ` ${settings.chatWidth}px`;
   const gridCols = `${railW}px 1fr${chatCol}`;
+  // topnav now spans the full width of (left rail + main) so the sub-tabs sit
+  // at the top edge, above the left rail — per Shawn's reference layout.
   const gridAreas = settings.chatHidden
-    ? `"wb wb" "left topnav" "left main"`
-    : `"wb wb chat" "left topnav chat" "left main chat"`;
+    ? `"wb wb" "topnav topnav" "left main"`
+    : `"wb wb chat" "topnav topnav chat" "left main chat"`;
 
   const toggleRail = () => update({ railCollapsed: !settings.railCollapsed });
 
@@ -84,6 +88,19 @@ export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLab
       <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: gridCols, gridTemplateRows: '40px 48px 1fr', gridTemplateAreas: gridAreas }}>
         <div style={{ gridArea: 'wb' }}>
           <WorkbenchTabs active={workbench} />
+        </div>
+        <div
+          style={{ gridArea: 'topnav' }}
+          className="bg-surface border-b border-rule flex items-center gap-3"
+        >
+          <div className="flex-1 min-w-0">
+            {topNav}
+          </div>
+          {scopeRight && (
+            <div className="shrink-0 flex items-center gap-2 pr-4 text-[11px] font-medium text-muted whitespace-nowrap">
+              {scopeRight}
+            </div>
+          )}
         </div>
         <aside
           style={{ gridArea: 'left' }}
@@ -107,9 +124,6 @@ export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLab
             </>
           )}
         </aside>
-        <div style={{ gridArea: 'topnav' }} className="bg-surface border-b border-rule">
-          {topNav}
-        </div>
         <main style={{ gridArea: 'main' }} className="overflow-auto p-5">
           {children}
         </main>
@@ -171,13 +185,9 @@ function WorkbenchTabs({ active }: { active: string }) {
           </Link>
         );
       })}
-      {/* Right-side meta — data-source summary + ticking "live updated" */}
+      {/* Right-side meta — just the ticking "live updated" indicator */}
       <div className="flex-1" />
       <div className="hidden lg:flex items-center gap-2 text-[11px] text-muted pr-4">
-        <span className="num">Sources 9/9</span>
-        <span className="text-faint">·</span>
-        <span className="num">Segments 12</span>
-        <span className="text-faint">·</span>
         <LiveTimer />
       </div>
     </div>

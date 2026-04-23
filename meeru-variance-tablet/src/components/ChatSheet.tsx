@@ -1,6 +1,11 @@
 import React, { useCallback, useMemo, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
-import BottomSheet, { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
+} from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
 import { useChat, useToasts, useAuth } from '../store';
 import { SUGGESTIONS } from '../data';
@@ -12,7 +17,12 @@ export interface ChatSheetRef {
   collapse: () => void;
 }
 
-export const ChatSheet = forwardRef<ChatSheetRef>((_, ref) => {
+export interface ChatSheetProps {
+  /** Region-specific suggestion overrides. Falls back to SUGGESTIONS when empty/undefined. */
+  suggestions?: string[];
+}
+
+export const ChatSheet = forwardRef<ChatSheetRef, ChatSheetProps>(({ suggestions }, ref) => {
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['12%', '55%', '92%'], []);
   const [sheetIndex, setSheetIndex] = useState(0);
@@ -22,6 +32,23 @@ export const ChatSheet = forwardRef<ChatSheetRef>((_, ref) => {
     collapse: () => sheetRef.current?.snapToIndex(0),
   }));
 
+  // Dim/blur the rest of the screen only when the sheet is at full screen
+  // (index 2). At peek/mid the canvas stays fully interactive. Tapping the
+  // backdrop drops back to the mid snap so the user can still see context.
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={2}
+        disappearsOnIndex={1}
+        opacity={0.35}
+        pressBehavior="collapse"
+        onPress={() => sheetRef.current?.snapToIndex(1)}
+      />
+    ),
+    [],
+  );
+
   return (
     <BottomSheet
       ref={sheetRef}
@@ -29,20 +56,39 @@ export const ChatSheet = forwardRef<ChatSheetRef>((_, ref) => {
       snapPoints={snapPoints}
       onChange={setSheetIndex}
       enablePanDownToClose={false}
+      backdropComponent={renderBackdrop}
       handleIndicatorStyle={{ backgroundColor: '#94A3B8', width: 40 }}
       backgroundStyle={{ backgroundColor: '#FFFFFF', borderTopLeftRadius: 24, borderTopRightRadius: 24 }}
     >
-      <ChatContent expanded={sheetIndex > 0} onExpand={() => sheetRef.current?.snapToIndex(2)} />
+      <ChatContent
+        sheetIndex={sheetIndex}
+        onSnap={(i) => sheetRef.current?.snapToIndex(i)}
+        suggestions={suggestions}
+      />
     </BottomSheet>
   );
 });
 ChatSheet.displayName = 'ChatSheet';
 
-function ChatContent({ expanded, onExpand }: { expanded: boolean; onExpand: () => void }) {
+function ChatContent({
+  sheetIndex,
+  onSnap,
+  suggestions,
+}: {
+  sheetIndex: number;
+  onSnap: (i: number) => void;
+  suggestions?: string[];
+}) {
+  const expanded = sheetIndex > 0;
+  const fullscreen = sheetIndex === 2;
+  const onExpand = () => onSnap(2);
   const { user } = useAuth();
   const { msgs, send, reset, contextual, followUps, thinking, sent, markSent } = useChat();
   const { push } = useToasts();
   const [input, setInput] = useState('');
+  // Session-scoped favorite — mirrors the web Command Center star. Filled
+  // polygon when active; toast confirms the state change.
+  const [favorited, setFavorited] = useState(false);
 
   const onSend = () => {
     if (!input.trim()) return;
@@ -58,7 +104,10 @@ function ChatContent({ expanded, onExpand }: { expanded: boolean; onExpand: () =
 
   return (
     <View className="flex-1">
-      {/* Header */}
+      {/* Header — title on the left, icon cluster on the right.
+          Mirrors the web Command Center header: new-chat, favorite,
+          maximize/minimize. Buttons only show once the sheet is expanded
+          so the peek state stays clean. */}
       <View className="flex-row items-center justify-between px-4 pb-2" style={{ borderBottomWidth: 1, borderBottomColor: '#E2E8F0' }}>
         <Pressable onPress={expanded ? undefined : onExpand} className="flex-row items-center gap-2 flex-1">
           <Icon.Sparkle color="#1E40AF" size={16} />
@@ -68,9 +117,59 @@ function ChatContent({ expanded, onExpand }: { expanded: boolean; onExpand: () =
           </View>
         </Pressable>
         {expanded && (
-          <Pressable onPress={reset} className="active:opacity-70 px-2 py-1">
-            <Text className="text-xs text-muted">New</Text>
-          </Pressable>
+          <View className="flex-row items-center gap-1">
+            <HeaderIconButton
+              label="New chat"
+              onPress={() => {
+                reset();
+                setInput('');
+                push({ kind: 'info', title: 'New chat started' });
+              }}
+            >
+              <Icon.Pencil color="#475569" size={14} />
+            </HeaderIconButton>
+            <HeaderIconButton
+              label={favorited ? 'Remove from favorites' : 'Add to favorites'}
+              active={favorited}
+              onPress={() => {
+                const next = !favorited;
+                setFavorited(next);
+                push({
+                  kind: 'ok',
+                  title: next ? 'Added to favorites' : 'Removed from favorites',
+                  sub: next ? 'This session is bookmarked for quick access' : undefined,
+                });
+                Haptics.selectionAsync();
+              }}
+            >
+              <Icon.Star
+                color={favorited ? '#1E40AF' : '#64748B'}
+                fill={favorited ? '#1E40AF' : 'none'}
+                size={14}
+              />
+            </HeaderIconButton>
+            <HeaderIconButton
+              label={fullscreen ? 'Collapse' : 'Full screen'}
+              active={fullscreen}
+              onPress={() => {
+                onSnap(fullscreen ? 1 : 2);
+                Haptics.selectionAsync();
+              }}
+            >
+              {fullscreen
+                ? <Icon.Minimize color="#1E40AF" size={14} />
+                : <Icon.Maximize color="#475569" size={14} />}
+            </HeaderIconButton>
+            <HeaderIconButton
+              label="Minimize"
+              onPress={() => {
+                onSnap(0);
+                Haptics.selectionAsync();
+              }}
+            >
+              <Icon.ChevDown color="#475569" size={14} />
+            </HeaderIconButton>
+          </View>
         )}
       </View>
 
@@ -116,20 +215,42 @@ function ChatContent({ expanded, onExpand }: { expanded: boolean; onExpand: () =
               </Text>
               <Text className="text-[10px] text-faint"> · ranked for {user?.role.split(' ').slice(-1)[0]}</Text>
             </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {contextual.map((a, i) => (
-                <NBACard
-                  key={`${a.kind}-${i}`}
-                  action={a}
-                  sent={sent.has(`${a.kind}-${i}`)}
-                  onSend={() => {
-                    markSent(`${a.kind}-${i}`);
-                    push({ kind: 'ok', title: `${a.label} — sent`, sub: a.who });
-                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                  }}
-                />
-              ))}
-            </ScrollView>
+            {fullscreen ? (
+              // Full-screen: 2-column grid with full-width cards so nothing
+              // is truncated and there's no horizontal scroll to hide tiles.
+              <View className="flex-row flex-wrap -mx-1">
+                {contextual.map((a, i) => (
+                  <View key={`${a.kind}-${i}`} style={{ width: '50%', paddingHorizontal: 4, marginBottom: 8 }}>
+                    <NBACard
+                      action={a}
+                      sent={sent.has(`${a.kind}-${i}`)}
+                      expanded
+                      onSend={() => {
+                        markSent(`${a.kind}-${i}`);
+                        push({ kind: 'ok', title: `${a.label} — sent`, sub: a.who });
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                      }}
+                    />
+                  </View>
+                ))}
+              </View>
+            ) : (
+              // Peek/mid: horizontal scroll is still the best use of space.
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {contextual.map((a, i) => (
+                  <NBACard
+                    key={`${a.kind}-${i}`}
+                    action={a}
+                    sent={sent.has(`${a.kind}-${i}`)}
+                    onSend={() => {
+                      markSent(`${a.kind}-${i}`);
+                      push({ kind: 'ok', title: `${a.label} — sent`, sub: a.who });
+                      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    }}
+                  />
+                ))}
+              </ScrollView>
+            )}
           </View>
         )}
 
@@ -142,7 +263,10 @@ function ChatContent({ expanded, onExpand }: { expanded: boolean; onExpand: () =
             </Text>
           </View>
           <View className="flex-row flex-wrap gap-1.5">
-            {(msgs.length > 0 && followUps.length > 0 ? followUps : SUGGESTIONS).map((s, i) => (
+            {(msgs.length > 0 && followUps.length > 0
+              ? followUps
+              : (suggestions && suggestions.length > 0 ? suggestions : SUGGESTIONS)
+            ).map((s, i) => (
               <Pressable
                 key={`${s}-${i}`}
                 onPress={() => onSuggestion(s)}
@@ -189,6 +313,39 @@ function ChatContent({ expanded, onExpand }: { expanded: boolean; onExpand: () =
         </View>
       </View>
     </View>
+  );
+}
+
+// ---------- header icon button (consistent hit target) ----------
+function HeaderIconButton({
+  label,
+  onPress,
+  active,
+  children,
+}: {
+  label: string;
+  onPress: () => void;
+  active?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityLabel={label}
+      accessibilityRole="button"
+      accessibilityState={{ selected: active }}
+      className="active:opacity-70"
+      style={{
+        width: 28,
+        height: 28,
+        borderRadius: 6,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: active ? '#EFF6FF' : 'transparent',
+      }}
+    >
+      {children}
+    </Pressable>
   );
 }
 
@@ -256,7 +413,19 @@ function MessageToolbar() {
 }
 
 // ---------- NBA card ----------
-function NBACard({ action, sent, onSend }: { action: ActionCard; sent: boolean; onSend: () => void }) {
+// `expanded` = full-screen grid layout. In that mode the card stretches to the
+// 50%-width grid cell and body text gets an extra line so nothing truncates.
+function NBACard({
+  action,
+  sent,
+  onSend,
+  expanded,
+}: {
+  action: ActionCard;
+  sent: boolean;
+  onSend: () => void;
+  expanded?: boolean;
+}) {
   const Icn = iconForActionKind(action.kind);
   const accent: Record<string, string> = {
     slack: '#4A154B', email: '#1E40AF', im: '#16A34A', pin: '#D97706',
@@ -268,9 +437,9 @@ function NBACard({ action, sent, onSend }: { action: ActionCard; sent: boolean; 
     : 'Send';
   return (
     <View
-      className="mr-2 p-3 rounded-xl"
+      className={`${expanded ? '' : 'mr-2'} p-3 rounded-xl`}
       style={{
-        width: 240,
+        width: expanded ? '100%' : 240,
         backgroundColor: '#EFF6FF',
         borderWidth: 1,
         borderColor: '#DBEAFE',
@@ -290,7 +459,7 @@ function NBACard({ action, sent, onSend }: { action: ActionCard; sent: boolean; 
           {action.who}
         </Text>
       </View>
-      <Text numberOfLines={2} className="text-[11px] text-ink leading-snug mb-2">
+      <Text numberOfLines={expanded ? 3 : 2} className="text-[11px] text-ink leading-snug mb-2">
         {action.body}
       </Text>
       <View className="flex-row items-center justify-between">

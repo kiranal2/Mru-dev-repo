@@ -13,7 +13,7 @@ export function RailGroup({ label, items, active, onSelect, groupKey }: GroupPro
   return (
     <div className="mb-3.5">
       <div className="flex justify-between items-center px-1.5 pb-1.5">
-        <span className="text-[10px] font-semibold tracking-wider uppercase text-muted">{label}</span>
+        <span className="text-[10.5px] font-bold tracking-wider uppercase text-ink">{label}</span>
       </div>
       {items.map(it => {
         const isActive = it.k === active;

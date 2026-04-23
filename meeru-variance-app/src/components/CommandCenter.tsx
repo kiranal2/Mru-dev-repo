@@ -51,7 +51,7 @@ const SUGGESTION_LIBRARY: string[] = [
   'Why did margins compress vs last quarter?',
   'When will margins recover?',
   'Compare NRR trend to prior 4 quarters',
-  'Compare EMEA vs Americas ARR growth',
+  'Compare West vs Northeast weekly variance',
   'Show top 5 at-risk Enterprise accounts',
   'Show cash bridge from plan to actual',
   'What drove the variance in gross margin?',
@@ -85,7 +85,7 @@ const SUGGESTION_GROUPS: { label: string; icon: 'Sparkle' | 'Trend' | 'Target' |
     icon: 'Trend',
     items: [
       'Compare NRR trend to prior 4 quarters',
-      'Compare EMEA vs Americas ARR growth',
+      'Compare West vs Northeast weekly variance',
       'Break down variance by driver — volume vs price vs mix',
       'Rank drivers of NRR decline',
     ],
@@ -121,9 +121,9 @@ interface HistoryEntry {
   scope?: string; // workbench context label
 }
 const SEED_HISTORY: HistoryEntry[] = [
-  { q: 'Show NRR trend by cohort',                when: '12m ago',  scope: 'Performance · NA' },
-  { q: 'Why is EMEA margin -180 bps?',             when: '1h ago',   scope: 'Margin' },
-  { q: 'Top 5 at-risk Enterprise accounts',        when: 'Yesterday',scope: 'Performance · Global' },
+  { q: 'Show NRR trend by cohort',                 when: '12m ago',  scope: 'Performance · National' },
+  { q: 'Why is West margin -180 bps?',             when: '1h ago',   scope: 'Margin' },
+  { q: 'Top 5 at-risk Enterprise accounts',        when: 'Yesterday',scope: 'Performance · National' },
   { q: 'Variance bridge Q4 → Q1',                  when: 'Yesterday',scope: 'Flux' },
   { q: 'Cash runway at current burn',              when: '2d ago',   scope: 'Treasury' },
   { q: 'Model 5% price increase on retention',     when: '3d ago',   scope: 'Performance' },
@@ -188,6 +188,27 @@ const DEFAULT_NBAS: NbaTile[] = [
     subtitle: 'Summarize Q1 miss · ready for review',
     priority: 'LOW',
   },
+  {
+    idKey: 'default-pin',
+    icon: Icon.Pin,
+    title: 'Pin quarterly variance view',
+    subtitle: 'Workspace · Q1 variance watch',
+    priority: 'MED',
+  },
+  {
+    idKey: 'default-slack',
+    icon: Icon.Slack,
+    title: 'Slack finance leadership',
+    subtitle: '#finance-leadership · share snapshot',
+    priority: 'MED',
+  },
+  {
+    idKey: 'default-remind',
+    icon: Icon.Remind,
+    title: 'Set reminder for Thursday review',
+    subtitle: 'Calendar · pre-earnings check',
+    priority: 'LOW',
+  },
 ];
 
 const PRIORITY_PILL: Record<NbaTile['priority'], string> = {
@@ -218,14 +239,14 @@ function tileFromAction(a: ActionCard, idx: number): NbaTile {
 
 function UtilityButton({
   label,
-  shortLabel,
   icon,
   onClick,
   active,
   badge,
 }: {
   label: string;
-  shortLabel: string;
+  /** Retained in the API for callers, but the button is icon-only now. */
+  shortLabel?: string;
   icon: ReactNode;
   onClick?: () => void;
   active?: boolean;
@@ -238,19 +259,18 @@ function UtilityButton({
       title={label}
       aria-label={label}
       aria-pressed={active}
-      className={`relative inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full border text-[11px] font-medium transition-all ${
+      className={`relative inline-flex items-center justify-center w-7 h-7 rounded-full border transition-all ${
         active
           ? 'bg-brand text-white border-brand shadow-e1'
           : 'bg-surface-alt text-muted border-rule hover:bg-brand-tint hover:text-brand hover:border-brand'
       }`}
     >
       <span className="shrink-0">{icon}</span>
-      <span className="hidden sm:inline">{shortLabel}</span>
       {badge !== undefined && badge > 0 && (
         <span
-          className={`inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-bold leading-none ${
+          className={`absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[14px] h-[14px] px-1 rounded-full text-[9px] font-bold leading-none ${
             active
-              ? 'bg-white/20 text-white'
+              ? 'bg-white text-brand border border-brand'
               : 'bg-brand text-white'
           }`}
         >
@@ -286,6 +306,37 @@ function HeaderIconButton({
       }`}
     >
       {icon}
+    </button>
+  );
+}
+
+/** Labeled header button — icon + text pill. Used in the redesigned
+ *  Command Center sub-row to match Shawn's reference (Pin / Favorite / Expand). */
+function HeaderLabeledButton({
+  label,
+  icon,
+  onClick,
+  active,
+}: {
+  label: string;
+  icon: ReactNode;
+  onClick?: () => void;
+  active?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={label}
+      aria-pressed={active}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[11px] font-medium transition-colors ${
+        active
+          ? 'border-brand bg-brand-tint text-brand'
+          : 'border-rule bg-surface text-muted hover:text-ink hover:border-brand hover:bg-brand-tint'
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
     </button>
   );
 }
@@ -1278,7 +1329,9 @@ export function CommandCenter({
   // ---------- NBA row (dynamic) ----------
   const nbaTiles: NbaTile[] = useMemo(() => {
     if (contextual.length === 0) return DEFAULT_NBAS;
-    return contextual.slice(0, 3).map(tileFromAction);
+    // No slice — show every action the response returned so the user can
+    // scroll through all relevant next steps.
+    return contextual.map(tileFromAction);
   }, [contextual]);
 
   // Clicking an NBA tile opens its action plan inline below the grid.
@@ -1323,10 +1376,13 @@ export function CommandCenter({
   // NBA row is gated on the user having actually prompted at least once
   // (msgs.length > 0).
   const [minimized, setMinimized] = useState(false);
-  // Default pinned = true so the Command Center is always reachable at the
-  // bottom of the viewport. Users can unpin via the Pin icon if they need
-  // the canvas uncovered.
-  const [pinned, setPinned] = useState(true);
+  // `hidden` collapses the whole card to a small floating "Show" button.
+  // Distinct from `minimized` (which keeps the header visible). Lets users
+  // fully reclaim the canvas when they don't need the AI surface.
+  const [hidden, setHidden] = useState(false);
+  // Default pinned = false so the Pin button doesn't read as "active" on first
+  // load. Users who want the CC to follow them while scrolling can click Pin.
+  const [pinned, setPinned] = useState(false);
   // `favorited` marks the current session/thread as a favorite. Locally held
   // (the whole widget is a cross-page surface; a session-scoped bookmark is
   // the right granularity here). Shows a filled star when active.
@@ -1384,6 +1440,23 @@ export function CommandCenter({
     prevThinking.current = thinking;
   }, [thinking, hasAsked]);
 
+  // When hidden, render only a compact floating button at the bottom to restore.
+  if (hidden) {
+    return (
+      <div className={`mt-4 ${pinned ? 'sticky bottom-3 z-30' : ''}`}>
+        <button
+          onClick={() => setHidden(false)}
+          className="inline-flex items-center gap-2 rounded-lg border border-rule bg-surface shadow-e2 px-3.5 py-2 text-[12px] font-medium text-ink hover:border-brand hover:bg-brand-tint hover:text-brand transition-colors"
+        >
+          <Icon.Sparkle className="w-3.5 h-3.5 text-brand" />
+          <span>Show Command Center</span>
+          <span className="text-faint">·</span>
+          <span className="text-[10px] text-faint">adaptive next best actions</span>
+        </button>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Fullscreen backdrop — dim + blur the canvas behind the widget.
@@ -1399,8 +1472,8 @@ export function CommandCenter({
       ref={widgetRef}
       className={`min-w-0 scroll-mt-6 transition-[top,left,right,bottom,margin,max-width,padding] duration-300 ease-out ${
         fullscreen
-          ? 'fixed inset-3 sm:inset-6 md:inset-10 z-50 mt-0 w-auto max-w-none overflow-y-auto'
-          : `mt-6 w-full ${pinned ? 'sticky bottom-3 z-30' : ''}`
+          ? 'fixed inset-4 sm:inset-8 md:inset-12 z-50 mt-0 w-auto max-w-none overflow-y-auto overflow-x-hidden bg-surface border border-rule rounded-xl shadow-e3'
+          : `mt-6 -mx-5 -mb-5 w-auto ${pinned ? 'sticky bottom-0 z-30' : ''}`
       }`}
     >
       {/* ========================================================== */}
@@ -1412,84 +1485,65 @@ export function CommandCenter({
       {/*   - backdrop-blur so content behind is gently frosted when   */}
       {/*     pinned and the page scrolls underneath                   */}
       {/* ========================================================== */}
-      <div
-        className="relative bg-surface border border-rule rounded-2xl p-5 min-w-0 transition-all duration-300"
-        style={{
-          // Clean, crisp shadow stack — neutral tones only (no tinted aura
-          // that muddies the card edges). Follows the Linear / Vercel / Stripe
-          // pattern: a couple of soft neutral layers + one brand hairline ring
-          // so the "this is AI" signal comes from the ring alone, not a blue
-          // fog around the whole card.
-          //   1. fine hairline  → crisp separation from page
-          //   2. near shadow    → cast just below the card
-          //   3. far shadow     → longer, softer distance shadow
-          //   4. brand ring     → 1px brand-tinted outline (the AI signal)
-          boxShadow: [
-            '0 1px 2px rgba(15,23,42,0.04)',
-            '0 4px 12px -2px rgba(15,23,42,0.06)',
-            '0 18px 36px -12px rgba(15,23,42,0.16)',
-            '0 0 0 1px rgba(30,64,175,0.1)',
-          ].join(', '),
-        }}
-      >
-        {/* Header band — a subtle gradient wash only on the header row so the
-            title area reads as a cockpit strip rather than floating on plain
-            white. Much lighter than before so it doesn't wash out the card.
-            Pointer-events-none so it never blocks clicks. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[64px] rounded-t-2xl"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(30,64,175,0.05) 0%, rgba(30,64,175,0.01) 70%, transparent 100%)',
-          }}
-        />
-        {/* Inner top highlight — a thin gradient line at the very top edge,
-            like the machined rim on a premium device. Fades at the corners. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-6 top-0 h-px rounded-t-2xl"
-          style={{
-            background:
-              'linear-gradient(90deg, transparent 0%, rgba(30,64,175,0.5) 50%, transparent 100%)',
-          }}
-        />
-
-        {/* Header — branded title on the left, utility icons on the right.
-            `relative z-10` so it layers above the decorative orb gradient. */}
-        <div className="relative z-10 flex items-center justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <div
-              className="w-8 h-8 rounded-lg grid place-items-center shrink-0 text-white shadow-e1"
-              style={{
-                background:
-                  'linear-gradient(135deg, var(--primary) 0%, rgba(30,64,175,0.75) 100%)',
+      <div className={`relative bg-surface min-w-0 transition-all duration-300 ${fullscreen ? 'overflow-hidden' : 'border-t border-rule'}`}>
+        {/* Row 1 — Title (left) + tagline (right). Flat tinted band per ref. */}
+        <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-brand-tint/40">
+          <span className="text-[14px] font-semibold text-ink tracking-tight">
+            Command Center
+          </span>
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-[11px] text-faint truncate">
+              Every answer generates a next best action
+            </span>
+            {/* ✕ button — context-aware:
+                • In fullscreen mode → collapses back to the inline view
+                • Otherwise → hides the whole Command Center (restore via pill) */}
+            <button
+              onClick={() => {
+                if (fullscreen) {
+                  setFullscreen(false);
+                  push({ kind: 'info', title: 'Back to inline view' });
+                } else {
+                  setHidden(true);
+                  push({
+                    kind: 'info',
+                    title: 'Command Center hidden',
+                    sub: 'Click the floating pill to show it again',
+                  });
+                }
               }}
+              title={fullscreen ? 'Exit full screen' : 'Hide Command Center'}
+              aria-label={fullscreen ? 'Exit full screen' : 'Hide Command Center'}
+              className={`rounded grid place-items-center text-faint hover:text-ink hover:bg-surface shrink-0 ${
+                fullscreen
+                  ? 'inline-flex items-center gap-1 px-2 h-7 text-[11px] font-medium'
+                  : 'w-5 h-5'
+              }`}
             >
-              <Icon.Sparkle className="w-4 h-4" />
-            </div>
-            <div className="min-w-0 flex flex-col leading-tight">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[15px] font-semibold text-ink tracking-tight">
-                  Command Center
-                </span>
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-brand-tint text-brand text-[9px] font-bold uppercase tracking-wider">
-                  <span className="w-1 h-1 rounded-full bg-brand live-dot" />
-                  Live
-                </span>
-              </div>
-              <span className="text-[11px] text-muted">
-                {thinking
-                  ? 'Meeru is analyzing…'
-                  : hasAsked
-                  ? `${msgs.filter(m => m.role === 'user').length} question${msgs.filter(m => m.role === 'user').length === 1 ? '' : 's'} this session`
-                  : 'Ask anything about this view'}
-              </span>
-            </div>
+              <Icon.X className={fullscreen ? 'w-3.5 h-3.5' : 'w-3 h-3'} />
+              {fullscreen && <span>Close</span>}
+            </button>
           </div>
-          <div className="flex items-center gap-1 shrink-0">
-            <HeaderIconButton
-              label={minimized ? 'Expand' : 'Minimize'}
+        </div>
+
+        {/* Row 2 — New Chat (left) + Pin / Favorite / Expand (right) per ref */}
+        <div className="flex items-center justify-between gap-3 px-4 py-2">
+          <button
+            onClick={() => {
+              reset();
+              setInput('');
+              if (taRef.current) taRef.current.style.height = 'auto';
+              push({ kind: 'info', title: 'New chat started' });
+            }}
+            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-brand hover:underline"
+          >
+            <Icon.Pencil className="w-3.5 h-3.5" />
+            <span>New Chat</span>
+          </button>
+          <div className="flex items-center gap-1.5">
+            <HeaderLabeledButton
+              label={minimized ? 'Show' : 'Minimize'}
+              active={minimized}
               icon={
                 minimized
                   ? <Icon.ChevUp className="w-3.5 h-3.5" />
@@ -1497,18 +1551,8 @@ export function CommandCenter({
               }
               onClick={() => setMinimized(v => !v)}
             />
-            <HeaderIconButton
-              label="New Chat"
-              icon={<Icon.Pencil className="w-3.5 h-3.5" />}
-              onClick={() => {
-                reset();
-                setInput('');
-                if (taRef.current) taRef.current.style.height = 'auto';
-                push({ kind: 'info', title: 'New chat started' });
-              }}
-            />
-            <HeaderIconButton
-              label={pinned ? 'Unpin' : 'Pin to bottom'}
+            <HeaderLabeledButton
+              label="Pin"
               active={pinned}
               icon={<Icon.Pin className="w-3.5 h-3.5" />}
               onClick={() => {
@@ -1517,14 +1561,11 @@ export function CommandCenter({
                 push({
                   kind: 'ok',
                   title: next ? 'Pinned to bottom' : 'Unpinned',
-                  sub: next
-                    ? 'Command Center stays visible while you scroll'
-                    : undefined,
                 });
               }}
             />
-            <HeaderIconButton
-              label={favorited ? 'Remove from favorites' : 'Add to favorites'}
+            <HeaderLabeledButton
+              label="Favorite"
               active={favorited}
               icon={
                 <Icon.Star
@@ -1538,21 +1579,16 @@ export function CommandCenter({
                 push({
                   kind: 'ok',
                   title: next ? 'Added to favorites' : 'Removed from favorites',
-                  sub: next
-                    ? 'This session is bookmarked for quick access'
-                    : undefined,
                 });
               }}
             />
-            <HeaderIconButton
-              label={fullscreen ? 'Exit full screen' : 'Open full screen'}
+            <HeaderLabeledButton
+              label={fullscreen ? 'Collapse' : 'Expand'}
               active={fullscreen}
-              icon={<Icon.Open className="w-3.5 h-3.5" />}
+              icon={<Icon.Open className={`w-3.5 h-3.5 ${fullscreen ? 'rotate-180' : ''}`} />}
               onClick={() => {
                 const next = !fullscreen;
                 setFullscreen(next);
-                // Full screen implies visible — don't let a prior minimize
-                // hide the content the user is trying to expand.
                 if (next) setMinimized(false);
               }}
             />
@@ -1571,18 +1607,13 @@ export function CommandCenter({
               : 'grid-rows-[1fr] opacity-100'
           }`}
         >
-          <div className="overflow-hidden min-h-0">
+          <div className="overflow-hidden min-h-0 px-4 pt-3 pb-0">
             {/* Conversation transcript (renders only after first send) */}
             <Transcript thinking={thinking} />
 
             {/* Suggestion chips — defaults before reply, follow-ups after. */}
             {chipPrompts.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
-                {hasAsked && (
-                  <span className="self-center text-[10px] font-semibold uppercase tracking-wider text-faint pr-1">
-                    Follow-ups
-                  </span>
-                )}
+              <div className="flex flex-wrap gap-2">
                 {chipPrompts.map((p, i) => (
                   <SuggestionChip key={`${p}-${i}`} onClick={() => onChip(p)}>
                     {p}
@@ -1600,12 +1631,12 @@ export function CommandCenter({
             background, heavier border, larger focus halo, bigger textarea. */}
         <div
           ref={composerWrapRef}
-          className="relative z-10 bg-surface border-2 border-rule rounded-xl px-3.5 pt-3 pb-2 focus-within:border-brand focus-within:shadow-[0_0_0_4px_var(--primary-tint)] shadow-e1 transition-all"
+          className="relative z-10 mx-4 mt-2 mb-4 bg-surface border border-rule rounded-xl px-3.5 pt-3 pb-2 focus-within:border-brand focus-within:shadow-[0_0_0_3px_var(--primary-tint)] transition-all"
         >
           {/* Type-ahead suggestions — floats above the textarea as the user types.
               Uses Sparkle icon + subtle brand tint for the highlighted row. */}
           {showSuggest && (
-            <div className="absolute left-0 right-0 bottom-full mb-2 bg-surface border border-rule rounded-xl shadow-e2 overflow-hidden z-20 anim-fade-up">
+            <div className="absolute left-0 right-0 bottom-full mb-2 bg-surface border border-rule rounded-xl shadow-e2 overflow-hidden z-[60] anim-fade-up">
               <div className="px-3 py-1.5 text-[10px] font-semibold tracking-wider uppercase text-faint border-b border-rule bg-surface-soft">
                 Suggestions
               </div>
@@ -1640,7 +1671,7 @@ export function CommandCenter({
               as the type-ahead (the two are mutually exclusive since the
               user is either typing or browsing). */}
           {openPanel && !showSuggest && (
-            <div className="absolute left-0 right-0 bottom-full mb-2 bg-surface border border-rule rounded-xl shadow-e2 overflow-hidden z-20 anim-fade-up">
+            <div className="absolute left-0 right-0 bottom-full mb-2 bg-surface border border-rule rounded-xl shadow-e2 overflow-hidden z-[60] anim-fade-up">
               {openPanel === 'history' && (
                 <HistoryPanel
                   entries={history}
@@ -1679,7 +1710,7 @@ export function CommandCenter({
             placeholder={hasAsked ? 'Ask a follow-up…' : 'Ask Meeru anything — e.g. “Why did Enterprise churn spike this quarter?”'}
             className="w-full bg-transparent border-none outline-none text-[14px] text-ink resize-none leading-relaxed py-1 min-h-[48px] max-h-[160px] placeholder:text-faint"
           />
-          <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-rule/60">
+          <div className="flex items-center justify-between mt-1.5">
             <div className="flex items-center gap-1.5 flex-wrap">
               <UtilityButton
                 label="Chat history"
@@ -1705,30 +1736,20 @@ export function CommandCenter({
                 onClick={() => setOpenPanel(p => (p === 'suggestions' ? null : 'suggestions'))}
               />
             </div>
-            <div className="flex items-center gap-2">
-              {/* Keyboard hint — only when composer is empty so it doesn't
-                  compete for attention once the user is typing. */}
-              {!input.trim() && (
-                <span className="hidden md:inline text-[10px] text-faint">
-                  <kbd className="font-mono px-1 py-0.5 rounded bg-surface-soft border border-rule text-[9px]">⏎</kbd> to ask
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={onSubmit}
-                disabled={!input.trim() || thinking}
-                title="Send (Enter) · Shift+Enter for newline"
-                aria-label="Send"
-                className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-white text-[12px] font-semibold shadow-e2 hover:shadow-e3 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-e1 transition-all shrink-0"
-                style={{
-                  background:
-                    'linear-gradient(135deg, var(--primary) 0%, rgba(30,64,175,0.85) 100%)',
-                }}
-              >
-                <span className="hidden sm:inline">Ask</span>
-                <Icon.Send className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={onSubmit}
+              disabled={!input.trim() || thinking}
+              title="Send (Enter) · Shift+Enter for newline"
+              aria-label="Send"
+              className="inline-flex items-center justify-center w-9 h-9 rounded-full text-white shadow-e2 hover:shadow-e3 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-e1 transition-all shrink-0"
+              style={{
+                background:
+                  'linear-gradient(135deg, var(--primary) 0%, rgba(30,64,175,0.85) 100%)',
+              }}
+            >
+              <Icon.Send className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -1756,9 +1777,9 @@ export function CommandCenter({
           <div className="overflow-hidden min-h-0">
         <div
           ref={nbaRef}
-          className="mt-4 min-w-0 w-full anim-fade-up"
+          className="mt-4 px-4 pb-2 min-w-0 w-full anim-fade-up"
         >
-          <div className="flex items-center gap-2 mb-2 px-1">
+          <div className="flex items-center gap-2 mb-2">
             <div className="text-[11px] font-semibold tracking-wider uppercase text-ink inline-flex items-center gap-1.5">
               {thinking ? (
                 <>
@@ -1766,28 +1787,22 @@ export function CommandCenter({
                   Preparing Next Best Actions
                 </>
               ) : (
-                <>
-                  Next Best Action
-                  <span className="text-faint font-normal normal-case tracking-normal">· Ranked For You</span>
-                </>
+                <>Next Best Action</>
               )}
             </div>
-            {!thinking && contextual.length > 0 && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-brand anim-fade-up">
-                <Icon.Sparkle className="w-3 h-3" />
-                Ranked from your last question
-              </span>
-            )}
           </div>
-          {/* Stay at 2 columns until xl (1280px) — at lg the main column is
-              shared with the right-side CommentaryPanel which makes 3 cards
-              too tight and causes overflow. */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+          {/* Horizontal scroll row — fixed-width cards so users can scroll
+              through many NBAs without the layout collapsing to 1 column.
+              Each card stays at a readable ~260px, independent of how many
+              the response returned. Cards respect the section's horizontal
+              padding so they don't hug the card edges. */}
+          <div className="flex gap-3 overflow-x-auto pb-1 snap-x">
             {thinking ? (
               <>
-                <NbaSkeleton delayMs={0} />
-                <NbaSkeleton delayMs={80} />
-                <NbaSkeleton delayMs={160} />
+                <div className="shrink-0 w-[260px]"><NbaSkeleton delayMs={0} /></div>
+                <div className="shrink-0 w-[260px]"><NbaSkeleton delayMs={80} /></div>
+                <div className="shrink-0 w-[260px]"><NbaSkeleton delayMs={160} /></div>
+                <div className="shrink-0 w-[260px]"><NbaSkeleton delayMs={240} /></div>
               </>
             ) : (
               nbaTiles.map((tile, idx) => {
@@ -1797,7 +1812,7 @@ export function CommandCenter({
                 return (
                   <div
                     key={tile.idKey}
-                    className={`min-w-0 anim-fade-up ${isSent && !isCompleted ? 'opacity-60' : ''}`}
+                    className={`shrink-0 w-[260px] snap-start anim-fade-up ${isSent && !isCompleted ? 'opacity-60' : ''}`}
                     style={{ animationDelay: `${idx * 80}ms` }}
                   >
                     <NbaCard
