@@ -8,8 +8,8 @@ import type {
 // ==========================================================
 export const PERSONAS: Record<Role, Persona> = {
   CFO: {
-    key: 'CFO', name: 'Sarah Chen', init: 'SC', role: 'Chief Financial Officer',
-    email: 'sarah.chen@contoso.com',
+    key: 'CFO', name: 'Kate Morgan', init: 'KM', role: 'Chief Financial Officer',
+    email: 'kate.morgan@contoso.com',
     order: ['email', 'pin', 'share', 'slack', 'im', 'remind', 'approve', 'whatif', 'open', 'investigate'],
     department: 'Finance · Executive',
     reportsTo: 'Alex Morrison, CEO',
@@ -25,13 +25,19 @@ export const PERSONAS: Record<Role, Persona> = {
       'Board deck finalization — 4 pm',
     ],
     permissions: ['View all workbenches', 'Approve JE > $1M', 'Lock period', 'Publish reports'],
+    capabilities: [
+      'log_note', 'attach_evidence',
+      'prepare_je', 'submit_for_approval', 'review_work',
+      'post_je', 'post_je_over_1m', 'approve_recon', 'signoff_close_phase',
+      'approve_je_over_1m', 'lock_period', 'publish_reports', 'override_materiality',
+    ],
   },
   CONTROLLER: {
     key: 'CONTROLLER', name: 'Raj Patel', init: 'RP', role: 'Corporate Controller',
     email: 'raj.patel@contoso.com',
     order: ['email', 'pin', 'slack', 'share', 'im', 'remind', 'open', 'whatif', 'investigate', 'approve'],
     department: 'Accounting · Close & Consolidation',
-    reportsTo: 'Sarah Chen, CFO',
+    reportsTo: 'Kate Morgan, CFO',
     teamSize: 12,
     location: 'Austin · HQ2',
     timezone: 'Central · UTC−6',
@@ -43,10 +49,16 @@ export const PERSONAS: Record<Role, Persona> = {
       'Chase tax team on depreciation schedule',
       'Stand-up with close team — 4 pm',
     ],
-    permissions: ['Post JE', 'Approve recons', 'Sign-off close phases', 'Review worklist'],
+    permissions: ['Post JE (< $1M)', 'Approve recons', 'Sign-off close phases', 'Review worklist', 'Route to CFO'],
+    capabilities: [
+      'log_note', 'attach_evidence',
+      'prepare_je', 'submit_for_approval', 'review_work',
+      'post_je', 'approve_recon', 'signoff_close_phase',
+      // cannot post or approve JE > $1M; must route to CFO
+    ],
   },
-  PREPARER: {
-    key: 'PREPARER', name: 'Maya Gonzales', init: 'MG', role: 'Staff Accountant',
+  STAFF: {
+    key: 'STAFF', name: 'Maya Gonzales', init: 'MG', role: 'Staff Accountant',
     email: 'maya.gonzales@contoso.com',
     order: ['im', 'slack', 'remind', 'email', 'investigate', 'open', 'pin', 'share', 'whatif', 'approve'],
     department: 'Accounting · AR Team',
@@ -62,7 +74,12 @@ export const PERSONAS: Record<Role, Persona> = {
       'Post Voltair remittance JE',
       'Submit evidence for Bank reconciliation',
     ],
-    permissions: ['Prepare JE (review required)', 'Upload evidence', 'Comment on recs'],
+    permissions: ['Prepare JE (review required)', 'Upload evidence', 'Comment on recs', 'Submit for approval'],
+    capabilities: [
+      'log_note', 'attach_evidence',
+      'prepare_je', 'submit_for_approval',
+      // cannot post, approve, signoff, or lock
+    ],
   },
 };
 
@@ -96,14 +113,13 @@ export const TOP_TAB_LABELS: Record<string, string> = {
 // ==========================================================
 // LEFT RAIL CONTENT
 // ==========================================================
-// FluxPlus — 6 US regions (National + 5 macro regions). Matches meeru-variance-tablet.
+// Uberflux — 5 operating regions (Global rolls up NA/LATAM/EMEA/APAC).
 export const PERF_REGIONS: LeftItem[] = [
-  { k: 'national',  n: 'National',  d: '-$3.2M', tone: 'neg' },
-  { k: 'northeast', n: 'Northeast', d: '+$0.7M', tone: 'pos' },
-  { k: 'southeast', n: 'Southeast', d: '-$0.4M', tone: 'warn' },
-  { k: 'midwest',   n: 'Midwest',   d: '-$0.5M', tone: 'warn' },
-  { k: 'west',      n: 'West',      d: '-$1.8M', tone: 'neg' },
-  { k: 'southwest', n: 'Southwest', d: '-$0.8M', tone: 'neg' },
+  { k: 'global',       n: 'Global',        d: '-$4.2M', tone: 'neg'  },
+  { k: 'northamerica', n: 'North America', d: '-$1.1M', tone: 'warn' },
+  { k: 'latam',        n: 'LATAM',         d: '-$2.4M', tone: 'neg'  },
+  { k: 'emea',         n: 'EMEA',          d: '+$0.3M', tone: 'pos'  },
+  { k: 'apac',         n: 'APAC',          d: '-$0.9M', tone: 'warn' },
 ];
 export const PERF_COMPARES: LeftItem[] = [
   { k: 'plan',     n: 'vs Plan' },
@@ -112,14 +128,14 @@ export const PERF_COMPARES: LeftItem[] = [
   { k: 'forecast', n: 'vs Forecast' },
   { k: 'runrate',  n: 'vs Run Rate' },
 ];
-// FluxPlus drivers. Named to match the per-region commentary drivers we surface.
+// Uberflux — 4 category segments (Grocery, Convenience, Alcohol, Pharmacy).
+// The variable name stays `PERF_DRIVERS` for compatibility — conceptually these
+// are now "segments" per the Uberflux layout; surfaced with label "Segments".
 export const PERF_DRIVERS: LeftItem[] = [
-  { k: 'caretail',  n: 'California Retail',        d: '-$1.2M', tone: 'neg'  },
-  { k: 'txenergy',  n: 'Texas Energy',             d: '-$0.8M', tone: 'neg'  },
-  { k: 'nyfinance', n: 'NY Financial Services',    d: '+$0.7M', tone: 'pos'  },
-  { k: 'fltourism', n: 'Florida Tourism',          d: '-$0.4M', tone: 'warn' },
-  { k: 'ilmfg',     n: 'Illinois Manufacturing',   d: '-$0.5M', tone: 'warn' },
-  { k: 'watech',    n: 'Washington Tech',          d: '-$0.6M', tone: 'warn' },
+  { k: 'grocery',     n: 'Grocery',     d: '-$2.1M', tone: 'neg'  },
+  { k: 'convenience', n: 'Convenience', d: '-$0.9M', tone: 'warn' },
+  { k: 'alcohol',     n: 'Alcohol',     d: '+$0.4M', tone: 'pos'  },
+  { k: 'pharmacy',    n: 'Pharmacy',    d: 'flat' },
 ];
 
 export const MARGIN_PRODUCTS: LeftItem[] = [
@@ -289,6 +305,346 @@ export const SUGGESTIONS = [
 ];
 
 export const CHAT_RESPONSES: ChatResponseDef[] = [
+  // ==================================================================
+  // Delivery-industry (Uberflux) responses — matched first so prompt
+  // chips like "Why did LATAM underperform?" get a substantive answer
+  // instead of the generic fallback.
+  // ==================================================================
+  {
+    match: /latam|mexico grocery|brazil convenience/i,
+    text: '<strong>LATAM is −$2.4M vs Plan — Mexico Grocery drives 87% of it.</strong><br/><br/>Mexico Grocery is −$2.1M this week. Courier utilization sits at 68% — 5 points above the 63% red line. Trip dampening has been active since Week 8 and the miss is compounding: W8 −$0.6M → W9 −$1.4M → W10 −$2.1M.<br/><br/>Brazil Convenience adds −$0.6M with courier util at 61% (approaching the 63% threshold). Colombia Grocery is the only positive (+$0.3M) — Bogotá expansion tracking 2× launch model.<br/><br/><strong>W11 projection:</strong> −$3.1M to −$5.2M if Mexico supply ceiling isn\'t raised by Tuesday.',
+    actions: [
+      { kind: 'approve', label: 'Raise Mexico supply ceiling (+11%)', who: 'Ops · MX Lead',      body: 'Approve lift from 1,240 → 1,380 couriers before Tuesday.', requires: 'approve_je_over_1m' },
+      { kind: 'slack',   label: 'Slack LATAM ops lead',               who: 'Rafael · LATAM Ops', body: 'Mexico Grocery at 68% courier util 3 weeks running — need supply ceiling raised to 1,380 by Tue.' },
+      { kind: 'email',   label: 'Route approval to CFO',              who: 'Kate · CFO',         body: '$2.1M variance exceeds $1M materiality — CFO sign-off required on the supply-ceiling decision.', requires: 'review_work' },
+      { kind: 'whatif',  label: 'What-If: 15% Brazil courier incentive', who: 'Forecast · W11',  body: 'Pre-authorize $40K incentive to prevent threshold breach in Brazil · 20× ROI vs letting BR hit dampening.' },
+      { kind: 'pin',     label: 'Pin LATAM watch',                    who: 'Workspace · W10',    body: 'Mexico + Brazil supply constraint tracker.' },
+      { kind: 'share',   label: 'Share with exec',                    who: 'Exec leadership',    body: 'LATAM variance snapshot + recommended actions.' },
+    ],
+    followUps: [
+      'How bad does the Mexico forecast look for W11?',
+      'Compare W10 Mexico to W34 2024 (prior supply event)',
+      'What is the ROI on the Brazil incentive?',
+    ],
+  },
+  {
+    match: /watch.*tuesday|before tuesday|tuesday|most important/i,
+    text: '<strong>One thing to watch before Tuesday: Mexico Grocery supply threshold.</strong><br/><br/>Courier utilization has been above the 63% red line for 3 consecutive weeks (currently 68%). If the supply ceiling isn\'t raised from 1,240 → 1,380 couriers by Tuesday, the ML model projects an <strong>additional −3% to −5% trip loss in W11</strong> on top of the existing −$2.1M hole.<br/><br/>Second priority: <strong>Brazil Convenience</strong> at 61% util — base-case demand forecast crosses the 63% threshold by W11 Day 3 unless we pre-authorize a 15% courier incentive (~$40K spend, protects ~$0.8M revenue).<br/><br/>Everything else is auto-recovering (AU weather, US Super Bowl exit rate) — monitor, no intervention.',
+    actions: [
+      { kind: 'approve', label: 'Approve Mexico ceiling lift',         who: 'Ops · MX',           body: 'Raise courier ceiling to 1,380 (+11%) effective Tue.', requires: 'approve_je_over_1m' },
+      { kind: 'approve', label: 'Pre-authorize Brazil incentive',      who: 'Ops · BR',           body: '15% courier incentive for W11 · $40K budget.',          requires: 'post_je' },
+      { kind: 'remind',  label: 'Remind: Tuesday 8am pre-check',       who: 'Calendar · Mon pm',  body: 'Check Mexico courier onboarding status before Tuesday open.' },
+      { kind: 'slack',   label: 'Slack CEO briefing',                  who: 'Josh · CEO',         body: 'Two supply calls to make before Tuesday — MX ceiling (critical) + BR incentive (preventive).' },
+      { kind: 'pin',     label: 'Pin "Pre-Tuesday" checklist',         who: 'Workspace',          body: 'MX ceiling + BR incentive + W11 monitoring.' },
+    ],
+    followUps: [
+      'What is the risk if we do nothing?',
+      'How much does the Brazil incentive cost?',
+      'Who owns the Mexico ceiling decision?',
+    ],
+  },
+  {
+    match: /regions.*risk|most at risk|next week|w11|risk next/i,
+    text: '<strong>W11 risk ranking — 5 regions:</strong><br/><br/>1. <strong class="text-negative">LATAM</strong> — Mexico supply constraint accelerating. W11 projected <strong>−$3.1M to −$5.2M</strong> if Mexico ceiling not raised. Brazil Convenience also at risk of threshold breach mid-week.<br/><br/>2. <strong class="text-warning">APAC</strong> — AU weather event auto-recovering; +15% demand rebound modeled over 2 weeks but timing uncertain. Low intervention cost.<br/><br/>3. <strong class="text-warning">NA</strong> — US Convenience expected to normalize fully post–Super Bowl (87% model confidence). Low risk, but NYC radius-reduction review scheduled for W11.<br/><br/>4. <strong class="text-positive">EMEA</strong> — Holiday demand normalizing as school breaks end. Projection +$0.1M (down from +$0.3M) — still positive.<br/><br/>5. <strong class="text-positive">Global</strong> — If LATAM interventions land, W11 projects −$2.8M (improvement from W10). If not, closer to −$6M.',
+    actions: [
+      { kind: 'email',   label: 'Escalate LATAM to CEO',            who: 'Josh · CEO',             body: 'W11 LATAM risk could hit −$5.2M without Mexico ceiling lift + Brazil incentive.',      requires: 'review_work' },
+      { kind: 'approve', label: 'Approve combined LATAM package',   who: 'Ops · LATAM',            body: 'Mexico ceiling +11% + Brazil 15% incentive. Combined cost ~$40K · protects ~$2.8M.',  requires: 'approve_je_over_1m' },
+      { kind: 'whatif',  label: 'Model "do nothing" scenario',      who: 'Forecast · W11',         body: 'Project full W11 impact if no supply actions taken.' },
+      { kind: 'remind',  label: 'Set W11 risk-review ping',         who: 'Calendar · Friday',      body: 'Re-review risk ranking Fri pm before W11 opens.' },
+      { kind: 'pin',     label: 'Pin risk ranking',                 who: 'Workspace · W11 prep',   body: '5-region W11 risk snapshot.' },
+      { kind: 'share',   label: 'Share with exec leadership',       who: 'Kate, Josh, Priya',      body: 'W11 risk ranking + recommended actions.' },
+    ],
+    followUps: [
+      'What is the cost to act on all 5 regions?',
+      'Which region has the highest ROI on action?',
+      'Compare W11 risk to W10 realized miss',
+    ],
+  },
+  {
+    match: /us convenience|exit rate|super bowl/i,
+    text: '<strong>US Convenience −$0.9M vs Plan — Super Bowl week effect, explainable.</strong><br/><br/>Exit rate spike at 1.8 std devs above seasonal baseline. NYC radius reduction active since W9. CPP (cost per purchase) seeing 9% trip loss as customers self-select for shorter routes.<br/><br/><strong>Historical comparison:</strong> exact pattern matches W10 2024 and W10 2023 — both showed full recovery within 7 days. Model confidence: 87%.<br/><br/><strong>Not structural.</strong> No intervention needed. The NYC radius reduction review is already scheduled for W11.',
+    actions: [
+      { kind: 'open',   label: 'Open US Convenience drilldown',   who: 'This workbench',         body: 'Deep-dive metrics + store-level detail.' },
+      { kind: 'whatif', label: 'Model W11 recovery curve',        who: 'Forecast · W11',         body: 'Based on 2024/2023 precedent — +6% rebound expected.' },
+      { kind: 'remind', label: 'Remind: Review NYC radius W11',   who: 'Calendar',               body: 'Confirm radius-reduction policy review completes on schedule.' },
+      { kind: 'pin',    label: 'Pin US W10 context',              who: 'Workspace',              body: 'Super Bowl exit-rate historical pattern.' },
+      { kind: 'share',  label: 'Share with US ops',               who: 'NA Ops',                 body: 'Confirming no action required; W11 auto-recovery expected.' },
+    ],
+    followUps: [
+      'When did NYC radius reduction start?',
+      'Historical recovery curve for similar events',
+      'Will Canada Grocery recover the same way?',
+    ],
+  },
+  {
+    match: /eup grocery|school holiday|europe holiday|holiday.*demand/i,
+    text: '<strong>EUP Grocery +$1.0M vs Plan — school holiday effect confirmed.</strong><br/><br/>French half-term + UK mid-term align in W10, delivering <strong>+1.8M incremental trips</strong> vs model baseline. France +18%, UK +14%, Benelux +11% vs weekly baseline.<br/><br/>Courier supply healthy at 51% utilization — no strain. Margin intact. No co-funding deployed.<br/><br/><strong>W11 outlook:</strong> Holiday momentum ending — expect pullback to +$0.1M vs Plan (still positive). No structural risks.<br/><br/><strong>Lever for next year:</strong> W25 (late June) is the largest European school holiday period. Last year it drove +$2.8M above plan. Proactive courier supply investment in May could capture +$0.5M–$0.8M more.',
+    actions: [
+      { kind: 'pin',     label: 'Flag W25 for planning',            who: 'Workspace · H2 planning', body: 'Largest EU school-holiday window · $2.8M upside precedent.' },
+      { kind: 'whatif',  label: 'Model W25 supply pre-investment',  who: 'Forecast · May-June',    body: 'Pre-invest courier supply for summer holiday peak.' },
+      { kind: 'share',   label: 'Share with EMEA leadership',       who: 'EMEA GM',                 body: 'Holiday uplift confirmed; planning ahead for W25.' },
+      { kind: 'slack',   label: 'Slack EMEA planner',               who: 'Sophie · EMEA Planning',  body: 'W25 opportunity — start courier pre-seed in May.' },
+      { kind: 'email',   label: 'Brief on EMEA strength',           who: 'Kate · CFO',              body: 'Only positive region this week; no action needed; flagging W25 opportunity.' },
+    ],
+    followUps: [
+      'What drove the +$2.8M last year in W25?',
+      'Break down by country (FR/UK/Benelux)',
+      'When do the school holidays end?',
+    ],
+  },
+  {
+    match: /au grocery|australia|weather|rainfall/i,
+    text: '<strong>AU Grocery −$0.7M vs Plan — weather-driven, auto-recovering.</strong><br/><br/>Eastern seaboard rainfall event (100-year intensity in Sydney) suppressed trip demand across Grocery and Convenience. Sydney −21%, Melbourne −18%, Brisbane −15% vs weekly baseline.<br/><br/>Courier supply unaffected (utilization 43% — plenty of headroom). No structural issues.<br/><br/><strong>Historical analysis:</strong> 14 comparable AU weather events show average <strong>+15% demand rebound over the following 2 weeks</strong>. 81% model accuracy.<br/><br/><strong>Recommendation: no action.</strong> Auto-recovery model is incorporated into W11–W12 projections. Promotional spend during a natural rebound typically shows diminishing returns.',
+    actions: [
+      { kind: 'open',   label: 'Open AU drilldown',              who: 'APAC · AU',           body: 'Store-level demand patterns + weather overlay.' },
+      { kind: 'whatif', label: 'Model rebound scenario',         who: 'Forecast · W11-W12',  body: '+15% demand uplift · 2-week window.' },
+      { kind: 'remind', label: 'Remind: verify W12 recovery',    who: 'Calendar · W12',      body: 'Check rebound materialized as modeled.' },
+      { kind: 'share',  label: 'Share with APAC ops',            who: 'APAC GM',             body: 'Weather event classified as auto-recovering; no intervention required.' },
+      { kind: 'pin',    label: 'Pin for W12 verification',       who: 'Workspace',           body: 'AU weather rebound tracker.' },
+    ],
+    followUps: [
+      'Show the 14 comparable weather events',
+      'What is the expected Sydney recovery curve?',
+      'Any supply risk if rebound overshoots?',
+    ],
+  },
+  {
+    match: /exceptions|significant|flagged|critical/i,
+    text: '<strong>6 W10 exceptions — 3 critical, 2 warning, 2 positive:</strong><br/><br/><strong class="text-negative">Critical:</strong><br/>1. <strong>Mexico Grocery</strong> (−$2.1M) — supply ceiling breach, 3rd consecutive week<br/>2. <strong>AU Grocery</strong> (−$0.7M) — weather demand suppression, auto-recovering<br/>3. <strong>US Convenience</strong> (−$0.9M) — exit rate spike, Super Bowl effect<br/><br/><strong class="text-warning">Warning:</strong><br/>4. <strong>Brazil Convenience</strong> (−$0.6M) — early warning, util 61% approaching 63% threshold<br/>5. <strong>DACH Pharmacy</strong> (−$0.2M) — regulatory delay, W12 resolution expected<br/><br/><strong class="text-positive">Positive:</strong><br/>6. <strong>EUP Grocery</strong> (+$0.4M) — school holiday outperformance<br/>7. <strong>Colombia Grocery</strong> (+$0.3M) — Bogotá expansion 2× launch model<br/><br/><strong>Action required:</strong> Mexico (supply ceiling) + Brazil (pre-authorize incentive). The rest are explainable/recoverable.',
+    actions: [
+      { kind: 'open',    label: 'Open Exceptions tab',             who: 'This workbench',        body: 'Full severity-ranked exception list.' },
+      { kind: 'approve', label: 'Approve Mexico + Brazil package', who: 'LATAM Ops',             body: 'Combined supply actions for 2 critical/warning exceptions.', requires: 'approve_je_over_1m' },
+      { kind: 'pin',     label: 'Pin exception snapshot',          who: 'Workspace · W10',       body: 'Current-week flagged items + owners.' },
+      { kind: 'share',   label: 'Share exception list',            who: 'Exec team',             body: 'W10 exception list with ownership + status.' },
+      { kind: 'remind',  label: 'Remind: W11 exception review',    who: 'Calendar · Monday',     body: 'Re-rank W11 exceptions Mon pm.' },
+    ],
+    followUps: [
+      'Rank exceptions by revenue impact',
+      'Show the audit trail for each critical exception',
+      'Compare W10 exception count to W9',
+    ],
+  },
+
+  // ==================================================================
+  // CFO persona-tagged responses — board prep, approvals, exposure,
+  // period-lock decisions. Only match when persona.key === 'CFO'.
+  // ==================================================================
+  {
+    persona: 'CFO',
+    match: /my approval|needs (?:my |cfo )?approval|approval queue|needs sign.?off|awaiting sign.?off/i,
+    text: '<strong>Kate — 3 items awaiting your approval:</strong><br/><br/>1. <strong class="text-negative">Mexico supply ceiling lift</strong> · $2.1M variance / $1M materiality · routed by Raj Patel · <span class="text-muted">aging 4 hrs</span><br/>2. <strong class="text-warning">Q1 period close — Mexico Grocery segment lock</strong> · requires CFO sign-off post supply resolution · <span class="text-muted">aging 1 day</span><br/>3. <strong class="text-warning">Brazil pre-authorization — 15% courier incentive, $40K</strong> · Raj recommends approval; ROI 20× · <span class="text-muted">aging 2 hrs</span><br/><br/><strong>Total exposure if all unapproved through W11:</strong> ~$6M downside risk across LATAM.',
+    actions: [
+      { kind: 'approve', label: 'Approve Mexico supply ceiling',     who: 'Kate · CFO sign-off',   body: 'Lift from 1,240 → 1,380 couriers (+11%). Unblocks W11 recovery.',           requires: 'approve_je_over_1m' },
+      { kind: 'approve', label: 'Approve & Lock Q1 Mexico segment',  who: 'Kate · Period lock',    body: 'Lock Mexico Grocery segment post supply fix. Period-end control.',          requires: 'lock_period' },
+      { kind: 'approve', label: 'Approve Brazil $40K incentive',     who: 'Kate · Pre-auth',       body: '15% courier incentive for W11 · protects ~$0.8M revenue.',                  requires: 'approve_je_over_1m' },
+      { kind: 'email',   label: 'Reply to Raj with decision',        who: 'Raj · Controller',      body: 'Acknowledged — approving Mexico lift; will review period-lock after supply resolves.' },
+      { kind: 'share',   label: 'Share decisions with board',        who: 'Board distribution',    body: 'CFO-approved actions for W10 variance package.' },
+    ],
+    followUps: [
+      'What is the risk if I defer Mexico approval by 24 hrs?',
+      'Show the full approval audit trail',
+      'Draft the board update summarizing my decisions',
+    ],
+  },
+  {
+    persona: 'CFO',
+    match: /board|board summary|board prep|board deck|board.?ready/i,
+    text: '<strong>Draft W10 board update — CFO voice:</strong><br/><br/>Global variance came in at −$4.2M vs Plan for the week, driven primarily by LATAM supply constraints in Mexico Grocery (−$2.1M, 3rd consecutive week). US Convenience Super Bowl timing (−$0.9M) and AU weather (−$0.7M) are explainable and auto-recovering. EMEA is the only positive region at +$0.3M on confirmed school-holiday uplift.<br/><br/><strong>Q1 cumulative:</strong> −$12.4M vs Plan (primarily February/March · supply-constrained). W11 projects −$2.8M if Mexico interventions land, closer to −$6M if not.<br/><br/><strong>Actions taken this week:</strong> Approved Mexico courier ceiling lift, pre-authorized Brazil incentive, scheduled NYC radius-reduction policy review for W11.',
+    actions: [
+      { kind: 'pin',     label: 'Pin to Q1 Board Prep folder',     who: 'Workspace · Board',       body: 'W10 variance + actions summary.' },
+      { kind: 'email',   label: 'Send to board circulation list',  who: 'Board of Directors',      body: 'W10 summary + Q1 cumulative context.' },
+      { kind: 'share',   label: 'Share board snapshot link',       who: 'meeru.ai/s/w10-board',    body: 'Shareable read-only snapshot.' },
+      { kind: 'whatif',  label: 'Model Q2 recovery scenario',      who: 'Forecast · Q2',           body: 'What if all LATAM interventions land successfully?' },
+      { kind: 'approve', label: 'Publish as board pre-read',       who: 'Board distribution',     body: 'Finalize + publish for Friday board meeting.', requires: 'publish_reports' },
+    ],
+    followUps: [
+      'Add Q1 cumulative variance breakdown',
+      'Include the Mexico supply case study',
+      'Shorten to 1 paragraph for board email',
+    ],
+  },
+  {
+    persona: 'CFO',
+    match: /exposure|materiality|cumulative|quarter.?to.?date|qtd/i,
+    text: '<strong>Q1 cumulative materiality-exceeding variances:</strong><br/><br/>• <strong>Mexico Grocery</strong> — $2.1M (W10) + $1.4M (W9) + $0.6M (W8) = <strong>$4.1M cumulative</strong> · above $1M threshold, triggers CFO approval<br/>• <strong>AU Grocery</strong> — $0.7M (W10 weather) · below threshold, auto-recovering<br/>• <strong>US Convenience</strong> — $0.9M (W10 seasonal) · below threshold<br/><br/><strong>Aggregate Q1 exposure above materiality:</strong> $4.1M (Mexico only)<br/><strong>Q1 total variance vs Plan:</strong> −$12.4M<br/>The Mexico compound risk is the single item demanding CFO attention. Everything else is within ordinary-course tolerance.',
+    actions: [
+      { kind: 'open',    label: 'Open Exceptions tab',              who: 'This workbench',         body: 'Severity-ranked exception list.' },
+      { kind: 'approve', label: 'Approve materiality override · Q1', who: 'Policy · materiality',  body: 'Temporarily lift threshold for Mexico pending supply resolution.', requires: 'override_materiality' },
+      { kind: 'share',   label: 'Share Q1 exposure memo',            who: 'Audit + Controller',    body: 'Cumulative materiality report for sign-off.' },
+      { kind: 'pin',     label: 'Pin exposure tracker',               who: 'Workspace · QTD',       body: 'Rolling Q1 materiality-exceeding variances.' },
+    ],
+    followUps: [
+      'Compare Q1 to Q4 materiality exceedances',
+      'Show the decision trail on the Mexico $4.1M',
+      'What is the audit treatment for compound variance?',
+    ],
+  },
+  {
+    persona: 'CFO',
+    match: /lock period|period lock|period.?end|close.*lock/i,
+    text: '<strong>Segments ready for period lock:</strong><br/><br/>✓ <strong>EMEA Grocery</strong> · +$0.4M, fully reconciled, no pending JEs<br/>✓ <strong>US Alcohol</strong> · +$0.3M, clean close<br/>✓ <strong>APAC Japan Convenience</strong> · +$0.1M, no exceptions<br/><br/>⏳ <strong>Awaiting action:</strong><br/>• Mexico Grocery — $2.1M variance post-approval; supply resolution required first<br/>• AU Grocery — weather recovery still mid-flight; recommend deferring lock 7 days<br/>• Brazil Convenience — early-warning flag; wait for W11 actuals<br/><br/><strong>Recommendation:</strong> Lock the 3 clean segments now; defer the 3 pending until W11 close.',
+    actions: [
+      { kind: 'approve', label: 'Lock EMEA + US Alcohol + Japan',  who: 'Kate · Period lock',    body: 'Lock 3 clean segments now. 3 others deferred to W11.',  requires: 'lock_period' },
+      { kind: 'remind',  label: 'Remind: revisit pending W11',     who: 'Calendar · W11 Monday', body: 'Re-review the 3 deferred segments after W11 actuals land.' },
+      { kind: 'email',   label: 'Notify Raj of lock decisions',    who: 'Raj · Controller',      body: 'Locking 3 segments · 3 deferred · audit trail recorded.' },
+      { kind: 'pin',     label: 'Pin lock decision log',           who: 'Workspace · Q1 close',  body: 'Segment-by-segment lock decisions.' },
+    ],
+    followUps: [
+      'What are the downstream effects of locking Mexico prematurely?',
+      'Audit trail for previous period locks',
+      'How long can AU recovery be deferred?',
+    ],
+  },
+
+  // ==================================================================
+  // Controller persona-tagged responses — review queue, close ops,
+  // posting, recon status, audit trail.
+  // ==================================================================
+  {
+    persona: 'CONTROLLER',
+    match: /review queue|my review|pending.*review|awaiting.*review|staff submission/i,
+    text: '<strong>Raj — your review queue (4 items):</strong><br/><br/>1. <strong class="text-negative">Mexico Grocery variance — $2.1M</strong> · prepared by Maya Gonzales · evidence attached (courier-util chart, Cencosud email) · <span class="text-muted">submitted 2 hrs ago</span><br/>2. <strong class="text-warning">AR aging reconciliation — Mexico market</strong> · prepared by Maya · <span class="text-muted">submitted yesterday</span><br/>3. <strong class="text-warning">Voltair remittance JE draft</strong> · prepared by Maya · 3rd-party confirmation pending<br/>4. <strong class="text-muted">Bank reconciliation evidence — Chicago operating</strong> · prepared by Maya · ready for final sign-off<br/><br/><strong>Highest priority:</strong> Mexico Grocery — exceeds $1M materiality, needs your review then CFO routing.',
+    actions: [
+      { kind: 'approve',     label: 'Post Mexico provisional JE',         who: 'GL · Mexico',          body: 'Post to draft. Routes to CFO for final approval on > $1M amount.', requires: 'post_je' },
+      { kind: 'email',       label: 'Route Mexico to CFO',                who: 'Kate · CFO',           body: '$2.1M variance exceeds threshold — request CFO sign-off.',         requires: 'review_work' },
+      { kind: 'approve',     label: 'Approve AR reconciliation',          who: 'Mexico market',        body: 'Sign off recon after Maya\'s evidence review.',                    requires: 'approve_recon' },
+      { kind: 'approve',     label: 'Approve Bank recon · Chicago',       who: 'Close · Day 4',        body: 'Final sign-off on fully-evidenced recon.',                          requires: 'approve_recon' },
+      { kind: 'slack',       label: 'Reply to Maya',                      who: 'Maya · Staff Acct',    body: 'Reviewing Mexico variance now — CFO routing after post.' },
+    ],
+    followUps: [
+      'Show the full audit trail on Mexico',
+      'What evidence is Maya missing on Voltair?',
+      'Who else is in my review queue this week?',
+    ],
+  },
+  {
+    persona: 'CONTROLLER',
+    match: /close.*day|close.*blocker|day 4|day 5|close status/i,
+    text: '<strong>Close status — Day 4 of 5:</strong><br/><br/><strong class="text-negative">2 blockers open:</strong><br/>• AR aging recon · Maya investigating $142K variance · evidence pending<br/>• Depreciation schedule · tax team 2 days behind · escalation opened<br/><br/><strong class="text-warning">3 reconciliations in review:</strong> Mexico market, Chicago bank, Voltair remittance<br/><br/><strong class="text-positive">Completed today:</strong> EMEA grocery close (Maya), US alcohol close (automated)<br/><br/><strong>Critical path to Day 5 close:</strong> AR aging recon must clear by 4 pm today to unblock Day 5 period-end validation.',
+    actions: [
+      { kind: 'slack',       label: 'Slack tax team escalation',          who: 'Tax · Lead',           body: 'Depreciation schedule 2 days behind — need by Thu noon to avoid Day 5 delay.' },
+      { kind: 'slack',       label: 'Check in with Maya on AR variance',  who: 'Maya · Staff Acct',    body: 'How close are we on the AR $142K variance? Day 4 critical-path item.' },
+      { kind: 'approve',     label: 'Sign off Day 4 complete segments',    who: 'Close · phase',        body: 'Flip EMEA + US alcohol to closed. Blockers remain for Day 5.',  requires: 'signoff_close_phase' },
+      { kind: 'remind',      label: 'Remind: 4pm critical checkpoint',    who: 'Calendar · today',     body: 'AR recon status check before Day 5 validation.' },
+      { kind: 'pin',         label: 'Pin close blockers',                  who: 'Workspace · close',    body: '2 blockers + 3 pending.' },
+    ],
+    followUps: [
+      'What happens if we slip to Day 6?',
+      'Show me the full close checklist',
+      'Who can I reassign the tax escalation to?',
+    ],
+  },
+  {
+    persona: 'CONTROLLER',
+    match: /recon|reconciliation|recon status/i,
+    text: '<strong>Reconciliation status — 8 items:</strong><br/><br/><strong class="text-negative">Unmatched variance (3):</strong><br/>• AR Aging · −$142K · Maya investigating · <span class="text-muted">3 days</span><br/>• Intercompany · +$18K · materiality borderline · Raj to review<br/>• FX Remeasurement · +$72K · material · awaits evidence<br/><br/><strong class="text-positive">Fully matched (5):</strong><br/>• Bank Operating, Bank Payroll, Accrued Payroll, Deferred Revenue, Inventory<br/><br/><strong>Materiality-exceeding:</strong> AR Aging + FX — both need Raj sign-off this week.',
+    actions: [
+      { kind: 'approve',     label: 'Approve AR recon (post-evidence)',    who: 'Close · AR',          body: 'Flip to matched once Maya\'s evidence lands.',              requires: 'approve_recon' },
+      { kind: 'approve',     label: 'Approve FX Remeasurement',            who: 'Close · FX',          body: 'Sign off after reviewing evidence package.',                requires: 'approve_recon' },
+      { kind: 'slack',       label: 'Ping Maya on AR evidence timing',     who: 'Maya · Staff Acct',   body: 'AR recon on Day 4 critical path — ETA on evidence?' },
+      { kind: 'open',        label: 'Open Reconciliations workbench',      who: 'Nav · Recons',        body: 'Full recon list with drill-through.' },
+      { kind: 'pin',         label: 'Pin recon snapshot',                   who: 'Workspace · Day 4',   body: 'Day 4 recon status.' },
+    ],
+    followUps: [
+      'How many days has the AR variance been open?',
+      'Show historical recon close rates',
+      'Which recons automatically pass materiality tests?',
+    ],
+  },
+  {
+    persona: 'CONTROLLER',
+    match: /audit trail|approval chain|who approved|signoff history/i,
+    text: '<strong>Audit trail — Mexico Grocery $2.1M variance:</strong><br/><br/>1. <strong>Prepared by</strong> Maya Gonzales · 2026-03-09 10:14 CST · evidence attached (3 files)<br/>2. <strong>Submitted for review</strong> · 2026-03-09 10:17 CST · auto-routed to Raj Patel<br/>3. <strong>Reviewed by</strong> Raj Patel · 2026-03-09 12:34 CST · evidence accepted · notes added<br/>4. <strong>Provisional JE posted</strong> by Raj · 2026-03-09 12:41 CST · amount $2.1M · draft stage<br/>5. <strong>Routed to CFO</strong> · 2026-03-09 12:42 CST · reason: amount exceeds $1M materiality<br/>6. <strong class="text-warning">Awaiting CFO approval</strong> · Kate Morgan · open 4 hrs<br/><br/>All signatures recorded. Full evidence bundle attached. Trail meets SOX documentation standard.',
+    actions: [
+      { kind: 'remind',      label: 'Ping Kate on CFO approval',          who: 'Kate · CFO',           body: 'Mexico approval open 4 hrs — need before Tuesday supply deadline.' },
+      { kind: 'share',       label: 'Share audit trail with external audit', who: 'External audit',    body: 'Mexico variance trail for Q1 documentation.' },
+      { kind: 'pin',         label: 'Pin to close documentation',          who: 'Workspace · audit',    body: 'Q1 material variance trails.' },
+      { kind: 'open',        label: 'View full evidence bundle',           who: 'Mexico case folder',   body: 'All 3 evidence files + notes.' },
+    ],
+    followUps: [
+      'Show all open approval chains',
+      'Compare trail completeness to prior quarters',
+      'Which items are missing signatures?',
+    ],
+  },
+
+  // ==================================================================
+  // Staff Accountant persona-tagged responses — task queue, preparation,
+  // evidence, submission, investigation guidance.
+  // ==================================================================
+  {
+    persona: 'STAFF',
+    match: /my task|my queue|my work|todo|what.*today|what.*should.*do/i,
+    text: '<strong>Maya — your queue for today (3 due):</strong><br/><br/>1. <strong class="text-negative">Investigate Mexico Grocery $2.1M variance</strong> · <span class="text-muted">due today 4 pm</span> · evidence attached, note draft in progress<br/>2. <strong class="text-warning">Post Voltair remittance JE draft</strong> · <span class="text-muted">due today 5 pm</span> · awaiting 3rd-party confirmation<br/>3. <strong class="text-warning">Submit evidence for Bank reconciliation</strong> · <span class="text-muted">due today EOD</span> · 2 files remaining to upload<br/><br/><strong>In review (3):</strong> Mexico Grocery (Raj reviewing), AR aging Mexico (Raj reviewing), Chicago bank (awaiting Raj sign-off)<br/><br/><strong>Blocker:</strong> AR $142K variance — waiting on Maya-side evidence completion. This is critical-path for Day 5 close.',
+    actions: [
+      { kind: 'investigate', label: 'Open Mexico investigation',          who: 'Mexico Grocery · W10', body: 'Continue your draft — add supply-constraint context.',           requires: 'attach_evidence' },
+      { kind: 'email',       label: 'Submit Mexico for Controller review', who: 'Raj · Controller',    body: 'Mexico Grocery evidence package ready for your review.',         requires: 'submit_for_approval' },
+      { kind: 'investigate', label: 'Complete AR $142K evidence',         who: 'AR aging · Mexico',    body: 'Upload remaining evidence to unblock Day 5 close.',              requires: 'attach_evidence' },
+      { kind: 'investigate', label: 'Prepare Voltair JE',                 who: 'Voltair · remittance', body: 'Draft JE once 3rd-party confirmation lands.',                    requires: 'prepare_je' },
+      { kind: 'remind',      label: 'Remind: 4 pm Mexico deadline',       who: 'Calendar · today',     body: 'Mexico investigation due 4 pm.' },
+      { kind: 'slack',       label: 'Slack Raj if blocked',               who: 'Raj · Controller',     body: 'Ping on Voltair 3rd-party confirmation status.' },
+    ],
+    followUps: [
+      'What evidence do I still need for Mexico?',
+      'How do I format the AR aging variance note?',
+      'Show me the Voltair JE template',
+    ],
+  },
+  {
+    persona: 'STAFF',
+    match: /how.*prepare|how.*file|how.*submit|how.*write|how.*document/i,
+    text: '<strong>Variance preparation playbook — Mexico Grocery $2.1M:</strong><br/><br/><strong>Step 1 — Investigation note (~150 words):</strong> state the variance ($2.1M vs Plan), root cause (courier utilization 68% vs 63% threshold · supply constraint), duration (3 weeks), and any mitigating context (Cencosud co-funding offset).<br/><br/><strong>Step 2 — Evidence (required for SOX materiality):</strong><br/>✓ Courier utilization chart · attached<br/>✓ Cencosud co-funding email · attached<br/>□ Weekly trip dampening model output · <em>still needed</em><br/>□ Supply ceiling historical reference (W34 2024) · <em>still needed</em><br/><br/><strong>Step 3 — Submit to Controller:</strong> click "Submit for approval" — auto-routes to Raj with evidence bundle.<br/><br/><strong>Step 4 — Wait for review.</strong> Raj posts provisional JE; then routes to CFO since the amount exceeds $1M materiality.',
+    actions: [
+      { kind: 'investigate', label: 'Open Mexico investigation editor',   who: 'Mexico · W10',         body: 'Continue your draft note.',                                       requires: 'attach_evidence' },
+      { kind: 'open',        label: 'View investigation template',        who: 'Documentation · template', body: 'Standard note format + example.' },
+      { kind: 'email',       label: 'Submit for Controller review',       who: 'Raj · Controller',     body: 'Mexico Grocery investigation ready for review.',                 requires: 'submit_for_approval' },
+      { kind: 'pin',         label: 'Pin the playbook',                    who: 'Workspace · guides',  body: 'Variance-prep playbook.' },
+      { kind: 'slack',       label: 'Ask Raj for the W34 2024 ref',      who: 'Raj · Controller',     body: 'Do you have the W34 2024 supply event reference I should cite?' },
+    ],
+    followUps: [
+      'What makes an investigation SOX-ready?',
+      'Show me a well-documented example',
+      'How long does the review step usually take?',
+    ],
+  },
+  {
+    persona: 'STAFF',
+    match: /evidence|attach|upload|what.*need|missing/i,
+    text: '<strong>Evidence status across your 3 open items:</strong><br/><br/><strong class="text-negative">Mexico Grocery (2 of 4 attached):</strong><br/>✓ Courier utilization chart<br/>✓ Cencosud co-funding email<br/>□ Weekly trip dampening model output<br/>□ W34 2024 historical supply-event reference<br/><br/><strong class="text-warning">Voltair JE (1 of 2):</strong><br/>✓ Remittance detail<br/>□ 3rd-party bank confirmation (outstanding)<br/><br/><strong class="text-warning">Bank reconciliation (6 of 8):</strong><br/>✓ 6 files uploaded<br/>□ March statement final page<br/>□ Reconciling item backup for $4,200 timing diff<br/><br/>Mexico is highest priority — the two missing items are what\'s blocking your submission to Raj.',
+    actions: [
+      { kind: 'investigate', label: 'Upload Mexico missing evidence',     who: 'Mexico · W10',         body: 'Add the two remaining files.',                                   requires: 'attach_evidence' },
+      { kind: 'slack',       label: 'Request Voltair bank confirm',       who: 'Bank · ops',           body: 'Need 3rd-party confirmation to finalize JE draft.' },
+      { kind: 'investigate', label: 'Upload Bank recon remaining',        who: 'Bank recon · March',   body: '2 files outstanding for Chicago.',                               requires: 'attach_evidence' },
+      { kind: 'open',        label: 'Open evidence library',              who: 'Documentation',        body: 'Reference docs + historical examples.' },
+      { kind: 'remind',      label: 'Remind: chase bank confirm Tue',     who: 'Calendar · Tuesday',   body: 'Voltair 3rd-party confirmation follow-up.' },
+    ],
+    followUps: [
+      'What happens if I submit without all evidence?',
+      'Who can sign off the W34 2024 reference?',
+      'How do I tag evidence by type?',
+    ],
+  },
+  {
+    persona: 'STAFF',
+    match: /submit for|submit.*review|send.*review|push.*controller/i,
+    text: '<strong>Ready to submit Mexico Grocery?</strong><br/><br/>You\'re <strong>2 evidence items short</strong> of a complete submission:<br/>□ Weekly trip dampening model output<br/>□ W34 2024 historical supply-event reference<br/><br/><strong>If you submit now:</strong> Raj will accept the note and the 2 attached evidence files, but SOX documentation is incomplete — he\'ll likely request the remaining 2 before posting. That adds a round-trip.<br/><br/><strong>Recommendation:</strong> Complete the 2 missing items first (est. 15 min with the model output export + W34 reference pull from the archive), then submit. Cleaner path to CFO approval.',
+    actions: [
+      { kind: 'investigate', label: 'Complete remaining evidence first',  who: 'Mexico · W10',         body: 'Upload 2 files, then submit.',                                   requires: 'attach_evidence' },
+      { kind: 'email',       label: 'Submit anyway (incomplete evidence)', who: 'Raj · Controller',    body: 'Mexico investigation · 2 evidence items still pending · submitting early for triage.', requires: 'submit_for_approval' },
+      { kind: 'slack',       label: 'Ask Raj if partial is acceptable',   who: 'Raj · Controller',     body: 'Okay to submit Mexico with 2 items pending? Or wait for full bundle?' },
+      { kind: 'remind',      label: 'Remind: 15-min evidence burst',      who: 'Calendar · 15 min',    body: 'Block 15 min to finish the two evidence files.' },
+    ],
+    followUps: [
+      'How long do Raj\'s reviews typically take?',
+      'What happens after Raj approves?',
+      'Can I withdraw a submission if I spot an error?',
+    ],
+  },
+
+  // ==================================================================
+  // Legacy / SaaS-industry matchers follow. These still work for
+  // prompts that explicitly mention enterprise / churn / NRR / etc.
+  // ==================================================================
   {
     match: /enterprise|churn/i,
     text: '<strong>3 logo churns are the driver.</strong> Acme Corp ($800K ARR), GlobalTech ($750K), DataStar ($550K) — all cited pricing and product fit. Our renewal-risk model flags 2 more accounts ($1.1M combined) as high-risk before end of Q2. NRR dropped from 115% to 108%.<br/><br/>Expansion ARR in the installed base partially offset (+$600K), but the trend needs intervention before June renewals.',
@@ -389,7 +745,7 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
       { kind: 'slack',  label: 'Slack Product Lead',    who: 'Nina · VP Product',         body: 'Platform add-on attach at 22% — below 35% target. Need to revisit packaging or enablement?' },
       { kind: 'open',   label: 'Open Segment Drill',    who: 'Workbench · drill',         body: 'Drill into Mid-Market expansion by customer tier.' },
       { kind: 'pin',    label: 'Pin Gap Analysis',      who: 'Workspace · Board Prep',    body: 'Expansion ARR $0.7M gap vs target.' },
-      { kind: 'email',  label: 'Email VP Sales Ops',    who: 'Sarah · VP Sales Ops',      body: 'Mid-Market attach gap — need enablement review for platform add-on.' },
+      { kind: 'email',  label: 'Email VP Sales Ops',    who: 'Marcus · VP Sales Ops',     body: 'Mid-Market attach gap — need enablement review for platform add-on.' },
       { kind: 'whatif', label: 'What-If: Attach +13pp', who: 'Forecast · 35% attach',     body: 'Model: attach hits 35% → Mid-Market +$0.6M, gap closes.' },
       { kind: 'share',  label: 'Share with exec',       who: 'Exec leadership',           body: 'Expansion gap summary by segment.' },
       { kind: 'remind', label: 'Remind: QBR prep',      who: 'Calendar · QBR week',       body: 'Finalize Mid-Market packaging proposal before QBR.' },
@@ -427,6 +783,34 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
       'Which invoices make up the AR variance?',
       'Show aging buckets',
       'Compare to last quarter recons',
+    ],
+  },
+
+  // -----------------------------------------------------------------
+  // Approval-gated flow — drives the Staff → Controller → CFO demo.
+  // Cards carry `requires` keys so they appear/disappear per persona.
+  // -----------------------------------------------------------------
+  {
+    match: /materiality|supply ceiling|mexico.*11%|approve.*je|post.*je|lock.*period/i,
+    text: '<strong>Mexico Grocery variance is -$2.1M — above the $1M materiality ceiling.</strong><br/><br/>That crosses the SOX approval threshold, so any JE tied to this variance needs the three-step path: <strong>Staff prepares</strong> → <strong>Controller reviews & posts (if ≤ $1M)</strong> → <strong>CFO approves & locks (if > $1M)</strong>.<br/><br/>The right next action depends on your role — the cards below only show what you can actually execute.',
+    actions: [
+      // Staff Accountant path
+      { kind: 'investigate', label: 'Open investigation',       who: 'Mexico Grocery · W10',       body: 'Log findings, attach evidence, tag driver.',                 requires: 'attach_evidence' },
+      { kind: 'email',       label: 'Submit for approval',      who: 'Raj · Controller',           body: 'Route prepared JE to Controller review queue.',              requires: 'submit_for_approval' },
+      // Controller path
+      { kind: 'approve',     label: 'Post provisional JE',      who: 'GL · draft stage',           body: 'Post to draft; requires CFO sign-off for > $1M.',            requires: 'post_je' },
+      { kind: 'email',       label: 'Route to CFO for sign-off',who: 'Kate · CFO',                 body: 'Large-variance approval request — $2.1M over threshold.',    requires: 'review_work' },
+      // CFO path
+      { kind: 'approve',     label: 'Approve & Lock Period',    who: 'CFO sign-off · Mexico · W10', body: 'Approve the $2.1M JE and lock the period for Mexico Grocery.', requires: 'approve_je_over_1m' },
+      { kind: 'whatif',      label: 'What-If: Raise materiality threshold', who: 'Policy · materiality', body: 'Model impact of lifting threshold from $1M to $2M.',   requires: 'override_materiality' },
+      // Universal fallbacks
+      { kind: 'pin',         label: 'Pin to my queue',          who: 'Workspace',                  body: 'Save the Mexico Grocery approval flow.' },
+      { kind: 'share',       label: 'Share snapshot',           who: 'Team',                       body: 'Export the supply-variance context.' },
+    ],
+    followUps: [
+      'Who has posted the JE?',
+      'Show the approval audit trail',
+      'What is the current materiality threshold?',
     ],
   },
 ];
@@ -482,9 +866,9 @@ export const MISSIONS: Mission[] = [
     ],
   },
   {
-    id: 'preparer-recon',
+    id: 'staff-recon',
     label: 'The 3% Discrepancy',
-    persona: 'PREPARER',
+    persona: 'STAFF',
     startWorkbench: 'performance',
     startPath: '/reconciliations',
     beats: [
@@ -514,7 +898,7 @@ export const WATCHLIST = [
 ];
 export const ACTIVITY = [
   { who: 'Meeru AI', when: 'just now', what: 'Flagged 3 enterprise churns — $2.1M ARR' },
-  { who: 'Sarah Chen', when: '8 min ago', what: 'Pinned CA Retail margin to Board Deck' },
+  { who: 'Kate Morgan', when: '8 min ago', what: 'Pinned CA Retail margin to Board Deck' },
   { who: 'Raj Patel', when: '23 min ago', what: 'Marked 2 close tasks complete' },
   { who: 'Meeru AI', when: '1 h ago', what: 'Generated NRR trend report · 4 quarters' },
   { who: 'Maya Gonzales', when: '2 h ago', what: 'Posted JE — $142K AR correction' },
@@ -553,31 +937,39 @@ export const CLOSE_TASKS: CloseTask[] = [
 export interface DrillRow {
   id: string;
   customer: string;
-  segment: 'Enterprise' | 'Mid-Market' | 'SMB';
+  segment: 'Grocery' | 'Convenience' | 'Alcohol' | 'Pharmacy';
   region: string;
-  arr: number;
-  deltaArr: number;
-  nrr: number;
+  arr: number;          // trip count this week
+  deltaArr: number;     // variance vs plan in USD
+  nrr: number;          // courier utilization %
+  tripsVsPlan: string;  // pre-formatted trip % vs plan (e.g. "-8.3%")
+  spark: number[];      // 5-point weekly trend (W6 → W10)
   status: 'Healthy' | 'Expansion' | 'At Risk' | 'Churned';
   lastActivity: string;
 }
+// Uberflux — segment drill cards (Week 10). Fields adapted to existing DrillRow shape:
+//   customer     → segment name (e.g. "Mexico Grocery")
+//   segment      → category tag (Grocery / Convenience / Alcohol / Pharmacy)
+//   region       → operating region
+//   arr          → trip volume this week (count, not dollars)
+//   deltaArr     → variance vs Plan in dollars
+//   nrr          → courier utilization % (0–100)
+//   status       → operational status (Churned ≈ critical miss, At Risk ≈ watch,
+//                  Expansion ≈ positive growth, Healthy ≈ on-plan)
+//   lastActivity → short operational note
 export const PERF_DRILLDOWN: DrillRow[] = [
-  { id: 'd1',  customer: 'Acme Corp',       segment: 'Enterprise', region: 'West',      arr: 800_000,  deltaArr: -800_000, nrr: 0,   status: 'Churned',   lastActivity: '12 days ago' },
-  { id: 'd2',  customer: 'GlobalTech',      segment: 'Enterprise', region: 'Southwest', arr: 750_000,  deltaArr: -750_000, nrr: 0,   status: 'Churned',   lastActivity: '9 days ago' },
-  { id: 'd3',  customer: 'DataStar',        segment: 'Enterprise', region: 'West',      arr: 550_000,  deltaArr: -550_000, nrr: 0,   status: 'Churned',   lastActivity: '4 days ago' },
-  { id: 'd4',  customer: 'Voltair',         segment: 'Enterprise', region: 'Midwest',   arr: 680_000,  deltaArr: 0,        nrr: 95,  status: 'At Risk',   lastActivity: 'Silent 18d' },
-  { id: 'd5',  customer: 'Meridian',        segment: 'Enterprise', region: 'Northeast', arr: 520_000,  deltaArr: 0,        nrr: 92,  status: 'At Risk',   lastActivity: 'RFP open' },
-  { id: 'd6',  customer: 'Parkline',        segment: 'Enterprise', region: 'West',      arr: 480_000,  deltaArr: -50_000,  nrr: 90,  status: 'At Risk',   lastActivity: '2 days ago' },
-  { id: 'd7',  customer: 'Northbridge',     segment: 'Enterprise', region: 'Northeast', arr: 920_000,  deltaArr: 180_000,  nrr: 124, status: 'Expansion', lastActivity: '1 day ago' },
-  { id: 'd8',  customer: 'Solstice Labs',   segment: 'Enterprise', region: 'West',      arr: 640_000,  deltaArr: 95_000,   nrr: 118, status: 'Expansion', lastActivity: '3 days ago' },
-  { id: 'd9',  customer: 'Reaktor',         segment: 'Mid-Market', region: 'Midwest',   arr: 260_000,  deltaArr: 42_000,   nrr: 119, status: 'Expansion', lastActivity: '2 days ago' },
-  { id: 'd10', customer: 'Finley Finance',  segment: 'Mid-Market', region: 'Northeast', arr: 180_000,  deltaArr: 35_000,   nrr: 122, status: 'Expansion', lastActivity: '5 days ago' },
-  { id: 'd11', customer: 'Wavelength',      segment: 'Mid-Market', region: 'Southeast', arr: 145_000,  deltaArr: 12_000,   nrr: 109, status: 'Healthy',   lastActivity: '6 days ago' },
-  { id: 'd12', customer: 'Cinder',          segment: 'Mid-Market', region: 'West',      arr: 210_000,  deltaArr: 28_000,   nrr: 115, status: 'Expansion', lastActivity: '1 day ago' },
-  { id: 'd13', customer: 'BrightRidge',     segment: 'Mid-Market', region: 'Midwest',   arr: 92_000,   deltaArr: -8_000,   nrr: 94,  status: 'At Risk',   lastActivity: '14 days ago' },
-  { id: 'd14', customer: 'Pinecone Group',  segment: 'Mid-Market', region: 'Southwest', arr: 120_000,  deltaArr: 0,        nrr: 100, status: 'Healthy',   lastActivity: '4 days ago' },
-  { id: 'd15', customer: 'Lumen SMB',       segment: 'SMB',        region: 'Southeast', arr: 14_400,   deltaArr: -800,     nrr: 95,  status: 'Healthy',   lastActivity: '7 days ago' },
-  { id: 'd16', customer: 'Kite Studio',     segment: 'SMB',        region: 'West',      arr: 9_600,    deltaArr: 1_200,    nrr: 113, status: 'Healthy',   lastActivity: '2 days ago' },
+  { id: 'd1',  customer: 'Mexico Grocery',     segment: 'Grocery',     region: 'LATAM',         arr: 1_240_000, deltaArr: -2_100_000, nrr: 68, tripsVsPlan: '-8.3%',  spark: [55, 50, 45, 42, 40], status: 'Churned',   lastActivity: 'Supply breach · 3 wks' },
+  { id: 'd2',  customer: 'US Convenience',     segment: 'Convenience', region: 'North America', arr: 2_100_000, deltaArr:   -900_000, nrr: 74, tripsVsPlan: '-4.2%',  spark: [62, 63, 60, 56, 52], status: 'At Risk',   lastActivity: 'Exit rate spike · W10' },
+  { id: 'd3',  customer: 'EUP Grocery',        segment: 'Grocery',     region: 'EMEA',          arr: 3_800_000, deltaArr:    400_000, nrr: 51, tripsVsPlan: '+2.3%',  spark: [52, 53, 54, 55, 58], status: 'Expansion', lastActivity: 'Holiday demand confirmed' },
+  { id: 'd4',  customer: 'AU Grocery',         segment: 'Grocery',     region: 'APAC',          arr:   870_000, deltaArr:   -700_000, nrr: 43, tripsVsPlan: '-11.6%', spark: [60, 61, 62, 59, 50], status: 'At Risk',   lastActivity: 'Weather · auto-recovering' },
+  { id: 'd5',  customer: 'Brazil Convenience', segment: 'Convenience', region: 'LATAM',         arr: 1_600_000, deltaArr:   -600_000, nrr: 61, tripsVsPlan: '-5.1%',  spark: [58, 57, 56, 55, 54], status: 'At Risk',   lastActivity: 'Approaching threshold' },
+  { id: 'd6',  customer: 'UK Convenience',     segment: 'Convenience', region: 'EMEA',          arr: 1_100_000, deltaArr:    100_000, nrr: 49, tripsVsPlan: '+0.9%',  spark: [48, 49, 50, 50, 51], status: 'Healthy',   lastActivity: 'Order freq +3% WoW' },
+  { id: 'd7',  customer: 'US Alcohol',         segment: 'Alcohol',     region: 'North America', arr:   620_000, deltaArr:    300_000, nrr: 47, tripsVsPlan: '+6.2%',  spark: [45, 46, 47, 48, 52], status: 'Expansion', lastActivity: 'Super Bowl tailgate spike' },
+  { id: 'd8',  customer: 'Colombia Grocery',   segment: 'Grocery',     region: 'LATAM',         arr:   410_000, deltaArr:    300_000, nrr: 54, tripsVsPlan: '+9.1%',  spark: [34, 37, 40, 43, 46], status: 'Expansion', lastActivity: 'Bogotá expansion · +18%' },
+  { id: 'd9',  customer: 'Canada Grocery',     segment: 'Grocery',     region: 'North America', arr:   540_000, deltaArr:   -300_000, nrr: 55, tripsVsPlan: '-6.8%',  spark: [58, 57, 56, 55, 51], status: 'At Risk',   lastActivity: 'Toronto cold snap · −7%' },
+  { id: 'd10', customer: 'Japan Convenience',  segment: 'Convenience', region: 'APAC',          arr:   820_000, deltaArr:    100_000, nrr: 52, tripsVsPlan: '+1.4%',  spark: [50, 51, 51, 52, 52], status: 'Healthy',   lastActivity: 'Lunch uptick steady' },
+  { id: 'd11', customer: 'Taiwan Grocery',     segment: 'Grocery',     region: 'APAC',          arr:   330_000, deltaArr:   -300_000, nrr: 48, tripsVsPlan: '-8.2%',  spark: [40, 38, 35, 34, 33], status: 'At Risk',   lastActivity: 'Lunar NY normalizing' },
+  { id: 'd12', customer: 'DACH Pharmacy',      segment: 'Pharmacy',    region: 'EMEA',          arr:   290_000, deltaArr:   -200_000, nrr: 46, tripsVsPlan: '-4.1%',  spark: [32, 31, 30, 29, 29], status: 'At Risk',   lastActivity: 'Regulatory delay · W12 fix' },
 ];
 
 // ==========================================================
@@ -593,14 +985,14 @@ export interface ExceptionItem {
   driver: string;
   owner: string;
 }
+// Uberflux — 6 week-10 exceptions (3 critical, 2 warning, 2 positive).
 export const PERF_EXCEPTIONS: ExceptionItem[] = [
-  { id: 'e1', severity: 'critical', title: 'Enterprise churn cluster',           entity: 'Enterprise segment', impact: '-$2.1M ARR',    age: '3 days',    driver: 'Product-fit + pricing',       owner: 'Sue Park · VP Sales' },
-  { id: 'e2', severity: 'critical', title: 'California Retail labor surge',      entity: 'LA + SF markets',    impact: '-$3.2M margin', age: '3 weeks',   driver: 'Minimum-wage adjustment',     owner: 'Carlos · West Ops' },
-  { id: 'e3', severity: 'critical', title: 'Cloud egress anomaly',               entity: 'AI workload',        impact: '-$140K/mo',     age: '2 days',    driver: 'Customer data exports spike', owner: 'Jin · CTO' },
-  { id: 'e4', severity: 'warning',  title: 'NRR declining 3 Q in a row',         entity: 'Global',             impact: '-7pp',          age: '1 quarter', driver: '2022 cohort renewals',        owner: 'Priya · CS' },
-  { id: 'e5', severity: 'warning',  title: 'Mid-Market add-on attach below tgt', entity: 'Mid-Market',         impact: '-$0.7M ARR',    age: '4 weeks',   driver: 'Enablement gap',              owner: 'Nina · Product' },
-  { id: 'e6', severity: 'positive', title: 'Northbridge expansion',              entity: 'APAC Enterprise',    impact: '+$180K ARR',    age: '1 day',     driver: 'Seat growth + new module',    owner: 'AM · APAC' },
-  { id: 'e7', severity: 'positive', title: 'APAC pricing experiment',            entity: 'SMB',                impact: '+3.1pp conv',   age: '1 week',    driver: 'Tier repackaging',            owner: 'Nina · Product' },
+  { id: 'e1', severity: 'critical', title: 'Mexico Grocery — Supply Ceiling Breach', entity: 'LATAM · Grocery',        impact: '-$2.1M', age: 'W8-W10', driver: 'Courier util 68% vs 63% red line · 3rd consecutive week',          owner: 'Ops · MX Lead' },
+  { id: 'e2', severity: 'critical', title: 'AU Grocery — Weather Demand Suppression', entity: 'APAC · Grocery',         impact: '-$0.7M', age: 'W10',    driver: 'Eastern seaboard rainfall · Sydney -21%, Melbourne -18%',            owner: 'Ops · APAC' },
+  { id: 'e3', severity: 'warning',  title: 'US Convenience — Exit Rate Spike',        entity: 'North America · Conv.',  impact: '-$0.9M', age: 'W10',    driver: '1.8 std devs above seasonal baseline · Super Bowl effect',           owner: 'Demand · US' },
+  { id: 'e4', severity: 'warning',  title: 'Brazil Convenience — Supply Early Warning', entity: 'LATAM · Convenience',  impact: '-$0.6M', age: 'W10',    driver: 'Util 61% approaching 63% threshold · Carnival hangover',              owner: 'Ops · BR Lead' },
+  { id: 'e5', severity: 'positive', title: 'EUP Grocery — School Holiday Outperformance', entity: 'EMEA · Grocery',     impact: '+$0.4M', age: 'W10',    driver: 'School holidays driving +1.8M incremental trips · FR +18%, UK +14%', owner: 'Demand · EMEA' },
+  { id: 'e6', severity: 'positive', title: 'Colombia Grocery — Expansion ROI Positive', entity: 'LATAM · Grocery',      impact: '+$0.3M', age: 'W6-W10', driver: 'Bogotá expansion +18% trips vs baseline · supply healthy 54%',       owner: 'Expansion · LATAM' },
 ];
 
 // ==========================================================
@@ -616,12 +1008,14 @@ export interface SignalItem {
   suggestedAction: string;
   model: string;
 }
+// Uberflux — 6 active ML signals (W10).
 export const PERF_SIGNALS: SignalItem[] = [
-  { id: 's1', title: 'CA Retail margin compression to accelerate', confidence: 94, horizon: 'W11 (3 days)', direction: 'down', body: 'Overtime hours 18% above plan for 3 straight weeks. Model projects -2% to -4% additional margin erosion in W11 without staffing intervention.', suggestedAction: 'Adjust shift scheduling by Thu', model: 'labor-margin-v3' },
-  { id: 's2', title: 'Voltair likely to churn',                    confidence: 87, horizon: 'Q2 renewal',    direction: 'down', body: 'Silent since W5. Retention model at 28%. 3 of 4 predictive indicators flipped negative (usage, sentiment, tickets).',             suggestedAction: 'Executive outreach this week',   model: 'retention-v5' },
-  { id: 's3', title: 'Enterprise expansion window opens W12',      confidence: 78, horizon: 'W12-W14',       direction: 'up',   body: '4 accounts have seat utilization >95% with budget approval cycle starting Q2. Pattern matches 2024 Q2 expansion wave.',          suggestedAction: 'Brief AMs before Friday',         model: 'expansion-v2' },
-  { id: 's4', title: 'APAC price test to beat target by 15%',      confidence: 72, horizon: 'End of Q2',     direction: 'up',   body: 'Free-to-paid conversion in APAC repackaging trial at 4.8% (target 4.2%). If trend holds, segment beats plan by $0.3M.',          suggestedAction: 'Extend test to LATAM',            model: 'pricing-v1' },
-  { id: 's5', title: 'Cloud storage breaks $1M/mo in W14',         confidence: 69, horizon: 'W14',           direction: 'up',   body: 'AI workload storage growing 18% WoW. At current trajectory, first time crossing $1M/month threshold.',                           suggestedAction: 'FinOps reservation strategy',     model: 'cost-forecast-v2' },
+  { id: 's1', title: 'Mexico Supply Ceiling Breach Risk W11',         confidence: 94, horizon: 'W11',       direction: 'down', body: 'Courier utilization trend projects continued breach through W11. Trip dampening cumulative impact accelerating. Model based on 18 comparable historical events.',                suggestedAction: 'Raise supply ceiling to 1,380 couriers (+11%) by Tuesday', model: 'supply-breach-v3' },
+  { id: 's2', title: 'Brazil Courier Utilization Approaching Threshold', confidence: 78, horizon: 'W11',    direction: 'down', body: 'Brazil Convenience util at 61%, trajectory crosses 63% by W11 Day 3 under base-case demand forecast. Carnival hangover supply lag is primary driver.',                          suggestedAction: 'Pre-authorize 15% courier incentive this week',            model: 'supply-breach-v3' },
+  { id: 's3', title: 'EUP School Holiday Demand Surge Confirmed',     confidence: 96, horizon: 'W10-W11',    direction: 'up',   body: 'French and UK school holidays confirmed driving +1.8M incremental trips vs baseline. Pattern matches W10 2025 and W10 2024 with high fidelity.',                                suggestedAction: 'Hold supply plan · plan W25 amplification',                model: 'demand-holiday-v2' },
+  { id: 's4', title: 'AU Eastern Seaboard Rebound — W11 Expected',    confidence: 82, horizon: 'W11-W12',    direction: 'up',   body: 'Post-rainfall rebound modeled at +15% demand uplift over 2 weeks. Historical accuracy on 14 comparable AU weather events: 81%. Supply positioned to absorb.',                   suggestedAction: 'No intervention — monitor auto-recovery',                  model: 'weather-rebound-v1' },
+  { id: 's5', title: 'US Convenience Full Recovery Expected W11',     confidence: 87, horizon: 'W11',        direction: 'up',   body: 'Super Bowl exit rate spike resolves in all 3 historical comparisons within 7 days. NYC radius reduction review scheduled for W11. Model confidence high.',                      suggestedAction: 'Review NYC radius reduction W11',                          model: 'seasonal-revert-v2' },
+  { id: 's6', title: 'Colombia Expansion: Medellín Readiness Signal', confidence: 71, horizon: 'W12-W14',    direction: 'up',   body: 'Bogotá trajectory at +18% vs plan suggests Medellín expansion (W14 target) feasibility is high. Courier pre-seeding recommended by W12 to hit W14 launch KPIs.',                 suggestedAction: 'Pre-seed Medellín couriers by W12',                        model: 'expansion-readiness-v1' },
 ];
 
 // ==========================================================
@@ -637,15 +1031,23 @@ export interface HistoryRow {
   spark: number[];
   annotations?: string;
 }
+// Uberflux — 12-week rolling history (Global rollup, W51 2025 → W10 2026).
+// Fields adapted: revenue ≈ actual weekly run rate ($M), plan ≈ weekly plan ($M),
+// variance = actual - plan, nrr here represents "demand health index", churn =
+// count of segments in dampening. Spark is a 4-point trend of the index.
 export const PERF_HISTORY: HistoryRow[] = [
-  { period: 'Q1 FY26', revenue: 38.4, plan: 41.6, variance: -3.2, nrr: 108, churn: 3, spark: [117, 116, 115, 108], annotations: '3 Enterprise churns · CA labor surge' },
-  { period: 'Q4 FY25', revenue: 39.1, plan: 38.7, variance: 0.4,  nrr: 115, churn: 1, spark: [114, 115, 115, 115] },
-  { period: 'Q3 FY25', revenue: 36.8, plan: 35.9, variance: 0.9,  nrr: 116, churn: 1, spark: [115, 116, 116, 116] },
-  { period: 'Q2 FY25', revenue: 34.5, plan: 34.0, variance: 0.5,  nrr: 117, churn: 0, spark: [116, 116, 117, 117] },
-  { period: 'Q1 FY25', revenue: 32.1, plan: 32.4, variance: -0.3, nrr: 116, churn: 1, spark: [115, 115, 116, 116] },
-  { period: 'Q4 FY24', revenue: 30.8, plan: 29.9, variance: 0.9,  nrr: 115, churn: 0, spark: [113, 114, 114, 115] },
-  { period: 'Q3 FY24', revenue: 28.4, plan: 28.6, variance: -0.2, nrr: 114, churn: 0, spark: [112, 113, 113, 114] },
-  { period: 'Q2 FY24', revenue: 27.1, plan: 26.5, variance: 0.6,  nrr: 113, churn: 1, spark: [111, 112, 112, 113] },
+  { period: 'W10 · Mar 3–9 2026',    revenue: 38.4, plan: 42.6, variance: -4.2, nrr: 92, churn: 3, spark: [98, 96, 94, 92], annotations: 'Supply breach + weather · 3 critical segments' },
+  { period: 'W9 · Feb 24–Mar 2',     revenue: 39.5, plan: 42.6, variance: -3.1, nrr: 94, churn: 2, spark: [99, 97, 95, 94], annotations: 'Supply constraint escalating' },
+  { period: 'W8 · Feb 17–23',        revenue: 40.8, plan: 42.6, variance: -1.8, nrr: 96, churn: 1, spark: [100, 99, 97, 96], annotations: 'Supply early warning — MX Grocery threshold crossed' },
+  { period: 'W7 · Feb 10–16',        revenue: 43.2, plan: 42.6, variance: +0.6, nrr: 101, churn: 0, spark: [100, 100, 101, 101], annotations: 'On plan' },
+  { period: 'W6 · Feb 3–9',          revenue: 43.8, plan: 42.6, variance: +1.2, nrr: 102, churn: 0, spark: [100, 101, 102, 102], annotations: 'Holiday uplift' },
+  { period: 'W5 · Jan 27–Feb 2',     revenue: 42.2, plan: 42.6, variance: -0.4, nrr: 99, churn: 0, spark: [100, 100, 99, 99], annotations: 'Minor miss' },
+  { period: 'W4 · Jan 20–26',        revenue: 44.7, plan: 42.6, variance: +2.1, nrr: 103, churn: 0, spark: [100, 101, 102, 103], annotations: 'Promo success in LATAM + EMEA' },
+  { period: 'W3 · Jan 13–19',        revenue: 43.5, plan: 42.6, variance: +0.9, nrr: 101, churn: 0, spark: [100, 100, 101, 101], annotations: 'On plan' },
+  { period: 'W2 · Jan 6–12',         revenue: 41.5, plan: 42.6, variance: -1.1, nrr: 98, churn: 0, spark: [100, 99, 98, 98], annotations: 'Post-holiday normalization' },
+  { period: 'W1 · Dec 30–Jan 5',     revenue: 46.4, plan: 42.6, variance: +3.8, nrr: 107, churn: 0, spark: [102, 104, 106, 107], annotations: 'New Year demand surge' },
+  { period: 'W52 · Dec 23–29 2025',  revenue: 47.8, plan: 42.6, variance: +5.2, nrr: 110, churn: 0, spark: [104, 106, 108, 110], annotations: 'Christmas peak' },
+  { period: 'W51 · Dec 16–22 2025',  revenue: 44.5, plan: 42.6, variance: +1.9, nrr: 104, churn: 0, spark: [101, 102, 103, 104], annotations: 'Pre-holiday ramp' },
 ];
 
 // ==========================================================
@@ -839,211 +1241,183 @@ export interface RegionalSlice {
   chart: ChartBar[];
   chartTitle: string;
 }
-// FluxPlus — 6 US regions. Ported from meeru-variance-tablet FLUX_REGIONS.
+// Uberflux — 5 operating regions (Global rollup + NA / LATAM / EMEA / APAC).
+// Week 10 (Mar 3–9 2026). Data mirrors the Uberflux prototype dataset.
 export const PERF_REGIONAL: Record<string, RegionalSlice> = {
-  national: {
-    statusChip: { kind: 'neg', text: 'Variance flagged' },
+  global: {
+    statusChip: { kind: 'neg', text: 'Variance flagged · action recommended' },
     kpis: [
-      { lbl: 'NRR',          val: '108%',   delta: '▼ 7pp vs prior Q',  tone: 'neg' },
-      { lbl: 'New ARR',      val: '$4.2M',  delta: '▲ 12% vs plan',     tone: 'pos' },
-      { lbl: 'Gross Margin', val: '78.4%',  delta: '▼ 1.2pp vs prior Q', tone: 'neg' },
+      { lbl: 'Total Variance',    val: '-$4.2M',  delta: '▼ vs Plan',   tone: 'neg'  },
+      { lbl: 'Segments Flagged',  val: '7',       delta: '3 critical',  tone: 'warn' },
+      { lbl: 'Top Driver',        val: 'Supply',  delta: 'Courier util ↑', tone: 'neg' },
+      { lbl: 'Commentary',        val: 'Ready',   delta: '08:38 AM ✓',  tone: 'pos'  },
     ],
     commentary: [
       {
-        rank: 1, name: 'California Retail', delta: '−$1.2M vs Plan',
-        text: 'Min-wage hike pushed overtime 18% above plan in LA/SF. Margin down 340bps, 3rd week of escalation.',
-        tags: [{ t: 'red', l: 'Labor' }, { t: 'red', l: '3 weeks' }, { t: 'blue', l: 'ML flag' }],
+        rank: 1, name: 'Mexico Grocery', delta: '−$2.1M vs Plan',
+        text: 'Courier utilization 68%, above 63% red line. Trip dampening active since Week 8. Supply constraint driving basket-size reduction — similar to W34 2024 storm event. Cencosud co-funding partially offset.',
+        tags: [{ t: 'red', l: 'Supply breach' }, { t: 'red', l: '3 wks escalating' }, { t: 'blue', l: 'Predictive flag' }],
       },
       {
-        rank: 2, name: 'Texas Energy', delta: '−$0.8M vs Plan',
-        text: 'Henry Hub spot −18% WoW. Hedge covers 60% — unhedged 40% fully exposed. Forward curve suggests W12 stabilization.',
-        tags: [{ t: 'amber', l: 'Commodity' }, { t: 'amber', l: 'Unhedged' }],
+        rank: 2, name: 'US Convenience', delta: '−$0.9M vs Plan',
+        text: 'CPP 9% trip loss. NYC radius reduction active. Exit rate above seasonal baseline by 1.8 std devs. Super Bowl holiday partially explanatory — pattern consistent with prior 3 Super Bowl weeks.',
+        tags: [{ t: 'amber', l: 'Exit rate elevated' }, { t: 'blue', l: 'Seasonal baseline' }],
       },
       {
-        rank: 3, name: 'New York Financial Svcs', delta: '+$0.7M vs Plan',
-        text: 'Equity desk +22% vs plan on elevated VIX. Advisory pipeline converting 3 weeks ahead of schedule.',
-        tags: [{ t: 'green', l: 'Positive' }, { t: 'green', l: 'Q1 momentum' }],
+        rank: 3, name: 'EUP Grocery', delta: '+$1.0M vs Plan',
+        text: '+2.3% trips. Courier utilization normalized. School holiday effect confirmed — +1.8M incremental trips vs model baseline. No supply constraints flagged this week.',
+        tags: [{ t: 'green', l: 'Above plan' }, { t: 'green', l: 'Holiday confirmed' }],
       },
     ],
     chart: [
-      { w: 'W6',   a: 34,   p: 33,   tone: 'pos'  },
-      { w: 'W7',   a: 33,   p: 33,   tone: 'blue' },
-      { w: 'W8',   a: 32,   p: 33,   tone: 'warn' },
-      { w: 'W9',   a: 31,   p: 33,   tone: 'warn' },
-      { w: 'W10',  a: 30.5, p: 33.7, tone: 'neg'  },
-      { w: 'W11▸', a: 31,   p: 34,   tone: 'neg', forecast: true },
+      { w: 'W6',   a: 58, p: 62, tone: 'warn' },
+      { w: 'W7',   a: 55, p: 62, tone: 'warn' },
+      { w: 'W8',   a: 50, p: 62, tone: 'warn' },
+      { w: 'W9',   a: 44, p: 62, tone: 'neg'  },
+      { w: 'W10',  a: 40, p: 62, tone: 'neg'  },
+      { w: 'W11▸', a: 37, p: 62, tone: 'neg', forecast: true },
     ],
-    chartTitle: 'Weekly Revenue Variance — National',
+    chartTitle: 'Weekly Trip Variance — Mexico Grocery',
   },
-  northeast: {
-    statusChip: { kind: 'pos', text: 'Beating plan' },
+  northamerica: {
+    statusChip: { kind: 'warn', text: 'US Convenience exit rate elevated' },
     kpis: [
-      { lbl: 'NRR',          val: '115%',  delta: '▲ 3pp vs prior Q',    tone: 'pos' },
-      { lbl: 'New ARR',      val: '$1.8M', delta: '▲ 28% vs plan',       tone: 'pos' },
-      { lbl: 'Gross Margin', val: '80.2%', delta: '▲ 0.6pp vs prior Q',  tone: 'pos' },
+      { lbl: 'Total Variance',    val: '-$1.1M',   delta: '▼ vs Plan',       tone: 'neg'  },
+      { lbl: 'Segments Flagged',  val: '3',        delta: '1 critical',      tone: 'warn' },
+      { lbl: 'Top Driver',        val: 'Demand',   delta: 'Exit rate ↑',     tone: 'neg'  },
+      { lbl: 'Commentary',        val: 'Ready',    delta: '08:38 AM ✓',      tone: 'pos'  },
     ],
     commentary: [
       {
-        rank: 1, name: 'Equity Trading Desk', delta: '+$0.4M vs Plan',
-        text: 'VIX elevated above 22 for third consecutive week. Trading desk +22% vs plan. Infrastructure upgrade providing structural lift even if vol normalizes.',
-        tags: [{ t: 'green', l: 'Trading beat' }, { t: 'blue', l: 'Structural' }],
+        rank: 1, name: 'US Convenience', delta: '−$0.9M vs Plan',
+        text: 'CPP 9% trip loss. NYC radius reduction active. Exit rate above seasonal baseline by 1.8 std devs. Super Bowl holiday partially explanatory.',
+        tags: [{ t: 'amber', l: 'Exit rate elevated' }, { t: 'blue', l: 'Seasonal baseline' }],
       },
       {
-        rank: 2, name: 'Advisory Pipeline', delta: '+$0.2M vs Plan',
-        text: 'Pipeline converting 3 weeks ahead of schedule. $2.4M in W11–W13 committed closings. Win rate improving on larger deal sizes.',
-        tags: [{ t: 'green', l: 'Pipeline pull-fwd' }],
+        rank: 2, name: 'Canada Grocery', delta: '−$0.3M vs Plan',
+        text: 'Cold snap in Toronto reduced orders by 7%. Courier acceptance rate 91% — within normal range. Expected recovery as weather normalizes mid-week.',
+        tags: [{ t: 'amber', l: 'Weather impact' }, { t: 'blue', l: 'Auto-recovery likely' }],
       },
       {
-        rank: 3, name: 'Wealth Management', delta: '+$0.1M vs Plan',
-        text: 'AUM fees tracking in-line. Net new money $340M, 2x prior quarter pace. Advisor attrition at 3-year low.',
-        tags: [{ t: 'green', l: 'AUM growth' }],
+        rank: 3, name: 'US Alcohol', delta: '+$0.1M vs Plan',
+        text: 'Super Bowl tailgate demand spike. +12% trips Sun–Mon. Margin intact. No supply issues.',
+        tags: [{ t: 'green', l: 'Event uplift' }, { t: 'green', l: 'Margin healthy' }],
       },
     ],
     chart: [
-      { w: 'W6',   a: 7.6, p: 7.5, tone: 'pos' },
-      { w: 'W7',   a: 7.8, p: 7.6, tone: 'pos' },
-      { w: 'W8',   a: 7.9, p: 7.7, tone: 'pos' },
-      { w: 'W9',   a: 8.0, p: 7.4, tone: 'pos' },
-      { w: 'W10',  a: 8.1, p: 7.4, tone: 'pos' },
-      { w: 'W11▸', a: 8.3, p: 7.6, tone: 'pos', forecast: true },
+      { w: 'W6',   a: 61, p: 64, tone: 'warn' },
+      { w: 'W7',   a: 63, p: 64, tone: 'warn' },
+      { w: 'W8',   a: 60, p: 64, tone: 'warn' },
+      { w: 'W9',   a: 56, p: 64, tone: 'warn' },
+      { w: 'W10',  a: 52, p: 64, tone: 'neg'  },
+      { w: 'W11▸', a: 58, p: 64, tone: 'warn', forecast: true },
     ],
-    chartTitle: 'Weekly Revenue Variance — Northeast',
+    chartTitle: 'Weekly Trip Variance — US Convenience',
   },
-  southeast: {
-    statusChip: { kind: 'warn', text: 'Calendar shift' },
+  latam: {
+    statusChip: { kind: 'neg', text: 'Critical: LATAM supply constraint — 3rd week' },
     kpis: [
-      { lbl: 'NRR',          val: '106%',  delta: '▼ 4pp vs prior Q',    tone: 'neg' },
-      { lbl: 'New ARR',      val: '$0.6M', delta: '▼ $0.2M vs plan',     tone: 'neg' },
-      { lbl: 'Gross Margin', val: '77.5%', delta: '▼ 0.4pp vs prior Q',  tone: 'neg' },
+      { lbl: 'Total Variance',    val: '-$2.4M',   delta: '▼ vs Plan',          tone: 'neg'  },
+      { lbl: 'Segments Flagged',  val: '4',        delta: '3 critical',         tone: 'neg'  },
+      { lbl: 'Top Driver',        val: 'Supply',   delta: 'MX courier util',    tone: 'neg'  },
+      { lbl: 'Commentary',        val: 'Ready',    delta: '08:38 AM ✓',         tone: 'pos'  },
     ],
     commentary: [
       {
-        rank: 1, name: 'Florida Tourism', delta: '−$0.4M vs Plan',
-        text: 'Spring break peak moved from W10 to W11. Hotel occupancy 71% vs 84% plan. W11 bookings tracking +18% above W10.',
-        tags: [{ t: 'amber', l: 'Calendar shift' }, { t: 'blue', l: 'Auto-recovering' }],
+        rank: 1, name: 'Mexico Grocery', delta: '−$2.1M vs Plan',
+        text: 'Courier utilization 68%, above 63% red line. Trip dampening active since Week 8. Cencosud co-funding offset −$0.4M. Supply ceiling review overdue.',
+        tags: [{ t: 'red', l: 'Supply constraint' }, { t: 'red', l: '3 weeks escalating' }, { t: 'blue', l: 'Predictive: W11 worse' }],
       },
       {
-        rank: 2, name: 'Hotel ADR', delta: '+$0.08M vs Plan',
-        text: 'Average daily rate $218 vs $210 planned. Pricing discipline holding despite soft occupancy — room for upside as W11 demand materializes.',
-        tags: [{ t: 'green', l: 'ADR strength' }],
+        rank: 2, name: 'Brazil Convenience', delta: '−$0.6M vs Plan',
+        text: 'Courier util 61% — approaching red line. São Paulo carnival hangover effect. Trip volume recovering but supply thinning. Early warning flag active.',
+        tags: [{ t: 'amber', l: 'Approaching threshold' }, { t: 'amber', l: 'Early warning' }],
       },
       {
-        rank: 3, name: 'Cruise Partnerships', delta: 'Flat',
-        text: 'Miami and Fort Lauderdale embarkations in-line. Pre-cruise hotel nights flat, no spring-break shift impact.',
-        tags: [{ t: 'blue', l: 'On plan' }],
+        rank: 3, name: 'Colombia Grocery', delta: '+$0.3M vs Plan',
+        text: 'Bogotá expansion Week 6 showing returns. Trip volume +18% vs W6 baseline. Courier supply healthy at 54%.',
+        tags: [{ t: 'green', l: 'Expansion ROI' }, { t: 'green', l: 'Supply healthy' }],
       },
     ],
     chart: [
-      { w: 'W6',   a: 3.1, p: 3.1, tone: 'blue' },
-      { w: 'W7',   a: 3.2, p: 3.1, tone: 'pos'  },
-      { w: 'W8',   a: 3.1, p: 3.1, tone: 'blue' },
-      { w: 'W9',   a: 3.0, p: 3.2, tone: 'warn' },
-      { w: 'W10',  a: 2.9, p: 3.3, tone: 'neg'  },
-      { w: 'W11▸', a: 3.6, p: 3.1, tone: 'pos', forecast: true },
+      { w: 'W6',   a: 58, p: 62, tone: 'warn' },
+      { w: 'W7',   a: 55, p: 62, tone: 'warn' },
+      { w: 'W8',   a: 50, p: 62, tone: 'warn' },
+      { w: 'W9',   a: 44, p: 62, tone: 'neg'  },
+      { w: 'W10',  a: 40, p: 62, tone: 'neg'  },
+      { w: 'W11▸', a: 36, p: 62, tone: 'neg', forecast: true },
     ],
-    chartTitle: 'Weekly Revenue Variance — Southeast',
+    chartTitle: 'Weekly Trip Variance — Mexico Grocery',
   },
-  midwest: {
-    statusChip: { kind: 'warn', text: 'Supply constrained' },
+  emea: {
+    statusChip: { kind: 'pos', text: 'Beating plan · holiday tailwind' },
     kpis: [
-      { lbl: 'NRR',          val: '104%',  delta: '▼ 5pp vs prior Q',    tone: 'neg' },
-      { lbl: 'New ARR',      val: '$1.1M', delta: '▼ $0.3M vs plan',     tone: 'neg' },
-      { lbl: 'Gross Margin', val: '76.8%', delta: '▼ 1.8pp vs prior Q',  tone: 'neg' },
+      { lbl: 'Total Variance',    val: '+$0.3M',     delta: '▲ vs Plan',        tone: 'pos'  },
+      { lbl: 'Segments Flagged',  val: '2',          delta: '0 critical',       tone: 'pos'  },
+      { lbl: 'Top Driver',        val: 'Holiday',    delta: 'School break EU',  tone: 'pos'  },
+      { lbl: 'Commentary',        val: 'Ready',      delta: '08:38 AM ✓',       tone: 'pos'  },
     ],
     commentary: [
       {
-        rank: 1, name: 'Illinois Manufacturing', delta: '−$0.5M vs Plan',
-        text: 'Chicago hub at 94% capacity, above 90% stress threshold. Union Pacific rail car shortage. Fulfillment cycle 8.2 days vs 5.5 target.',
-        tags: [{ t: 'amber', l: 'Watch' }, { t: 'amber', l: 'Rail shortage' }],
+        rank: 1, name: 'EUP Grocery', delta: '+$0.4M vs Plan',
+        text: '+2.3% trips. Courier utilization 51% — healthy. School holiday confirmed driving demand. France +18%, UK +14% vs baseline.',
+        tags: [{ t: 'green', l: 'Positive variance' }, { t: 'green', l: 'Holiday confirmed' }],
       },
       {
-        rank: 2, name: 'Detroit Automotive', delta: 'Flat',
-        text: 'OEM schedules stable. Tier-1 supplier orders tracking plan. No material variance this week.',
-        tags: [{ t: 'blue', l: 'On plan' }],
+        rank: 2, name: 'UK Convenience', delta: '+$0.1M vs Plan',
+        text: 'Steady week. Order frequency up 3%. No exceptions. Margin expanding slightly due to AOV mix shift.',
+        tags: [{ t: 'green', l: 'On track' }, { t: 'green', l: 'Margin expansion' }],
       },
       {
-        rank: 3, name: 'Ohio Distribution', delta: '+$0.05M vs Plan',
-        text: 'Columbus hub running smooth at 81% utilization. Could absorb 6–8% of Chicago overflow if routing is reshaped.',
-        tags: [{ t: 'green', l: 'Capacity headroom' }],
+        rank: 3, name: 'DACH Pharmacy', delta: '−$0.2M vs Plan',
+        text: 'Germany regulatory delay impacting Rx fulfilment. 3% of SKUs affected. Resolution expected W12. Non-material.',
+        tags: [{ t: 'amber', l: 'Regulatory' }, { t: 'blue', l: 'W12 resolution' }],
       },
     ],
     chart: [
-      { w: 'W6',   a: 5.8, p: 5.8, tone: 'blue' },
-      { w: 'W7',   a: 5.8, p: 5.8, tone: 'blue' },
-      { w: 'W8',   a: 5.7, p: 5.8, tone: 'warn' },
-      { w: 'W9',   a: 5.6, p: 5.9, tone: 'warn' },
-      { w: 'W10',  a: 5.4, p: 5.9, tone: 'neg'  },
-      { w: 'W11▸', a: 5.7, p: 5.9, tone: 'warn', forecast: true },
+      { w: 'W6',   a: 52, p: 54, tone: 'warn' },
+      { w: 'W7',   a: 53, p: 54, tone: 'warn' },
+      { w: 'W8',   a: 54, p: 54, tone: 'pos'  },
+      { w: 'W9',   a: 55, p: 54, tone: 'pos'  },
+      { w: 'W10',  a: 58, p: 54, tone: 'pos'  },
+      { w: 'W11▸', a: 56, p: 54, tone: 'pos', forecast: true },
     ],
-    chartTitle: 'Weekly Revenue Variance — Midwest',
+    chartTitle: 'Weekly Trip Variance — EUP Grocery',
   },
-  west: {
-    statusChip: { kind: 'neg', text: 'Biggest drag' },
+  apac: {
+    statusChip: { kind: 'warn', text: 'AU weather event — auto-recovering' },
     kpis: [
-      { lbl: 'NRR',          val: '101%',  delta: '▼ 9pp vs prior Q',    tone: 'neg' },
-      { lbl: 'New ARR',      val: '$2.4M', delta: '▼ $0.6M vs plan',     tone: 'neg' },
-      { lbl: 'Gross Margin', val: '75.2%', delta: '▼ 2.8pp vs prior Q',  tone: 'neg' },
+      { lbl: 'Total Variance',    val: '-$0.9M',     delta: '▼ vs Plan',         tone: 'neg'  },
+      { lbl: 'Segments Flagged',  val: '3',          delta: '1 critical',        tone: 'warn' },
+      { lbl: 'Top Driver',        val: 'Demand',     delta: 'AU weather',        tone: 'warn' },
+      { lbl: 'Commentary',        val: 'Ready',      delta: '08:38 AM ✓',        tone: 'pos'  },
     ],
     commentary: [
       {
-        rank: 1, name: 'California Retail', delta: '−$1.2M vs Plan',
-        text: 'Min-wage hike driving OT 18% above plan in LA/SF. Store-level margin compressed 340bps. 3rd consecutive week of escalation.',
-        tags: [{ t: 'red', l: 'Critical' }, { t: 'red', l: 'Labor' }, { t: 'blue', l: 'ML flag' }],
+        rank: 1, name: 'AU Grocery', delta: '−$0.7M vs Plan',
+        text: 'Eastern seaboard rainfall. Demand suppressed across Grocery and Convenience. Sydney −21%, Melbourne −18% vs weekly baseline. Auto-recovery expected W11–W12.',
+        tags: [{ t: 'amber', l: 'Weather impact' }, { t: 'blue', l: 'Auto-recovery W11' }],
       },
       {
-        rank: 2, name: 'Washington Tech', delta: '−$0.6M vs Plan',
-        text: 'AI workload training costs +28% MoM, compute utilization only 65%. FinOps reservation strategy in progress — $180K/mo recoverable.',
-        tags: [{ t: 'amber', l: 'Cloud' }, { t: 'green', l: 'Savings plan' }],
+        rank: 2, name: 'Japan Convenience', delta: '+$0.1M vs Plan',
+        text: 'Steady performance. Convenience segment outperforming on lunch ordering uptick. AOV stable.',
+        tags: [{ t: 'green', l: 'On track' }],
       },
       {
-        rank: 3, name: 'Oregon Clean Energy', delta: '+$0.2M vs Plan',
-        text: 'IRA subsidy tranche released W9. Solar installation revenue accelerating — Q2 pipeline $1.8M may pull forward 4–6 weeks.',
-        tags: [{ t: 'green', l: 'Subsidy release' }, { t: 'green', l: 'Growing' }],
+        rank: 3, name: 'Taiwan Grocery', delta: '−$0.3M vs Plan',
+        text: 'Lunar New Year hangover — demand normalization in progress. Expected back to baseline by W12.',
+        tags: [{ t: 'amber', l: 'Seasonal' }, { t: 'blue', l: 'Normalizing' }],
       },
     ],
     chart: [
-      { w: 'W6',   a: 12.5, p: 12.6, tone: 'blue' },
-      { w: 'W7',   a: 12.3, p: 12.6, tone: 'warn' },
-      { w: 'W8',   a: 11.9, p: 12.7, tone: 'neg'  },
-      { w: 'W9',   a: 11.4, p: 12.7, tone: 'neg'  },
-      { w: 'W10',  a: 11.0, p: 12.8, tone: 'neg'  },
-      { w: 'W11▸', a: 11.4, p: 12.8, tone: 'warn', forecast: true },
+      { w: 'W6',   a: 60, p: 62, tone: 'warn' },
+      { w: 'W7',   a: 61, p: 62, tone: 'warn' },
+      { w: 'W8',   a: 62, p: 62, tone: 'pos'  },
+      { w: 'W9',   a: 59, p: 62, tone: 'warn' },
+      { w: 'W10',  a: 50, p: 62, tone: 'neg'  },
+      { w: 'W11▸', a: 57, p: 62, tone: 'warn', forecast: true },
     ],
-    chartTitle: 'Weekly Revenue Variance — West',
-  },
-  southwest: {
-    statusChip: { kind: 'neg', text: 'Commodity driven' },
-    kpis: [
-      { lbl: 'NRR',          val: '105%',  delta: '▼ 4pp vs prior Q',    tone: 'neg' },
-      { lbl: 'New ARR',      val: '$0.9M', delta: '▼ $0.1M vs plan',     tone: 'neg' },
-      { lbl: 'Gross Margin', val: '77.1%', delta: '▼ 1.4pp vs prior Q',  tone: 'neg' },
-    ],
-    commentary: [
-      {
-        rank: 1, name: 'Texas Energy', delta: '−$0.8M vs Plan',
-        text: 'Henry Hub spot price down 18% WoW. Hedge covers 60% — unhedged 40% fully exposed. Forward curve suggests W12 stabilization.',
-        tags: [{ t: 'amber', l: 'Commodity' }, { t: 'amber', l: 'Unhedged' }],
-      },
-      {
-        rank: 2, name: 'Arizona Solar', delta: '+$0.05M vs Plan',
-        text: 'Utility-scale installations on track. Phoenix + Tucson commercial projects ahead of schedule by 6 days.',
-        tags: [{ t: 'green', l: 'Execution' }],
-      },
-      {
-        rank: 3, name: 'New Mexico Logistics', delta: 'Flat',
-        text: 'Albuquerque distribution in-line. No material variance this week.',
-        tags: [{ t: 'blue', l: 'On plan' }],
-      },
-    ],
-    chart: [
-      { w: 'W6',   a: 4.0, p: 4.0, tone: 'blue' },
-      { w: 'W7',   a: 3.9, p: 4.0, tone: 'warn' },
-      { w: 'W8',   a: 3.7, p: 4.0, tone: 'warn' },
-      { w: 'W9',   a: 3.5, p: 4.0, tone: 'neg'  },
-      { w: 'W10',  a: 3.2, p: 4.0, tone: 'neg'  },
-      { w: 'W11▸', a: 3.5, p: 4.0, tone: 'warn', forecast: true },
-    ],
-    chartTitle: 'Weekly Revenue Variance — Southwest',
+    chartTitle: 'Weekly Trip Variance — AU Grocery',
   },
 };
 
@@ -1055,55 +1429,63 @@ export const PERF_REGIONAL: Record<string, RegionalSlice> = {
 type CompareOverride = { val?: string; delta: string; tone: 'pos' | 'neg' | 'warn' };
 type CompareFn = (orig: Kpi) => CompareOverride;
 
-function matchKpi(lbl: string): 'nrr' | 'arr' | 'gm' | 'other' {
+function matchKpi(lbl: string): 'variance' | 'flagged' | 'driver' | 'commentary' | 'other' {
   const l = lbl.toLowerCase();
-  if (l.includes('nrr')) return 'nrr';
-  if (l.includes('arr')) return 'arr';
-  if (l.includes('gross margin') || l.includes('margin')) return 'gm';
+  if (l.includes('variance'))   return 'variance';
+  if (l.includes('flagged'))    return 'flagged';
+  if (l.includes('driver'))     return 'driver';
+  if (l.includes('commentary')) return 'commentary';
   return 'other';
 }
 
+// Uberflux Global totals per comparison mode (anchor values for the KPI strip).
+// Region-level numbers still come from each `RegionalSlice`; these overrides
+// flip the Total Variance KPI to reflect the active comparison lens.
 const COMPARE_OVERRIDE_MAP: Record<string, CompareFn> = {
-  // vs Plan — keep the base numbers + original tone the region defined.
+  // vs Plan — keep each region's authored values.
   plan: (k) => ({ val: k.val, delta: k.delta, tone: k.tone }),
 
-  // vs Prior Week — WoW deltas, small moves, small color change.
+  // vs Prior Week — every region trended positive WoW.
   priorwk: (k) => {
     switch (matchKpi(k.lbl)) {
-      case 'nrr': return { delta: '▲ 0.3pp WoW',  tone: 'pos' };
-      case 'arr': return { delta: '▲ 1.2% WoW',   tone: 'pos' };
-      case 'gm':  return { delta: '▼ 0.2pp WoW',  tone: 'neg' };
-      default:    return { delta: k.delta,        tone: k.tone };
+      case 'variance':   return { val: '+$0.8M',  delta: '▲ vs Prior Week',  tone: 'pos'  };
+      case 'flagged':    return { val: '5',       delta: '2 fewer WoW',      tone: 'pos'  };
+      case 'driver':     return { val: 'Holiday', delta: 'EMEA tailwind',    tone: 'pos'  };
+      case 'commentary': return { val: 'Ready',   delta: '08:38 AM ✓',       tone: 'pos'  };
+      default:           return { delta: k.delta, tone: k.tone };
     }
   },
 
-  // vs Prior Year — large YoY degradation, everything red.
+  // vs Prior Year — strong YoY growth (partly weak comps).
   prioryr: (k) => {
     switch (matchKpi(k.lbl)) {
-      case 'nrr': return { val: '108%',  delta: '▼ 9pp YoY',     tone: 'neg' };
-      case 'arr': return { val: '$4.2M', delta: '▼ $0.3M YoY',   tone: 'neg' };
-      case 'gm':  return { val: '78.4%', delta: '▼ 0.9pp YoY',   tone: 'neg' };
-      default:    return { delta: k.delta,       tone: k.tone };
+      case 'variance':   return { val: '+$12.1M', delta: '▲ vs Prior Year',  tone: 'pos'  };
+      case 'flagged':    return { val: '2',       delta: '0 critical',       tone: 'pos'  };
+      case 'driver':     return { val: 'Growth',  delta: 'Market expansion', tone: 'pos'  };
+      case 'commentary': return { val: 'Ready',   delta: '08:38 AM ✓',       tone: 'pos'  };
+      default:           return { delta: k.delta, tone: k.tone };
     }
   },
 
-  // vs Forecast — closer to plan, mix of pos/warn.
+  // vs Forecast — missed internal forecast despite embedded risk.
   forecast: (k) => {
     switch (matchKpi(k.lbl)) {
-      case 'nrr': return { delta: '▲ 1pp vs forecast',       tone: 'pos'  };
-      case 'arr': return { delta: '▲ $0.1M vs forecast',     tone: 'pos'  };
-      case 'gm':  return { delta: 'in line with forecast',   tone: 'warn' };
-      default:    return { delta: k.delta,                   tone: k.tone };
+      case 'variance':   return { val: '-$1.9M',  delta: '▼ vs Forecast',    tone: 'warn' };
+      case 'flagged':    return { val: '4',       delta: '2 unforecast',     tone: 'warn' };
+      case 'driver':     return { val: 'Weather', delta: 'Unmodeled AU',     tone: 'warn' };
+      case 'commentary': return { val: 'Ready',   delta: '08:38 AM ✓',       tone: 'pos'  };
+      default:           return { delta: k.delta, tone: k.tone };
     }
   },
 
-  // vs Run Rate — slight miss vs the trend.
+  // vs Run Rate — below 8-week trend; LATAM structural drag.
   runrate: (k) => {
     switch (matchKpi(k.lbl)) {
-      case 'nrr': return { delta: '▼ 2pp vs run rate',   tone: 'neg' };
-      case 'arr': return { delta: '▼ 3% vs run rate',    tone: 'neg' };
-      case 'gm':  return { delta: '▼ 0.4pp vs run rate', tone: 'neg' };
-      default:    return { delta: k.delta,                tone: k.tone };
+      case 'variance':   return { val: '-$2.8M',  delta: '▼ vs Run Rate',    tone: 'neg'  };
+      case 'flagged':    return { val: '6',       delta: 'trend declining',  tone: 'neg'  };
+      case 'driver':     return { val: 'Supply',  delta: 'LATAM drag',       tone: 'neg'  };
+      case 'commentary': return { val: 'Ready',   delta: '08:38 AM ✓',       tone: 'pos'  };
+      default:           return { delta: k.delta, tone: k.tone };
     }
   },
 };
@@ -1120,17 +1502,22 @@ export function adjustKpisByCompare(kpis: Kpi[], compareKey: string): Kpi[] {
 // PERFORMANCE — driver filter for commentary
 // Matches a driver key to a rough keyword search in commentary item names/tags.
 // ==========================================================================
+// Uberflux — map each segment key to a set of name/tag keywords so clicking a
+// segment in the left rail filters the commentary (and drill-down events from
+// the right-side Variance Deep-Dive panel) down to matching rows.
 const DRIVER_KEYWORDS: Record<string, string[]> = {
-  caretail:  ['california retail', 'california', 'retail', 'labor', 'la/sf', 'wage'],
-  txenergy:  ['texas energy', 'texas', 'henry hub', 'natural gas', 'commodity', 'hedge'],
-  nyfinance: ['new york', 'nyfinance', 'financial services', 'equity', 'advisory', 'trading', 'wealth'],
-  fltourism: ['florida', 'tourism', 'hotel', 'occupancy', 'cruise', 'spring break'],
-  ilmfg:     ['illinois', 'manufacturing', 'chicago', 'rail', 'hub', 'detroit', 'ohio'],
-  watech:    ['washington', 'watech', 'cloud', 'ai workload', 'tech', 'oregon'],
+  grocery:     ['grocery', 'mexico grocery', 'eup grocery', 'au grocery', 'canada grocery', 'taiwan grocery', 'colombia grocery'],
+  convenience: ['convenience', 'us convenience', 'uk convenience', 'brazil convenience', 'japan convenience'],
+  alcohol:     ['alcohol', 'us alcohol', 'eup alcohol'],
+  pharmacy:    ['pharmacy', 'dach pharmacy', 'us pharmacy', 'apac pharmacy', 'rx'],
 };
-export function filterCommentaryByDriver(items: CommentaryItem[], driverKey: string | null): CommentaryItem[] {
+export function filterCommentaryByDriver(
+  items: CommentaryItem[],
+  driverKey: string | null,
+  keywordOverrides?: Record<string, string[]>,
+): CommentaryItem[] {
   if (!driverKey) return items;
-  const kws = DRIVER_KEYWORDS[driverKey] ?? [driverKey];
+  const kws = (keywordOverrides?.[driverKey]) ?? DRIVER_KEYWORDS[driverKey] ?? [driverKey];
   const match = (s: string) => kws.some(kw => s.toLowerCase().includes(kw));
   const filtered = items.filter(it => match(it.name) || match(it.text) || it.tags.some(t => match(t.l)));
   return filtered.length ? filtered : items; // never return empty — fall back to all

@@ -18,7 +18,7 @@ export default function Login() {
   const cards: { role: Role; tagline: string; accent: string }[] = [
     { role: 'CFO',        tagline: 'Executive rollup. Approvals. Board prep.', accent: 'from-blue-500 to-indigo-700' },
     { role: 'CONTROLLER', tagline: 'Close orchestration. Reconciliations. Review queue.', accent: 'from-emerald-500 to-teal-700' },
-    { role: 'PREPARER',   tagline: 'Worklist. Investigations. Evidence uploads.', accent: 'from-amber-500 to-orange-700' },
+    { role: 'STAFF',      tagline: 'Worklist. Investigations. Evidence uploads.', accent: 'from-amber-500 to-orange-700' },
   ];
 
   return (

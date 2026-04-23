@@ -149,8 +149,11 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: none;
 }
 
-/* Status chip hues */
-.chip-neg  { background: var(--negative-weak); color: var(--negative); }
-.chip-pos  { background: var(--positive-weak); color: var(--positive); }
-.chip-warn { background: var(--warning-weak); color: var(--warning); }
-.chip-info { background: var(--primary-tint);  color: var(--primary); }
+/* Status chip hues — subtle tinted pills matching the Uberflux
+   "COMPETITIVE PRESSURE" pill treatment. Semi-transparent tint of the base
+   color (reads cleanly on both light + dark surfaces) with a soft matching
+   border, so the chip communicates status without dominating the title row. */
+.chip-neg  { background: color-mix(in srgb, var(--negative) 14%, transparent); color: var(--negative); border: 1px solid color-mix(in srgb, var(--negative) 28%, transparent); }
+.chip-pos  { background: color-mix(in srgb, var(--positive) 14%, transparent); color: var(--positive); border: 1px solid color-mix(in srgb, var(--positive) 28%, transparent); }
+.chip-warn { background: color-mix(in srgb, var(--warning)  14%, transparent); color: var(--warning);  border: 1px solid color-mix(in srgb, var(--warning)  28%, transparent); }
+.chip-info { background: color-mix(in srgb, var(--primary)  14%, transparent); color: var(--primary);  border: 1px solid color-mix(in srgb, var(--primary)  28%, transparent); }

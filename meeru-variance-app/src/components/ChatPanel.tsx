@@ -1,6 +1,6 @@
 import { useRef, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useChat, useSettings, useToasts, useMission } from '../store';
+import { useChat, useSettings, useToasts, useMission, hasPermission } from '../store';
 import { INSIGHTS, NEW_INSIGHTS_POOL, SUGGESTIONS, UNIVERSAL_ACTIONS, CHAT_RESPONSES } from '../data';
 import { Icon, getActionIcon } from '../icons';
 import { usePersona } from './AppShell';
@@ -584,7 +584,10 @@ export function ChatPanel() {
     : 'Suggested';
 
   // Ordered contextual cards (NBA)
-  const nbaCards = orderByRole(contextual, persona.order);
+  const nbaCards = orderByRole(
+    contextual.filter(c => !c.requires || hasPermission(persona, c.requires)),
+    persona.order,
+  );
 
   return (
     <>

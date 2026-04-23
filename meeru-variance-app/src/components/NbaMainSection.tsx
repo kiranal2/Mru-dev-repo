@@ -1,13 +1,17 @@
 import { useMemo, useState } from 'react';
-import { useChat, useToasts } from '../store';
+import { useChat, useToasts, hasPermission } from '../store';
 import { usePersona } from './AppShell';
 import { Icon } from '../icons';
 import { SlackPreviewModal } from './SlackPreviewModal';
-import type { ActionCard, ActionKind } from '../types';
+import type { ActionCard, ActionKind, Persona } from '../types';
 
 function orderByRole(cards: ActionCard[], order: string[]): ActionCard[] {
   const rank = new Map(order.map((k, i) => [k, i]));
   return [...cards].sort((a, b) => (rank.get(a.kind) ?? 99) - (rank.get(b.kind) ?? 99));
+}
+
+function filterByPermission(cards: ActionCard[], persona: Persona): ActionCard[] {
+  return cards.filter(c => !c.requires || hasPermission(persona, c.requires));
 }
 
 function truncate(s: string, n: number) {
@@ -291,8 +295,8 @@ export function NbaMainSection() {
   const [slackPreview, setSlackPreview] = useState<{ card: ActionCard; idKey: string } | null>(null);
 
   const cards = useMemo(
-    () => orderByRole(contextual, persona.order).slice(0, 5),
-    [contextual, persona.order],
+    () => orderByRole(filterByPermission(contextual, persona), persona.order).slice(0, 5),
+    [contextual, persona],
   );
 
   if (cards.length === 0) return null;

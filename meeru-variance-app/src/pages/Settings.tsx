@@ -1,7 +1,8 @@
 import { useSettings, useTheme, useAuth, useToasts } from '../store';
 import { Card, Eyebrow } from '../components/ui';
 import { PERSONAS } from '../data';
-import type { ActionKind } from '../types';
+import { INDUSTRY_PRESETS, INDUSTRY_LIST } from '../industry-presets';
+import type { ActionKind, IndustryKey } from '../types';
 
 const ALL_KINDS: { kind: ActionKind; label: string }[] = [
   { kind: 'pin', label: 'Pin' },
@@ -57,6 +58,44 @@ export default function Settings() {
           </div>
         </Card>
 
+        {/* Industry */}
+        <Card className="p-5 mb-4">
+          <Eyebrow>Industry data</Eyebrow>
+          <p className="text-[11px] text-muted mt-1.5 mb-2.5">
+            Switch the data lens. Regions, segments, commentary, exceptions, signals, and history across the Performance workbench all rebuild from the chosen preset.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {INDUSTRY_LIST.map(k => {
+              const preset = INDUSTRY_PRESETS[k];
+              const active = settings.industry === k;
+              return (
+                <button
+                  key={k}
+                  onClick={() => {
+                    update({ industry: k as IndustryKey });
+                    push({ kind: 'ok', title: 'Industry switched', sub: `${preset.meta.label} · ${preset.meta.periodLabel}` });
+                  }}
+                  className={`text-left p-3.5 rounded-lg border transition-all ${
+                    active
+                      ? 'border-brand bg-brand-tint'
+                      : 'border-rule hover:bg-surface-soft hover:border-brand-weak'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className={`text-[12.5px] font-semibold ${active ? 'text-brand' : 'text-ink'}`}>{preset.meta.label}</span>
+                    {active && <span className="px-1.5 py-0.5 bg-brand text-white rounded text-[9px] font-bold uppercase tracking-wider">Active</span>}
+                  </div>
+                  <div className="text-[10.5px] text-muted leading-snug mb-2">{preset.meta.tagline}</div>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="px-1.5 py-0.5 bg-surface border border-rule rounded text-[9px] text-muted uppercase tracking-wider">{preset.meta.periodLabel}</span>
+                    <span className="px-1.5 py-0.5 bg-surface border border-rule rounded text-[9px] text-muted uppercase tracking-wider">Metric: {preset.meta.metricLabel}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </Card>
+
         {/* Theme */}
         <Card className="p-5 mb-4">
           <Eyebrow>Appearance</Eyebrow>
@@ -78,6 +117,20 @@ export default function Settings() {
                 {d} {settings.density === d && '· active'}
               </button>
             ))}
+          </div>
+        </Card>
+
+        {/* Navigation */}
+        <Card className="p-5 mb-4">
+          <Eyebrow>Navigation</Eyebrow>
+          <div className="space-y-2.5 mt-2.5">
+            <label className="flex items-center justify-between gap-2 p-2 rounded hover:bg-surface-soft">
+              <div>
+                <div className="text-[13px] text-ink">Show workbench tabs</div>
+                <div className="text-[11px] text-muted">Reveal the Performance / Margin / Flux Intelligence tab bar at the top of the workbench. Hidden by default.</div>
+              </div>
+              <input type="checkbox" checked={settings.showWorkbenchTabs} onChange={e => update({ showWorkbenchTabs: e.target.checked })} className="w-4 h-4 accent-brand" />
+            </label>
           </div>
         </Card>
 

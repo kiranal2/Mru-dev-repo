@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { WORKBENCHES, PERF_COMMENTARY } from '../data';
 import type { CommentaryItem } from '../types';
@@ -9,27 +9,6 @@ import { useChat, useSettings } from '../store';
 
 const RAIL_W_EXPANDED = 200;
 const RAIL_W_COLLAPSED = 36;
-
-/** "Xs ago" ticking counter — lives in the workbench-tabs row. */
-function LiveTimer() {
-  const [sec, setSec] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setSec(s => s + 1), 1000);
-    return () => clearInterval(id);
-  }, []);
-  const label =
-    sec < 60
-      ? `${sec}s ago`
-      : sec < 3600
-      ? `${Math.floor(sec / 60)}m ${sec % 60}s ago`
-      : `${Math.floor(sec / 3600)}h ago`;
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <span className="w-1.5 h-1.5 rounded-full bg-positive live-dot" />
-      <span className="num">Live · updated {label}</span>
-    </span>
-  );
-}
 
 interface Props {
   /** The workbench key we're currently on */
@@ -75,20 +54,28 @@ export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLab
   const railW = settings.railCollapsed ? RAIL_W_COLLAPSED : RAIL_W_EXPANDED;
   const chatCol = settings.chatHidden ? '' : ` ${settings.chatWidth}px`;
   const gridCols = `${railW}px 1fr${chatCol}`;
-  // topnav now spans the full width of (left rail + main) so the sub-tabs sit
-  // at the top edge, above the left rail — per Shawn's reference layout.
-  const gridAreas = settings.chatHidden
-    ? `"wb wb" "topnav topnav" "left main"`
-    : `"wb wb chat" "topnav topnav chat" "left main chat"`;
+  // When the workbench-tabs row is hidden, collapse its grid row entirely so
+  // there's no empty stripe at the top. topnav then owns the first row.
+  const showTabs = settings.showWorkbenchTabs;
+  const gridRows = showTabs ? '40px 48px 1fr' : '48px 1fr';
+  const gridAreas = showTabs
+    ? (settings.chatHidden
+        ? `"wb wb" "topnav topnav" "left main"`
+        : `"wb wb chat" "topnav topnav chat" "left main chat"`)
+    : (settings.chatHidden
+        ? `"topnav topnav" "left main"`
+        : `"topnav topnav chat" "left main chat"`);
 
   const toggleRail = () => update({ railCollapsed: !settings.railCollapsed });
 
   return (
     <>
-      <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: gridCols, gridTemplateRows: '40px 48px 1fr', gridTemplateAreas: gridAreas }}>
-        <div style={{ gridArea: 'wb' }}>
-          <WorkbenchTabs active={workbench} />
-        </div>
+      <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: gridCols, gridTemplateRows: gridRows, gridTemplateAreas: gridAreas }}>
+        {showTabs && (
+          <div style={{ gridArea: 'wb' }}>
+            <WorkbenchTabs active={workbench} />
+          </div>
+        )}
         <div
           style={{ gridArea: 'topnav' }}
           className="bg-surface border-b border-rule flex items-center gap-3"
@@ -185,11 +172,7 @@ function WorkbenchTabs({ active }: { active: string }) {
           </Link>
         );
       })}
-      {/* Right-side meta — just the ticking "live updated" indicator */}
       <div className="flex-1" />
-      <div className="hidden lg:flex items-center gap-2 text-[11px] text-muted pr-4">
-        <LiveTimer />
-      </div>
     </div>
   );
 }

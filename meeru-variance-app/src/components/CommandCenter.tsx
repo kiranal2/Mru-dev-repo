@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import type { ReactNode, ComponentType, SVGProps } from 'react';
 import { useChat, useToasts } from '../store';
+import { usePersona } from './AppShell';
 import { Icon, getActionIcon } from '../icons';
-import type { ActionCard, ActionKind, SavedReply } from '../types';
+import type { ActionCard, ActionKind, Role, SavedReply } from '../types';
 
 /**
  * CommandCenter — self-contained ask-and-act surface.
@@ -34,80 +35,114 @@ import type { ActionCard, ActionKind, SavedReply } from '../types';
  * latest prompt produces a fresh `contextual` action list.
  */
 
-// Default chip copy (mockup) — shown before the user has asked anything.
-const DEFAULT_PROMPTS = [
-  'Why did Enterprise churn spike this quarter?',
-  'When will margins recover?',
-  'Compare NRR trend to prior 4 quarters',
+// Shared delivery-industry prompts that work for any persona.
+const SHARED_PROMPTS = [
+  'Why did LATAM underperform this week?',
+  'What should we watch before Tuesday?',
+  'Which regions are most at risk next week?',
+  'What are the most significant exceptions this week?',
+  'Why is Mexico Grocery in dampening?',
+  'Explain the US Convenience exit rate spike',
+  'What is driving EUP Grocery outperformance?',
+  'What caused the AU Grocery miss?',
 ];
 
-// Library of type-ahead suggestions surfaced as the user types in the composer.
-// These are broader than the 3 default chips and cover common finance queries
-// so the composer feels alive (rather than waiting for the user to finish
-// typing and hit send).
-const SUGGESTION_LIBRARY: string[] = [
-  'Why did Enterprise churn spike this quarter?',
-  'Why did revenue miss plan in Q1?',
-  'Why did margins compress vs last quarter?',
-  'When will margins recover?',
-  'Compare NRR trend to prior 4 quarters',
-  'Compare West vs Northeast weekly variance',
-  'Show top 5 at-risk Enterprise accounts',
-  'Show cash bridge from plan to actual',
-  'What drove the variance in gross margin?',
-  'What if we save 2 of 3 at-risk Enterprise logos?',
-  'Model retention impact of a 5% price increase',
-  'Forecast Q2 ARR at current run-rate',
-  'Break down variance by driver — volume vs price vs mix',
-  'Which SKUs are driving the margin drop?',
-  'Draft a board pre-read summarizing the Q1 miss',
-  'Summarize Week 10 performance for the CFO',
-  'Explain the -$3.2M variance in plain English',
-  'Rank drivers of NRR decline',
-  'Flag accounts with rising churn risk',
-];
+// Persona-specific prompt pools — surfaced based on the active persona.
+// Persona-tagged CHAT_RESPONSES match these in data.ts.
+const PROMPTS_BY_PERSONA: Record<Role, { defaults: string[]; library: string[] }> = {
+  CFO: {
+    defaults: [
+      'Show items needing my approval',
+      'Draft a W10 board summary',
+      'What is the Q1 cumulative exposure?',
+    ],
+    library: [
+      'Show items needing my approval',
+      'Draft a W10 board summary',
+      'What is the Q1 cumulative exposure?',
+      'What segments are ready for period lock?',
+      'Compare W10 to same week last year',
+      'Total materiality-exceeding variances this quarter',
+      'Publish board pre-read for Friday',
+      'Model Q2 recovery if all LATAM interventions land',
+    ],
+  },
+  CONTROLLER: {
+    defaults: [
+      'Show my review queue',
+      'What are the close-day blockers?',
+      'Reconciliation status across segments',
+    ],
+    library: [
+      'Show my review queue',
+      'What are the close-day blockers?',
+      'Reconciliation status across segments',
+      'Show the Mexico audit trail',
+      'Which staff-prepared items need approval?',
+      'Post the Mexico provisional JE',
+      'Route Mexico to CFO for sign-off',
+      'Day 4 critical-path items',
+    ],
+  },
+  STAFF: {
+    defaults: [
+      'What are my tasks for today?',
+      'How do I prepare the Mexico investigation?',
+      'What evidence am I missing?',
+    ],
+    library: [
+      'What are my tasks for today?',
+      'How do I prepare the Mexico investigation?',
+      'What evidence am I missing?',
+      'Submit Mexico for Controller review',
+      'Show me a well-documented example',
+      'How long does Raj usually take to review?',
+      'Prepare the Voltair JE',
+      'Upload Bank recon evidence',
+    ],
+  },
+};
 
-// Curated groups for the Suggestions popover — categorized so the user can
-// orient quickly across the library of prompts (rather than a flat list).
-const SUGGESTION_GROUPS: { label: string; icon: 'Sparkle' | 'Trend' | 'Target' | 'Email'; items: string[] }[] = [
+// Shared topical buckets — useful for all personas.
+const SHARED_SUGGESTION_GROUPS: { label: string; icon: 'Sparkle' | 'Trend' | 'Target' | 'Email'; items: string[] }[] = [
   {
     label: 'Diagnose',
     icon: 'Sparkle',
     items: [
-      'Why did Enterprise churn spike this quarter?',
-      'Why did margins compress vs last quarter?',
-      'What drove the variance in gross margin?',
-      'Which SKUs are driving the margin drop?',
+      'Why did LATAM underperform this week?',
+      'Why is Mexico Grocery in dampening?',
+      'Explain the US Convenience exit rate spike',
+      'What caused the AU Grocery miss?',
     ],
   },
   {
     label: 'Compare & Trend',
     icon: 'Trend',
     items: [
-      'Compare NRR trend to prior 4 quarters',
-      'Compare West vs Northeast weekly variance',
-      'Break down variance by driver — volume vs price vs mix',
-      'Rank drivers of NRR decline',
+      'Compare W10 to W34 2024',
+      'Compare W10 to same week last year',
+      'Rank exceptions by revenue impact',
+      'How does W10 compare to W9?',
     ],
   },
   {
     label: 'Forecast & Model',
     icon: 'Target',
     items: [
-      'Forecast Q2 ARR at current run-rate',
-      'What if we save 2 of 3 at-risk Enterprise logos?',
-      'Model retention impact of a 5% price increase',
-      'When will margins recover?',
+      'Which regions are most at risk next week?',
+      'Model Mexico supply ceiling +11%',
+      'Will NA recover next week?',
+      'What should we watch before Tuesday?',
     ],
   },
   {
     label: 'Drafts & Briefs',
     icon: 'Email',
     items: [
-      'Draft a board pre-read summarizing the Q1 miss',
-      'Summarize Week 10 performance for the CFO',
-      'Explain the -$3.2M variance in plain English',
-      'Flag accounts with rising churn risk',
+      'Draft a W10 summary for the CEO',
+      'Summarize the vs Plan view in one sentence',
+      'Flag segments approaching supply thresholds',
+      'Can we amplify the EUP school holiday effect?',
     ],
   },
 ];
@@ -121,11 +156,11 @@ interface HistoryEntry {
   scope?: string; // workbench context label
 }
 const SEED_HISTORY: HistoryEntry[] = [
-  { q: 'Show NRR trend by cohort',                 when: '12m ago',  scope: 'Performance · National' },
-  { q: 'Why is West margin -180 bps?',             when: '1h ago',   scope: 'Margin' },
-  { q: 'Top 5 at-risk Enterprise accounts',        when: 'Yesterday',scope: 'Performance · National' },
-  { q: 'Variance bridge Q4 → Q1',                  when: 'Yesterday',scope: 'Flux' },
-  { q: 'Cash runway at current burn',              when: '2d ago',   scope: 'Treasury' },
+  { q: 'Why did LATAM underperform this week?',    when: '12m ago',  scope: 'Performance · Global' },
+  { q: 'Diagnose the Mexico supply breach',        when: '1h ago',   scope: 'Performance · LATAM' },
+  { q: 'Rank exceptions by revenue impact',        when: 'Yesterday',scope: 'Performance · Global' },
+  { q: 'Compare W10 to W34 2024',                  when: 'Yesterday',scope: 'Flux' },
+  { q: 'Will NA recover next week?',               when: '2d ago',   scope: 'Performance · North America' },
   { q: 'Model 5% price increase on retention',     when: '3d ago',   scope: 'Performance' },
 ];
 
@@ -763,8 +798,11 @@ function ActionPlanPanel({
   }, [onClose, running]);
 
   // Single commit moment. Briefly show a running state so the action feels
-  // real (network call / work being done), then mark done. The settings
-  // above lock while running + after done.
+  // real (network call / work being done), then mark done. For "open" /
+  // "investigate" kinds we also fire a `meeru-navigate` window event so the
+  // host page can switch to the relevant detail tab, then auto-close the
+  // modal shortly after — otherwise users see "Opened ✓" and nothing visibly
+  // happens.
   const execute = () => {
     if (running || finished) return;
     setRunning(true);
@@ -772,6 +810,16 @@ function ActionPlanPanel({
       setRunning(false);
       setFinished(true);
       onComplete(tile);
+      if (kind === 'open' || kind === 'investigate') {
+        const label = tile.action?.label ?? tile.title ?? '';
+        const body = tile.action?.body ?? '';
+        const who = tile.action?.who ?? '';
+        window.dispatchEvent(new CustomEvent('meeru-navigate', {
+          detail: { label, body, who, kind },
+        }));
+        // Brief delay so the user sees the ✓ state before the modal dismisses.
+        setTimeout(() => onClose(), 650);
+      }
     }, 900);
   };
 
@@ -1186,15 +1234,15 @@ function SavedPanel({
   );
 }
 
-function SuggestionsPanel({ onPick }: { onPick: (q: string) => void }) {
+function SuggestionsPanel({ onPick, groups }: { onPick: (q: string) => void; groups: { label: string; icon: 'Sparkle' | 'Trend' | 'Target' | 'Email'; items: string[] }[] }) {
   return (
     <div>
       <PanelHeader
         title="Prompt suggestions"
-        count={SUGGESTION_GROUPS.reduce((n, g) => n + g.items.length, 0)}
+        count={groups.reduce((n, g) => n + g.items.length, 0)}
       />
       <div className="max-h-[300px] overflow-y-auto">
-        {SUGGESTION_GROUPS.map(group => {
+        {groups.map(group => {
           const Ic = group.icon === 'Sparkle' ? Icon.Sparkle
             : group.icon === 'Trend' ? Icon.Trend
             : group.icon === 'Target' ? Icon.Target
@@ -1230,7 +1278,7 @@ function SuggestionsPanel({ onPick }: { onPick: (q: string) => void }) {
 // ---------------------------------------------------------------------------
 
 export function CommandCenter({
-  prompts = DEFAULT_PROMPTS,
+  prompts,
 }: {
   prompts?: string[];
 }) {
@@ -1238,8 +1286,23 @@ export function CommandCenter({
     send, reset, msgs, contextual, followUps, thinking, markSent, sent,
     saved, removeSaved,
   } = useChat();
+  const persona = usePersona();
   const { push } = useToasts();
   const [input, setInput] = useState('');
+
+  // Persona-specific prompt pools — the 3 default chips and the type-ahead
+  // library both pull from here so the user sees prompts that actually match
+  // persona-tagged responses in data.ts.
+  const personaPrompts = PROMPTS_BY_PERSONA[persona.key];
+  const DEFAULT_PROMPTS = prompts ?? personaPrompts.defaults;
+  const SUGGESTION_LIBRARY = useMemo(
+    () => [...personaPrompts.library, ...SHARED_PROMPTS],
+    [personaPrompts],
+  );
+  const SUGGESTION_GROUPS = useMemo(() => [
+    { label: `For ${persona.role.split(/\s|,/)[0]}`, icon: 'Sparkle' as const, items: personaPrompts.library.slice(0, 5) },
+    ...SHARED_SUGGESTION_GROUPS,
+  ], [personaPrompts, persona.role]);
 
   // ---------- Composer-icon popovers (History / Saved / Suggestions) ----------
   // A single `openPanel` drives which floating panel renders above the utility
@@ -1319,12 +1382,12 @@ export function CommandCenter({
   };
 
   // ---------- Chips ----------
-  // Before any reply: show default starter prompts from the mockup.
+  // Before any reply: show persona-aware default starter prompts.
   // After a reply: show the follow-ups returned by the response.
-  const chipPrompts = useMemo(() => {
+  const chipPrompts = useMemo<string[]>(() => {
     if (followUps.length > 0) return followUps.slice(0, 4);
-    return prompts;
-  }, [followUps, prompts]);
+    return DEFAULT_PROMPTS;
+  }, [followUps, DEFAULT_PROMPTS]);
 
   // ---------- NBA row (dynamic) ----------
   const nbaTiles: NbaTile[] = useMemo(() => {
@@ -1697,6 +1760,7 @@ export function CommandCenter({
               {openPanel === 'suggestions' && (
                 <SuggestionsPanel
                   onPick={(q) => { setOpenPanel(null); submit(q); }}
+                  groups={SUGGESTION_GROUPS}
                 />
               )}
             </div>

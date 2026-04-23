@@ -1,10 +1,9 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { WorkbenchShell } from '../components/WorkbenchShell';
 import { RailGroup } from '../components/LeftRail';
 import { TopNav } from '../components/TopNav';
 import { KpiRow } from '../components/KpiRow';
 import { VarianceChart } from '../components/VarianceChart';
-import type { BridgeDriver } from '../components/VarianceBridge';
 import { CommandCenter } from '../components/CommandCenter';
 import { StatusChip, InlineFilterMenu } from '../components/ui';
 import { Icon } from '../icons';
@@ -14,180 +13,120 @@ import {
   RefreshingOverlay,
 } from '../components/Skeletons';
 import { useAsyncData } from '../hooks/useAsyncData';
-import {
-  PERF_REGIONS, PERF_COMPARES, PERF_DRIVERS,
-  WORKBENCHES,
-  PERF_DRILLDOWN, PERF_EXCEPTIONS, PERF_SIGNALS, PERF_HISTORY,
-  PERF_REGIONAL, adjustKpisByCompare, filterCommentaryByDriver,
-} from '../data';
+import { WORKBENCHES, adjustKpisByCompare, filterCommentaryByDriver } from '../data';
+import { useIndustryData } from '../store';
 import { usePersona } from '../components/AppShell';
-
-// -----------------------------------------------------------------------------
-// Per-region AHA headline + Variance Bridge data
-// (Inline here rather than in data.ts to keep the demo swap surgical. If this
-//  becomes canonical we can migrate these into PERF_REGIONAL.)
-// -----------------------------------------------------------------------------
-interface RegionBridgeData {
-  aha: ReactNode; // rich JSX headline with inline number formatting
-  planM: number;
-  actualM: number;
-  drivers: BridgeDriver[];
-}
-
-const PERF_BRIDGE: Record<string, RegionBridgeData> = {
-  national: {
-    aha: (
-      <>
-        <b>Week 10 revenue $30.5M vs plan $33.7M — missed by <span className="text-negative">-$3.2M</span>.</b>
-        {' '}California Retail labor surge (<b className="text-negative">-$1.2M</b>) and Texas Energy
-        commodity exposure (<b className="text-negative">-$0.8M</b>) drive most of the gap.
-        NY Financial Services (<b className="text-positive">+$0.7M</b>) is the only offsetter.
-      </>
-    ),
-    planM: 33.7,
-    actualM: 30.5,
-    drivers: [
-      { label: 'CA Retail',       valueM: -1.2 },
-      { label: 'TX Energy',       valueM: -0.8 },
-      { label: 'WA Tech Cloud',   valueM: -0.6 },
-      { label: 'IL Manufacturing',valueM: -0.5 },
-      { label: 'FL Tourism',      valueM: -0.4 },
-      { label: 'NY FinServ',      valueM: +0.7 },
-      { label: 'Other',           valueM: -0.4 },
-    ],
-  },
-  northeast: {
-    aha: (
-      <>
-        <b>Northeast is carrying the team — $8.1M vs plan $7.4M (<span className="text-positive">+$0.7M</span>).</b>
-        {' '}NY Financial Services equity desk +22% on elevated VIX;
-        advisory pipeline pulling forward by 3 weeks. Structural capture-rate lift of +15bps
-        should persist through Q2.
-      </>
-    ),
-    planM: 7.4,
-    actualM: 8.1,
-    drivers: [
-      { label: 'Equity Trading', valueM: +0.4 },
-      { label: 'Advisory',       valueM: +0.2 },
-      { label: 'Wealth Mgmt',    valueM: +0.1 },
-      { label: 'Other',          valueM: 0 },
-    ],
-  },
-  southeast: {
-    aha: (
-      <>
-        <b>Southeast miss is timing, not demand — $2.9M vs plan $3.3M.</b>
-        {' '}Florida spring-break peak moved from W10 to W11. Hotel occupancy 71% vs 84% planned,
-        but <b>W11 advance bookings tracking +18%</b>. 4 of 5 historical calendar shifts fully recovered.
-      </>
-    ),
-    planM: 3.3,
-    actualM: 2.9,
-    drivers: [
-      { label: 'FL Tourism',   valueM: -0.4 },
-      { label: 'Hotel ADR',    valueM: +0.08 },
-      { label: 'Cruise',       valueM: 0 },
-      { label: 'Other',        valueM: -0.08 },
-    ],
-  },
-  midwest: {
-    aha: (
-      <>
-        <b>Midwest is supply-constrained — $5.4M vs plan $5.9M.</b>
-        {' '}Chicago hub at 94% capacity vs 90% stress threshold; fulfillment cycle 8.2d vs 5.5d target.
-        Union Pacific confirmed <b>+15% rail car allocation for W11</b> — recovery by W12 at historical UP accuracy.
-      </>
-    ),
-    planM: 5.9,
-    actualM: 5.4,
-    drivers: [
-      { label: 'IL Mfg',           valueM: -0.5 },
-      { label: 'Detroit Auto',     valueM: 0 },
-      { label: 'Ohio Distribution',valueM: +0.05 },
-      { label: 'Other',            valueM: -0.05 },
-    ],
-  },
-  west: {
-    aha: (
-      <>
-        <b>West is the biggest drag — $11.0M vs plan $12.8M (<span className="text-negative">-$1.8M</span>).</b>
-        {' '}California Retail labor (-$1.2M) plus Washington Tech AI training spend (-$0.6M).
-        Lever: automation acceleration from W14 → W11 saves ~<b>$0.4M/week</b> (confidence 92%).
-      </>
-    ),
-    planM: 12.8,
-    actualM: 11.0,
-    drivers: [
-      { label: 'CA Retail',        valueM: -1.2 },
-      { label: 'WA Tech Cloud',    valueM: -0.6 },
-      { label: 'OR Clean Energy',  valueM: +0.2 },
-      { label: 'Other',            valueM: -0.2 },
-    ],
-  },
-  southwest: {
-    aha: (
-      <>
-        <b>Southwest is commodity-driven — $3.2M vs plan $4.0M.</b>
-        {' '}Henry Hub spot -18% WoW to $2.62/MMBtu. Hedge covers 60%; unhedged 40% fully exposed.
-        Forward curve projects stabilization at <b>$2.80 by W12</b> — recommend raising hedge ratio to 75% before W11 close.
-      </>
-    ),
-    planM: 4.0,
-    actualM: 3.2,
-    drivers: [
-      { label: 'TX Energy',        valueM: -0.8 },
-      { label: 'AZ Solar',         valueM: +0.05 },
-      { label: 'NM Logistics',     valueM: 0 },
-      { label: 'Other',            valueM: -0.05 },
-    ],
-  },
-};
 
 export default function Performance() {
   const persona = usePersona();
-  const [region, setRegion] = useState('national');
+  const industry = useIndustryData();
+  const PERF_REGIONS = industry.regions;
+  const PERF_COMPARES = industry.compares;
+  const PERF_DRIVERS = industry.segments;
+  const PERF_REGIONAL = industry.regional;
+  const PERF_DRILLDOWN = industry.drilldown;
+  const PERF_EXCEPTIONS = industry.exceptions;
+  const PERF_SIGNALS = industry.signals;
+  const PERF_HISTORY = industry.history;
+  const PERF_BRIDGE = industry.bridges;
+  const [region, setRegion] = useState(industry.regions[0]?.k ?? 'global');
   const [compare, setCompare] = useState('plan');
   const [driver, setDriver] = useState<string | null>(null);
   const [topTab, setTopTab] = useState('analysis');
-  const [ahaOpen, setAhaOpen] = useState(false);
+  // AI summary callout — shown by default; user can dismiss with the × button.
+  // Preference persists across sessions via localStorage.
+  const [ahaOpen, setAhaOpen] = useState<boolean>(() => {
+    try { return localStorage.getItem('meeru.perf.aiSummaryOpen') !== '0'; } catch { return true; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('meeru.perf.aiSummaryOpen', ahaOpen ? '1' : '0'); } catch {}
+  }, [ahaOpen]);
+  // Segment the user most recently drilled into — used by Drill-Down view to
+  // highlight the matching card/row when arriving from the right-nav.
+  const [focusSegment, setFocusSegment] = useState<string | null>(null);
 
-  // Drill-down events from the right-side CommentaryPanel — map driver name
-  // to a PERF_DRIVERS key and apply as a filter, rather than dumping the
-  // "drill down" verb into the chat (which was confusing vs. "Ask about this").
+  // Drill-down events from the right-side Variance Deep-Dive:
+  //   1) switch to the Drill-Down tab
+  //   2) mark the clicked segment as focus so it highlights
+  //   3) apply the category filter (industry-dependent)
   useEffect(() => {
     const handler = (e: Event) => {
       const itemName = (e as CustomEvent<{ itemName: string }>).detail?.itemName ?? '';
-      const l = itemName.toLowerCase();
-      const k = l.includes('california') || l.includes('ca retail') ? 'caretail'
-        : l.includes('texas') || l.includes('tx energy') ? 'txenergy'
-        : l.includes('new york') || l.includes('ny') || l.includes('financial') || l.includes('advisory') || l.includes('equity') || l.includes('wealth') ? 'nyfinance'
-        : l.includes('florida') || l.includes('tourism') || l.includes('hotel') || l.includes('cruise') ? 'fltourism'
-        : l.includes('illinois') || l.includes('chicago') || l.includes('manufacturing') || l.includes('detroit') || l.includes('ohio') ? 'ilmfg'
-        : l.includes('washington') || l.includes('wa tech') || l.includes('cloud') || l.includes('ai workload') || l.includes('oregon') ? 'watech'
-        : null;
+      const k = industry.drillKeywordMap(itemName);
+      setTopTab('drilldown');
+      setFocusSegment(itemName || null);
       if (k) setDriver(k);
     };
     window.addEventListener('meeru-drill', handler);
     return () => window.removeEventListener('meeru-drill', handler);
+  }, [industry]);
+
+  // Reset region + filter when industry changes — keys from one preset may not
+  // exist in another (e.g. 'latam' exists in delivery + saas but not retail
+  // which uses 'row').
+  useEffect(() => {
+    setRegion(industry.regions[0]?.k ?? 'global');
+    setDriver(null);
+    setFocusSegment(null);
+  }, [industry.meta.key]);
+
+  // Clear segment focus whenever the user navigates away from the Drill-Down tab.
+  useEffect(() => {
+    if (topTab !== 'drilldown') setFocusSegment(null);
+  }, [topTab]);
+
+  // Navigation events from action-card modals ("Open Drill-Down", "Open
+  // Exceptions", etc.). Map the card's label/body keywords to a sub-tab.
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ label: string; body: string; who: string; kind: string }>).detail;
+      const hay = `${detail?.label ?? ''} ${detail?.body ?? ''} ${detail?.who ?? ''}`.toLowerCase();
+      const nextTab =
+        /history|rolling weeks|12-week/.test(hay) ? 'history'
+      : /signal|ml model|prediction|forecast flag/.test(hay) ? 'signals'
+      : /exception|critical|flagged|alert/.test(hay) ? 'exceptions'
+      : /drill|segment|investigate|detail|account/.test(hay) ? 'drilldown'
+      : null;
+      if (nextTab) setTopTab(nextTab);
+    };
+    window.addEventListener('meeru-navigate', handler);
+    return () => window.removeEventListener('meeru-navigate', handler);
   }, []);
 
-  // ---- Analysis-tab data (reloads on region/compare/driver change) ----
+  // KPI-card click routing — index → tab (mirrors the Uberflux pattern where
+  // each metric tile is a shortcut into the relevant detail view).
+  const onKpiClick = (i: number) => {
+    switch (i) {
+      case 0: setAhaOpen(v => !v); break;          // Total Variance → toggle AI summary
+      case 1: setTopTab('exceptions'); break;       // Segments Flagged → Exceptions
+      case 2: setTopTab('signals'); break;          // Top Driver → Signals
+      case 3: setTopTab('drilldown'); break;        // Commentary → Drill-Down
+    }
+  };
+
+  // ---- Analysis-tab data (reloads on region/compare/driver/industry change) ----
+  const firstRegionKey = industry.regions[0]?.k ?? 'global';
   const analysis = useAsyncData(
     () => {
-      const slice = PERF_REGIONAL[region] ?? PERF_REGIONAL.national;
+      const slice = PERF_REGIONAL[region] ?? PERF_REGIONAL[firstRegionKey] ?? Object.values(PERF_REGIONAL)[0];
+      // Compare-override dollar amounts (e.g. "-$4.2M vs Plan") are authored
+      // only for the delivery preset today. For SaaS/Retail, return the
+      // region's authored KPIs unchanged so the numbers stay in-domain.
+      const kpis = industry.meta.key === 'delivery'
+        ? adjustKpisByCompare(slice.kpis, compare)
+        : slice.kpis;
       return {
-        regionLabel: PERF_REGIONS.find(r => r.k === region)?.n ?? 'National',
+        regionLabel: PERF_REGIONS.find(r => r.k === region)?.n ?? (PERF_REGIONS[0]?.n ?? 'Global'),
         compareLabel: PERF_COMPARES.find(c => c.k === compare)?.n ?? 'vs Plan',
         driverLabel: driver ? (PERF_DRIVERS.find(d => d.k === driver)?.n ?? null) : null,
-        kpis: adjustKpisByCompare(slice.kpis, compare),
-        commentary: filterCommentaryByDriver(slice.commentary, driver),
+        kpis,
+        commentary: filterCommentaryByDriver(slice.commentary, driver, industry.segmentKeywords),
         statusChip: slice.statusChip,
         chart: slice.chart,
         chartTitle: slice.chartTitle,
       };
     },
-    [region, compare, driver],
+    [region, compare, driver, industry.meta.key],
     { delayMs: 420, keepPrevious: true },
   );
 
@@ -196,15 +135,10 @@ export default function Performance() {
     () => {
       switch (topTab) {
         case 'drilldown': {
-          const map: Record<string, string> = {
-            northeast: 'Northeast',
-            southeast: 'Southeast',
-            midwest:   'Midwest',
-            west:      'West',
-            southwest: 'Southwest',
-          };
-          const regionName = map[region];
-          if (region === 'national') return { kind: 'drill' as const, rows: PERF_DRILLDOWN };
+          // First region in the preset is always the "roll-up" (Global / Corp);
+          // selecting anything else narrows to rows matching that region's label.
+          const regionName = PERF_REGIONS.find(r => r.k === region)?.n ?? '';
+          if (region === firstRegionKey) return { kind: 'drill' as const, rows: PERF_DRILLDOWN };
           const filtered = PERF_DRILLDOWN.filter(r => r.region === regionName);
           return { kind: 'drill' as const, rows: filtered.length ? filtered : PERF_DRILLDOWN };
         }
@@ -214,14 +148,14 @@ export default function Performance() {
         default:           return { kind: 'none'       as const, rows: [] };
       }
     },
-    [topTab, region],
+    [topTab, region, industry.meta.key],
     { delayMs: 340, keepPrevious: false },
   );
 
-  const regionLabel  = analysis.data?.regionLabel  ?? (PERF_REGIONS.find(r => r.k === region)?.n ?? 'National');
+  const regionLabel  = analysis.data?.regionLabel  ?? (PERF_REGIONS.find(r => r.k === region)?.n ?? 'Global');
   const driverLabel  = analysis.data?.driverLabel  ?? (driver ? (PERF_DRIVERS.find(d => d.k === driver)?.n ?? null) : null);
 
-  const personaChip = persona.key === 'PREPARER'
+  const personaChip = persona.key === 'STAFF'
     ? { kind: 'warn' as const, text: '3 tasks assigned · due today' }
     : persona.key === 'CONTROLLER'
     ? { kind: 'info' as const, text: 'Close Day 4 · 2 blockers open' }
@@ -232,7 +166,7 @@ export default function Performance() {
   return (
     <WorkbenchShell
       workbench="performance"
-      scopeLabel={`${WORKBENCHES.performance.label} · Week 10 · ${regionLabel}`}
+      scopeLabel={`${WORKBENCHES.performance.label} · ${industry.meta.periodLabel} · ${regionLabel}`}
       scopeRight={
         <>
           <InlineFilterMenu
@@ -242,19 +176,17 @@ export default function Performance() {
             onChange={setCompare}
           />
           <span className="text-faint">·</span>
-          <span>Week 10</span>
+          <span>{industry.meta.periodLabel}</span>
           <span className="text-faint">·</span>
           <span>{regionLabel}</span>
-          <span className="text-faint">·</span>
-          <span>Q1 FY2026</span>
         </>
       }
       commentary={analysis.data?.commentary}
-      commentaryHeadline={driverLabel ? `${regionLabel} · ${driverLabel}` : `Drivers of Week 10 variance — ${regionLabel}`}
+      commentaryHeadline={driverLabel ? `${regionLabel} · ${driverLabel}` : `Drivers of ${industry.meta.periodLabel} variance — ${regionLabel}`}
       leftRail={
         <>
-          <RailGroup label="Regions"    items={PERF_REGIONS}  active={region}  onSelect={setRegion}  groupKey="region" />
-          <RailGroup label="Drivers"    items={PERF_DRIVERS}  active={driver ?? undefined} onSelect={(k) => setDriver(prev => prev === k ? null : k)} groupKey="driver" />
+          <RailGroup label="Regions"  items={PERF_REGIONS}  active={region}  onSelect={setRegion}  groupKey="region" />
+          <RailGroup label="Segments" items={PERF_DRIVERS}  active={driver ?? undefined} onSelect={(k) => setDriver(prev => prev === k ? null : k)} groupKey="driver" />
         </>
       }
       topNav={
@@ -268,7 +200,7 @@ export default function Performance() {
     >
       <div className="flex items-center justify-between mb-3 gap-3">
         <h1 className="text-[18px] font-semibold text-ink tracking-tight truncate">
-          Performance Intelligence · Week 10 · {regionLabel}
+          Performance Intelligence · {industry.meta.periodLabel} · {regionLabel}
         </h1>
         <div className="flex items-center gap-2 shrink-0">
           {PERF_BRIDGE[region] && topTab === 'analysis' && (
@@ -299,13 +231,32 @@ export default function Performance() {
         </div>
       </div>
 
-      {/* AI summary body — collapsed by default, reveals below the title row
-          when the user clicks the pill. Small muted paragraph so it reads as
-          a helper note, not a heavyweight callout. */}
+      {/* AI summary callout — shown by default. Brand-tinted card with a
+          Sparkle icon and a × close button. Preference persists (see above).
+          Re-open via the "AI summary" pill next to the title. */}
       {ahaOpen && PERF_BRIDGE[region] && topTab === 'analysis' && (
-        <p className="mb-3 text-[11.5px] leading-[1.55] text-muted anim-fade-up">
-          {PERF_BRIDGE[region].aha}
-        </p>
+        <div className="relative mb-3 rounded-lg border border-brand-weak bg-gradient-to-br from-brand-tint to-transparent px-3.5 py-3 pr-9 anim-fade-up">
+          <div className="flex items-start gap-2.5">
+            <div className="w-6 h-6 rounded-md bg-brand/10 text-brand grid place-items-center shrink-0 mt-0.5">
+              <Icon.Sparkle className="w-3.5 h-3.5" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-[10px] font-semibold tracking-wider uppercase text-brand">AI Summary</span>
+              </div>
+              <p className="text-[12.5px] leading-[1.55] text-ink">
+                {PERF_BRIDGE[region].aha}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setAhaOpen(false)}
+            title="Hide AI summary"
+            className="absolute top-2 right-2 w-6 h-6 rounded grid place-items-center text-faint hover:text-ink hover:bg-surface-soft transition-colors"
+          >
+            <Icon.X className="w-3.5 h-3.5" />
+          </button>
+        </div>
       )}
 
       {topTab === 'analysis' && (
@@ -313,7 +264,7 @@ export default function Performance() {
           {analysis.refreshing && <RefreshingOverlay />}
           {driverLabel && !analysis.initialLoading && (
             <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg border border-rule bg-brand-tint text-[12px]">
-              <span className="text-muted">Driver filter:</span>
+              <span className="text-muted">Segment filter:</span>
               <span className="font-semibold text-brand">{driverLabel}</span>
               <button onClick={() => setDriver(null)} className="ml-auto text-[11px] text-muted hover:text-brand">Clear</button>
             </div>
@@ -331,7 +282,7 @@ export default function Performance() {
               {/* KPIs stack above the weekly chart. Variance bridge removed
                   so the canvas stays clean with one chart + KPIs. */}
               <div className="space-y-3 mb-3">
-                <KpiRow kpis={analysis.data.kpis} />
+                <KpiRow kpis={analysis.data.kpis} onCardClick={onKpiClick} />
                 <VarianceChart title={analysis.data.chartTitle} bars={analysis.data.chart} />
               </div>
 
@@ -345,20 +296,32 @@ export default function Performance() {
       )}
 
       {topTab === 'drilldown' && (
-        tabRows.loading || tabRows.data?.kind !== 'drill' ? <TableSkeleton rows={8} cols={8} />
-        : <DrillDownView rows={tabRows.data.rows} />
+        <>
+          {tabRows.loading || tabRows.data?.kind !== 'drill' ? <TableSkeleton rows={8} cols={8} />
+          : <DrillDownView rows={tabRows.data.rows} focusSegment={focusSegment} />}
+          <CommandCenter />
+        </>
       )}
       {topTab === 'exceptions' && (
-        tabRows.loading || tabRows.data?.kind !== 'exceptions' ? <ListCardSkeleton items={5} />
-        : <ExceptionsView items={tabRows.data.rows} />
+        <>
+          {tabRows.loading || tabRows.data?.kind !== 'exceptions' ? <ListCardSkeleton items={5} />
+          : <ExceptionsView items={tabRows.data.rows} />}
+          <CommandCenter />
+        </>
       )}
       {topTab === 'signals' && (
-        tabRows.loading || tabRows.data?.kind !== 'signals' ? <ListCardSkeleton items={5} />
-        : <SignalsView items={tabRows.data.rows} />
+        <>
+          {tabRows.loading || tabRows.data?.kind !== 'signals' ? <ListCardSkeleton items={5} />
+          : <SignalsView items={tabRows.data.rows} />}
+          <CommandCenter />
+        </>
       )}
       {topTab === 'history' && (
-        tabRows.loading || tabRows.data?.kind !== 'history' ? <TableSkeleton rows={8} cols={8} />
-        : <HistoryView rows={tabRows.data.rows} />
+        <>
+          {tabRows.loading || tabRows.data?.kind !== 'history' ? <TableSkeleton rows={8} cols={8} />
+          : <HistoryView rows={tabRows.data.rows} />}
+          <CommandCenter />
+        </>
       )}
     </WorkbenchShell>
   );

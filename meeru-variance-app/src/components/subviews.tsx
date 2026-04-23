@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import type {
   DrillRow, ExceptionItem, SignalItem, HistoryRow,
   WaterfallStep, ProductMixRow, CostRow, SensitivityScenario, FluxRow,
@@ -37,9 +37,90 @@ function Sparkline({ points, color }: { points: number[]; color?: string }) {
 // ==========================================================
 // PERFORMANCE — Drill-Down
 // ==========================================================
-export function DrillDownView({ rows }: { rows: DrillRow[] }) {
-  const [segmentFilter, setSegmentFilter] = useState<'all' | 'Enterprise' | 'Mid-Market' | 'SMB'>('all');
+function DrillCard({ r, focused }: { r: DrillRow; focused?: boolean }) {
+  const varCls = r.deltaArr > 0 ? 'text-positive' : r.deltaArr < 0 ? 'text-negative' : 'text-muted';
+  const utilTone = r.nrr >= 63 ? 'text-negative'
+    : r.nrr >= 55 ? 'text-warning'
+    : 'text-positive';
+  const tripsLabel = r.arr >= 1_000_000
+    ? `${(r.arr / 1_000_000).toFixed(2)}M trips`
+    : `${(r.arr / 1_000).toFixed(0)}K trips`;
+  const varianceLabel = r.deltaArr === 0 ? '—' : fmtMoney(r.deltaArr, true);
+  const tripsVsPlanCls = r.tripsVsPlan.startsWith('+') ? 'text-positive'
+    : r.tripsVsPlan.startsWith('-') ? 'text-negative'
+    : 'text-muted';
+
+  // Sparkline bars — last bar accented, earlier bars muted so the eye lands
+  // on the current week. Color follows the segment's variance direction.
+  const min = Math.min(...r.spark), max = Math.max(...r.spark);
+  const barHeights = r.spark.map(v => Math.max(4, ((v - min) / (max - min || 1)) * 28 + 4));
+  const isPositive = r.deltaArr > 0;
+  const accentLast = isPositive ? 'var(--positive)' : 'var(--negative)';
+  const accentMuted = isPositive ? 'rgba(16,185,129,0.45)' : 'rgba(74,122,155,0.6)';
+
+  return (
+    <div
+      className={`bg-surface border rounded-xl p-4 hover:-translate-y-0.5 hover:shadow-e2 transition-all cursor-pointer ${
+        focused ? 'border-brand ring-2 ring-brand-weak shadow-e2' : 'border-rule'
+      }`}
+    >
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="min-w-0">
+          <div className="text-[13px] font-semibold text-ink truncate">{r.customer}</div>
+          <div className="text-[10px] font-semibold tracking-wider uppercase text-faint mt-0.5">{r.region}</div>
+        </div>
+        <div className={`text-[13px] font-semibold num shrink-0 ${varCls}`}>{varianceLabel}</div>
+      </div>
+      <div className="flex items-end gap-1 h-8 mb-3">
+        {r.spark.map((_v, i) => {
+          const isLast = i === r.spark.length - 1;
+          return (
+            <div
+              key={i}
+              className="flex-1 rounded-sm"
+              style={{
+                height: `${barHeights[i]}px`,
+                backgroundColor: isLast ? accentLast : accentMuted,
+              }}
+            />
+          );
+        })}
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        <div>
+          <div className={`text-[13px] font-semibold num ${utilTone}`}>{r.nrr}%</div>
+          <div className="text-[10px] text-faint mt-0.5">Courier Util</div>
+        </div>
+        <div>
+          <div className="text-[13px] font-semibold text-ink num truncate">{tripsLabel}</div>
+          <div className="text-[10px] text-faint mt-0.5">Trips W10</div>
+        </div>
+        <div>
+          <div className={`text-[13px] font-semibold num ${tripsVsPlanCls}`}>{r.tripsVsPlan}</div>
+          <div className="text-[10px] text-faint mt-0.5">vs Plan</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function DrillDownView({ rows, focusSegment }: { rows: DrillRow[]; focusSegment?: string | null }) {
+  const [view, setView] = useState<'cards' | 'table'>('cards');
+  const [segmentFilter, setSegmentFilter] = useState<'all' | 'Grocery' | 'Convenience' | 'Alcohol' | 'Pharmacy'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'Churned' | 'At Risk' | 'Expansion' | 'Healthy'>('all');
+
+  // Snap to Cards view when the user arrives via a drill-in from the right-nav
+  // so the highlighted card is immediately visible.
+  useEffect(() => {
+    if (focusSegment) setView('cards');
+  }, [focusSegment]);
+
+  const isFocused = (customer: string) => {
+    if (!focusSegment) return false;
+    const a = customer.toLowerCase();
+    const b = focusSegment.toLowerCase();
+    return a === b || a.includes(b) || b.includes(a);
+  };
 
   const filtered = useMemo(() =>
     rows.filter(r =>
@@ -60,12 +141,21 @@ export function DrillDownView({ rows }: { rows: DrillRow[] }) {
     s === 'Expansion' ? 'bg-positive-weak text-positive' :
     'bg-surface-soft text-muted';
 
+  const viewBtnCls = (v: typeof view) =>
+    `px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
+      view === v ? 'bg-surface text-ink shadow-e1' : 'text-muted hover:text-ink'
+    }`;
+
   return (
     <>
       <div className="flex flex-wrap items-center gap-3 mb-3">
-        <div className="text-[11px] text-muted">{filtered.length} customers · ARR {fmtMoney(totals.arr, true)} · Δ <span className={toneClass(totals.delta)}>{fmtMoney(totals.delta, true)}</span></div>
-        <div className="flex gap-1 ml-auto">
-          {(['all', 'Enterprise', 'Mid-Market', 'SMB'] as const).map(s => (
+        <div className="text-[11px] text-muted">{filtered.length} segments · {(totals.arr / 1_000_000).toFixed(1)}M trips · Δ <span className={toneClass(totals.delta)}>{fmtMoney(totals.delta, true)}</span></div>
+        <div className="ml-auto inline-flex items-center gap-0.5 p-0.5 bg-surface-soft border border-rule rounded-md">
+          <button onClick={() => setView('cards')} className={viewBtnCls('cards')}>Cards</button>
+          <button onClick={() => setView('table')} className={viewBtnCls('table')}>Table</button>
+        </div>
+        <div className="flex gap-1">
+          {(['all', 'Grocery', 'Convenience', 'Alcohol', 'Pharmacy'] as const).map(s => (
             <button key={s} onClick={() => setSegmentFilter(s)} className={`px-2.5 py-1 rounded-md text-[11px] ${segmentFilter === s ? 'bg-brand-tint text-brand font-semibold' : 'text-muted hover:bg-surface-soft'}`}>
               {s === 'all' ? 'All segments' : s}
             </button>
@@ -80,36 +170,51 @@ export function DrillDownView({ rows }: { rows: DrillRow[] }) {
         </div>
       </div>
 
-      <Card className="p-0 overflow-hidden">
-        <table className="w-full text-[12px]">
-          <thead>
-            <tr className="bg-brand text-white">
-              <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Customer</th>
-              <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Segment</th>
-              <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Region</th>
-              <th className="text-right px-4 py-2.5 text-[11px] font-semibold">ARR</th>
-              <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Δ ARR</th>
-              <th className="text-right px-4 py-2.5 text-[11px] font-semibold">NRR</th>
-              <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Status</th>
-              <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Last Activity</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((r, i) => (
-              <tr key={r.id} className={`border-t border-rule ${i % 2 === 0 ? 'bg-surface' : 'bg-surface-alt'} hover:bg-surface-soft cursor-pointer`}>
-                <td className="px-4 py-2.5 font-semibold text-ink">{r.customer}</td>
-                <td className="px-4 py-2.5 text-muted">{r.segment}</td>
-                <td className="px-4 py-2.5 text-muted">{r.region}</td>
-                <td className="px-4 py-2.5 text-right num text-ink">{fmtMoney(r.arr, true)}</td>
-                <td className={`px-4 py-2.5 text-right num font-medium ${toneClass(r.deltaArr)}`}>{r.deltaArr === 0 ? '—' : fmtMoney(r.deltaArr, true)}</td>
-                <td className={`px-4 py-2.5 text-right num ${r.nrr === 0 ? 'text-negative' : r.nrr < 100 ? 'text-warning' : 'text-positive'}`}>{r.nrr}%</td>
-                <td className="px-4 py-2.5"><span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${statusColor(r.status)}`}>{r.status}</span></td>
-                <td className="px-4 py-2.5 text-[11px] text-faint">{r.lastActivity}</td>
+      {view === 'cards' ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {filtered.map(r => <DrillCard key={r.id} r={r} focused={isFocused(r.customer)} />)}
+        </div>
+      ) : (
+        <Card className="p-0 overflow-hidden">
+          <table className="w-full text-[12px]">
+            <thead>
+              <tr className="bg-brand text-white">
+                <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Segment</th>
+                <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Category</th>
+                <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Region</th>
+                <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Trips W10</th>
+                <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Δ vs Plan</th>
+                <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Courier Util</th>
+                <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Status</th>
+                <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Notes</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+            </thead>
+            <tbody>
+              {filtered.map((r, i) => {
+                const tripsLabel = r.arr >= 1_000_000
+                  ? `${(r.arr / 1_000_000).toFixed(2)}M`
+                  : `${(r.arr / 1_000).toFixed(0)}K`;
+                const utilTone = r.nrr >= 63 ? 'text-negative'
+                  : r.nrr >= 55 ? 'text-warning'
+                  : 'text-positive';
+                const focused = isFocused(r.customer);
+                return (
+                  <tr key={r.id} className={`border-t border-rule ${focused ? 'bg-brand-tint' : i % 2 === 0 ? 'bg-surface' : 'bg-surface-alt'} hover:bg-surface-soft cursor-pointer`}>
+                    <td className="px-4 py-2.5 font-semibold text-ink">{r.customer}</td>
+                    <td className="px-4 py-2.5 text-muted">{r.segment}</td>
+                    <td className="px-4 py-2.5 text-muted">{r.region}</td>
+                    <td className="px-4 py-2.5 text-right num text-ink">{tripsLabel}</td>
+                    <td className={`px-4 py-2.5 text-right num font-medium ${toneClass(r.deltaArr)}`}>{r.deltaArr === 0 ? '—' : fmtMoney(r.deltaArr, true)}</td>
+                    <td className={`px-4 py-2.5 text-right num ${utilTone}`}>{r.nrr}%</td>
+                    <td className="px-4 py-2.5"><span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${statusColor(r.status)}`}>{r.status}</span></td>
+                    <td className="px-4 py-2.5 text-[11px] text-faint">{r.lastActivity}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </Card>
+      )}
     </>
   );
 }
@@ -140,16 +245,13 @@ export function ExceptionsView({ items }: { items: ExceptionItem[] }) {
           return (
             <Card key={e.id} className="p-4 hover:shadow-e2 transition-all cursor-pointer">
               <div className="flex items-start gap-3">
-                <div className={`w-10 h-10 rounded-lg grid place-items-center ${m.bg} ${m.text} shrink-0`}>
-                  <m.Icon className="w-5 h-5" />
+                <div className={`w-6 h-6 rounded-md grid place-items-center ${m.bg} ${m.text} shrink-0 mt-0.5`} title={m.label}>
+                  <m.Icon className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[13px] font-semibold text-ink">{e.title}</span>
-                        <span className={`inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold rounded ${m.bg} ${m.text}`}>{m.label}</span>
-                      </div>
+                      <div className="text-[13px] font-semibold text-ink">{e.title}</div>
                       <div className="text-[11px] text-muted mt-0.5">{e.entity} · aged {e.age}</div>
                     </div>
                     <div className={`text-[16px] font-semibold num ${e.severity === 'positive' ? 'text-positive' : 'text-negative'}`}>{e.impact}</div>
@@ -222,18 +324,18 @@ export function SignalsView({ items }: { items: SignalItem[] }) {
 export function HistoryView({ rows }: { rows: HistoryRow[] }) {
   return (
     <>
-      <div className="text-[11px] text-muted mb-3">Rolling 8 quarters · revenue in $B, NRR in %</div>
+      <div className="text-[11px] text-muted mb-3">12-week rolling history · actuals & plan in $M (Global rollup)</div>
       <Card className="p-0 overflow-hidden">
         <table className="w-full text-[12px]">
           <thead>
             <tr className="bg-brand text-white">
-              <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Period</th>
-              <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Revenue ($B)</th>
+              <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Week</th>
+              <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Actual ($M)</th>
               <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Plan</th>
               <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Variance</th>
-              <th className="text-right px-4 py-2.5 text-[11px] font-semibold">NRR</th>
-              <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Churns</th>
-              <th className="text-left px-4 py-2.5 text-[11px] font-semibold">NRR Trend</th>
+              <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Demand Health</th>
+              <th className="text-right px-4 py-2.5 text-[11px] font-semibold">Flagged</th>
+              <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Trend</th>
               <th className="text-left px-4 py-2.5 text-[11px] font-semibold">Notes</th>
             </tr>
           </thead>
@@ -244,8 +346,8 @@ export function HistoryView({ rows }: { rows: HistoryRow[] }) {
                 <td className="px-4 py-2.5 text-right num text-ink">{r.revenue.toFixed(1)}</td>
                 <td className="px-4 py-2.5 text-right num text-muted">{r.plan.toFixed(1)}</td>
                 <td className={`px-4 py-2.5 text-right num font-medium ${toneClass(r.variance)}`}>{r.variance > 0 ? '+' : ''}{r.variance.toFixed(1)}</td>
-                <td className={`px-4 py-2.5 text-right num ${r.nrr < 110 ? 'text-warning' : 'text-positive'}`}>{r.nrr}%</td>
-                <td className={`px-4 py-2.5 text-right num ${r.churn >= 2 ? 'text-negative' : 'text-muted'}`}>{r.churn}</td>
+                <td className={`px-4 py-2.5 text-right num ${r.nrr < 95 ? 'text-negative' : r.nrr < 100 ? 'text-warning' : 'text-positive'}`}>{r.nrr}</td>
+                <td className={`px-4 py-2.5 text-right num ${r.churn >= 2 ? 'text-negative' : r.churn >= 1 ? 'text-warning' : 'text-muted'}`}>{r.churn}</td>
                 <td className="px-4 py-2.5"><Sparkline points={r.spark} /></td>
                 <td className="px-4 py-2.5 text-[11px] text-muted">{r.annotations || '—'}</td>
               </tr>

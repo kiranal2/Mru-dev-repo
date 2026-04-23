@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { useChat, useSettings } from '../store';
+import { useChat, useSettings, useIndustryData } from '../store';
 import { Icon } from '../icons';
-import { Badge } from './ui';
-import type { ActionCard, CommentaryItem } from '../types';
+import type { CommentaryItem, VarianceStatus } from '../types';
 
 const MIN_W = 320;
 const MAX_W = 560;
@@ -66,8 +65,86 @@ function variancePrefix(items: CommentaryItem[]): string {
   return `this week's ${negatives.toFixed(1).replace('-', '-$')}M variance`;
 }
 
-function stripHtml(s: string): string {
-  return s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+/* ------------------------------------------------------------------ */
+/* Tier-1 row metadata derivation                                     */
+/* ------------------------------------------------------------------ */
+
+/** Infer a workflow status from the item's tags + delta when not provided. */
+function deriveStatus(item: CommentaryItem): VarianceStatus {
+  if (item.status) return item.status;
+  const tagText = item.tags.map(t => t.l.toLowerCase()).join(' ');
+  const isPositive = item.delta.trim().startsWith('+') || /beat|above plan/i.test(item.delta);
+  if (isPositive) return 'monitoring';
+  if (/auto-recover|weather|holiday|rebound|w12 resolution/i.test(tagText)) return 'auto-recovering';
+  if (/3 wks|critical|breach|red line|supply constraint|escalating/i.test(tagText)) return 'investigating';
+  if (/watch|approaching|early warning|threshold/i.test(tagText)) return 'monitoring';
+  return 'investigating';
+}
+
+function deriveImpactM(item: CommentaryItem): number {
+  if (typeof item.impactM === 'number') return item.impactM;
+  return parseDelta(item.delta);
+}
+
+/** Visual config for each workflow state. */
+const STATUS_META: Record<VarianceStatus, { label: string; bg: string; fg: string; dot: string }> = {
+  investigating:     { label: 'Investigating',  bg: 'bg-warning-weak',  fg: 'text-warning',  dot: 'bg-warning'  },
+  submitted:         { label: 'In review',      bg: 'bg-brand-tint',    fg: 'text-brand',    dot: 'bg-brand'    },
+  reviewing:         { label: 'In review',      bg: 'bg-brand-tint',    fg: 'text-brand',    dot: 'bg-brand'    },
+  approved:          { label: 'Approved',       bg: 'bg-positive-weak', fg: 'text-positive', dot: 'bg-positive' },
+  locked:            { label: 'Period locked',  bg: 'bg-surface-soft',  fg: 'text-muted',    dot: 'bg-muted'    },
+  'auto-recovering': { label: 'Auto-recovering',bg: 'bg-positive-weak', fg: 'text-positive', dot: 'bg-positive' },
+  monitoring:        { label: 'Monitoring',     bg: 'bg-surface-soft',  fg: 'text-muted',    dot: 'bg-faint'    },
+};
+
+function StatusChip({ status }: { status: VarianceStatus }) {
+  const m = STATUS_META[status];
+  return (
+    <span
+      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wider ${m.bg} ${m.fg} shrink-0`}
+      title={`Workflow state: ${m.label}`}
+    >
+      <span className={`w-1 h-1 rounded-full ${m.dot}`} />
+      {m.label}
+    </span>
+  );
+}
+
+/** Red $ icon flag when variance crosses the $1M SOX materiality threshold. */
+function MaterialityFlag({ impactM }: { impactM: number }) {
+  if (Math.abs(impactM) < 1) return null;
+  return (
+    <span
+      title={`Materiality ceiling exceeded · ${impactM < 0 ? '−' : '+'}$${Math.abs(impactM).toFixed(1)}M`}
+      className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-negative-weak text-negative text-[8px] font-bold shrink-0"
+    >
+      $
+    </span>
+  );
+}
+
+/** Compact 5-point bar sparkline. Last bar full opacity (anchors the eye on
+ *  the current week); earlier bars muted. Colored by variance direction. */
+function MiniSpark({ points, negative }: { points: number[]; negative: boolean }) {
+  const W = 48, H = 16;
+  const min = Math.min(...points), max = Math.max(...points);
+  const slot = W / Math.max(1, points.length);
+  const barW = Math.max(2, slot - 1.5);
+  const color = negative ? 'var(--negative)' : 'var(--positive)';
+  const muted = negative ? 'rgba(239,68,68,0.35)' : 'rgba(16,185,129,0.35)';
+  return (
+    <svg width={W} height={H} className="shrink-0" aria-hidden>
+      {points.map((v, i) => {
+        const h = Math.max(2, ((v - min) / Math.max(max - min, 1)) * (H - 2) + 2);
+        const x = i * slot + (slot - barW) / 2;
+        const y = H - h;
+        const isLast = i === points.length - 1;
+        return (
+          <rect key={i} x={x} y={y} width={barW} height={h} rx={0.5} fill={isLast ? color : muted} />
+        );
+      })}
+    </svg>
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -94,28 +171,44 @@ function SortPill({
 function DriverRow({
   item,
   rank,
+  spark,
   onDrill,
   onAsk,
   isLast,
 }: {
   item: CommentaryItem;
   rank: number;
+  spark?: number[];
   onDrill: () => void;
   onAsk: () => void;
   isLast: boolean;
 }) {
   const deltaCls = deltaClass(item.delta);
+  const status = deriveStatus(item);
+  const impactM = deriveImpactM(item);
+  const isNegative = impactM < 0;
+  const sparkPoints = spark && spark.length > 1 ? spark : undefined;
+
   return (
     <div className={`flex gap-2.5 py-2.5 ${isLast ? '' : 'border-b border-rule'}`}>
-      <div className="w-6 h-6 rounded-full bg-surface-soft grid place-items-center text-[11px] font-semibold text-ink shrink-0">
-        {rank}
+      <div className="flex flex-col items-center gap-1 shrink-0">
+        <div className="w-6 h-6 rounded-full bg-surface-soft grid place-items-center text-[11px] font-semibold text-ink">
+          {rank}
+        </div>
+        <MaterialityFlag impactM={impactM} />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-baseline justify-between gap-2 text-[13px]">
+        <div className="flex items-baseline justify-between gap-2 text-[12px]">
           <span className="font-semibold text-ink truncate">{item.name}</span>
           <span className={`text-[11px] font-medium num shrink-0 ${deltaCls}`}>— {item.delta}</span>
         </div>
-        <div className="text-[12px] text-muted leading-relaxed mt-0.5">{item.text}</div>
+        {/* Row meta strip: status chip · sparkline — packs both indicators on
+            a single line so the description block below stays clean. */}
+        <div className="flex items-center gap-2 mt-1">
+          <StatusChip status={status} />
+          {sparkPoints && <MiniSpark points={sparkPoints} negative={isNegative} />}
+        </div>
+        <div className="text-[11.5px] text-muted leading-relaxed mt-1.5">{item.text}</div>
         <div className="flex items-center gap-2 mt-2 text-[11px]">
           <button
             onClick={onDrill}
@@ -138,44 +231,6 @@ function DriverRow({
   );
 }
 
-function AiInsightCard({
-  question, answerHtml, actions, onAsk,
-}: {
-  question: string;
-  answerHtml: string;
-  actions: ActionCard[];
-  onAsk: (q: string) => void;
-}) {
-  const preview = useMemo(() => {
-    const txt = stripHtml(answerHtml);
-    return txt.length > 200 ? txt.slice(0, 200) + '…' : txt;
-  }, [answerHtml]);
-  return (
-    <div className="rounded-lg bg-surface-alt border border-rule p-2.5 mb-3">
-      <div className="flex items-center gap-1.5 mb-1.5">
-        <Icon.Sparkle className="w-3 h-3 text-brand" />
-        <span className="text-[10px] font-semibold text-muted uppercase tracking-wider">AI Insight · just now</span>
-      </div>
-      <div className="text-[12.5px] font-semibold text-ink mb-1 truncate" title={question}>{question}</div>
-      <div className="text-[12px] text-muted leading-relaxed">{preview}</div>
-      {actions.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
-          {actions.slice(0, 3).map((a, i) => (
-            <Badge key={i} tone="blue">{a.label}</Badge>
-          ))}
-        </div>
-      )}
-      <button
-        onClick={() => onAsk(`Tell me more about "${question}"`)}
-        className="mt-2 inline-flex items-center gap-1 text-[11px] font-medium text-brand hover:underline"
-      >
-        <Icon.Sparkle className="w-3 h-3" />
-        Explore further
-      </button>
-    </div>
-  );
-}
-
 /* ------------------------------------------------------------------ */
 /* panel                                                                */
 /* ------------------------------------------------------------------ */
@@ -188,22 +243,23 @@ export function CommentaryPanel({
   style,
 }: Props) {
   const { settings, update } = useSettings();
-  const { msgs, contextual, send } = useChat();
+  const { send } = useChat();
+  const industry = useIndustryData();
+
+  // Build a name→sparkline lookup from the active industry's drill rows so the
+  // right-nav row sparkline shows the same trend as the Drill-Down card.
+  const sparkByName = useMemo(() => {
+    const map: Record<string, number[]> = {};
+    for (const r of industry.drilldown) {
+      map[r.customer.toLowerCase()] = r.spark;
+    }
+    return map;
+  }, [industry]);
 
   const [sort, setSort] = useState<SortKey>('impact');
   const [expanded, setExpanded] = useState(false);
-  const [tick, setTick] = useState(0);
 
   const dragState = useRef<{ startX: number; startW: number } | null>(null);
-
-  useEffect(() => {
-    const id = setInterval(() => setTick(t => t + 1), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    setTick(0);
-  }, [msgs.length, contextual.length]);
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
@@ -258,25 +314,7 @@ export function CommentaryPanel({
     return Math.max(3, Math.min(9, set.size));
   }, [items]);
 
-  const latestExchange = useMemo(() => {
-    if (!msgs.length) return null;
-    for (let i = msgs.length - 1; i >= 0; i--) {
-      if (msgs[i].role === 'ai' && msgs[i].html) {
-        for (let j = i - 1; j >= 0; j--) {
-          if (msgs[j].role === 'user' && msgs[j].text) {
-            return { question: msgs[j].text!, answerHtml: msgs[i].html! };
-          }
-        }
-        return null;
-      }
-    }
-    return null;
-  }, [msgs]);
-
   if (settings.chatHidden) return null;
-
-  const updatedLabel =
-    tick < 60 ? `${tick}s ago` : tick < 3600 ? `${Math.floor(tick / 60)}m ago` : `${Math.floor(tick / 3600)}h ago`;
 
   return (
     <aside
@@ -300,10 +338,10 @@ export function CommentaryPanel({
             <span className="absolute inset-0 rounded-full bg-positive opacity-60 animate-ping" />
             <span className="relative w-1.5 h-1.5 rounded-full bg-positive" />
           </span>
-          <div className="text-[13px] font-semibold text-ink">AI Commentary</div>
+          <div className="text-[10.5px] font-bold tracking-wider uppercase text-ink">AI Insights</div>
           <div className="flex-1" />
           <button
-            onClick={() => setTick(0)}
+            onClick={() => setExpanded(false)}
             title="Refresh — fetch the latest ranked commentary"
             className="inline-flex items-center gap-1 text-[11px] text-muted hover:text-ink"
           >
@@ -322,27 +360,20 @@ export function CommentaryPanel({
 
       <div className="flex-1 overflow-y-auto px-3.5 py-3">
         {/* headline — concise, single line */}
-        <div className="text-[13px] font-semibold text-ink leading-tight mb-3">
+        <div className="text-[12px] font-semibold text-ink leading-tight mb-3">
           {headlineText}
         </div>
 
-        {/* AI Insight — only when a prompt has landed */}
-        {latestExchange && contextual.length > 0 && (
-          <AiInsightCard
-            question={latestExchange.question}
-            answerHtml={latestExchange.answerHtml}
-            actions={contextual}
-            onAsk={send}
-          />
-        )}
-
-        {/* ranked driver rows — same layout as main Commentary component */}
+        {/* ranked driver rows — same layout as main Commentary component.
+            The AI-conversation card that used to live here was removed so
+            this panel stops duplicating the Command Center transcript. */}
         <div>
           {visible.map((it, i) => (
             <DriverRow
               key={`${it.name}-${i}`}
               item={it}
               rank={i + 1}
+              spark={it.spark ?? sparkByName[it.name.toLowerCase()]}
               onDrill={() => {
                 // Dispatch to the host page so it can filter/navigate.
                 // Falls back to chat if nothing is listening.
@@ -367,8 +398,7 @@ export function CommentaryPanel({
       </div>
 
       {/* footer meta */}
-      <div className="px-3.5 py-2 border-t border-rule text-[11px] text-faint flex items-center justify-between">
-        <span>Updated {updatedLabel}</span>
+      <div className="px-3.5 py-2 border-t border-rule text-[11px] text-faint flex items-center justify-end">
         <span>Claims cite <span className="font-medium text-muted">{sourceCount}</span> sources</span>
       </div>
     </aside>
@@ -381,7 +411,7 @@ export function CommentaryShowButton() {
   return (
     <button
       onClick={() => update({ chatHidden: false })}
-      title="Show AI Commentary"
+      title="Show AI Insights"
       className="fixed right-0 top-1/2 -translate-y-1/2 bg-surface border border-rule border-r-0 rounded-l-lg px-1.5 py-2.5 z-40 shadow-e2 hover:bg-brand-tint hover:border-brand text-muted hover:text-brand transition-colors flex flex-col items-center gap-1"
     >
       <Icon.Sparkle className="w-3.5 h-3.5" />

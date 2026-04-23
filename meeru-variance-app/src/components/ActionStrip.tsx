@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useToasts, useSettings } from '../store';
+import { useToasts, useSettings, hasPermission } from '../store';
 import { UNIVERSAL_ACTIONS } from '../data';
 import { usePersona } from './AppShell';
 import { getActionIcon, Icon } from '../icons';
@@ -34,10 +34,11 @@ export function ActionStrip() {
   const { settings } = useSettings();
 
   const universal = useMemo(() => {
-    const filtered = UNIVERSAL_ACTIONS.filter(a => settings.pinnedActions.includes(a.kind));
-    const pool = filtered.length ? filtered : UNIVERSAL_ACTIONS;
+    const permitted = UNIVERSAL_ACTIONS.filter(a => !a.requires || hasPermission(persona, a.requires));
+    const filtered = permitted.filter(a => settings.pinnedActions.includes(a.kind));
+    const pool = filtered.length ? filtered : permitted;
     return orderByRole(pool, persona.order);
-  }, [persona.order, settings.pinnedActions]);
+  }, [persona, settings.pinnedActions]);
 
   const fire = (a: ActionCard) => {
     push({ kind: 'ok', title: `${a.label}`, sub: `${a.who}` });

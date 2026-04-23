@@ -1,7 +1,36 @@
 import { createContext, useContext, useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
-import type { Role, Persona, ActionKind, Toast, Mission, MissionBeat, ChatMsg, ActionCard, SavedReply } from './types';
+import type { Role, Persona, Permission, ActionKind, IndustryKey, Toast, Mission, MissionBeat, ChatMsg, ActionCard, SavedReply } from './types';
 import { PERSONAS } from './data';
+import { INDUSTRY_PRESETS } from './industry-presets';
+import type { IndustryPreset } from './industry-presets';
+
+// ==================================================================
+// PERMISSIONS — pure helper + React hook. Read from the current persona's
+// `capabilities` array (declared in data.ts). Use `hasPermission` inside
+// render paths for filtering/disabling UI.
+// ==================================================================
+export function hasPermission(persona: Persona | null | undefined, perm: Permission): boolean {
+  if (!persona?.capabilities) return false;
+  return persona.capabilities.includes(perm);
+}
+
+export function usePermission(perm: Permission): boolean {
+  const ctx = useContext(AuthContext);
+  return hasPermission(ctx?.user ?? null, perm);
+}
+
+// ==================================================================
+// INDUSTRY DATA — returns the full preset bundle for the currently-
+// selected industry. Performance.tsx reads everything (regions, segments,
+// regional slices, drilldown, exceptions, signals, history, bridges) from
+// this hook so switching industry in Settings reskins the workbench.
+// ==================================================================
+export function useIndustryData(): IndustryPreset {
+  const ctx = useContext(SettingsContext);
+  const key = ctx?.settings.industry ?? 'delivery';
+  return INDUSTRY_PRESETS[key] ?? INDUSTRY_PRESETS.delivery;
+}
 
 // ==================================================================
 // AUTH
@@ -46,6 +75,11 @@ interface Settings {
   chatWidth: number; // pixels (clamped 300–640)
   /** Collapse the workbench left rail (Regions/Comparison/Drivers filters) to a narrow icon strip. */
   railCollapsed: boolean;
+  /** Industry preset that drives Performance workbench data (regions, segments, commentary, etc.) */
+  industry: IndustryKey;
+  /** Show the top "Performance / Margin / Flux Intelligence" workbench-tabs row.
+   *  Hidden by default to keep the page focused on the active workbench. */
+  showWorkbenchTabs: boolean;
 }
 interface SettingsCtx {
   settings: Settings;
@@ -149,12 +183,21 @@ export const useChat = () => {
 import { CHAT_RESPONSES, FALLBACK_RESPONSE } from './data';
 
 export function AppProviders({ children }: { children: ReactNode }) {
-  // AUTH
+  // AUTH — seeds a default CFO persona so the prototype lands directly in the
+  // app. The persona/workbench ContextSwitcher in the header handles swapping.
+  // Legacy 'PREPARER' key migrates transparently to 'STAFF'.
   const [user, setUser] = useState<Persona | null>(() => {
     try {
       const raw = localStorage.getItem('meeru.user');
-      return raw ? (PERSONAS[raw as Role] ?? null) : null;
-    } catch { return null; }
+      if (raw) {
+        const migrated = raw === 'PREPARER' ? 'STAFF' : raw;
+        if (migrated !== raw) {
+          try { localStorage.setItem('meeru.user', migrated); } catch {}
+        }
+        return PERSONAS[migrated as Role] ?? PERSONAS.CFO;
+      }
+    } catch {}
+    return PERSONAS.CFO;
   });
   const login = useCallback((role: Role) => {
     const p = PERSONAS[role];
@@ -185,6 +228,8 @@ export function AppProviders({ children }: { children: ReactNode }) {
     chatHidden: false,
     chatWidth: 344,
     railCollapsed: false,
+    industry: 'delivery',
+    showWorkbenchTabs: false,
   };
   const [settings, setSettings] = useState<Settings>(() => {
     try {
@@ -256,11 +301,21 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   const [thinking, setThinking] = useState(false);
 
+  // Persona-aware matcher: first look for a response tagged with the active
+  // persona; fall back to generic (untagged) responses. Keeps the demo
+  // contextual — CFO gets board-ready summaries, Staff gets task-list framing.
+  const resolveResponse = useCallback((q: string) => {
+    const activeKey = user?.key;
+    const personaHit = CHAT_RESPONSES.find(r => r.persona === activeKey && r.match.test(q));
+    if (personaHit) return personaHit;
+    return CHAT_RESPONSES.find(r => !r.persona && r.match.test(q)) ?? FALLBACK_RESPONSE;
+  }, [user?.key]);
+
   const sendChat = useCallback((q: string) => {
     if (!q.trim()) return;
     setMsgs(prev => [...prev, { role: 'user', text: q }]);
     setThinking(true);
-    const resp = CHAT_RESPONSES.find(r => r.match.test(q)) ?? FALLBACK_RESPONSE;
+    const resp = resolveResponse(q);
     // Slight variable delay for more realistic feel
     const delay = 900 + Math.random() * 500;
     setTimeout(() => {
@@ -270,14 +325,14 @@ export function AppProviders({ children }: { children: ReactNode }) {
       setSent(new Set());
       setThinking(false);
     }, delay);
-  }, []);
+  }, [resolveResponse]);
 
   const regenerate = useCallback(() => {
     // Find the last user message and re-run the pipeline
     const lastUserMsg = [...msgs].reverse().find(m => m.role === 'user');
     if (!lastUserMsg || !lastUserMsg.text) return;
     const q = lastUserMsg.text;
-    const resp = CHAT_RESPONSES.find(r => r.match.test(q)) ?? FALLBACK_RESPONSE;
+    const resp = resolveResponse(q);
     // Remove the last AI message if any, then append a new one (simulating re-run)
     setMsgs(prev => {
       const idx = [...prev].reverse().findIndex(m => m.role === 'ai');

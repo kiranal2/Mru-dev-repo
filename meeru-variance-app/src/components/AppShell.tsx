@@ -52,6 +52,7 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
         )}
       </div>
       <div className="flex items-center gap-2.5">
+        <ContextSwitcher />
         <ChatToggleButton />
         <button onClick={toggle} className="w-7 h-7 rounded-md grid place-items-center text-muted hover:bg-surface-soft hover:text-ink" title="Toggle theme">
           {theme === 'light' ? <Icon.Moon className="w-4 h-4" /> : <Icon.Sun className="w-4 h-4" />}
@@ -59,6 +60,119 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
         <ProfileMenu />
       </div>
     </header>
+  );
+}
+
+// ==========================================================
+// ContextSwitcher — unified workbench + persona navigator
+// Replaces the persona-picker-first landing. Shows "Workbench · Persona"
+// and opens a dropdown with two sections: workbenches and personas.
+// ==========================================================
+const WORKBENCH_NAV: { path: string; label: string; Ic: (p: React.SVGProps<SVGSVGElement>) => JSX.Element; group?: string }[] = [
+  { path: '/workspace',            label: 'Workspace',       Ic: Icon.Home },
+  { path: '/variance/performance', label: 'Performance',     Ic: Icon.Chart,    group: 'Variance' },
+  { path: '/variance/margin',      label: 'Margin',          Ic: Icon.Chart,    group: 'Variance' },
+  { path: '/variance/flux',        label: 'Flux',            Ic: Icon.Chart,    group: 'Variance' },
+  { path: '/close',                label: 'Close',           Ic: Icon.Calendar },
+  { path: '/reconciliations',      label: 'Reconciliations', Ic: Icon.Calendar },
+];
+
+function ContextSwitcher() {
+  const { user } = useAuth();
+  const loc = useLocation();
+  const nav = useNavigate();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onEsc);
+    return () => {
+      document.removeEventListener('mousedown', onDoc);
+      document.removeEventListener('keydown', onEsc);
+    };
+  }, [open]);
+
+  if (!user) return null;
+
+  const currentWb =
+    WORKBENCH_NAV.find(w => loc.pathname === w.path) ??
+    WORKBENCH_NAV.find(w => loc.pathname.startsWith(w.path)) ??
+    WORKBENCH_NAV[1];
+
+  const goTo = (path: string) => { setOpen(false); nav(path); };
+
+  const switchPersona = (r: Role) => {
+    if (r === user.key) { setOpen(false); return; }
+    try { localStorage.setItem('meeru.user', r); } catch {}
+    window.location.reload();
+  };
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        className={`flex items-center gap-1.5 pl-2 pr-2 py-1 rounded-md border transition-colors ${
+          open ? 'bg-brand-tint border-brand-weak' : 'bg-surface-soft border-transparent hover:border-rule'
+        }`}
+        title="Switch workbench or persona"
+      >
+        <currentWb.Ic className="w-3.5 h-3.5 text-muted" />
+        <span className="text-[11px] font-semibold text-ink">{currentWb.label}</span>
+        <span className="text-[10px] text-faint">·</span>
+        <span className="text-[11px] text-muted">{user.role.replace('Chief Financial Officer', 'CFO').replace('Corporate Controller', 'Controller')}</span>
+        <svg className={`w-3 h-3 text-faint transition-transform ${open ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-[320px] bg-surface border border-rule rounded-xl shadow-e3 z-[60] overflow-hidden anim-fade-up">
+          <div className="px-4 pt-3 pb-1.5 text-[10px] font-semibold tracking-wider uppercase text-faint">Go to workbench</div>
+          <div className="pb-1.5">
+            {WORKBENCH_NAV.map(w => {
+              const active = currentWb.path === w.path;
+              return (
+                <button
+                  key={w.path}
+                  onClick={() => goTo(w.path)}
+                  className={`w-full flex items-center gap-2.5 px-4 py-1.5 text-left text-[12px] ${active ? 'bg-brand-tint' : 'hover:bg-surface-soft'}`}
+                >
+                  <w.Ic className={`w-3.5 h-3.5 ${active ? 'text-brand' : 'text-muted'}`} />
+                  <span className={`flex-1 ${active ? 'text-brand font-semibold' : 'text-ink'}`}>{w.label}</span>
+                  {w.group && !active && <span className="text-[9px] text-faint uppercase tracking-wider">{w.group}</span>}
+                  {active && <span className="text-[10px] text-brand font-semibold">Active</span>}
+                </button>
+              );
+            })}
+          </div>
+          <div className="px-4 pt-2 pb-1.5 text-[10px] font-semibold tracking-wider uppercase text-faint border-t border-rule">Switch persona</div>
+          <div className="pb-2">
+            {(['CFO', 'CONTROLLER', 'STAFF'] as Role[]).map(r => {
+              const p = PERSONAS[r];
+              const active = r === user.key;
+              return (
+                <button
+                  key={r}
+                  onClick={() => switchPersona(r)}
+                  className={`w-full flex items-center gap-2.5 px-4 py-1.5 text-left text-[12px] ${active ? 'bg-brand-tint' : 'hover:bg-surface-soft'}`}
+                >
+                  <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[10px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg,#6366F1,#1E40AF)' }}>{p.init}</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[11px] font-semibold text-ink truncate">{p.name}</div>
+                    <div className="text-[10px] text-muted truncate">{p.role}</div>
+                  </div>
+                  {active && <span className="text-[10px] text-brand font-semibold">Active</span>}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -93,12 +207,6 @@ function ProfileMenu() {
                  : user.quickStat?.tone === 'neg'  ? 'text-negative'
                  : user.quickStat?.tone === 'warn' ? 'text-warning'
                  : 'text-ink';
-
-  const switchPersona = (r: Role) => {
-    if (r === user.key) { setOpen(false); return; }
-    try { localStorage.setItem('meeru.user', r); } catch {}
-    window.location.reload();
-  };
 
   return (
     <div className="relative" ref={ref}>
@@ -207,29 +315,6 @@ function ProfileMenu() {
             <MenuItem onClick={() => { toggle(); }} icon={theme === 'light' ? <Icon.Moon className="w-3.5 h-3.5" /> : <Icon.Sun className="w-3.5 h-3.5" />} label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'} />
             <MenuItem onClick={() => { setOpen(false); alert('Keyboard shortcuts:\n\n/ — focus chat\n⌘K — command palette\nEsc — close menu'); }} icon={<Icon.Info className="w-3.5 h-3.5" />} label="Keyboard shortcuts" hint="⌘/" />
             <MenuItem onClick={() => { setOpen(false); alert('Help & docs coming soon'); }} icon={<Icon.Info className="w-3.5 h-3.5" />} label="Help & docs" />
-          </div>
-
-          {/* Switch persona */}
-          <div className="border-t border-rule py-1.5">
-            <div className="px-4 pt-1.5 pb-1 text-[10px] font-semibold tracking-wider uppercase text-faint">Switch persona</div>
-            {(['CFO', 'CONTROLLER', 'PREPARER'] as Role[]).map(r => {
-              const p = PERSONAS[r];
-              const active = r === user.key;
-              return (
-                <button
-                  key={r}
-                  onClick={() => switchPersona(r)}
-                  className={`w-full flex items-center gap-2.5 px-4 py-1.5 text-left text-[12px] ${active ? 'bg-brand-tint' : 'hover:bg-surface-soft'}`}
-                >
-                  <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[10px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg,#6366F1,#1E40AF)' }}>{p.init}</div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[11px] font-semibold text-ink truncate">{p.name}</div>
-                    <div className="text-[10px] text-muted truncate">{p.role}</div>
-                  </div>
-                  {active && <span className="text-[10px] text-brand font-semibold">Active</span>}
-                </button>
-              );
-            })}
           </div>
 
           {/* Logout */}

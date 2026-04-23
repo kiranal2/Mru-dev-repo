@@ -63,7 +63,7 @@ export function MissionEndCard() {
 
   const onTryAnother = () => {
     // Launch a different-persona mission
-    const nextPersona = user?.key === 'CFO' ? 'CONTROLLER' : user?.key === 'CONTROLLER' ? 'PREPARER' : 'CFO';
+    const nextPersona = user?.key === 'CFO' ? 'CONTROLLER' : user?.key === 'CONTROLLER' ? 'STAFF' : 'CFO';
     const m = MISSIONS.find(x => x.persona === nextPersona);
     if (!m) return;
     localStorage.setItem('meeru.user', nextPersona);
