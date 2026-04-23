@@ -1536,7 +1536,7 @@ export function CommandCenter({
       className={`min-w-0 scroll-mt-6 transition-[top,left,right,bottom,margin,max-width,padding] duration-300 ease-out ${
         fullscreen
           ? 'fixed inset-4 sm:inset-8 md:inset-12 z-50 mt-0 w-auto max-w-none overflow-y-auto overflow-x-hidden bg-surface border border-rule rounded-xl shadow-e3'
-          : `mt-6 -mx-5 -mb-5 w-auto ${pinned ? 'sticky bottom-0 z-30' : ''}`
+          : `w-auto`
       }`}
     >
       {/* ========================================================== */}

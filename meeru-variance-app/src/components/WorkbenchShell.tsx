@@ -19,6 +19,8 @@ interface Props {
   topNav: ReactNode;
   /** Main center canvas */
   children: ReactNode;
+  /** Pinned footer inside the main column — stays visible while children scroll */
+  dock?: ReactNode;
   /** Scope label shown at bottom of chat */
   scopeLabel?: string;
   /** Right-side scope indicator rendered in the top-nav row (e.g., "Week 10 · Global · Q1 FY2026") */
@@ -44,7 +46,7 @@ interface Props {
  * was removed — those actions are available via the chat panel toolbar
  * per-reply, which avoided the stacked-widget crowding.)
  */
-export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLabel, scopeRight, commentary, commentaryHeadline }: Props) {
+export function WorkbenchShell({ workbench, leftRail, topNav, children, dock, scopeLabel, scopeRight, commentary, commentaryHeadline }: Props) {
   const { setScope } = useChat();
   const { settings, update } = useSettings();
   useEffect(() => {
@@ -111,8 +113,15 @@ export function WorkbenchShell({ workbench, leftRail, topNav, children, scopeLab
             </>
           )}
         </aside>
-        <main style={{ gridArea: 'main' }} className="overflow-auto p-5">
-          {children}
+        <main style={{ gridArea: 'main' }} className="flex flex-col overflow-hidden min-h-0">
+          <div className="flex-1 overflow-auto p-5 min-h-0">
+            {children}
+          </div>
+          {dock && (
+            <div className="shrink-0">
+              {dock}
+            </div>
+          )}
         </main>
         <CommentaryPanel
           style={{ gridArea: 'chat' }}

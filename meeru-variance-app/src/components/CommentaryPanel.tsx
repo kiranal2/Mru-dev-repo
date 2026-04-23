@@ -338,6 +338,7 @@ export function CommentaryPanel({
             <span className="absolute inset-0 rounded-full bg-positive opacity-60 animate-ping" />
             <span className="relative w-1.5 h-1.5 rounded-full bg-positive" />
           </span>
+          <Icon.Sparkle className="w-3 h-3 text-brand shrink-0" />
           <div className="text-[10.5px] font-bold tracking-wider uppercase text-ink">AI Insights</div>
           <div className="flex-1" />
           <button

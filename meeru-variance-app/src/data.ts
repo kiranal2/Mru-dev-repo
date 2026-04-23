@@ -8,8 +8,8 @@ import type {
 // ==========================================================
 export const PERSONAS: Record<Role, Persona> = {
   CFO: {
-    key: 'CFO', name: 'Kate Morgan', init: 'KM', role: 'Chief Financial Officer',
-    email: 'kate.morgan@contoso.com',
+    key: 'CFO', name: 'Mai Lane', init: 'ML', role: 'Chief Financial Officer',
+    email: 'mai.lane@contoso.com',
     order: ['email', 'pin', 'share', 'slack', 'im', 'remind', 'approve', 'whatif', 'open', 'investigate'],
     department: 'Finance · Executive',
     reportsTo: 'Alex Morrison, CEO',
@@ -37,7 +37,7 @@ export const PERSONAS: Record<Role, Persona> = {
     email: 'raj.patel@contoso.com',
     order: ['email', 'pin', 'slack', 'share', 'im', 'remind', 'open', 'whatif', 'investigate', 'approve'],
     department: 'Accounting · Close & Consolidation',
-    reportsTo: 'Kate Morgan, CFO',
+    reportsTo: 'Mai Lane, CFO',
     teamSize: 12,
     location: 'Austin · HQ2',
     timezone: 'Central · UTC−6',
@@ -316,7 +316,7 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
     actions: [
       { kind: 'approve', label: 'Raise Mexico supply ceiling (+11%)', who: 'Ops · MX Lead',      body: 'Approve lift from 1,240 → 1,380 couriers before Tuesday.', requires: 'approve_je_over_1m' },
       { kind: 'slack',   label: 'Slack LATAM ops lead',               who: 'Rafael · LATAM Ops', body: 'Mexico Grocery at 68% courier util 3 weeks running — need supply ceiling raised to 1,380 by Tue.' },
-      { kind: 'email',   label: 'Route approval to CFO',              who: 'Kate · CFO',         body: '$2.1M variance exceeds $1M materiality — CFO sign-off required on the supply-ceiling decision.', requires: 'review_work' },
+      { kind: 'email',   label: 'Route approval to CFO',              who: 'Mai · CFO',         body: '$2.1M variance exceeds $1M materiality — CFO sign-off required on the supply-ceiling decision.', requires: 'review_work' },
       { kind: 'whatif',  label: 'What-If: 15% Brazil courier incentive', who: 'Forecast · W11',  body: 'Pre-authorize $40K incentive to prevent threshold breach in Brazil · 20× ROI vs letting BR hit dampening.' },
       { kind: 'pin',     label: 'Pin LATAM watch',                    who: 'Workspace · W10',    body: 'Mexico + Brazil supply constraint tracker.' },
       { kind: 'share',   label: 'Share with exec',                    who: 'Exec leadership',    body: 'LATAM variance snapshot + recommended actions.' },
@@ -352,7 +352,7 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
       { kind: 'whatif',  label: 'Model "do nothing" scenario',      who: 'Forecast · W11',         body: 'Project full W11 impact if no supply actions taken.' },
       { kind: 'remind',  label: 'Set W11 risk-review ping',         who: 'Calendar · Friday',      body: 'Re-review risk ranking Fri pm before W11 opens.' },
       { kind: 'pin',     label: 'Pin risk ranking',                 who: 'Workspace · W11 prep',   body: '5-region W11 risk snapshot.' },
-      { kind: 'share',   label: 'Share with exec leadership',       who: 'Kate, Josh, Priya',      body: 'W11 risk ranking + recommended actions.' },
+      { kind: 'share',   label: 'Share with exec leadership',       who: 'Mai, Josh, Priya',      body: 'W11 risk ranking + recommended actions.' },
     ],
     followUps: [
       'What is the cost to act on all 5 regions?',
@@ -384,7 +384,7 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
       { kind: 'whatif',  label: 'Model W25 supply pre-investment',  who: 'Forecast · May-June',    body: 'Pre-invest courier supply for summer holiday peak.' },
       { kind: 'share',   label: 'Share with EMEA leadership',       who: 'EMEA GM',                 body: 'Holiday uplift confirmed; planning ahead for W25.' },
       { kind: 'slack',   label: 'Slack EMEA planner',               who: 'Sophie · EMEA Planning',  body: 'W25 opportunity — start courier pre-seed in May.' },
-      { kind: 'email',   label: 'Brief on EMEA strength',           who: 'Kate · CFO',              body: 'Only positive region this week; no action needed; flagging W25 opportunity.' },
+      { kind: 'email',   label: 'Brief on EMEA strength',           who: 'Mai · CFO',              body: 'Only positive region this week; no action needed; flagging W25 opportunity.' },
     ],
     followUps: [
       'What drove the +$2.8M last year in W25?',
@@ -432,11 +432,11 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
   {
     persona: 'CFO',
     match: /my approval|needs (?:my |cfo )?approval|approval queue|needs sign.?off|awaiting sign.?off/i,
-    text: '<strong>Kate — 3 items awaiting your approval:</strong><br/><br/>1. <strong class="text-negative">Mexico supply ceiling lift</strong> · $2.1M variance / $1M materiality · routed by Raj Patel · <span class="text-muted">aging 4 hrs</span><br/>2. <strong class="text-warning">Q1 period close — Mexico Grocery segment lock</strong> · requires CFO sign-off post supply resolution · <span class="text-muted">aging 1 day</span><br/>3. <strong class="text-warning">Brazil pre-authorization — 15% courier incentive, $40K</strong> · Raj recommends approval; ROI 20× · <span class="text-muted">aging 2 hrs</span><br/><br/><strong>Total exposure if all unapproved through W11:</strong> ~$6M downside risk across LATAM.',
+    text: '<strong>Mai — 3 items awaiting your approval:</strong><br/><br/>1. <strong class="text-negative">Mexico supply ceiling lift</strong> · $2.1M variance / $1M materiality · routed by Raj Patel · <span class="text-muted">aging 4 hrs</span><br/>2. <strong class="text-warning">Q1 period close — Mexico Grocery segment lock</strong> · requires CFO sign-off post supply resolution · <span class="text-muted">aging 1 day</span><br/>3. <strong class="text-warning">Brazil pre-authorization — 15% courier incentive, $40K</strong> · Raj recommends approval; ROI 20× · <span class="text-muted">aging 2 hrs</span><br/><br/><strong>Total exposure if all unapproved through W11:</strong> ~$6M downside risk across LATAM.',
     actions: [
-      { kind: 'approve', label: 'Approve Mexico supply ceiling',     who: 'Kate · CFO sign-off',   body: 'Lift from 1,240 → 1,380 couriers (+11%). Unblocks W11 recovery.',           requires: 'approve_je_over_1m' },
-      { kind: 'approve', label: 'Approve & Lock Q1 Mexico segment',  who: 'Kate · Period lock',    body: 'Lock Mexico Grocery segment post supply fix. Period-end control.',          requires: 'lock_period' },
-      { kind: 'approve', label: 'Approve Brazil $40K incentive',     who: 'Kate · Pre-auth',       body: '15% courier incentive for W11 · protects ~$0.8M revenue.',                  requires: 'approve_je_over_1m' },
+      { kind: 'approve', label: 'Approve Mexico supply ceiling',     who: 'Mai · CFO sign-off',   body: 'Lift from 1,240 → 1,380 couriers (+11%). Unblocks W11 recovery.',           requires: 'approve_je_over_1m' },
+      { kind: 'approve', label: 'Approve & Lock Q1 Mexico segment',  who: 'Mai · Period lock',    body: 'Lock Mexico Grocery segment post supply fix. Period-end control.',          requires: 'lock_period' },
+      { kind: 'approve', label: 'Approve Brazil $40K incentive',     who: 'Mai · Pre-auth',       body: '15% courier incentive for W11 · protects ~$0.8M revenue.',                  requires: 'approve_je_over_1m' },
       { kind: 'email',   label: 'Reply to Raj with decision',        who: 'Raj · Controller',      body: 'Acknowledged — approving Mexico lift; will review period-lock after supply resolves.' },
       { kind: 'share',   label: 'Share decisions with board',        who: 'Board distribution',    body: 'CFO-approved actions for W10 variance package.' },
     ],
@@ -484,7 +484,7 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
     match: /lock period|period lock|period.?end|close.*lock/i,
     text: '<strong>Segments ready for period lock:</strong><br/><br/>✓ <strong>EMEA Grocery</strong> · +$0.4M, fully reconciled, no pending JEs<br/>✓ <strong>US Alcohol</strong> · +$0.3M, clean close<br/>✓ <strong>APAC Japan Convenience</strong> · +$0.1M, no exceptions<br/><br/>⏳ <strong>Awaiting action:</strong><br/>• Mexico Grocery — $2.1M variance post-approval; supply resolution required first<br/>• AU Grocery — weather recovery still mid-flight; recommend deferring lock 7 days<br/>• Brazil Convenience — early-warning flag; wait for W11 actuals<br/><br/><strong>Recommendation:</strong> Lock the 3 clean segments now; defer the 3 pending until W11 close.',
     actions: [
-      { kind: 'approve', label: 'Lock EMEA + US Alcohol + Japan',  who: 'Kate · Period lock',    body: 'Lock 3 clean segments now. 3 others deferred to W11.',  requires: 'lock_period' },
+      { kind: 'approve', label: 'Lock EMEA + US Alcohol + Japan',  who: 'Mai · Period lock',    body: 'Lock 3 clean segments now. 3 others deferred to W11.',  requires: 'lock_period' },
       { kind: 'remind',  label: 'Remind: revisit pending W11',     who: 'Calendar · W11 Monday', body: 'Re-review the 3 deferred segments after W11 actuals land.' },
       { kind: 'email',   label: 'Notify Raj of lock decisions',    who: 'Raj · Controller',      body: 'Locking 3 segments · 3 deferred · audit trail recorded.' },
       { kind: 'pin',     label: 'Pin lock decision log',           who: 'Workspace · Q1 close',  body: 'Segment-by-segment lock decisions.' },
@@ -506,7 +506,7 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
     text: '<strong>Raj — your review queue (4 items):</strong><br/><br/>1. <strong class="text-negative">Mexico Grocery variance — $2.1M</strong> · prepared by Maya Gonzales · evidence attached (courier-util chart, Cencosud email) · <span class="text-muted">submitted 2 hrs ago</span><br/>2. <strong class="text-warning">AR aging reconciliation — Mexico market</strong> · prepared by Maya · <span class="text-muted">submitted yesterday</span><br/>3. <strong class="text-warning">Voltair remittance JE draft</strong> · prepared by Maya · 3rd-party confirmation pending<br/>4. <strong class="text-muted">Bank reconciliation evidence — Chicago operating</strong> · prepared by Maya · ready for final sign-off<br/><br/><strong>Highest priority:</strong> Mexico Grocery — exceeds $1M materiality, needs your review then CFO routing.',
     actions: [
       { kind: 'approve',     label: 'Post Mexico provisional JE',         who: 'GL · Mexico',          body: 'Post to draft. Routes to CFO for final approval on > $1M amount.', requires: 'post_je' },
-      { kind: 'email',       label: 'Route Mexico to CFO',                who: 'Kate · CFO',           body: '$2.1M variance exceeds threshold — request CFO sign-off.',         requires: 'review_work' },
+      { kind: 'email',       label: 'Route Mexico to CFO',                who: 'Mai · CFO',           body: '$2.1M variance exceeds threshold — request CFO sign-off.',         requires: 'review_work' },
       { kind: 'approve',     label: 'Approve AR reconciliation',          who: 'Mexico market',        body: 'Sign off recon after Maya\'s evidence review.',                    requires: 'approve_recon' },
       { kind: 'approve',     label: 'Approve Bank recon · Chicago',       who: 'Close · Day 4',        body: 'Final sign-off on fully-evidenced recon.',                          requires: 'approve_recon' },
       { kind: 'slack',       label: 'Reply to Maya',                      who: 'Maya · Staff Acct',    body: 'Reviewing Mexico variance now — CFO routing after post.' },
@@ -554,9 +554,9 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
   {
     persona: 'CONTROLLER',
     match: /audit trail|approval chain|who approved|signoff history/i,
-    text: '<strong>Audit trail — Mexico Grocery $2.1M variance:</strong><br/><br/>1. <strong>Prepared by</strong> Maya Gonzales · 2026-03-09 10:14 CST · evidence attached (3 files)<br/>2. <strong>Submitted for review</strong> · 2026-03-09 10:17 CST · auto-routed to Raj Patel<br/>3. <strong>Reviewed by</strong> Raj Patel · 2026-03-09 12:34 CST · evidence accepted · notes added<br/>4. <strong>Provisional JE posted</strong> by Raj · 2026-03-09 12:41 CST · amount $2.1M · draft stage<br/>5. <strong>Routed to CFO</strong> · 2026-03-09 12:42 CST · reason: amount exceeds $1M materiality<br/>6. <strong class="text-warning">Awaiting CFO approval</strong> · Kate Morgan · open 4 hrs<br/><br/>All signatures recorded. Full evidence bundle attached. Trail meets SOX documentation standard.',
+    text: '<strong>Audit trail — Mexico Grocery $2.1M variance:</strong><br/><br/>1. <strong>Prepared by</strong> Maya Gonzales · 2026-03-09 10:14 CST · evidence attached (3 files)<br/>2. <strong>Submitted for review</strong> · 2026-03-09 10:17 CST · auto-routed to Raj Patel<br/>3. <strong>Reviewed by</strong> Raj Patel · 2026-03-09 12:34 CST · evidence accepted · notes added<br/>4. <strong>Provisional JE posted</strong> by Raj · 2026-03-09 12:41 CST · amount $2.1M · draft stage<br/>5. <strong>Routed to CFO</strong> · 2026-03-09 12:42 CST · reason: amount exceeds $1M materiality<br/>6. <strong class="text-warning">Awaiting CFO approval</strong> · Mai Lane · open 4 hrs<br/><br/>All signatures recorded. Full evidence bundle attached. Trail meets SOX documentation standard.',
     actions: [
-      { kind: 'remind',      label: 'Ping Kate on CFO approval',          who: 'Kate · CFO',           body: 'Mexico approval open 4 hrs — need before Tuesday supply deadline.' },
+      { kind: 'remind',      label: 'Ping Mai on CFO approval',          who: 'Mai · CFO',           body: 'Mexico approval open 4 hrs — need before Tuesday supply deadline.' },
       { kind: 'share',       label: 'Share audit trail with external audit', who: 'External audit',    body: 'Mexico variance trail for Q1 documentation.' },
       { kind: 'pin',         label: 'Pin to close documentation',          who: 'Workspace · audit',    body: 'Q1 material variance trails.' },
       { kind: 'open',        label: 'View full evidence bundle',           who: 'Mexico case folder',   body: 'All 3 evidence files + notes.' },
@@ -799,7 +799,7 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
       { kind: 'email',       label: 'Submit for approval',      who: 'Raj · Controller',           body: 'Route prepared JE to Controller review queue.',              requires: 'submit_for_approval' },
       // Controller path
       { kind: 'approve',     label: 'Post provisional JE',      who: 'GL · draft stage',           body: 'Post to draft; requires CFO sign-off for > $1M.',            requires: 'post_je' },
-      { kind: 'email',       label: 'Route to CFO for sign-off',who: 'Kate · CFO',                 body: 'Large-variance approval request — $2.1M over threshold.',    requires: 'review_work' },
+      { kind: 'email',       label: 'Route to CFO for sign-off',who: 'Mai · CFO',                 body: 'Large-variance approval request — $2.1M over threshold.',    requires: 'review_work' },
       // CFO path
       { kind: 'approve',     label: 'Approve & Lock Period',    who: 'CFO sign-off · Mexico · W10', body: 'Approve the $2.1M JE and lock the period for Mexico Grocery.', requires: 'approve_je_over_1m' },
       { kind: 'whatif',      label: 'What-If: Raise materiality threshold', who: 'Policy · materiality', body: 'Model impact of lifting threshold from $1M to $2M.',   requires: 'override_materiality' },
@@ -898,7 +898,7 @@ export const WATCHLIST = [
 ];
 export const ACTIVITY = [
   { who: 'Meeru AI', when: 'just now', what: 'Flagged 3 enterprise churns — $2.1M ARR' },
-  { who: 'Kate Morgan', when: '8 min ago', what: 'Pinned CA Retail margin to Board Deck' },
+  { who: 'Mai Lane', when: '8 min ago', what: 'Pinned CA Retail margin to Board Deck' },
   { who: 'Raj Patel', when: '23 min ago', what: 'Marked 2 close tasks complete' },
   { who: 'Meeru AI', when: '1 h ago', what: 'Generated NRR trend report · 4 quarters' },
   { who: 'Maya Gonzales', when: '2 h ago', what: 'Posted JE — $142K AR correction' },

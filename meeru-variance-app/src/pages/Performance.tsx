@@ -197,6 +197,7 @@ export default function Performance() {
           dots={{ exceptions: 3 }}
         />
       }
+      dock={<CommandCenter />}
     >
       <div className="flex items-center justify-between mb-3 gap-3">
         <h1 className="text-[18px] font-semibold text-ink tracking-tight truncate">
@@ -281,47 +282,30 @@ export default function Performance() {
                   Variance Bridge on the right; NBA / Command Center follows. */}
               {/* KPIs stack above the weekly chart. Variance bridge removed
                   so the canvas stays clean with one chart + KPIs. */}
-              <div className="space-y-3 mb-3">
+              <div className="space-y-3">
                 <KpiRow kpis={analysis.data.kpis} onCardClick={onKpiClick} />
                 <VarianceChart title={analysis.data.chartTitle} bars={analysis.data.chart} />
               </div>
-
-              {/* Inline Commentary removed — ranked explanations render in the
-                  right-side CommentaryPanel; this space now belongs to the
-                  Command Center adaptive actions. */}
-              <CommandCenter />
             </>
           )}
         </div>
       )}
 
       {topTab === 'drilldown' && (
-        <>
-          {tabRows.loading || tabRows.data?.kind !== 'drill' ? <TableSkeleton rows={8} cols={8} />
-          : <DrillDownView rows={tabRows.data.rows} focusSegment={focusSegment} />}
-          <CommandCenter />
-        </>
+        tabRows.loading || tabRows.data?.kind !== 'drill' ? <TableSkeleton rows={8} cols={8} />
+        : <DrillDownView rows={tabRows.data.rows} focusSegment={focusSegment} />
       )}
       {topTab === 'exceptions' && (
-        <>
-          {tabRows.loading || tabRows.data?.kind !== 'exceptions' ? <ListCardSkeleton items={5} />
-          : <ExceptionsView items={tabRows.data.rows} />}
-          <CommandCenter />
-        </>
+        tabRows.loading || tabRows.data?.kind !== 'exceptions' ? <ListCardSkeleton items={5} />
+        : <ExceptionsView items={tabRows.data.rows} />
       )}
       {topTab === 'signals' && (
-        <>
-          {tabRows.loading || tabRows.data?.kind !== 'signals' ? <ListCardSkeleton items={5} />
-          : <SignalsView items={tabRows.data.rows} />}
-          <CommandCenter />
-        </>
+        tabRows.loading || tabRows.data?.kind !== 'signals' ? <ListCardSkeleton items={5} />
+        : <SignalsView items={tabRows.data.rows} />
       )}
       {topTab === 'history' && (
-        <>
-          {tabRows.loading || tabRows.data?.kind !== 'history' ? <TableSkeleton rows={8} cols={8} />
-          : <HistoryView rows={tabRows.data.rows} />}
-          <CommandCenter />
-        </>
+        tabRows.loading || tabRows.data?.kind !== 'history' ? <TableSkeleton rows={8} cols={8} />
+        : <HistoryView rows={tabRows.data.rows} />
       )}
     </WorkbenchShell>
   );
