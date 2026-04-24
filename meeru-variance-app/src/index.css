@@ -21,16 +21,20 @@
   --negative-weak: #FEE2E2;
 }
 [data-theme='dark'] {
-  --ink: #F1F5F9;
-  --text-muted: #CBD5E1;
-  --text-faint: #64748B;
-  --rule: #334155;
-  --surface: #0F172A;
-  --surface-alt: #1E293B;
-  --surface-soft: #0B1220;
+  /* Pure-black dark theme — near-black surfaces with vivid accent colors.
+     Cards layer via subtle lightness steps: surface (#0A0A0A) → surface-alt
+     (#141414) → surface-soft (#1F1F1F). Borders (rule) are neutral-800 so
+     card edges read without dominating. */
+  --ink: #F5F5F5;
+  --text-muted: #A3A3A3;
+  --text-faint: #737373;
+  --rule: #262626;
+  --surface: #0A0A0A;
+  --surface-alt: #141414;
+  --surface-soft: #1F1F1F;
   --primary: #3B82F6;
   --primary-weak: #1E3A8A;
-  --primary-tint: #172554;
+  --primary-tint: #0F1E4D;
   --positive: #22C55E;
   --positive-weak: #14532D;
   --warning: #F59E0B;

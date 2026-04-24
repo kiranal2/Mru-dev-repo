@@ -15,8 +15,8 @@ import type {
 // -------- PERSONAS --------
 export const PERSONAS: Record<Role, Persona> = {
   CFO: {
-    key: 'CFO', name: 'Sarah Chen', init: 'SC', role: 'Chief Financial Officer',
-    email: 'sarah.chen@contoso.com',
+    key: 'CFO', name: 'Mai Lane', init: 'ML', role: 'Chief Financial Officer',
+    email: 'mai.lane@contoso.com',
     order: ['email', 'pin', 'share', 'slack', 'im', 'remind', 'approve', 'whatif', 'open', 'investigate'],
     department: 'Finance · Executive',
     reportsTo: 'Alex Morrison, CEO',
@@ -36,7 +36,7 @@ export const PERSONAS: Record<Role, Persona> = {
     email: 'raj.patel@contoso.com',
     order: ['email', 'pin', 'slack', 'share', 'im', 'remind', 'open', 'whatif', 'investigate', 'approve'],
     department: 'Accounting · Close & Consolidation',
-    reportsTo: 'Sarah Chen, CFO',
+    reportsTo: 'Mai Lane, CFO',
     teamSize: 12,
     location: 'Austin · HQ2',
     timezone: 'Central · UTC−6',
@@ -48,8 +48,8 @@ export const PERSONAS: Record<Role, Persona> = {
       'Stand-up with close team — 4 pm',
     ],
   },
-  PREPARER: {
-    key: 'PREPARER', name: 'Maya Gonzales', init: 'MG', role: 'Staff Accountant',
+  STAFF: {
+    key: 'STAFF', name: 'Maya Gonzales', init: 'MG', role: 'Staff Accountant',
     email: 'maya.gonzales@contoso.com',
     order: ['im', 'slack', 'remind', 'email', 'investigate', 'open', 'pin', 'share', 'whatif', 'approve'],
     department: 'Accounting · AR Team',
@@ -837,6 +837,98 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
     followUps: ['Which AI workload is driving growth?', 'What are the reservation tiers?', 'Compare egress to last quarter'],
   },
 ];
+
+// ==================================================================
+// Uberflux delivery-themed responses — match the active industry preset.
+// ==================================================================
+CHAT_RESPONSES.push(
+  {
+    match: /latam|mexico grocery|mexico supply|courier util|supply constraint/i,
+    text: '**LATAM is −$2.4M this week — Mexico Grocery drives 87% of the miss.** Courier utilization sitting at 68% for 3 consecutive weeks (above the 63% red line) is the root cause; it triggered trip dampening since W8 and drove basket-size reduction. Brazil Convenience is approaching its own supply threshold (−$0.6M). Colombia expansion is the only bright spot at +$0.3M — tracking 2× the launch model. **Recommended:** route the Mexico courier ceiling lift for CFO approval today.',
+    actions: [
+      { kind: 'approve', label: 'Route Mexico ceiling lift',   who: 'Mai · CFO sign-off', body: 'Lift 1,240 → 1,380 couriers (+11%). Unblocks W11 recovery.' },
+      { kind: 'approve', label: 'Pre-auth Brazil incentive',   who: 'Mai · Pre-auth',      body: '15% courier incentive for W11 · $40K · protects ~$0.8M revenue.' },
+      { kind: 'open',    label: 'Open LATAM drill-down',       who: 'Performance · LATAM',  body: 'Segment-level variance detail.' },
+      { kind: 'pin',     label: 'Pin Mexico supply tracker',   who: 'Workspace · LATAM',    body: 'Courier-util + variance rolling view.' },
+    ],
+    followUps: ['What is the W11 exposure if Mexico approval slips?', 'Show Brazil incentive ROI detail', 'Compare to W34 2024 supply event'],
+  },
+  {
+    match: /tuesday|before tuesday|this week.*watch|what.*watch/i,
+    text: '**Three items demand attention before Tuesday:** (1) Mexico supply ceiling approval — without it, W11 projects −$2.3M additional on Mexico alone. (2) Brazil Convenience threshold — without pre-auth incentive, projects −$1.1M for W11. (3) US Convenience Super Bowl exit rate has room to normalize per historical pattern but the NYC radius policy needs a decision by Monday EOD. Tuesday is the supply-approval deadline that unlocks the W11 recovery path.',
+    actions: [
+      { kind: 'approve', label: 'Approve Mexico ceiling (today)', who: 'Mai · CFO sign-off', body: 'Unblocks W11 recovery. Deadline: Tuesday.' },
+      { kind: 'remind',  label: 'Remind: NYC radius decision',    who: 'Monday EOD',          body: 'US Convenience policy review — decision by Monday EOD.' },
+      { kind: 'whatif',  label: 'W11 scenario model',              who: 'Forecast · W11',      body: 'Run stacked scenario on all 3 items.' },
+      { kind: 'pin',     label: 'Pin Tuesday deadlines',           who: 'Workspace',           body: 'Rolling deadline tracker.' },
+    ],
+    followUps: ['What is the W11 base case if nothing changes?', 'Show the NYC radius tradeoffs', 'Who owns each Tuesday deadline?'],
+  },
+  {
+    match: /risk|most at risk|next week|w11|week 11/i,
+    text: '**Mexico Grocery is the single highest risk into W11 — projected −$2.3M if no intervention.** Brazil Convenience is the second-biggest, approaching its supply threshold at −$1.1M projected without pre-auth. US Convenience is auto-recovering (exit-rate normalization begins post Super Bowl). AU Grocery rebounds +15% in 2 weeks per the historical rainfall pattern. **EMEA is the only region model-scored positive again** — school-holiday lift continues into W11.',
+    actions: [
+      { kind: 'pin',     label: 'Pin W11 risk ranking',            who: 'Workspace',                body: 'Region-level W11 risk view.' },
+      { kind: 'share',   label: 'Share with exec leadership',       who: 'Mai, Josh, Priya',        body: 'W11 risk ranking + recommended actions.' },
+      { kind: 'whatif',  label: 'Run base/best/stress scenarios',  who: 'Forecast · W11 bands',     body: 'Model: base −$2.1M · best −$0.8M · stress −$6.0M.' },
+      { kind: 'open',    label: 'Open Signals tab',                who: 'Performance · Signals',     body: 'ML model forecasts per region.' },
+    ],
+    followUps: ['Show model confidence for each risk', 'Compare W11 projections to W10 outcomes', 'Which of these has Tuesday dependency?'],
+  },
+  // ----- CFO persona -----
+  {
+    persona: 'CFO',
+    match: /my approval|needs (?:my |cfo )?approval|approval queue|needs sign.?off|awaiting sign.?off/i,
+    text: '**Mai — 3 items awaiting your approval:**\n\n1. **Mexico supply ceiling lift** · $2.1M variance / $1M materiality · routed by Raj Patel · aging 4 hrs\n2. **Q1 period close — Mexico Grocery segment lock** · requires CFO sign-off post supply resolution · aging 1 day\n3. **Brazil pre-authorization — 15% courier incentive, $40K** · Raj recommends approval; ROI 20× · aging 2 hrs\n\n**Total exposure if all unapproved through W11:** ~$6M downside risk across LATAM.',
+    actions: [
+      { kind: 'approve', label: 'Approve Mexico supply ceiling',    who: 'Mai · CFO sign-off',  body: 'Lift 1,240 → 1,380 couriers (+11%). Unblocks W11 recovery.' },
+      { kind: 'approve', label: 'Approve & Lock Q1 Mexico segment', who: 'Mai · Period lock',    body: 'Lock Mexico Grocery segment post supply fix.' },
+      { kind: 'approve', label: 'Approve Brazil $40K incentive',    who: 'Mai · Pre-auth',       body: '15% courier incentive for W11 · protects ~$0.8M revenue.' },
+      { kind: 'email',   label: 'Reply to Raj with decision',        who: 'Raj · Controller',     body: 'Acknowledged — approving Mexico lift first.' },
+      { kind: 'share',   label: 'Share decisions with board',        who: 'Board distribution',   body: 'CFO-approved actions for W10 variance package.' },
+    ],
+    followUps: ['What is the risk if I defer Mexico 24 hrs?', 'Show the full approval audit trail', 'Draft the board update summarizing my decisions'],
+  },
+  {
+    persona: 'CFO',
+    match: /board|board summary|board prep|board deck|board.?ready/i,
+    text: '**Draft W10 board update — CFO voice:**\n\nGlobal variance came in at −$4.2M vs Plan, driven primarily by LATAM supply constraints in Mexico Grocery (−$2.1M, 3rd consecutive week). US Convenience Super Bowl timing (−$0.9M) and AU weather (−$0.7M) are explainable and auto-recovering. EMEA is the only positive region at +$0.3M on confirmed school-holiday uplift.\n\n**Q1 cumulative:** −$12.4M vs Plan (primarily February/March · supply-constrained). W11 projects −$2.8M if Mexico interventions land, closer to −$6M if not.\n\n**Actions taken this week:** Approved Mexico courier ceiling lift, pre-authorized Brazil incentive, scheduled NYC radius-reduction policy review for W11.',
+    actions: [
+      { kind: 'pin',     label: 'Pin to Q1 Board Prep folder',      who: 'Workspace · Board',      body: 'W10 variance + actions summary.' },
+      { kind: 'email',   label: 'Send to board circulation list',   who: 'Board of Directors',     body: 'W10 summary + Q1 cumulative context.' },
+      { kind: 'share',   label: 'Share board snapshot link',        who: 'meeru.ai/s/w10-board',   body: 'Shareable read-only snapshot.' },
+      { kind: 'whatif',  label: 'Model Q2 recovery scenario',       who: 'Forecast · Q2',          body: 'What if all LATAM interventions land?' },
+    ],
+    followUps: ['Add Q1 cumulative variance breakdown', 'Include the Mexico supply case study', 'Shorten to 1 paragraph for board email'],
+  },
+  // ----- CONTROLLER persona -----
+  {
+    persona: 'CONTROLLER',
+    match: /review queue|my review|pending.*review|awaiting.*review|staff submission|recon|reconciliation/i,
+    text: '**Raj — your review queue (4 items):**\n\n1. **Mexico Grocery variance — $2.1M** · prepared by Maya Gonzales · evidence attached (courier-util chart, Cencosud email) · submitted 2 hrs ago\n2. **AR aging reconciliation — Mexico market** · prepared by Maya · submitted yesterday\n3. **Voltair remittance JE draft** · prepared by Maya · 3rd-party confirmation pending\n4. **Bank reconciliation evidence — Chicago operating** · prepared by Maya · ready for final sign-off\n\n**Highest priority:** Mexico Grocery — exceeds $1M materiality, needs your review then CFO routing.',
+    actions: [
+      { kind: 'approve', label: 'Post Mexico provisional JE',       who: 'GL · Mexico',           body: 'Post to draft. Routes to CFO for approval on > $1M.' },
+      { kind: 'email',   label: 'Route Mexico to CFO',               who: 'Mai · CFO',             body: '$2.1M variance exceeds threshold — request CFO sign-off.' },
+      { kind: 'approve', label: 'Approve AR reconciliation',         who: 'Mexico market',         body: 'Sign off recon after Maya\'s evidence review.' },
+      { kind: 'slack',   label: 'Reply to Maya',                     who: 'Maya · Staff Acct',     body: 'Reviewing Mexico variance now — CFO routing after post.' },
+    ],
+    followUps: ['Show the full audit trail on Mexico', 'What evidence is Maya missing on Voltair?', 'Who else is in my review queue this week?'],
+  },
+  // ----- STAFF persona -----
+  {
+    persona: 'STAFF',
+    match: /my task|my queue|my work|todo|what.*today|what.*should.*do|investigate/i,
+    text: '**Maya — your queue for today (3 due):**\n\n1. **Investigate Mexico Grocery $2.1M variance** · due today 4 pm · evidence attached, note draft in progress\n2. **Post Voltair remittance JE draft** · due today 5 pm · awaiting 3rd-party confirmation\n3. **Submit evidence for Bank reconciliation** · due today EOD · 2 files remaining to upload\n\n**Blocker:** AR $142K variance — waiting on Maya-side evidence completion. This is critical-path for Day 5 close.',
+    actions: [
+      { kind: 'investigate', label: 'Open Mexico investigation',       who: 'Mexico Grocery · W10', body: 'Continue your draft — add supply-constraint context.' },
+      { kind: 'email',       label: 'Submit Mexico for review',        who: 'Raj · Controller',     body: 'Mexico Grocery evidence package ready.' },
+      { kind: 'investigate', label: 'Complete AR $142K evidence',      who: 'AR aging · Mexico',    body: 'Upload remaining evidence to unblock Day 5 close.' },
+      { kind: 'remind',      label: 'Remind: 4 pm Mexico deadline',    who: 'Calendar · today',     body: 'Mexico investigation due 4 pm.' },
+      { kind: 'slack',       label: 'Slack Raj if blocked',            who: 'Raj · Controller',     body: 'Ping on Voltair 3rd-party confirmation status.' },
+    ],
+    followUps: ['What evidence do I still need for Mexico?', 'How do I format the AR aging variance note?', 'Show me the Voltair JE template'],
+  },
+);
 
 export const FALLBACK_RESPONSE: ChatResponseDef = {
   match: /.*/,

@@ -9,13 +9,13 @@ import { Icon } from '../components/icons';
 const CARD_ACCENTS: Record<Role, readonly [string, string]> = {
   CFO:        ['#3B82F6', '#1E3A8A'],
   CONTROLLER: ['#10B981', '#0F766E'],
-  PREPARER:   ['#F59E0B', '#C2410C'],
+  STAFF:   ['#F59E0B', '#C2410C'],
 };
 
 const TAGLINES: Record<Role, string> = {
   CFO:        'Executive rollup. Approvals. Board prep.',
   CONTROLLER: 'Close orchestration. Reconciliations. Review queue.',
-  PREPARER:   'Worklist. Investigations. Evidence uploads.',
+  STAFF:   'Worklist. Investigations. Evidence uploads.',
 };
 
 export default function LoginScreen() {

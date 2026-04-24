@@ -6,6 +6,8 @@ import type { ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Role, Persona, ChatMsg, ActionCard } from './types';
 import { PERSONAS, CHAT_RESPONSES, FALLBACK_RESPONSE } from './data';
+import { INDUSTRY_PRESETS } from './industry-presets';
+import type { IndustryPreset } from './industry-presets';
 
 // ==========================================================
 // AUTH
@@ -44,6 +46,42 @@ export const useChat = () => {
 };
 
 // ==========================================================
+// SETTINGS — adaptive preferences mirrored from web prototype.
+// Persisted to AsyncStorage under meeru.settings.
+// ==========================================================
+export type IndustryKey = 'delivery' | 'saas' | 'retail';
+export type Density = 'comfortable' | 'compact';
+
+export interface Settings {
+  industry: IndustryKey;
+  density: Density;
+  showWorkbenchTabs: boolean;
+}
+
+const DEFAULT_SETTINGS: Settings = {
+  industry: 'delivery',
+  density: 'comfortable',
+  showWorkbenchTabs: false,
+};
+
+interface SettingsCtx {
+  settings: Settings;
+  update: (patch: Partial<Settings>) => void;
+}
+const SettingsContext = createContext<SettingsCtx | null>(null);
+export const useSettings = () => {
+  const c = useContext(SettingsContext);
+  if (!c) throw new Error('useSettings must be inside AppProviders');
+  return c;
+};
+
+/** Current active industry preset — resolves from SettingsContext. */
+export function useIndustryData(): IndustryPreset {
+  const { settings } = useSettings();
+  return INDUSTRY_PRESETS[settings.industry];
+}
+
+// ==========================================================
 // TOASTS
 // ==========================================================
 export interface Toast { id: number; kind: 'ok' | 'warn' | 'info'; title: string; sub?: string; }
@@ -65,7 +103,12 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     AsyncStorage.getItem('meeru.user').then((raw) => {
-      if (raw && PERSONAS[raw as Role]) setUser(PERSONAS[raw as Role]);
+      // Migrate legacy PREPARER → STAFF persisted key transparently.
+      const migrated = raw === 'PREPARER' ? 'STAFF' : raw;
+      if (migrated && migrated !== raw) {
+        AsyncStorage.setItem('meeru.user', migrated).catch(() => {});
+      }
+      if (migrated && PERSONAS[migrated as Role]) setUser(PERSONAS[migrated as Role]);
       setHydrated(true);
     });
   }, []);
@@ -91,7 +134,15 @@ export function AppProviders({ children }: { children: ReactNode }) {
     if (!q.trim()) return;
     setMsgs((prev) => [...prev, { role: 'user', text: q }]);
     setThinking(true);
-    const resp = CHAT_RESPONSES.find((r) => r.match.test(q)) ?? FALLBACK_RESPONSE;
+    // Persona-tagged responses are preferred — if the active persona has a
+    // matching entry we pick it first; otherwise we fall back to the generic
+    // (persona-less) pool, then the catch-all FALLBACK_RESPONSE.
+    const currentRole = user?.key;
+    const personaMatch = currentRole
+      ? CHAT_RESPONSES.find((r) => r.persona === currentRole && r.match.test(q))
+      : undefined;
+    const genericMatch = CHAT_RESPONSES.find((r) => !r.persona && r.match.test(q));
+    const resp = personaMatch ?? genericMatch ?? FALLBACK_RESPONSE;
     const delay = 900 + Math.random() * 500;
     setTimeout(() => {
       setMsgs((prev) => [...prev, { role: 'ai', text: resp.text }]);
@@ -100,7 +151,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
       setSent(new Set());
       setThinking(false);
     }, delay);
-  }, []);
+  }, [user]);
 
   const reset = useCallback(() => {
     setMsgs([]); setContextual([]); setFollowUps([]); setSent(new Set());
@@ -108,6 +159,25 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   const markSent = useCallback((id: string) => {
     setSent((prev) => { const n = new Set(prev); n.add(id); return n; });
+  }, []);
+
+  // ---- settings ----
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  useEffect(() => {
+    AsyncStorage.getItem('meeru.settings').then((raw) => {
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        setSettings({ ...DEFAULT_SETTINGS, ...parsed });
+      } catch {}
+    });
+  }, []);
+  const updateSettings = useCallback((patch: Partial<Settings>) => {
+    setSettings((prev) => {
+      const next = { ...prev, ...patch };
+      AsyncStorage.setItem('meeru.settings', JSON.stringify(next)).catch(() => {});
+      return next;
+    });
   }, []);
 
   // ---- toasts ----
@@ -130,11 +200,14 @@ export function AppProviders({ children }: { children: ReactNode }) {
     [msgs, contextual, followUps, sent, thinking, send, reset, markSent]
   );
   const toastV = useMemo(() => ({ toasts, push, dismiss }), [toasts, push, dismiss]);
+  const settingsV = useMemo(() => ({ settings, update: updateSettings }), [settings, updateSettings]);
 
   return (
     <AuthContext.Provider value={authV}>
       <ChatContext.Provider value={chatV}>
-        <ToastContext.Provider value={toastV}>{children}</ToastContext.Provider>
+        <SettingsContext.Provider value={settingsV}>
+          <ToastContext.Provider value={toastV}>{children}</ToastContext.Provider>
+        </SettingsContext.Provider>
       </ChatContext.Provider>
     </AuthContext.Provider>
   );

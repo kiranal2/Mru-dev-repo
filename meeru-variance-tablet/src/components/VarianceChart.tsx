@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import Svg, { Rect, Line, Text as SvgText, Defs, Pattern, Path } from 'react-native-svg';
 import type { ChartBar } from '../types';
@@ -11,7 +11,11 @@ const COLORS = {
 } as const;
 
 export function VarianceChart({ title, bars }: { title: string; bars: ChartBar[] }) {
-  const w = Dimensions.get('window').width - 56; // page padding
+  // Measure container width via onLayout so the chart scales to whatever
+  // column it's rendered into — inside WorkbenchShell the main column is
+  // narrower than window width.
+  const [layoutW, setLayoutW] = useState<number>(Dimensions.get('window').width - 56);
+  const w = layoutW;
   const H = 180;
   const pad = 28;
   const max = Math.max(...bars.map(b => Math.abs(b.a)), ...bars.map(b => Math.abs(b.p)));
@@ -22,16 +26,10 @@ export function VarianceChart({ title, bars }: { title: string; bars: ChartBar[]
 
   return (
     <View
-      style={{
-        backgroundColor: '#FFFFFF',
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 12,
-        borderWidth: 1,
-        borderColor: '#E2E8F0',
-      }}
+      className="bg-surface border border-rule rounded-2xl p-4 mb-3"
+      onLayout={(e) => setLayoutW(e.nativeEvent.layout.width - 32)}
     >
-      <Text style={{ fontSize: 13, fontWeight: '600', color: '#0F172A', marginBottom: 8 }}>{title}</Text>
+      <Text className="text-[13px] font-semibold text-ink mb-2">{title}</Text>
       <Svg width={w - 32} height={H + 12}>
         <Defs>
           {bars.map((b, i) =>

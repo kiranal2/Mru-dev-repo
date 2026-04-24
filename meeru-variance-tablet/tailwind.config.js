@@ -1,26 +1,30 @@
 /** @type {import('tailwindcss').Config} */
+// Colors reference CSS custom properties that are set at runtime via
+// NativeWind's `vars()` helper on the root View (see src/theme.tsx).
+// This lets the light/dark palette swap instantly without re-rendering
+// every `className` and keeps tokens in sync with the web prototype.
 module.exports = {
   content: ['./App.tsx', './src/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
       colors: {
-        ink: '#0F172A',
-        muted: '#475569',
-        faint: '#94A3B8',
-        rule: '#E2E8F0',
-        surface: '#FFFFFF',
-        'surface-alt': '#F8FAFC',
-        'surface-soft': '#F1F5F9',
-        brand: '#1E40AF',
-        'brand-weak': '#DBEAFE',
-        'brand-tint': '#EFF6FF',
-        positive: '#16A34A',
-        'positive-weak': '#DCFCE7',
-        warning: '#D97706',
-        'warning-weak': '#FEF3C7',
-        negative: '#DC2626',
-        'negative-weak': '#FEE2E2',
+        ink: 'var(--color-ink)',
+        muted: 'var(--color-muted)',
+        faint: 'var(--color-faint)',
+        rule: 'var(--color-rule)',
+        surface: 'var(--color-surface)',
+        'surface-alt': 'var(--color-surface-alt)',
+        'surface-soft': 'var(--color-surface-soft)',
+        brand: 'var(--color-brand)',
+        'brand-weak': 'var(--color-brand-weak)',
+        'brand-tint': 'var(--color-brand-tint)',
+        positive: 'var(--color-positive)',
+        'positive-weak': 'var(--color-positive-weak)',
+        warning: 'var(--color-warning)',
+        'warning-weak': 'var(--color-warning-weak)',
+        negative: 'var(--color-negative)',
+        'negative-weak': 'var(--color-negative-weak)',
       },
     },
   },

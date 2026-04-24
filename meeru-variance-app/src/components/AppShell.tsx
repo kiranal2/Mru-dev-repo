@@ -18,7 +18,7 @@ function Sidebar() {
       active ? 'bg-brand text-white' : 'text-slate-400 hover:bg-white/10 hover:text-white'
     }`;
   return (
-    <aside className="bg-slate-900 dark:bg-slate-950 flex flex-col items-center py-2.5 gap-1 border-r border-rule/40" style={{ width: 56 }}>
+    <aside className="bg-slate-900 dark:bg-black flex flex-col items-center py-2.5 gap-1" style={{ width: 56 }}>
       <Link to="/workspace" className={cls(is('/workspace'))} title="Home"><Icon.Home className="w-5 h-5" /></Link>
       <Link to="/variance/performance" className={cls(is('/variance'))} title="Decision Intelligence"><Icon.Chart className="w-5 h-5" /></Link>
       <Link to="/close" className={cls(is('/close') || is('/reconciliations'))} title="Close Intelligence"><Icon.Calendar className="w-5 h-5" /></Link>

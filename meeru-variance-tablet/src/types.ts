@@ -3,7 +3,7 @@
  * Kept identical so data.ts can be shared across both codebases.
  */
 
-export type Role = 'CFO' | 'CONTROLLER' | 'PREPARER';
+export type Role = 'CFO' | 'CONTROLLER' | 'STAFF';
 
 export type ActionKind =
   | 'slack' | 'email' | 'im' | 'pin' | 'remind' | 'share'
@@ -54,6 +54,9 @@ export interface ActionCard {
   label: string;
   who: string;
   body: string;
+  /** Optional permission gate — matched against the active persona's
+   *  capabilities to hide/show the action in the card strip. */
+  requires?: string;
 }
 
 export interface ChatResponseDef {
@@ -61,6 +64,9 @@ export interface ChatResponseDef {
   text: string;
   actions: ActionCard[];
   followUps?: string[];
+  /** When set, this response is only picked when the active persona matches.
+   *  Persona-tagged responses are matched before generic ones. */
+  persona?: Role;
 }
 
 export interface ChatMsg {
