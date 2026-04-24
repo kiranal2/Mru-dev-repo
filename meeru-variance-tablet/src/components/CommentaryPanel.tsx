@@ -15,7 +15,7 @@ const CHIP_STYLE: Record<
   neg:  { bg: 'rgba(220,38,38,0.14)',  border: 'rgba(220,38,38,0.28)',  textClass: 'text-negative', label: 'Investigating' },
   pos:  { bg: 'rgba(22,163,74,0.14)',  border: 'rgba(22,163,74,0.28)',  textClass: 'text-positive', label: 'On track' },
   warn: { bg: 'rgba(217,119,6,0.14)',  border: 'rgba(217,119,6,0.28)',  textClass: 'text-warning',  label: 'Monitoring' },
-  info: { bg: 'rgba(30,64,175,0.14)',  border: 'rgba(30,64,175,0.28)',  textClass: 'text-brand',    label: 'Predictive flag' },
+  info: { bg: 'rgba(241,105,34,0.14)',  border: 'rgba(241,105,34,0.28)',  textClass: 'text-brand',    label: 'Predictive flag' },
 };
 
 function StatusChip({ kind, children }: { kind: keyof typeof CHIP_STYLE; children: string }) {
@@ -25,7 +25,7 @@ function StatusChip({ kind, children }: { kind: keyof typeof CHIP_STYLE; childre
       className="px-1.5 py-0.5 rounded"
       style={{ backgroundColor: s.bg, borderWidth: 1, borderColor: s.border }}
     >
-      <Text className={`text-[9px] font-bold uppercase tracking-wider ${s.textClass}`}>
+      <Text className={`text-[13px] font-bold uppercase tracking-wider ${s.textClass}`}>
         {children}
       </Text>
     </View>
@@ -61,7 +61,7 @@ function MiniSpark({ values, tone }: { values: number[]; tone: 'pos' | 'neg' | '
 function MaterialityFlag() {
   return (
     <View className="px-1.5 py-0.5 rounded bg-warning-weak">
-      <Text className="text-[9px] font-bold uppercase tracking-wider text-warning">Material</Text>
+      <Text className="text-[13px] font-bold uppercase tracking-wider text-warning">Material</Text>
     </View>
   );
 }
@@ -97,7 +97,7 @@ function CommentaryRow({ item, spark }: { item: CommentaryItem; spark?: number[]
     <View className="mb-3 pb-3 border-b border-rule">
       <View className="flex-row items-start gap-2">
         <View className="w-5 h-5 rounded-full bg-surface-soft items-center justify-center shrink-0">
-          <Text className="text-[10px] font-bold text-muted">{item.rank}</Text>
+          <Text className="text-[14px] font-bold text-muted">{item.rank}</Text>
         </View>
         <View className="flex-1">
           <View className="flex-row items-center justify-between gap-2 mb-1">
@@ -105,7 +105,7 @@ function CommentaryRow({ item, spark }: { item: CommentaryItem; spark?: number[]
               {item.name}
             </Text>
             <Text
-              className={`text-[11px] font-semibold ${
+              className={`text-[13px] font-semibold ${
                 tone === 'pos' ? 'text-positive' : tone === 'neg' ? 'text-negative' : 'text-warning'
               }`}
             >
@@ -118,14 +118,14 @@ function CommentaryRow({ item, spark }: { item: CommentaryItem; spark?: number[]
             <View className="flex-1" />
             {spark && <MiniSpark values={spark} tone={tone} />}
           </View>
-          <Text className="text-[11.5px] leading-5 text-muted">{item.text}</Text>
+          <Text className="text-[13.5px] leading-5 text-muted">{item.text}</Text>
           <View className="flex-row gap-1 mt-2 flex-wrap">
             <Pressable>
-              <Text className="text-[11px] text-brand">Drill down ›</Text>
+              <Text className="text-[13px] text-brand">Drill down ›</Text>
             </Pressable>
-            <Text className="text-[11px] text-faint"> · </Text>
+            <Text className="text-[13px] text-faint"> · </Text>
             <Pressable>
-              <Text className="text-[11px] text-muted">★ Ask about this</Text>
+              <Text className="text-[13px] text-muted">★ Ask about this</Text>
             </Pressable>
           </View>
         </View>
@@ -152,15 +152,15 @@ export function CommentaryPanel({ items, headline, sparkByName }: Props) {
       {/* Header */}
       <View className="px-3.5 pt-3 pb-2 border-b border-rule flex-row items-center gap-2">
         <View className="w-1.5 h-1.5 rounded-full bg-positive" />
-        <Icon.Sparkle size={12} color="#1E40AF" />
-        <Text className="text-[10.5px] font-bold tracking-wider uppercase text-ink">
+        <Icon.Sparkle size={12} color="#F16922" />
+        <Text className="text-[14px] font-bold tracking-wider uppercase text-ink">
           AI Insights
         </Text>
       </View>
       {/* Body */}
       <ScrollView contentContainerStyle={{ padding: 14 }}>
         {headline && (
-          <Text className="text-[12px] font-semibold text-ink mb-3" numberOfLines={2}>
+          <Text className="text-[14px] font-semibold text-ink mb-3" numberOfLines={2}>
             {headline}
           </Text>
         )}

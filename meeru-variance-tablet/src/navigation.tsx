@@ -18,8 +18,8 @@ import SettingsScreen from './screens/SettingsScreen';
 // Palette snippets used directly by react-navigation (which doesn't speak
 // Tailwind). Keep these in sync with src/theme.tsx.
 const NAV_COLORS = {
-  light: { surface: '#FFFFFF', rule: '#E2E8F0', brand: '#1E40AF', faint: '#94A3B8', ink: '#0F172A' },
-  dark:  { surface: '#0F172A', rule: '#334155', brand: '#3B82F6', faint: '#64748B', ink: '#F1F5F9' },
+  light: { surface: '#FFFFFF', rule: '#E2E8F0', brand: '#F16922', faint: '#94A3B8', ink: '#0F172A' },
+  dark:  { surface: '#0A0A0A', rule: '#262626', brand: '#FF9B6C', faint: '#737373', ink: '#F5F5F5' },
 };
 
 // ---------- Variance sub-stack ----------

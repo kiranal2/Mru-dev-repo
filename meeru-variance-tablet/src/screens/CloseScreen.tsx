@@ -1,10 +1,11 @@
-import { View, Text, ScrollView, Image } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '../components/icons';
+import { Logo } from '../components/Logo';
 
 const STATUS = [
   { key: 'done',        label: 'Done',        count: 5,  color: '#16A34A' },
-  { key: 'in_progress', label: 'In Progress', count: 4,  color: '#1E40AF' },
+  { key: 'in_progress', label: 'In Progress', count: 4,  color: '#F16922' },
   { key: 'blocked',     label: 'Blocked',     count: 2,  color: '#DC2626' },
   { key: 'not_started', label: 'Not Started', count: 1,  color: '#475569' },
 ];
@@ -26,14 +27,11 @@ export default function CloseScreen() {
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
         <View className="mb-4 flex-row items-start justify-between">
           <View className="flex-1">
-            <Text className="text-[10px] tracking-wider uppercase text-muted">Close Workbench</Text>
+            <Text className="text-[14px] tracking-wider uppercase text-muted">Close Workbench</Text>
             <Text className="text-xl font-semibold text-ink mt-1">Day 4 / 5 · Period-End Close</Text>
             <Text className="text-xs text-muted mt-1">Target close: Day 5 EOD. 2 blockers open.</Text>
           </View>
-          <Image
-            source={require('../../assets/meeru-logo.png')}
-            style={{ width: 96, height: 24, resizeMode: 'contain', marginTop: 4 }}
-          />
+          <Logo height={24} style={{ marginTop: 4 }} />
         </View>
 
         <View className="flex-row flex-wrap gap-3 mb-4">
@@ -43,7 +41,7 @@ export default function CloseScreen() {
               className="bg-surface rounded-2xl p-3"
               style={{ width: '48%', borderWidth: 1, borderColor: '#E2E8F0' }}
             >
-              <Text className="text-[10px] tracking-wider uppercase text-muted font-semibold">{s.label}</Text>
+              <Text className="text-[14px] tracking-wider uppercase text-muted font-semibold">{s.label}</Text>
               <Text style={{ fontSize: 22, color: s.color, fontWeight: '600', marginTop: 4 }}>{s.count}</Text>
             </View>
           ))}

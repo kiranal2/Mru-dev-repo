@@ -41,13 +41,13 @@ export function AISummaryCallout({
     <View className="relative mb-3 rounded-lg border border-brand-weak bg-brand-tint/40 px-3.5 py-3 pr-9">
       <View className="flex-row items-start gap-2.5">
         <View className="w-6 h-6 rounded-md bg-brand-tint items-center justify-center">
-          <Icon.Sparkle size={14} color="#1E40AF" />
+          <Icon.Sparkle size={14} color="#F16922" />
         </View>
         <View className="flex-1">
-          <Text className="text-[10px] font-semibold tracking-widest uppercase text-brand mb-1">
+          <Text className="text-[14px] font-semibold tracking-widest uppercase text-brand mb-1">
             AI Summary
           </Text>
-          <Text className="text-[12.5px] leading-5 text-ink">
+          <Text className="text-[14px] leading-5 text-ink">
             {parts.map((p, i) => (
               <Text
                 key={i}

@@ -1,12 +1,13 @@
-import { View, Text, Pressable, Image } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { Logo } from './Logo';
 
 /**
  * Unified top bar for Variance-stack screens:
  *   [ MeeruAI logo ]   [ Performance | Margin | Flux ]
  *
- * Single light row — logo on the left, segmented switcher on the right.
- * Matches the overall white/slate visual language of the app.
+ * Single row — logo on the left, segmented switcher on the right. Uses
+ * Tailwind tokens so it flips with the active theme.
  */
 const ITEMS = [
   { route: 'Performance', label: 'Performance' },
@@ -19,34 +20,10 @@ export function VarianceSwitcher() {
   const route = useRoute();
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        backgroundColor: '#FFFFFF',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E2E8F0',
-      }}
-    >
-      <Image
-        source={require('../../assets/meeru-logo.png')}
-        style={{ width: 88, height: 22, resizeMode: 'contain' }}
-      />
+    <View className="flex-row items-center justify-between px-4 py-2.5 bg-surface border-b border-rule">
+      <Logo height={22} />
 
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: 4,
-          padding: 3,
-          borderRadius: 8,
-          backgroundColor: '#F1F5F9',
-          borderWidth: 1,
-          borderColor: '#E2E8F0',
-        }}
-      >
+      <View className="flex-row gap-1 p-0.5 rounded-lg bg-surface-soft border border-rule">
         {ITEMS.map((it) => {
           const active = route.name === it.route;
           return (
@@ -55,26 +32,15 @@ export function VarianceSwitcher() {
               onPress={() => {
                 if (!active) navigation.navigate(it.route);
               }}
-              style={{
-                paddingVertical: 5,
-                paddingHorizontal: 14,
-                borderRadius: 6,
-                backgroundColor: active ? '#FFFFFF' : 'transparent',
-                borderWidth: active ? 1 : 0,
-                borderColor: '#E2E8F0',
-                shadowColor: active ? '#0F172A' : 'transparent',
-                shadowOpacity: active ? 0.04 : 0,
-                shadowRadius: active ? 2 : 0,
-                shadowOffset: { width: 0, height: 1 },
-              }}
+              className={`px-3.5 py-1 rounded-md ${
+                active ? 'bg-surface border border-rule' : ''
+              }`}
             >
               <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: active ? '600' : '500',
-                  color: active ? '#1E40AF' : '#64748B',
-                  letterSpacing: 0.2,
-                }}
+                className={`text-[14px] ${
+                  active ? 'text-brand font-semibold' : 'text-muted font-medium'
+                }`}
+                style={{ letterSpacing: 0.2 }}
               >
                 {it.label}
               </Text>

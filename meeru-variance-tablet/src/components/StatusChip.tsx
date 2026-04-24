@@ -8,7 +8,7 @@ const STYLES = {
   neg:  { bg: 'rgba(220,38,38,0.14)',  border: 'rgba(220,38,38,0.28)',  text: 'text-negative' },
   pos:  { bg: 'rgba(22,163,74,0.14)',  border: 'rgba(22,163,74,0.28)',  text: 'text-positive' },
   warn: { bg: 'rgba(217,119,6,0.14)',  border: 'rgba(217,119,6,0.28)',  text: 'text-warning' },
-  info: { bg: 'rgba(30,64,175,0.14)',  border: 'rgba(30,64,175,0.28)',  text: 'text-brand' },
+  info: { bg: 'rgba(241,105,34,0.14)',  border: 'rgba(241,105,34,0.28)',  text: 'text-brand' },
 } as const;
 
 export type StatusKind = keyof typeof STYLES;
@@ -20,7 +20,7 @@ export function StatusChip({ kind, children }: { kind: StatusKind; children: str
       className="px-2.5 py-1 rounded-md self-start"
       style={{ backgroundColor: s.bg, borderWidth: 1, borderColor: s.border }}
     >
-      <Text className={`text-[10.5px] font-semibold ${s.text}`}>{children}</Text>
+      <Text className={`text-[14px] font-semibold ${s.text}`}>{children}</Text>
     </View>
   );
 }

@@ -1,13 +1,14 @@
-import { View, Text, Pressable, ScrollView, Image } from 'react-native';
+import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PERSONAS } from '../data';
 import { useAuth } from '../store';
 import type { Role } from '../types';
 import { Icon } from '../components/icons';
+import { Logo } from '../components/Logo';
 
 const CARD_ACCENTS: Record<Role, readonly [string, string]> = {
-  CFO:        ['#3B82F6', '#1E3A8A'],
+  CFO:        ['#FF9B6C', '#7A2E10'],
   CONTROLLER: ['#10B981', '#0F766E'],
   STAFF:   ['#F59E0B', '#C2410C'],
 };
@@ -25,10 +26,7 @@ export default function LoginScreen() {
     <SafeAreaView className="flex-1 bg-surface-alt">
       <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 40 }}>
         <View className="mb-8 mt-4">
-          <Image
-            source={require('../../assets/meeru-logo.png')}
-            style={{ width: 160, height: 40, resizeMode: 'contain' }}
-          />
+          <Logo height={40} />
           <Text className="text-xs text-muted mt-2">
             Variance Workbench — pick a persona to explore
           </Text>
@@ -53,20 +51,20 @@ export default function LoginScreen() {
                   <Text className="text-white text-lg font-semibold">{p.init}</Text>
                 </LinearGradient>
 
-                <Text className="text-[15px] font-semibold text-ink">{p.name}</Text>
+                <Text className="text-[13px] font-semibold text-ink">{p.name}</Text>
                 <Text className="text-xs text-muted mb-2">{p.role}</Text>
                 <Text className="text-sm text-ink leading-relaxed mb-3">{TAGLINES[role]}</Text>
 
                 <View className="flex-row items-center gap-1">
                   <Text className="text-[13px] font-medium text-brand">Enter workspace</Text>
-                  <Icon.Send color="#1E40AF" size={14} />
+                  <Icon.Send color="#F16922" size={14} />
                 </View>
               </Pressable>
             );
           })}
         </View>
 
-        <Text className="text-center text-[11px] text-faint mt-8">
+        <Text className="text-center text-[13px] text-faint mt-8">
           Prototype · No credentials · Persona stored locally, switchable from Profile
         </Text>
       </ScrollView>

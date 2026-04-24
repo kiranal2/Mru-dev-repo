@@ -6,7 +6,8 @@
     "orientation": "default",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "backgroundColor": "#1E40AF",
+      "image": "./assets/meeru-logo-dark.png",
+      "backgroundColor": "#0A0A0A",
       "resizeMode": "contain"
     },
     "ios": {
@@ -17,7 +18,8 @@
     "android": {
       "package": "ai.meeru.variance.tablet",
       "adaptiveIcon": {
-        "backgroundColor": "#1E40AF"
+        "foregroundImage": "./assets/meeru-logo-dark.png",
+        "backgroundColor": "#0A0A0A"
       }
     },
     "web": {

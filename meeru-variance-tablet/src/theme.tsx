@@ -19,9 +19,9 @@ const PALETTES: Record<Theme, Record<string, string>> = {
     '--color-surface': '#FFFFFF',
     '--color-surface-alt': '#F8FAFC',
     '--color-surface-soft': '#F1F5F9',
-    '--color-brand': '#1E40AF',
-    '--color-brand-weak': '#DBEAFE',
-    '--color-brand-tint': '#EFF6FF',
+    '--color-brand': '#F16922',
+    '--color-brand-weak': '#FED5BC',
+    '--color-brand-tint': '#FFF1E7',
     '--color-positive': '#16A34A',
     '--color-positive-weak': '#DCFCE7',
     '--color-warning': '#D97706',
@@ -29,17 +29,22 @@ const PALETTES: Record<Theme, Record<string, string>> = {
     '--color-negative': '#DC2626',
     '--color-negative-weak': '#FEE2E2',
   },
+  // Pure-black dark theme matching the web prototype — cards layer via
+  // subtle steps surface (#0A0A0A) → surface-alt (#141414) → surface-soft
+  // (#1F1F1F). Borders (rule) are neutral-800 so edges read without
+  // dominating. Brand is the same coral #FF9B6C (lighter coral for contrast
+  // on near-black).
   dark: {
-    '--color-ink': '#F1F5F9',
-    '--color-muted': '#CBD5E1',
-    '--color-faint': '#64748B',
-    '--color-rule': '#334155',
-    '--color-surface': '#0F172A',
-    '--color-surface-alt': '#1E293B',
-    '--color-surface-soft': '#0B1220',
-    '--color-brand': '#3B82F6',
-    '--color-brand-weak': '#1E3A8A',
-    '--color-brand-tint': '#172554',
+    '--color-ink': '#F5F5F5',
+    '--color-muted': '#A3A3A3',
+    '--color-faint': '#737373',
+    '--color-rule': '#262626',
+    '--color-surface': '#0A0A0A',
+    '--color-surface-alt': '#141414',
+    '--color-surface-soft': '#1F1F1F',
+    '--color-brand': '#FF9B6C',
+    '--color-brand-weak': '#7A2E10',
+    '--color-brand-tint': '#3A1607',
     '--color-positive': '#22C55E',
     '--color-positive-weak': '#14532D',
     '--color-warning': '#F59E0B',
@@ -62,7 +67,9 @@ export const useTheme = () => {
 };
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('light');
+  // Dark is the default — matches the web prototype's near-black canvas.
+  // AsyncStorage override below lets the user flip to light + persist it.
+  const [theme, setThemeState] = useState<Theme>('dark');
 
   useEffect(() => {
     AsyncStorage.getItem('meeru.theme').then((raw) => {

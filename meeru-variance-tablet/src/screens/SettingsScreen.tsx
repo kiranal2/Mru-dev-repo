@@ -16,9 +16,9 @@ export default function SettingsScreen() {
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40, maxWidth: 720, alignSelf: 'center', width: '100%' }}>
         {/* Header */}
         <View className="mb-6">
-          <Text className="text-[10px] font-semibold tracking-wider uppercase text-muted">Settings</Text>
+          <Text className="text-[14px] font-semibold tracking-wider uppercase text-muted">Settings</Text>
           <Text className="text-[22px] font-semibold text-ink mt-0.5">Adaptive preferences</Text>
-          <Text className="text-[12px] text-muted mt-1">
+          <Text className="text-[14px] text-muted mt-1">
             Changes apply immediately and persist to device storage.
           </Text>
         </View>
@@ -26,7 +26,7 @@ export default function SettingsScreen() {
         {/* Industry preset */}
         <SectionCard>
           <Eyebrow>Industry data</Eyebrow>
-          <Text className="text-[11px] text-muted mt-1.5 mb-2.5">
+          <Text className="text-[13px] text-muted mt-1.5 mb-2.5">
             Switch the data lens. Regions, segments, commentary, exceptions, signals, and history across the Performance workbench rebuild from the chosen preset.
           </Text>
           {INDUSTRY_LIST.map((k) => {
@@ -46,13 +46,13 @@ export default function SettingsScreen() {
                   </Text>
                   {active && (
                     <View className="px-1.5 py-0.5 bg-brand rounded">
-                      <Text className="text-[9px] font-bold uppercase tracking-wider text-white">
+                      <Text className="text-[13px] font-bold uppercase tracking-wider text-white">
                         Active
                       </Text>
                     </View>
                   )}
                 </View>
-                <Text className="text-[11px] text-muted mb-2">{preset.meta.tagline}</Text>
+                <Text className="text-[13px] text-muted mb-2">{preset.meta.tagline}</Text>
                 <View className="flex-row gap-1 flex-wrap">
                   <Tag>{preset.meta.periodLabel}</Tag>
                   <Tag>Metric: {preset.meta.metricLabel}</Tag>
@@ -78,7 +78,7 @@ export default function SettingsScreen() {
                 >
                   <View className="flex-row items-center justify-center gap-2">
                     {t === 'light' ? <Icon.Sun size={14} /> : <Icon.Moon size={14} />}
-                    <Text className={`text-[12px] font-medium capitalize ${active ? 'text-brand' : 'text-muted'}`}>
+                    <Text className={`text-[14px] font-medium capitalize ${active ? 'text-brand' : 'text-muted'}`}>
                       {t} mode {active ? '·  active' : ''}
                     </Text>
                   </View>
@@ -102,7 +102,7 @@ export default function SettingsScreen() {
                     active ? 'border-brand bg-brand-tint' : 'border-rule'
                   }`}
                 >
-                  <Text className={`text-[12px] font-medium capitalize text-center ${active ? 'text-brand' : 'text-muted'}`}>
+                  <Text className={`text-[14px] font-medium capitalize text-center ${active ? 'text-brand' : 'text-muted'}`}>
                     {d} {active ? '· active' : ''}
                   </Text>
                 </Pressable>
@@ -120,7 +120,7 @@ export default function SettingsScreen() {
           >
             <View className="flex-1 pr-4">
               <Text className="text-[13px] text-ink">Show workbench tabs</Text>
-              <Text className="text-[11px] text-muted mt-0.5">
+              <Text className="text-[13px] text-muted mt-0.5">
                 Reveal the Performance / Margin / Flux tab bar at the top of the workbench.
               </Text>
             </View>
@@ -142,7 +142,7 @@ function SectionCard({ children }: { children: React.ReactNode }) {
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <Text className="text-[10px] font-semibold tracking-widest uppercase text-faint">
+    <Text className="text-[14px] font-semibold tracking-widest uppercase text-faint">
       {children}
     </Text>
   );
@@ -151,7 +151,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 function Tag({ children }: { children: React.ReactNode }) {
   return (
     <View className="px-1.5 py-0.5 bg-surface-alt border border-rule rounded">
-      <Text className="text-[9.5px] uppercase tracking-wider text-muted">{children}</Text>
+      <Text className="text-[13px] uppercase tracking-wider text-muted">{children}</Text>
     </View>
   );
 }

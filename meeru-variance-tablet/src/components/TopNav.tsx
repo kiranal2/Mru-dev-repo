@@ -29,7 +29,7 @@ export function TopNav({ tabs, active, onChange, dots, right }: TopNavProps) {
               className="flex-row items-center px-4 h-full"
             >
               <Text
-                className={`text-[12px] ${
+                className={`text-[14px] ${
                   isActive ? 'text-brand font-semibold' : 'text-muted font-medium'
                 }`}
               >
@@ -37,7 +37,7 @@ export function TopNav({ tabs, active, onChange, dots, right }: TopNavProps) {
               </Text>
               {dot !== undefined && dot > 0 && (
                 <View className="ml-1.5 min-w-[16px] h-4 px-1 bg-negative rounded-full items-center justify-center">
-                  <Text className="text-[9px] font-bold text-white leading-none">{dot}</Text>
+                  <Text className="text-[13px] font-bold text-white leading-none">{dot}</Text>
                 </View>
               )}
             </Pressable>

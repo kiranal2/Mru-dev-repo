@@ -22,7 +22,7 @@ export function KpiCard({
 }) {
   const body = (
     <View className="flex-1 bg-surface border border-rule rounded-lg" style={{ padding: compact ? 10 : 14 }}>
-      <Text className="text-[9.5px] font-semibold uppercase text-muted tracking-widest mb-1">
+      <Text className="text-[13px] font-semibold uppercase text-muted tracking-widest mb-1">
         {kpi.lbl}
       </Text>
       <Text
@@ -35,7 +35,7 @@ export function KpiCard({
       >
         {kpi.val}
       </Text>
-      <Text className={`text-[10px] mt-0.5 ${DELTA_CLASS[kpi.tone]}`}>{kpi.delta}</Text>
+      <Text className={`text-[14px] mt-0.5 ${DELTA_CLASS[kpi.tone]}`}>{kpi.delta}</Text>
     </View>
   );
   if (onPress) {

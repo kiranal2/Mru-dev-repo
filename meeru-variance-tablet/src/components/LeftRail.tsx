@@ -1,5 +1,6 @@
-import { View, Text, Pressable, ScrollView, Image } from 'react-native';
+import { View, Text, Pressable, ScrollView } from 'react-native';
 import type { LeftItem } from '../industry-presets';
+import { Logo } from './Logo';
 
 const TONE_DOT: Record<NonNullable<LeftItem['tone']>, string> = {
   pos:  '#16A34A',
@@ -23,7 +24,7 @@ interface RailGroupProps {
 export function RailGroup({ label, items, active, onSelect }: RailGroupProps) {
   return (
     <View className="mb-4">
-      <Text className="px-1 mb-1.5 text-[10px] font-semibold tracking-wider uppercase text-faint">
+      <Text className="px-1 mb-1.5 text-[14px] font-semibold tracking-wider uppercase text-faint">
         {label}
       </Text>
       {items.map((it) => {
@@ -43,7 +44,7 @@ export function RailGroup({ label, items, active, onSelect }: RailGroupProps) {
               />
             )}
             <Text
-              className={`flex-1 text-[12px] ${
+              className={`flex-1 text-[14px] ${
                 isActive ? 'text-brand font-semibold' : 'text-ink'
               }`}
               numberOfLines={1}
@@ -52,7 +53,7 @@ export function RailGroup({ label, items, active, onSelect }: RailGroupProps) {
             </Text>
             {it.d && (
               <Text
-                className={`text-[11px] font-medium ${
+                className={`text-[13px] font-medium ${
                   it.tone ? TONE_TEXT[it.tone] : 'text-muted'
                 }`}
               >
@@ -79,10 +80,7 @@ export function LeftRail({ children }: LeftRailProps) {
   return (
     <View className="bg-surface border-r border-rule" style={{ width: 200 }}>
       <View className="px-3 pt-3 pb-2 border-b border-rule">
-        <Image
-          source={require('../../assets/meeru-logo.png')}
-          style={{ width: 88, height: 22, resizeMode: 'contain' }}
-        />
+        <Logo height={22} />
       </View>
       <ScrollView contentContainerStyle={{ padding: 10 }}>{children}</ScrollView>
     </View>

@@ -110,7 +110,7 @@ function ChatContent({
           so the peek state stays clean. */}
       <View className="flex-row items-center justify-between px-4 pb-2" style={{ borderBottomWidth: 1, borderBottomColor: '#E2E8F0' }}>
         <Pressable onPress={expanded ? undefined : onExpand} className="flex-row items-center gap-2 flex-1">
-          <Icon.Sparkle color="#1E40AF" size={16} />
+          <Icon.Sparkle color="#F16922" size={16} />
           <Text className="text-sm font-semibold text-ink">AI Analysis</Text>
           <View className="ml-1 px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#DCFCE7' }}>
             <Text style={{ fontSize: 9, fontWeight: '600', color: '#16A34A' }}>● LIVE</Text>
@@ -143,8 +143,8 @@ function ChatContent({
               }}
             >
               <Icon.Star
-                color={favorited ? '#1E40AF' : '#64748B'}
-                fill={favorited ? '#1E40AF' : 'none'}
+                color={favorited ? '#F16922' : '#64748B'}
+                fill={favorited ? '#F16922' : 'none'}
                 size={14}
               />
             </HeaderIconButton>
@@ -157,7 +157,7 @@ function ChatContent({
               }}
             >
               {fullscreen
-                ? <Icon.Minimize color="#1E40AF" size={14} />
+                ? <Icon.Minimize color="#F16922" size={14} />
                 : <Icon.Maximize color="#475569" size={14} />}
             </HeaderIconButton>
             <HeaderIconButton
@@ -185,16 +185,16 @@ function ChatContent({
           return (
             <View key={idx} className="mb-3">
               <Text
-                style={{ fontSize: 10, fontWeight: '600', letterSpacing: 0.6, textTransform: 'uppercase', marginBottom: 4, color: isUser ? '#1E40AF' : '#475569' }}
+                style={{ fontSize: 10, fontWeight: '600', letterSpacing: 0.6, textTransform: 'uppercase', marginBottom: 4, color: isUser ? '#F16922' : '#475569' }}
               >
                 {who}
               </Text>
               <View
                 className="rounded-xl p-3"
                 style={{
-                  backgroundColor: isUser ? '#EFF6FF' : '#F8FAFC',
+                  backgroundColor: isUser ? '#FFF1E7' : '#F8FAFC',
                   borderWidth: 1,
-                  borderColor: isUser ? '#DBEAFE' : '#E2E8F0',
+                  borderColor: isUser ? '#FED5BC' : '#E2E8F0',
                 }}
               >
                 <Text className="text-[13px] leading-relaxed text-ink">{m.text}</Text>
@@ -209,11 +209,11 @@ function ChatContent({
         {contextual.length > 0 && (
           <View className="mt-2">
             <View className="flex-row items-center gap-1 mb-2">
-              <Icon.Flag color="#1E40AF" size={12} />
-              <Text className="text-[10px] tracking-wider uppercase font-semibold text-brand">
+              <Icon.Flag color="#F16922" size={12} />
+              <Text className="text-[14px] tracking-wider uppercase font-semibold text-brand">
                 Next Best Action
               </Text>
-              <Text className="text-[10px] text-faint"> · ranked for {user?.role.split(' ').slice(-1)[0]}</Text>
+              <Text className="text-[14px] text-faint"> · ranked for {user?.role.split(' ').slice(-1)[0]}</Text>
             </View>
             {fullscreen ? (
               // Full-screen: 2-column grid with full-width cards so nothing
@@ -258,7 +258,7 @@ function ChatContent({
         <View className="mt-4">
           <View className="flex-row items-center gap-1 mb-2">
             <Icon.Sparkle color="#94A3B8" size={11} />
-            <Text className="text-[10px] tracking-wider uppercase font-semibold text-faint">
+            <Text className="text-[14px] tracking-wider uppercase font-semibold text-faint">
               {msgs.length > 0 && followUps.length > 0 ? 'Follow-up' : 'Suggested'}
             </Text>
           </View>
@@ -273,7 +273,7 @@ function ChatContent({
                 className="px-3 py-1.5 rounded-full active:bg-brand-tint"
                 style={{ borderWidth: 1, borderColor: '#E2E8F0', backgroundColor: '#FFFFFF' }}
               >
-                <Text className="text-[11px] text-ink">{s}</Text>
+                <Text className="text-[13px] text-ink">{s}</Text>
               </Pressable>
             ))}
           </View>
@@ -304,7 +304,7 @@ function ChatContent({
             disabled={!input.trim()}
             className="rounded-lg active:opacity-90"
             style={{
-              backgroundColor: input.trim() ? '#1E40AF' : '#CBD5E1',
+              backgroundColor: input.trim() ? '#F16922' : '#CBD5E1',
               width: 32, height: 32, alignItems: 'center', justifyContent: 'center',
             }}
           >
@@ -341,7 +341,7 @@ function HeaderIconButton({
         borderRadius: 6,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: active ? '#EFF6FF' : 'transparent',
+        backgroundColor: active ? '#FFF1E7' : 'transparent',
       }}
     >
       {children}
@@ -354,7 +354,7 @@ function WelcomeBlock({ personaName }: { personaName: string }) {
   return (
     <View
       className="rounded-2xl p-4 mb-3"
-      style={{ backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#DBEAFE' }}
+      style={{ backgroundColor: '#FFF1E7', borderWidth: 1, borderColor: '#FED5BC' }}
     >
       <View className="flex-row items-center gap-2 mb-2">
         <View className="w-7 h-7 rounded-full bg-brand items-center justify-center">
@@ -385,7 +385,7 @@ function ThinkingBubble() {
             <View key={i} className="w-1.5 h-1.5 rounded-full bg-brand" />
           ))}
         </View>
-        <Text className="text-[11px] text-muted">Analyzing…</Text>
+        <Text className="text-[13px] text-muted">Analyzing…</Text>
       </View>
     </View>
   );
@@ -405,7 +405,7 @@ function MessageToolbar() {
       {items.map((it) => (
         <Pressable key={it.key} onPress={it.onPress} className="flex-row items-center gap-1 active:opacity-60">
           {it.icon}
-          <Text className="text-[10px] text-faint">{it.label}</Text>
+          <Text className="text-[14px] text-faint">{it.label}</Text>
         </Pressable>
       ))}
     </View>
@@ -428,9 +428,9 @@ function NBACard({
 }) {
   const Icn = iconForActionKind(action.kind);
   const accent: Record<string, string> = {
-    slack: '#4A154B', email: '#1E40AF', im: '#16A34A', pin: '#D97706',
+    slack: '#4A154B', email: '#F16922', im: '#16A34A', pin: '#D97706',
     remind: '#8B5CF6', share: '#475569', approve: '#16A34A',
-    whatif: '#1E40AF', open: '#1E40AF', investigate: '#D97706',
+    whatif: '#F16922', open: '#F16922', investigate: '#D97706',
   };
   const verb = ['pin', 'remind', 'share', 'approve', 'whatif', 'open', 'investigate'].includes(action.kind)
     ? (action.kind === 'pin' ? 'Pin' : action.kind === 'remind' ? 'Set' : action.kind === 'share' ? 'Share' : action.kind === 'approve' ? 'Approve' : action.kind === 'whatif' ? 'Run' : 'Open')
@@ -440,9 +440,9 @@ function NBACard({
       className={`${expanded ? '' : 'mr-2'} p-3 rounded-xl`}
       style={{
         width: expanded ? '100%' : 240,
-        backgroundColor: '#EFF6FF',
+        backgroundColor: '#FFF1E7',
         borderWidth: 1,
-        borderColor: '#DBEAFE',
+        borderColor: '#FED5BC',
         opacity: sent ? 0.6 : 1,
         position: 'relative',
       }}
@@ -459,18 +459,18 @@ function NBACard({
           {action.who}
         </Text>
       </View>
-      <Text numberOfLines={expanded ? 3 : 2} className="text-[11px] text-ink leading-snug mb-2">
+      <Text numberOfLines={expanded ? 3 : 2} className="text-[13px] text-ink leading-snug mb-2">
         {action.body}
       </Text>
       <View className="flex-row items-center justify-between">
-        <Pressable><Text className="text-[10px] text-faint">Edit</Text></Pressable>
+        <Pressable><Text className="text-[14px] text-faint">Edit</Text></Pressable>
         <Pressable
           onPress={onSend}
           disabled={sent}
           className="px-3 py-1 rounded"
-          style={{ backgroundColor: sent ? '#16A34A' : '#1E40AF' }}
+          style={{ backgroundColor: sent ? '#16A34A' : '#F16922' }}
         >
-          <Text className="text-[10px] font-semibold text-white">{sent ? '✓ Sent' : verb}</Text>
+          <Text className="text-[14px] font-semibold text-white">{sent ? '✓ Sent' : verb}</Text>
         </Pressable>
       </View>
     </View>

@@ -15,7 +15,7 @@ const TONE_COLOR = {
   pos:  '#16A34A',
   neg:  '#DC2626',
   warn: '#D97706',
-  blue: '#1E40AF',
+  blue: '#F16922',
 } as const;
 
 const MAX_W = 1100;
@@ -132,11 +132,11 @@ export default function FluxScreen() {
             style={{
               flexDirection: 'row', alignItems: 'center', gap: 6,
               paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999,
-              backgroundColor: '#EFF6FF',
+              backgroundColor: '#FFF1E7',
             }}
           >
-            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#1E40AF' }} />
-            <Text style={{ fontSize: 10, fontWeight: '600', letterSpacing: 0.4, color: '#1E40AF' }}>
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#F16922' }} />
+            <Text style={{ fontSize: 10, fontWeight: '600', letterSpacing: 0.4, color: '#F16922' }}>
               {matCount} MATERIAL
             </Text>
           </View>
@@ -149,7 +149,7 @@ export default function FluxScreen() {
             <Text style={{ fontSize: 10, color: '#64748B', letterSpacing: 0.4 }}>Q1 vs Q4 2025</Text>
           </View>
           <Pressable onPress={() => chatRef.current?.expand()} hitSlop={8}>
-            <Icon.Sparkle color="#1E40AF" size={22} />
+            <Icon.Sparkle color="#F16922" size={22} />
           </Pressable>
         </View>
       </View>
@@ -169,17 +169,17 @@ export default function FluxScreen() {
                 onPress={() => setView(v.k)}
                 style={{
                   paddingHorizontal: 12, paddingVertical: 7, borderRadius: 6,
-                  backgroundColor: active ? '#EFF6FF' : '#FFFFFF',
-                  borderWidth: 1, borderColor: active ? '#1E40AF' : '#E2E8F0',
+                  backgroundColor: active ? '#FFF1E7' : '#FFFFFF',
+                  borderWidth: 1, borderColor: active ? '#F16922' : '#E2E8F0',
                 }}
               >
                 <Text style={{
                   fontSize: 12, fontWeight: active ? '700' : '500',
-                  color: active ? '#1E40AF' : '#0F172A',
+                  color: active ? '#F16922' : '#0F172A',
                 }}>
                   {v.n}
                 </Text>
-                <Text style={{ fontSize: 9, color: active ? '#1E40AF' : '#94A3B8', marginTop: 1 }}>{v.sub}</Text>
+                <Text style={{ fontSize: 9, color: active ? '#F16922' : '#94A3B8', marginTop: 1 }}>{v.sub}</Text>
               </Pressable>
             );
           })}
@@ -192,13 +192,13 @@ export default function FluxScreen() {
           onPress={() => setShowMaterialOnly(false)}
           style={{
             paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999,
-            backgroundColor: !showMaterialOnly ? '#EFF6FF' : '#FFFFFF',
-            borderWidth: 1, borderColor: !showMaterialOnly ? '#1E40AF' : '#E2E8F0',
+            backgroundColor: !showMaterialOnly ? '#FFF1E7' : '#FFFFFF',
+            borderWidth: 1, borderColor: !showMaterialOnly ? '#F16922' : '#E2E8F0',
           }}
         >
           <Text style={{
             fontSize: 12, fontWeight: !showMaterialOnly ? '600' : '500',
-            color: !showMaterialOnly ? '#1E40AF' : '#64748B',
+            color: !showMaterialOnly ? '#F16922' : '#64748B',
           }}>
             All rows · {pickRows(view).length}
           </Text>
@@ -207,13 +207,13 @@ export default function FluxScreen() {
           onPress={() => setShowMaterialOnly(true)}
           style={{
             paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999,
-            backgroundColor: showMaterialOnly ? '#EFF6FF' : '#FFFFFF',
-            borderWidth: 1, borderColor: showMaterialOnly ? '#1E40AF' : '#E2E8F0',
+            backgroundColor: showMaterialOnly ? '#FFF1E7' : '#FFFFFF',
+            borderWidth: 1, borderColor: showMaterialOnly ? '#F16922' : '#E2E8F0',
           }}
         >
           <Text style={{
             fontSize: 12, fontWeight: showMaterialOnly ? '600' : '500',
-            color: showMaterialOnly ? '#1E40AF' : '#64748B',
+            color: showMaterialOnly ? '#F16922' : '#64748B',
           }}>
             Material only · {matCount}
           </Text>
@@ -278,9 +278,9 @@ export default function FluxScreen() {
                       {r.material && (
                         <View style={{
                           paddingHorizontal: 5, paddingVertical: 1,
-                          backgroundColor: '#EFF6FF', borderRadius: 3,
+                          backgroundColor: '#FFF1E7', borderRadius: 3,
                         }}>
-                          <Text style={{ fontSize: 8, fontWeight: '700', color: '#1E40AF', letterSpacing: 0.4 }}>MAT</Text>
+                          <Text style={{ fontSize: 8, fontWeight: '700', color: '#F16922', letterSpacing: 0.4 }}>MAT</Text>
                         </View>
                       )}
                     </View>
@@ -310,7 +310,7 @@ export default function FluxScreen() {
                     </View>
                   )}
                   <View style={{ width: 24, alignItems: 'flex-end' }}>
-                    <Icon.Sparkle color="#1E40AF" size={12} />
+                    <Icon.Sparkle color="#F16922" size={12} />
                   </View>
                 </Pressable>
               );

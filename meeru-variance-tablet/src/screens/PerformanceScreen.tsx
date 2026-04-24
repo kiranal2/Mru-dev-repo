@@ -80,7 +80,7 @@ export default function PerformanceScreen() {
           onChange={setTopTab}
           dots={{ exceptions: industry.exceptions.filter((e) => e.severity === 'critical').length }}
           right={
-            <Text className="text-[11px] text-muted">
+            <Text className="text-[13px] text-muted">
               {industry.meta.periodLabel} · {regionLabel}
             </Text>
           }
@@ -101,7 +101,7 @@ export default function PerformanceScreen() {
     >
       {/* Title row */}
       <View className="flex-row items-center justify-between mb-3">
-        <Text className="text-[16px] font-semibold text-ink flex-1" numberOfLines={1}>
+        <Text className="text-[14px] font-semibold text-ink flex-1" numberOfLines={1}>
           Performance Intelligence · {industry.meta.periodLabel} · {regionLabel}
         </Text>
         {slice?.statusChip && (
@@ -120,10 +120,10 @@ export default function PerformanceScreen() {
       {/* Segment filter indicator */}
       {driverLabel && topTab === 'analysis' && (
         <View className="mb-3 flex-row items-center gap-2 px-3 py-2 rounded-lg border border-rule bg-brand-tint/40">
-          <Text className="text-[12px] text-muted">Segment filter:</Text>
-          <Text className="text-[12px] font-semibold text-brand">{driverLabel}</Text>
+          <Text className="text-[14px] text-muted">Segment filter:</Text>
+          <Text className="text-[14px] font-semibold text-brand">{driverLabel}</Text>
           <View className="flex-1" />
-          <Text className="text-[11px] text-muted" onPress={() => setDriver(null)}>Clear</Text>
+          <Text className="text-[13px] text-muted" onPress={() => setDriver(null)}>Clear</Text>
         </View>
       )}
 
