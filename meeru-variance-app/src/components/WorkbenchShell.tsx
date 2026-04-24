@@ -118,7 +118,7 @@ export function WorkbenchShell({ workbench, leftRail, topNav, children, dock, sc
             {children}
           </div>
           {dock && (
-            <div className="shrink-0">
+            <div className="shrink-0 bg-surface">
               {dock}
             </div>
           )}
