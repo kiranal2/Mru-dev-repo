@@ -8,7 +8,7 @@ const TONE_COLORS = {
   neg:  '#DC2626',
   pos:  '#16A34A',
   warn: '#D97706',
-  blue: '#F16922',
+  blue: '#FE9519',
 } as const;
 
 // Chart scaffolding hexes (baseline, plan bars, labels) picked per theme so

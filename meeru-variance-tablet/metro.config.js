@@ -5,4 +5,11 @@ const { withNativeWind } = require('nativewind/metro');
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 
+// SVG-as-component support via react-native-svg-transformer.
+// Imports like `import Logo from './assets/foo.svg'` return a React component
+// instead of an asset URI. See https://github.com/kristerkari/react-native-svg-transformer.
+config.transformer.babelTransformerPath = require.resolve('react-native-svg-transformer');
+config.resolver.assetExts = config.resolver.assetExts.filter((ext) => ext !== 'svg');
+config.resolver.sourceExts = [...config.resolver.sourceExts, 'svg'];
+
 module.exports = withNativeWind(config, { input: './global.css' });

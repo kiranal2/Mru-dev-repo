@@ -847,7 +847,7 @@ function ActionPlanPanel({
             '0 1px 2px rgba(15,23,42,0.04)',
             '0 12px 28px -6px rgba(15,23,42,0.2)',
             '0 28px 56px -12px rgba(15,23,42,0.28)',
-            '0 0 0 1px rgba(30,64,175,0.12)',
+            '0 0 0 1px rgba(254,149,25,0.12)',
           ].join(', '),
         }}
       >
@@ -857,7 +857,7 @@ function ActionPlanPanel({
           className="w-10 h-10 rounded-lg grid place-items-center shrink-0 text-white shadow-e1"
           style={{
             background:
-              'linear-gradient(135deg, var(--primary) 0%, rgba(30,64,175,0.8) 100%)',
+              'linear-gradient(135deg, var(--primary) 0%, rgba(254,149,25,0.8) 100%)',
           }}
         >
           <IconC className="w-5 h-5" />
@@ -964,7 +964,7 @@ function ActionPlanPanel({
           style={{
             background: finished
               ? 'linear-gradient(135deg, var(--positive) 0%, rgba(22,163,74,0.85) 100%)'
-              : 'linear-gradient(135deg, var(--primary) 0%, rgba(30,64,175,0.85) 100%)',
+              : 'linear-gradient(135deg, var(--primary) 0%, rgba(254,149,25,0.85) 100%)',
           }}
         >
           {finished ? (
@@ -1809,7 +1809,7 @@ export function CommandCenter({
               className="inline-flex items-center justify-center w-9 h-9 rounded-full text-white shadow-e2 hover:shadow-e3 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-e1 transition-all shrink-0"
               style={{
                 background:
-                  'linear-gradient(135deg, var(--primary) 0%, rgba(30,64,175,0.85) 100%)',
+                  'linear-gradient(135deg, var(--primary) 0%, rgba(254,149,25,0.85) 100%)',
               }}
             >
               <Icon.Send className="w-4 h-4" />

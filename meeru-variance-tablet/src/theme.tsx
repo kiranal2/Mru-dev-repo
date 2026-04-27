@@ -6,10 +6,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type Theme = 'light' | 'dark';
 
-// Palette mirrors the web prototype (meeru-variance-app/src/index.css).
-// Values are raw hex strings that get applied to the root View via NativeWind's
-// `vars()` helper, which exposes them as real CSS custom properties that every
-// `bg-surface` / `text-ink` class picks up automatically.
+// Palette: brand is orange (#FE9519) — same in light + dark. Warning is gold
+// to pull away from brand's hue band. --color-info is reserved for links +
+// tooltip accents so "click this" doesn't always read as brand.
 const PALETTES: Record<Theme, Record<string, string>> = {
   light: {
     '--color-ink': '#0F172A',
@@ -19,21 +18,21 @@ const PALETTES: Record<Theme, Record<string, string>> = {
     '--color-surface': '#FFFFFF',
     '--color-surface-alt': '#F8FAFC',
     '--color-surface-soft': '#F1F5F9',
-    '--color-brand': '#F16922',
-    '--color-brand-weak': '#FED5BC',
-    '--color-brand-tint': '#FFF1E7',
+    '--color-brand': '#FE9519',
+    '--color-brand-weak': '#FED5A8',
+    '--color-brand-tint': '#FFF1E0',
     '--color-positive': '#16A34A',
     '--color-positive-weak': '#DCFCE7',
-    '--color-warning': '#D97706',
+    '--color-warning': '#CA8A04',
     '--color-warning-weak': '#FEF3C7',
     '--color-negative': '#DC2626',
     '--color-negative-weak': '#FEE2E2',
+    '--color-info': '#2563EB',
   },
   // Pure-black dark theme matching the web prototype — cards layer via
   // subtle steps surface (#0A0A0A) → surface-alt (#141414) → surface-soft
   // (#1F1F1F). Borders (rule) are neutral-800 so edges read without
-  // dominating. Brand is the same coral #FF9B6C (lighter coral for contrast
-  // on near-black).
+  // dominating. Brand stays #FE9519 — bright orange reads cleanly on near-black.
   dark: {
     '--color-ink': '#F5F5F5',
     '--color-muted': '#A3A3A3',
@@ -42,15 +41,16 @@ const PALETTES: Record<Theme, Record<string, string>> = {
     '--color-surface': '#0A0A0A',
     '--color-surface-alt': '#141414',
     '--color-surface-soft': '#1F1F1F',
-    '--color-brand': '#FF9B6C',
-    '--color-brand-weak': '#7A2E10',
-    '--color-brand-tint': '#3A1607',
+    '--color-brand': '#FE9519',
+    '--color-brand-weak': '#5C3A0A',
+    '--color-brand-tint': '#2E1D05',
     '--color-positive': '#22C55E',
     '--color-positive-weak': '#14532D',
-    '--color-warning': '#F59E0B',
-    '--color-warning-weak': '#78350F',
-    '--color-negative': '#F87171',
+    '--color-warning': '#EAB308',
+    '--color-warning-weak': '#713F12',
+    '--color-negative': '#EF4444',
     '--color-negative-weak': '#7F1D1D',
+    '--color-info': '#60A5FA',
   },
 };
 

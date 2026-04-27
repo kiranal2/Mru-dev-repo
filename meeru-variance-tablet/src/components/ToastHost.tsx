@@ -13,7 +13,7 @@ export function ToastHost() {
       style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1000, alignItems: 'flex-end', padding: 12 }}
     >
       {toasts.map((t) => {
-        const accent = t.kind === 'warn' ? '#D97706' : t.kind === 'info' ? '#F16922' : '#16A34A';
+        const accent = t.kind === 'warn' ? '#D97706' : t.kind === 'info' ? '#FE9519' : '#16A34A';
         const Ic = t.kind === 'warn' ? Icon.Alert : t.kind === 'info' ? Icon.Sparkle : Icon.Check;
         return (
           <Animated.View

@@ -1,0 +1,128 @@
+/* Variance Workbench UI kit — styles. Uses tokens from colors_and_type.css */
+
+body { margin: 0; background: var(--surface-alt); color: var(--ink); font-family: var(--font-sans); font-size: 13px; font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; }
+.num { font-variant-numeric: tabular-nums; }
+
+.vw-app { height: 100vh; display: flex; flex-direction: column; background: var(--surface-alt); }
+.vw-app-body { flex: 1; display: flex; min-height: 0; }
+
+/* Header */
+.vw-header { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; background: var(--surface); border-bottom: 1px solid var(--rule); flex-shrink: 0; }
+.vw-header-left, .vw-header-right { display: flex; align-items: center; gap: 10px; }
+.vw-logo { height: 20px; width: auto; object-fit: contain; user-select: none; }
+.vw-icon-btn { width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center; background: transparent; border: 0; color: var(--text-muted); cursor: pointer; }
+.vw-icon-btn:hover { background: var(--surface-soft); color: var(--ink); }
+.vw-sparkle-btn { color: var(--primary); background: var(--primary-tint); }
+
+.vw-context-switcher { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 6px; background: var(--surface-soft); border: 1px solid transparent; cursor: pointer; font-family: inherit; }
+.vw-context-switcher:hover { border-color: var(--rule); }
+.vw-ctx-label { font-size: 11px; font-weight: 600; color: var(--ink); }
+.vw-ctx-dot { font-size: 10px; color: var(--text-faint); }
+.vw-ctx-persona { font-size: 11px; color: var(--text-muted); }
+
+.vw-profile { display: inline-flex; align-items: center; gap: 8px; padding: 2px 8px 2px 2px; border-radius: 999px; background: var(--surface-soft); border: 1px solid transparent; cursor: pointer; font-family: inherit; }
+.vw-profile:hover { border-color: var(--rule); }
+.vw-avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #FFAF88, #FD7A3D); color: #fff; display: grid; place-items: center; font-size: 11px; font-weight: 600; }
+.vw-profile-meta { text-align: left; line-height: 1.15; }
+.vw-profile-name { font-size: 11px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.vw-profile-role { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+
+/* Sidebar */
+.vw-sidebar { width: 56px; background: #0F172A; display: flex; flex-direction: column; align-items: center; padding: 10px 0; gap: 4px; flex-shrink: 0; }
+.vw-side-btn { width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; border: 0; background: transparent; color: #94A3B8; cursor: pointer; transition: all .15s; }
+.vw-side-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+.vw-side-btn.is-active { background: var(--primary); color: #fff; }
+
+/* Main column */
+.vw-main-col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* Tabs */
+.vw-tabs { height: 40px; display: flex; align-items: stretch; background: var(--surface); border-bottom: 1px solid var(--rule); }
+.vw-tab { padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-faint); background: transparent; border: 0; border-bottom: 2px solid transparent; cursor: pointer; font-family: inherit; }
+.vw-tab:hover { color: var(--ink); background: var(--surface-soft); }
+.vw-tab.is-active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+/* Workbench grid */
+.vw-wb-grid { flex: 1; display: grid; grid-template-columns: 200px 1fr 360px; grid-template-rows: 68px 1fr; min-height: 0; background: var(--surface-alt); }
+
+.vw-topnav { grid-column: 1 / span 2; background: var(--surface); border-bottom: 1px solid var(--rule); padding: 0 16px; display: flex; align-items: center; justify-content: space-between; }
+.vw-topnav-left { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.vw-eyebrow { display: block; line-height: 1.3; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vw-topnav-title { display: block; line-height: 1.2; font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+.vw-scope { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; color: var(--text-muted); white-space: nowrap; }
+
+/* Rail */
+.vw-rail { background: var(--surface); border-right: 1px solid var(--rule); padding: 10px; overflow-y: auto; }
+.vw-rail-lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text-faint); margin: 4px 0 6px; }
+.vw-rail-item { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; border-radius: 6px; font-size: 12px; color: var(--ink); background: transparent; border: 0; cursor: pointer; font-family: inherit; text-align: left; }
+.vw-rail-item:hover { background: var(--surface-soft); }
+.vw-rail-item.is-active { background: var(--primary-tint); color: var(--primary); font-weight: 600; }
+.vw-rail-delta { font-size: 11px; font-weight: 500; }
+.vw-tone-neg { color: var(--negative); }
+.vw-tone-warn { color: var(--warning); }
+.vw-tone-pos { color: var(--positive); }
+.vw-tone-faint { color: var(--text-faint); }
+
+/* Canvas */
+.vw-canvas { overflow: auto; padding: 20px; min-height: 0; display: flex; flex-direction: column; }
+
+/* KPI */
+.vw-kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+.vw-kpi { position: relative; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 14px; box-shadow: 0 1px 2px rgba(15,23,42,0.04); cursor: pointer; transition: all .15s; overflow: hidden; min-width: 0; }
+.vw-kpi:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15,23,42,0.08); border-color: var(--primary-weak); }
+.vw-kpi-head { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.vw-kpi-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); }
+.vw-kpi-value { font-size: 26px; font-weight: 600; color: var(--ink); margin-top: 4px; letter-spacing: -0.01em; }
+.vw-kpi-delta { font-size: 11px; margin-top: 4px; }
+.vw-watch-tag { display: inline-flex; align-items: center; gap: 4px; padding: 1px 4px; border-radius: 3px; background: var(--primary-tint); color: var(--primary); font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.vw-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+
+/* Card */
+.vw-card { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 14px; box-shadow: 0 1px 2px rgba(15,23,42,0.04); margin-bottom: 12px; }
+.vw-card-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+.vw-chart-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.vw-legend { display: flex; gap: 12px; font-size: 10px; color: var(--text-muted); }
+.vw-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.vw-sq { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+.vw-ranked-for { font-size: 11px; color: var(--text-muted); }
+
+/* Commentary */
+.vw-comment-row { display: grid; grid-template-columns: 24px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid var(--rule); }
+.vw-comment-row:first-of-type { border-top: 0; padding-top: 4px; }
+.vw-rank { width: 24px; height: 24px; border-radius: 50%; background: var(--surface-soft); font-size: 11px; font-weight: 600; display: grid; place-items: center; color: var(--ink); }
+.vw-comment-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+.vw-comment-delta { color: var(--negative); font-weight: 500; }
+.vw-comment-body { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 2px; }
+
+/* NBA */
+.vw-nba-wrap { flex-shrink: 0; padding: 12px 20px 16px; background: var(--surface-alt); border-top: 1px solid var(--rule); }
+.vw-nba-eyebrow { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--primary); margin-bottom: 8px; }
+.vw-nba-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+.vw-nba-card { position: relative; flex-shrink: 0; width: 232px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 12px 8px 14px; }
+.vw-nba-accent { position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; border-radius: 3px; }
+.vw-nba-head { display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); }
+.vw-nba-body { font-size: 11px; color: var(--ink); line-height: 1.4; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.vw-nba-ft { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+.vw-nba-edit { font-size: 10px; color: var(--text-faint); background: none; border: 0; cursor: pointer; font-family: inherit; padding: 2px 4px; }
+.vw-nba-send { padding: 2px 10px; font-size: 10px; font-weight: 600; border-radius: 4px; background: var(--primary); color: #fff; border: 0; cursor: pointer; font-family: inherit; }
+.vw-nba-send.is-sent { background: var(--positive); }
+
+/* Chat */
+.vw-chat { background: var(--surface); border-left: 1px solid var(--rule); display: flex; flex-direction: column; min-height: 0; grid-row: 1 / -1; grid-column: 3; }
+.vw-chat-head { height: 44px; padding: 0 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--rule); flex-shrink: 0; }
+.vw-chat-title { font-size: 13px; font-weight: 600; color: var(--ink); flex: 1; }
+.vw-chat-status { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 999px; background: var(--positive-weak); color: var(--positive); font-size: 10px; font-weight: 600; }
+.vw-chat-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.vw-chat-scope { font-size: 10px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .06em; padding-bottom: 6px; border-bottom: 1px dashed var(--rule); }
+.vw-msg { display: flex; gap: 8px; }
+.vw-msg-user { justify-content: flex-end; }
+.vw-msg-avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #FFAF88, #FD7A3D); color: #fff; display: grid; place-items: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.vw-msg-bubble { max-width: 82%; }
+.vw-msg-user .vw-msg-bubble { background: var(--primary-tint); border: 1px solid var(--primary-weak); padding: 8px 10px; border-radius: 10px 10px 2px 10px; }
+.vw-msg-ai .vw-msg-bubble { background: var(--surface-soft); padding: 8px 10px; border-radius: 10px 10px 10px 2px; }
+.vw-msg-body { font-size: 12px; color: var(--ink); line-height: 1.5; }
+.vw-msg-time { font-size: 10px; color: var(--text-faint); margin-top: 3px; }
+.vw-chat-composer { padding: 10px; border-top: 1px solid var(--rule); display: flex; gap: 6px; flex-shrink: 0; }
+.vw-chat-input { flex: 1; padding: 8px 10px; font-size: 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); color: var(--ink); font-family: inherit; outline: none; }
+.vw-chat-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-tint); }
+.vw-chat-send { width: 32px; height: 32px; border-radius: 8px; background: var(--primary); color: #fff; border: 0; display: grid; place-items: center; cursor: pointer; }

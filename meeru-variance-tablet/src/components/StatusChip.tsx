@@ -1,14 +1,15 @@
 import { View, Text } from 'react-native';
 
 // Title-level status chip — tinted pill matching the web's chip-neg / chip-pos
-// / chip-warn / chip-info classes. Since React Native doesn't support
-// CSS color-mix, we use pre-computed semi-transparent rgba so the tint
-// renders cleanly on both light + dark surfaces.
+// / chip-warn / chip-info classes. RN has no CSS color-mix, so we precompute
+// rgba tints. Values follow the palette audit: warning is gold (not amber) so
+// it pulls away from coral's hue band; info is a cool blue so "info" and
+// "brand" don't collide. See MeeruAI_Design_System/palette_audit.html.
 const STYLES = {
   neg:  { bg: 'rgba(220,38,38,0.14)',  border: 'rgba(220,38,38,0.28)',  text: 'text-negative' },
   pos:  { bg: 'rgba(22,163,74,0.14)',  border: 'rgba(22,163,74,0.28)',  text: 'text-positive' },
   warn: { bg: 'rgba(217,119,6,0.14)',  border: 'rgba(217,119,6,0.28)',  text: 'text-warning' },
-  info: { bg: 'rgba(241,105,34,0.14)',  border: 'rgba(241,105,34,0.28)',  text: 'text-brand' },
+  info: { bg: 'rgba(254,149,25,0.14)',  border: 'rgba(254,149,25,0.28)',  text: 'text-brand' },
 } as const;
 
 export type StatusKind = keyof typeof STYLES;

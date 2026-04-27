@@ -1,0 +1,208 @@
+/* =====================================================================
+   MeeruAI Design System — Colors & Type Tokens
+   Sourced from meeru-variance-app/src/index.css and tailwind.config.js.
+   ===================================================================== */
+
+/* -------- Fonts -------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ---------------- Color — Neutrals (light) ---------------- */
+  --ink:            #0F172A;   /* primary text */
+  --text-muted:    #475569;   /* secondary text / labels */
+  --text-faint:    #94A3B8;   /* tertiary / metadata */
+  --rule:          #E2E8F0;   /* dividers, borders */
+  --surface:       #FFFFFF;   /* cards, primary fill */
+  --surface-alt:   #F8FAFC;   /* app background */
+  --surface-soft:  #F1F5F9;   /* hover / inset fills */
+
+  /* ---------------- Color — Product Primary (two-coral pattern) ---------------- */
+  /* Post palette-audit (palette_audit.html):
+     Light theme runs a TWO-CORAL pattern. Deep coral --primary carries all
+     working UI (CTAs, active, focus halos). Light coral --brand-accent is
+     decorative only — reserved for the logo "AI" glyph, onboarding, hero
+     illustrations. Never mix the two on the same interactive surface. */
+  --primary:           #EA6A36;   /* deep coral — working UI */
+  --primary-hover:     #D35A29;   /* hover/press on coral */
+  --primary-weak:      #FED5BC;   /* soft fill on active chips */
+  --primary-tint:      #FFF1E7;   /* hover bg on white */
+  --primary-tint-soft: #FFF8F2;   /* hover bg on alt-surfaces (slate-50) */
+  --brand-accent:      #FE8953;   /* light coral — decorative only */
+
+  /* Alias kept for backwards-compat with anything referencing --brand-coral. */
+  --brand-coral:      var(--brand-accent);
+  --brand-coral-deep: var(--primary);
+  --brand-coral-soft: var(--primary-weak);
+
+  /* ---------------- Color — Semantic (status) ---------------- */
+  /* Warning shifted from amber (#D97706, 30°) to gold (#CA8A04, 45°) so it
+     pulls away from coral's 20° hue band. --info is a new role reserved
+     for tooltip accents, doc links, and secondary chart reference lines
+     so "click this" doesn't always read as primary brand. */
+  --positive:      #16A34A;   /* favorable variance, done */
+  --positive-weak: #DCFCE7;
+  --warning:       #CA8A04;   /* gold — caution, blockers-at-risk */
+  --warning-weak:  #FEF3C7;
+  --negative:      #DC2626;   /* unfavorable variance, errors */
+  --negative-weak: #FEE2E2;
+  --info:          #2563EB;   /* link + tooltip accent */
+
+  /* ---------------- Elevation / Shadows ---------------- */
+  --shadow-e1: 0 1px 2px   rgba(15,23,42,0.04);
+  --shadow-e2: 0 4px 12px  rgba(15,23,42,0.08);
+  --shadow-e3: 0 12px 32px rgba(15,23,42,0.15);
+
+  /* ---------------- Radii ---------------- */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-pill: 999px;
+
+  /* ---------------- Typography ---------------- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
+
+  /* base size — the app is intentionally dense */
+  --fs-base: 13px;
+
+  /* numeric scale (px) */
+  --fs-10: 10px;   /* eyebrows, meta */
+  --fs-11: 11px;   /* captions */
+  --fs-12: 12px;   /* body small */
+  --fs-13: 13px;   /* body default */
+  --fs-15: 15px;   /* lead / list heading */
+  --fs-18: 18px;   /* h3 / canvas title */
+  --fs-22: 22px;   /* h2 */
+  --fs-24: 24px;   /* h1 (workspace greeting) */
+  --fs-26: 26px;   /* KPI value */
+  --fs-28: 28px;   /* display (login) */
+
+  /* weights */
+  --fw-reg: 400;
+  --fw-med: 500;
+  --fw-sem: 600;
+  --fw-bold: 700;
+
+  /* tracking */
+  --tr-tight:  -0.01em;  /* display + h1/h2 */
+  --tr-normal: 0;
+  --tr-wide:   0.08em;   /* uppercase eyebrows */
+
+  /* line heights */
+  --lh-tight: 1.15;
+  --lh-snug:  1.35;
+  --lh-body:  1.55;
+}
+
+/* ---------------- Dark theme override ---------------- */
+/* Post palette-audit: dark theme runs a SINGLE coral at #FE8953 (the lighter
+   value reads cleaner on near-black). --brand-accent (#FF9B6C) is even lighter
+   for truly decorative surfaces. Warning shifts amber→gold (#EAB308, 48°) and
+   negative goes pink→pure-red (#EF4444) so the warm hue band doesn't collapse.
+   --info is brighter (#60A5FA) to clear the dark surface contrast bar. */
+[data-theme='dark'] {
+  --ink:            #F5F5F5;
+  --text-muted:    #A3A3A3;
+  --text-faint:    #737373;
+  --rule:          #262626;
+  --surface:       #0A0A0A;
+  --surface-alt:   #141414;
+  --surface-soft:  #1F1F1F;
+  --primary:           #FE8953;
+  --primary-hover:     #FFAF88;
+  --primary-weak:      #7A2E10;   /* deep coral for chip fills on dark */
+  --primary-tint:      #3A1607;   /* darkest coral wash on dark surface */
+  --primary-tint-soft: #2A1005;
+  --brand-accent:      #FF9B6C;
+  --positive:      #22C55E;
+  --positive-weak: #14532D;
+  --warning:       #EAB308;   /* gold — pulled 12° away from coral's hue band */
+  --warning-weak:  #713F12;
+  --negative:      #EF4444;   /* pure red — no orange undertone */
+  --negative-weak: #7F1D1D;
+  --info:          #60A5FA;   /* link + tooltip accent */
+}
+
+/* =====================================================================
+   Semantic type classes
+   ===================================================================== */
+html, body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--ink);
+  background: var(--surface-alt);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ds-h1 {
+  font-size: var(--fs-24);
+  font-weight: var(--fw-sem);
+  letter-spacing: var(--tr-tight);
+  line-height: var(--lh-tight);
+  color: var(--ink);
+}
+.ds-h2 {
+  font-size: var(--fs-22);
+  font-weight: var(--fw-sem);
+  letter-spacing: var(--tr-tight);
+  line-height: var(--lh-tight);
+  color: var(--ink);
+}
+.ds-h3 {
+  font-size: var(--fs-18);
+  font-weight: var(--fw-sem);
+  letter-spacing: var(--tr-tight);
+  color: var(--ink);
+}
+.ds-title {            /* card titles */
+  font-size: var(--fs-13);
+  font-weight: var(--fw-sem);
+  color: var(--ink);
+}
+.ds-body {
+  font-size: var(--fs-13);
+  line-height: var(--lh-body);
+  color: var(--ink);
+}
+.ds-body-sm {
+  font-size: var(--fs-12);
+  line-height: var(--lh-body);
+  color: var(--ink);
+}
+.ds-muted {
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+}
+.ds-faint {
+  font-size: var(--fs-11);
+  color: var(--text-faint);
+}
+.ds-eyebrow {          /* "LIVE PINS", "WATCHLIST" section labels */
+  font-size: var(--fs-10);
+  font-weight: var(--fw-sem);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.ds-num {              /* KPI values, table numerics */
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--fw-sem);
+  letter-spacing: var(--tr-tight);
+}
+.ds-kpi-value {
+  font-size: var(--fs-26);
+  font-weight: var(--fw-sem);
+  letter-spacing: var(--tr-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================================
+   Status chip primitives (from index.css chip-*).
+   ===================================================================== */
+.chip-neg  { background: color-mix(in srgb, var(--negative) 14%, transparent); color: var(--negative); border: 1px solid color-mix(in srgb, var(--negative) 28%, transparent); }
+.chip-pos  { background: color-mix(in srgb, var(--positive) 14%, transparent); color: var(--positive); border: 1px solid color-mix(in srgb, var(--positive) 28%, transparent); }
+.chip-warn { background: color-mix(in srgb, var(--warning)  14%, transparent); color: var(--warning);  border: 1px solid color-mix(in srgb, var(--warning)  28%, transparent); }
+.chip-info { background: color-mix(in srgb, var(--info)     14%, transparent); color: var(--info);     border: 1px solid color-mix(in srgb, var(--info)     28%, transparent); }

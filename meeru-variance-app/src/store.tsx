@@ -301,14 +301,22 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   const [thinking, setThinking] = useState(false);
 
-  // Persona-aware matcher: first look for a response tagged with the active
-  // persona; fall back to generic (untagged) responses. Keeps the demo
-  // contextual — CFO gets board-ready summaries, Staff gets task-list framing.
+  // Persona-aware matcher with a 3-tier fallback so every chip prompt gets a
+  // substantive reply rather than the generic FALLBACK_RESPONSE:
+  //   1. Active-persona tagged hit (CFO → board-ready; Staff → task framing).
+  //   2. Generic/untagged hit (any role can take it).
+  //   3. ANY persona-tagged hit — covers the case where a follow-up chip
+  //      references a response tagged for a different persona (e.g. CFO
+  //      clicks "Show the full approval audit trail", which is tagged
+  //      CONTROLLER). Better UX than dumping to fallback.
   const resolveResponse = useCallback((q: string) => {
     const activeKey = user?.key;
     const personaHit = CHAT_RESPONSES.find(r => r.persona === activeKey && r.match.test(q));
     if (personaHit) return personaHit;
-    return CHAT_RESPONSES.find(r => !r.persona && r.match.test(q)) ?? FALLBACK_RESPONSE;
+    const genericHit = CHAT_RESPONSES.find(r => !r.persona && r.match.test(q));
+    if (genericHit) return genericHit;
+    const anyPersonaHit = CHAT_RESPONSES.find(r => r.persona && r.match.test(q));
+    return anyPersonaHit ?? FALLBACK_RESPONSE;
   }, [user?.key]);
 
   const sendChat = useCallback((q: string) => {

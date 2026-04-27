@@ -134,15 +134,19 @@ export function AppProviders({ children }: { children: ReactNode }) {
     if (!q.trim()) return;
     setMsgs((prev) => [...prev, { role: 'user', text: q }]);
     setThinking(true);
-    // Persona-tagged responses are preferred — if the active persona has a
-    // matching entry we pick it first; otherwise we fall back to the generic
-    // (persona-less) pool, then the catch-all FALLBACK_RESPONSE.
+    // 3-tier response match so every chip prompt yields a substantive reply:
+    //   1. Active-persona tagged hit.
+    //   2. Generic (persona-less) hit.
+    //   3. ANY persona-tagged hit — covers the case where a prompt is only
+    //      wired to a different persona's response. Better UX than falling
+    //      through to FALLBACK_RESPONSE just because the tag doesn't match.
     const currentRole = user?.key;
     const personaMatch = currentRole
       ? CHAT_RESPONSES.find((r) => r.persona === currentRole && r.match.test(q))
       : undefined;
     const genericMatch = CHAT_RESPONSES.find((r) => !r.persona && r.match.test(q));
-    const resp = personaMatch ?? genericMatch ?? FALLBACK_RESPONSE;
+    const anyPersonaMatch = CHAT_RESPONSES.find((r) => r.persona && r.match.test(q));
+    const resp = personaMatch ?? genericMatch ?? anyPersonaMatch ?? FALLBACK_RESPONSE;
     const delay = 900 + Math.random() * 500;
     setTimeout(() => {
       setMsgs((prev) => [...prev, { role: 'ai', text: resp.text }]);

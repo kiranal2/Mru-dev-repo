@@ -209,10 +209,14 @@ export default function Performance() {
               type="button"
               onClick={() => setAhaOpen(v => !v)}
               aria-expanded={ahaOpen}
-              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10.5px] font-medium transition-colors ${
+              // Per palette audit item 5: "at most one coral element per major
+              // region" — the StatusChip next to this button already owns the
+              // primary/warning pill role, so the "AI summary" toggle goes
+              // neutral (surface-soft/rule). No coral tint.
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded border text-[10.5px] font-medium transition-colors ${
                 ahaOpen
-                  ? 'text-brand bg-brand-tint'
-                  : 'text-muted hover:text-brand hover:bg-brand-tint'
+                  ? 'text-ink bg-surface-soft border-rule'
+                  : 'text-muted border-transparent hover:text-ink hover:bg-surface-soft'
               }`}
             >
               <Icon.Sparkle className="w-3 h-3" />

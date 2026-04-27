@@ -37,7 +37,7 @@ export default function ProfileScreen() {
         <View className="rounded-2xl bg-surface border border-rule p-5 mb-3">
           <View className="flex-row items-center gap-3 mb-3">
             <LinearGradient
-              colors={['#FED5BC', '#F16922']}
+              colors={['#FED5A8', '#FE9519']}
               style={{ width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' }}
             >
               <Text className="text-white text-lg font-semibold">{user.init}</Text>
@@ -116,7 +116,7 @@ export default function ProfileScreen() {
                 className={`flex-row items-center gap-3 px-4 py-3 active:bg-surface-soft ${i < 2 ? 'border-b border-rule' : ''}`}
               >
                 <LinearGradient
-                  colors={['#FED5BC', '#F16922']}
+                  colors={['#FED5A8', '#FE9519']}
                   style={{ width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' }}
                 >
                   <Text className="text-white text-xs font-semibold">{p.init}</Text>

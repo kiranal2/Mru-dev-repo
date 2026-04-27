@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<style>
+  body{margin:0;padding:20px;background:var(--surface-alt);font-family:var(--font-sans);}
+  .card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px;box-shadow:0 1px 2px rgba(15,23,42,.04);}
+  .hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+  .title{font-size:13px;font-weight:600;color:var(--ink);}
+  .legend{display:flex;gap:12px;font-size:10px;color:var(--text-muted);}
+  .legend span{display:inline-flex;align-items:center;gap:4px;}
+  .sq{width:8px;height:8px;border-radius:2px;display:inline-block;}
+</style></head><body>
+<div class="card">
+  <div class="hdr">
+    <div class="title">Weekly Variance — Global · Q1 FY2026</div>
+    <div class="legend">
+      <span><span class="sq" style="background:var(--primary);"></span>Actual</span>
+      <span><span class="sq" style="background:var(--rule);"></span>Plan</span>
+      <span><span class="sq" style="background-image:repeating-linear-gradient(45deg,var(--primary),var(--primary) 2px,transparent 2px,transparent 4px);"></span>Forecast</span>
+    </div>
+  </div>
+  <svg viewBox="0 0 720 170" style="width:100%;height:160px;">
+    <defs>
+      <pattern id="fx" width="4" height="4" patternUnits="userSpaceOnUse">
+        <rect width="4" height="4" fill="var(--primary)" opacity="0.35"/>
+        <path d="M0,4 L4,0" stroke="var(--primary)" stroke-width="1"/>
+      </pattern>
+    </defs>
+    <line x1="32" y1="85" x2="688" y2="85" stroke="var(--rule)" stroke-width="1"/>
+    <g>
+      <rect x="65" y="55" width="24" height="30" fill="var(--rule)" opacity="0.6" rx="2"/>
+      <rect x="90" y="45" width="26" height="40" fill="var(--negative)" rx="2"/>
+      <text x="103" y="160" text-anchor="middle" font-size="10" fill="var(--text-faint)">W1</text>
+    </g>
+    <g>
+      <rect x="155" y="60" width="24" height="25" fill="var(--rule)" opacity="0.6" rx="2"/>
+      <rect x="180" y="52" width="26" height="33" fill="var(--warning)" rx="2"/>
+      <text x="193" y="160" text-anchor="middle" font-size="10" fill="var(--text-faint)">W2</text>
+    </g>
+    <g>
+      <rect x="245" y="70" width="24" height="15" fill="var(--rule)" opacity="0.6" rx="2"/>
+      <rect x="270" y="65" width="26" height="20" fill="var(--positive)" rx="2"/>
+      <text x="283" y="160" text-anchor="middle" font-size="10" fill="var(--text-faint)">W3</text>
+    </g>
+    <g>
+      <rect x="335" y="50" width="24" height="35" fill="var(--rule)" opacity="0.6" rx="2"/>
+      <rect x="360" y="38" width="26" height="47" fill="var(--negative)" rx="2"/>
+      <text x="373" y="160" text-anchor="middle" font-size="10" fill="var(--text-faint)">W4</text>
+    </g>
+    <g>
+      <rect x="425" y="58" width="24" height="27" fill="var(--rule)" opacity="0.6" rx="2"/>
+      <rect x="450" y="50" width="26" height="35" fill="url(#fx)" rx="2"/>
+      <text x="463" y="160" text-anchor="middle" font-size="10" fill="var(--text-faint)">W5</text>
+    </g>
+    <g>
+      <rect x="515" y="62" width="24" height="23" fill="var(--rule)" opacity="0.6" rx="2"/>
+      <rect x="540" y="55" width="26" height="30" fill="url(#fx)" rx="2"/>
+      <text x="553" y="160" text-anchor="middle" font-size="10" fill="var(--text-faint)">W6</text>
+    </g>
+  </svg>
+</div>
+</body></html>

@@ -8,7 +8,7 @@ import { MarinGuide, MissionEndCard } from './MarinGuide';
 import { LoadingBar } from './Skeletons';
 import { PERSONAS } from '../data';
 import type { Role } from '../types';
-import meeruLogo from '../assets/meeru-logo.png';
+import { Logo } from './Logo';
 
 function Sidebar() {
   const loc = useLocation();
@@ -43,13 +43,7 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
         >
           <Icon.Menu className="w-4 h-4" />
         </button>
-        {theme === 'light' ? (
-          <img src={meeruLogo} alt="MeeruAI" className="h-5 w-auto object-contain select-none" draggable={false} />
-        ) : (
-          <span className="text-[16px] font-bold tracking-tight leading-none text-white">
-            Meeru<span style={{ color: 'var(--primary)' }}>AI</span>
-          </span>
-        )}
+        <Logo className="h-5 w-auto object-contain select-none" />
       </div>
       <div className="flex items-center gap-2.5">
         <ContextSwitcher />
@@ -160,7 +154,7 @@ function ContextSwitcher() {
                   onClick={() => switchPersona(r)}
                   className={`w-full flex items-center gap-2.5 px-4 py-1.5 text-left text-[12px] ${active ? 'bg-brand-tint' : 'hover:bg-surface-soft'}`}
                 >
-                  <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[10px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg,#6366F1,#1E40AF)' }}>{p.init}</div>
+                  <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[10px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg,#FED5A8,#FE9519)' }}>{p.init}</div>
                   <div className="min-w-0 flex-1">
                     <div className="text-[11px] font-semibold text-ink truncate">{p.name}</div>
                     <div className="text-[10px] text-muted truncate">{p.role}</div>
@@ -215,7 +209,7 @@ function ProfileMenu() {
         className={`flex items-center gap-2 pl-1 pr-2 py-0.5 rounded-full border transition-colors ${open ? 'bg-brand-tint border-brand-weak' : 'bg-surface-soft border-transparent hover:border-rule'}`}
         title="Open profile menu"
       >
-        <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[11px] font-semibold" style={{ background: 'linear-gradient(135deg,#6366F1,#1E40AF)' }}>{user.init}</div>
+        <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[11px] font-semibold" style={{ background: 'linear-gradient(135deg,#FED5A8,#FE9519)' }}>{user.init}</div>
         <div className="leading-tight text-left">
           <div className="text-[11px] font-semibold text-ink">{user.name}</div>
           <div className="text-[10px] text-muted">{user.role}</div>
@@ -228,7 +222,7 @@ function ProfileMenu() {
           {/* Header */}
           <div className="p-4 border-b border-rule bg-gradient-to-br from-brand-tint to-transparent">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full text-white grid place-items-center text-[16px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg,#6366F1,#1E40AF)' }}>{user.init}</div>
+              <div className="w-12 h-12 rounded-full text-white grid place-items-center text-[16px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg,#FED5A8,#FE9519)' }}>{user.init}</div>
               <div className="min-w-0 flex-1">
                 <div className="text-[14px] font-semibold text-ink truncate">{user.name}</div>
                 <div className="text-[11px] text-muted truncate">{user.role}</div>

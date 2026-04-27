@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<style>
+  body{margin:0;padding:20px;background:var(--surface);font-family:var(--font-sans);}
+  .row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
+  .sw{border-radius:8px;border:1px solid var(--rule);padding:10px;display:flex;flex-direction:column;gap:6px;}
+  .chip{height:48px;border-radius:6px;border:1px solid var(--rule);}
+  .lbl{font-size:11px;font-weight:600;color:var(--ink);}
+  .hex{font-size:10px;color:var(--text-muted);font-variant-numeric:tabular-nums;letter-spacing:.02em;}
+  .role{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+  .sec{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin:0 0 6px 2px;}
+</style></head><body>
+<div class="sec">Brand coral — the single primary across product + marketing</div>
+<div class="row">
+  <div class="sw"><div class="chip" style="background:#FE8953;"></div><div class="lbl">Primary</div><div class="hex">#FE8953</div><div class="role">CTA · active · links</div></div>
+  <div class="sw"><div class="chip" style="background:#FD7A3D;"></div><div class="lbl">Primary Hover</div><div class="hex">#FD7A3D</div><div class="role">Hover / press</div></div>
+  <div class="sw"><div class="chip" style="background:#FED5BC;"></div><div class="lbl">Primary Weak</div><div class="hex">#FED5BC</div><div class="role">Active chip fill</div></div>
+  <div class="sw"><div class="chip" style="background:#FFF1E7;"></div><div class="lbl">Primary Tint</div><div class="hex">#FFF1E7</div><div class="role">Hover wash</div></div>
+</div>
+</body></html>

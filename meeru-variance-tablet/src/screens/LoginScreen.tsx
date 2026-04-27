@@ -8,7 +8,7 @@ import { Icon } from '../components/icons';
 import { Logo } from '../components/Logo';
 
 const CARD_ACCENTS: Record<Role, readonly [string, string]> = {
-  CFO:        ['#FF9B6C', '#7A2E10'],
+  CFO:        ['#FFAA48', '#5C3A0A'],
   CONTROLLER: ['#10B981', '#0F766E'],
   STAFF:   ['#F59E0B', '#C2410C'],
 };
@@ -57,7 +57,7 @@ export default function LoginScreen() {
 
                 <View className="flex-row items-center gap-1">
                   <Text className="text-[13px] font-medium text-brand">Enter workspace</Text>
-                  <Icon.Send color="#F16922" size={14} />
+                  <Icon.Send color="#FE9519" size={14} />
                 </View>
               </Pressable>
             );

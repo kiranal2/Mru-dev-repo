@@ -40,7 +40,7 @@ export default function Settings() {
         <Card className="p-5 mb-4">
           <Eyebrow>Profile</Eyebrow>
           <div className="flex items-center gap-4 mt-2">
-            <div className="w-14 h-14 rounded-full text-white grid place-items-center text-[18px] font-semibold" style={{ background: 'linear-gradient(135deg,#6366F1,#1E40AF)' }}>{user?.init}</div>
+            <div className="w-14 h-14 rounded-full text-white grid place-items-center text-[18px] font-semibold" style={{ background: 'linear-gradient(135deg,#FED5A8,#FE9519)' }}>{user?.init}</div>
             <div>
               <div className="text-[14px] font-semibold text-ink">{user?.name}</div>
               <div className="text-[12px] text-muted">{user?.role}</div>

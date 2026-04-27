@@ -41,7 +41,7 @@ export function AISummaryCallout({
     <View className="relative mb-3 rounded-lg border border-brand-weak bg-brand-tint/40 px-3.5 py-3 pr-9">
       <View className="flex-row items-start gap-2.5">
         <View className="w-6 h-6 rounded-md bg-brand-tint items-center justify-center">
-          <Icon.Sparkle size={14} color="#F16922" />
+          <Icon.Sparkle size={14} color="#FE9519" />
         </View>
         <View className="flex-1">
           <Text className="text-[14px] font-semibold tracking-widest uppercase text-brand mb-1">

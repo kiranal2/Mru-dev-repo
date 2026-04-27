@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 77.58 70.49">
+  
+  <defs>
+    
+    <clipPath id="clippath">
+      <polygon class="st0" points="49.05 19.99 57.58 19.99 57.58 50.48 49.05 50.48 49.07 37.15 42.42 50.51 35.88 50.51 34.22 47.68 49.05 19.99"></polygon>
+    </clipPath>
+  </defs>
+  <g class="st2">
+    <g>
+      <polyline class="st1" points="32.26 50.48 59.55 50.48 59.55 48.44 32.26 48.44"></polyline>
+      <polyline class="st1" points="32.26 22.03 59.55 22.03 59.55 19.99 32.26 19.99"></polyline>
+      <polyline class="st1" points="32.26 24.88 59.55 24.88 59.55 22.83 32.26 22.83"></polyline>
+      <polyline class="st1" points="32.26 27.72 59.55 27.72 59.55 25.68 32.26 25.68"></polyline>
+      <polyline class="st1" points="32.26 30.57 59.55 30.57 59.55 28.41 32.26 28.41"></polyline>
+      <polyline class="st1" points="32.26 33.41 59.55 33.41 59.55 31.37 32.26 31.37"></polyline>
+      <polyline class="st1" points="32.26 36.26 59.55 36.26 59.55 34.21 32.26 34.21"></polyline>
+      <polyline class="st1" points="32.26 39.1 59.55 39.1 59.55 37.06 32.26 37.06"></polyline>
+      <polyline class="st1" points="32.26 41.95 59.55 41.95 59.55 39.9 32.26 39.9"></polyline>
+      <polyline class="st1" points="32.26 44.79 59.55 44.79 59.55 42.75 32.26 42.75"></polyline>
+      <polyline class="st1" points="32.26 47.64 59.55 47.64 59.55 45.59 32.26 45.59"></polyline>
+    </g>
+  </g>
+  <polygon class="st1" points="28.53 20.01 20 20.01 20 50.51 28.53 50.51 28.53 37.97 35.88 50.51 42.42 50.51 43.64 48.05 28.53 20.01"></polygon>
+</svg>

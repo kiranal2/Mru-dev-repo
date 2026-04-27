@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<style>
+  body{margin:0;padding:20px;background:var(--surface);font-family:var(--font-sans);}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center;}
+  .badge{display:inline-flex;align-items:center;padding:2px 6px;font-size:10px;font-weight:500;border-radius:4px;}
+  .b-red{background:var(--negative-weak);color:var(--negative);}
+  .b-grn{background:var(--positive-weak);color:var(--positive);}
+  .b-amb{background:var(--warning-weak);color:var(--warning);}
+  .b-blu{background:var(--primary-tint);color:var(--primary);}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:500;}
+  .chip .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+</style></head><body>
+  <div class="row">
+    <span class="badge b-red">CRIT</span>
+    <span class="badge b-amb">WARN</span>
+    <span class="badge b-grn">OK</span>
+    <span class="badge b-blu">INFO</span>
+  </div>
+  <div class="row">
+    <span class="chip chip-neg"><span class="dot"></span>Variance flagged</span>
+    <span class="chip chip-warn"><span class="dot"></span>2 blockers open</span>
+  </div>
+  <div class="row">
+    <span class="chip chip-pos"><span class="dot"></span>On track</span>
+    <span class="chip chip-info"><span class="dot"></span>Close Day 4 · 2 blockers</span>
+  </div>
+</body></html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<style>
+  body{margin:0;padding:20px;background:var(--surface-alt);font-family:var(--font-sans);}
+  .nba{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;}
+  .card{position:relative;flex-shrink:0;width:232px;background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:8px 12px 8px 14px;}
+  .accent{position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;}
+  .hdr{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);}
+  svg{width:12px;height:12px;}
+  .body{font-size:11px;color:var(--ink);line-height:1.35;margin-top:2px;-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;}
+  .ft{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+  .edit{font-size:10px;color:var(--text-faint);background:none;border:0;cursor:pointer;}
+  .send{padding:2px 10px;font-size:10px;font-weight:600;border-radius:4px;background:var(--primary);color:#fff;border:0;cursor:pointer;}
+  .send.sent{background:var(--positive);}
+</style></head><body>
+  <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--primary);margin-bottom:8px;">▸ Next Best Action · ranked for CFO</div>
+  <div class="nba">
+    <div class="card"><span class="accent" style="background:var(--primary);"></span>
+      <div class="hdr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Board · Ops Committee</span></div>
+      <div class="body">Flag -$4.2M variance; propose labor plan review before Thu.</div>
+      <div class="ft"><button class="edit">Edit</button><button class="send">Send</button></div>
+    </div>
+    <div class="card"><span class="accent" style="background:var(--warning);"></span>
+      <div class="hdr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1V4H8v2h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg><span>Workspace · Pin</span></div>
+      <div class="body">Pin CA Retail labor analysis to my workspace.</div>
+      <div class="ft"><button class="edit">Edit</button><button class="send sent">✓ Pinned</button></div>
+    </div>
+    <div class="card"><span class="accent" style="background:#4A154B;"></span>
+      <div class="hdr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="8" height="2" rx="1"/><rect x="13" y="11" width="8" height="2" rx="1"/><rect x="11" y="3" width="2" height="8" rx="1"/><rect x="11" y="13" width="2" height="8" rx="1"/></svg><span>#fp-a &amp; ops</span></div>
+      <div class="body">Share variance summary to Slack channel with threaded notes.</div>
+      <div class="ft"><button class="edit">Edit</button><button class="send">Send</button></div>
+    </div>
+  </div>
+</body></html>

@@ -891,7 +891,10 @@ CHAT_RESPONSES.push(
   },
   {
     persona: 'CFO',
-    match: /board|board summary|board prep|board deck|board.?ready/i,
+    // Broadened to cover the "cumulative exposure / materiality / QTD" CFO
+    // chip — the board summary copy already leads with Q1 cumulative numbers,
+    // so it's a substantive answer for both prompts.
+    match: /board|board summary|board prep|board deck|board.?ready|exposure|materiality|cumulative|quarter.?to.?date|qtd/i,
     text: '**Draft W10 board update — CFO voice:**\n\nGlobal variance came in at −$4.2M vs Plan, driven primarily by LATAM supply constraints in Mexico Grocery (−$2.1M, 3rd consecutive week). US Convenience Super Bowl timing (−$0.9M) and AU weather (−$0.7M) are explainable and auto-recovering. EMEA is the only positive region at +$0.3M on confirmed school-holiday uplift.\n\n**Q1 cumulative:** −$12.4M vs Plan (primarily February/March · supply-constrained). W11 projects −$2.8M if Mexico interventions land, closer to −$6M if not.\n\n**Actions taken this week:** Approved Mexico courier ceiling lift, pre-authorized Brazil incentive, scheduled NYC radius-reduction policy review for W11.',
     actions: [
       { kind: 'pin',     label: 'Pin to Q1 Board Prep folder',      who: 'Workspace · Board',      body: 'W10 variance + actions summary.' },
@@ -904,7 +907,10 @@ CHAT_RESPONSES.push(
   // ----- CONTROLLER persona -----
   {
     persona: 'CONTROLLER',
-    match: /review queue|my review|pending.*review|awaiting.*review|staff submission|recon|reconciliation/i,
+    // Also catches close-blocker and day-status prompts — the review-queue copy
+    // doubles as a close-status answer since the highest-priority queue item is
+    // the Mexico materiality routing that's on the Day 5 critical path.
+    match: /review queue|my review|pending.*review|awaiting.*review|staff submission|recon|reconciliation|close.*day|close.*blocker|blocking.*close|day 4|day 5|close status|audit trail|approval chain|who approved/i,
     text: '**Raj — your review queue (4 items):**\n\n1. **Mexico Grocery variance — $2.1M** · prepared by Maya Gonzales · evidence attached (courier-util chart, Cencosud email) · submitted 2 hrs ago\n2. **AR aging reconciliation — Mexico market** · prepared by Maya · submitted yesterday\n3. **Voltair remittance JE draft** · prepared by Maya · 3rd-party confirmation pending\n4. **Bank reconciliation evidence — Chicago operating** · prepared by Maya · ready for final sign-off\n\n**Highest priority:** Mexico Grocery — exceeds $1M materiality, needs your review then CFO routing.',
     actions: [
       { kind: 'approve', label: 'Post Mexico provisional JE',       who: 'GL · Mexico',           body: 'Post to draft. Routes to CFO for approval on > $1M.' },
@@ -917,7 +923,10 @@ CHAT_RESPONSES.push(
   // ----- STAFF persona -----
   {
     persona: 'STAFF',
-    match: /my task|my queue|my work|todo|what.*today|what.*should.*do|investigate/i,
+    // Also covers the "evidence / how do I prepare / submit for review" staff
+    // chips — the task-list answer already includes the Mexico investigation
+    // + AR evidence + Voltair submit items, so it's a coherent response.
+    match: /my task|my queue|my work|todo|what.*today|what.*should.*do|investigate|evidence|attach|upload|what.*need|missing|how.*prepare|how.*file|how.*submit|how.*write|how.*document|submit for|submit.*review|send.*review|push.*controller/i,
     text: '**Maya — your queue for today (3 due):**\n\n1. **Investigate Mexico Grocery $2.1M variance** · due today 4 pm · evidence attached, note draft in progress\n2. **Post Voltair remittance JE draft** · due today 5 pm · awaiting 3rd-party confirmation\n3. **Submit evidence for Bank reconciliation** · due today EOD · 2 files remaining to upload\n\n**Blocker:** AR $142K variance — waiting on Maya-side evidence completion. This is critical-path for Day 5 close.',
     actions: [
       { kind: 'investigate', label: 'Open Mexico investigation',       who: 'Mexico Grocery · W10', body: 'Continue your draft — add supply-constraint context.' },

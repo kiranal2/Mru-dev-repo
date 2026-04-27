@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<style>
+  body{margin:0;padding:20px;background:var(--surface);font-family:var(--font-sans);}
+  .row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  button{font-family:var(--font-sans);cursor:pointer;}
+  .btn-primary{background:var(--primary);color:#fff;border:0;border-radius:6px;padding:8px 14px;font-size:12px;font-weight:600;}
+  .btn-primary:hover{opacity:.9;}
+  .btn-secondary{background:var(--surface);color:var(--text-muted);border:1px solid var(--rule);border-radius:6px;padding:8px 14px;font-size:12px;font-weight:500;}
+  .btn-secondary:hover{color:var(--ink);}
+  .btn-ghost{background:transparent;color:var(--text-muted);border:0;border-radius:6px;padding:8px 10px;font-size:12px;}
+  .btn-ghost:hover{background:var(--surface-soft);color:var(--ink);}
+  .btn-danger{background:transparent;color:var(--negative);border:0;border-radius:6px;padding:8px 14px;font-size:12px;font-weight:500;}
+  .btn-danger:hover{background:var(--negative-weak);}
+  .btn-mission{background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px;}
+  .icon-btn{width:28px;height:28px;border-radius:6px;display:inline-grid;place-items:center;background:transparent;color:var(--text-muted);border:0;}
+  .icon-btn:hover{background:var(--surface-soft);color:var(--ink);}
+  svg{width:14px;height:14px;}
+</style></head><body>
+  <div class="row">
+    <button class="btn-primary">Start today's mission</button>
+    <button class="btn-secondary">Export</button>
+    <button class="btn-ghost">Cancel</button>
+    <button class="btn-danger">Log out</button>
+  </div>
+  <div class="row">
+    <button class="btn-mission">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Start Mission</span>
+    </button>
+    <button class="icon-btn" title="Theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    <button class="icon-btn" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+  </div>
+</body></html>

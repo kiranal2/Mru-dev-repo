@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<style>
+  body{margin:0;padding:20px;background:var(--surface);font-family:var(--font-sans);}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .sw{border-radius:8px;border:1px solid var(--rule);padding:10px;display:flex;flex-direction:column;gap:6px;}
+  .pair{display:flex;height:48px;border-radius:6px;overflow:hidden;border:1px solid var(--rule);}
+  .pair>div{flex:1;}
+  .lbl{font-size:11px;font-weight:600;color:var(--ink);}
+  .hex{font-size:10px;color:var(--text-muted);font-variant-numeric:tabular-nums;}
+  .role{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+</style></head><body>
+<div class="grid">
+  <div class="sw"><div class="pair"><div style="background:#16A34A;"></div><div style="background:#DCFCE7;"></div></div><div class="lbl">Positive</div><div class="hex">#16A34A · #DCFCE7</div><div class="role">Favorable · done</div></div>
+  <div class="sw"><div class="pair"><div style="background:#D97706;"></div><div style="background:#FEF3C7;"></div></div><div class="lbl">Warning</div><div class="hex">#D97706 · #FEF3C7</div><div class="role">Caution · at-risk</div></div>
+  <div class="sw"><div class="pair"><div style="background:#DC2626;"></div><div style="background:#FEE2E2;"></div></div><div class="lbl">Negative</div><div class="hex">#DC2626 · #FEE2E2</div><div class="role">Unfavorable · error</div></div>
+</div>
+</body></html>

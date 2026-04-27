@@ -34,7 +34,7 @@ export const Icon = {
       <Circle cx="12" cy="7" r="4" />
     </Svg>
   ),
-  Sparkle: ({ color = '#F16922', size = 20 }: P) => (
+  Sparkle: ({ color = '#FE9519', size = 20 }: P) => (
     <Svg {...base(size)} stroke={color}><Polygon points="12 2 15 9 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 9 12 2" /></Svg>
   ),
   Send:    ({ color = '#FFFFFF', size = 20 }: P) => (
@@ -59,7 +59,7 @@ export const Icon = {
       <Rect x="11" y="13" width="2" height="8" rx="1" />
     </Svg>
   ),
-  Email:   ({ color = '#F16922', size = 20 }: P) => (
+  Email:   ({ color = '#FE9519', size = 20 }: P) => (
     <Svg {...base(size)} stroke={color}>
       <Path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
       <Polyline points="22,6 12,13 2,6" />

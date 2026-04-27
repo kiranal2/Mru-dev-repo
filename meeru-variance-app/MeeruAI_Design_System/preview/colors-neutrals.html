@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<style>
+  body{margin:0;padding:20px;background:var(--surface);font-family:var(--font-sans);}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .sw{border-radius:8px;border:1px solid var(--rule);padding:10px;display:flex;flex-direction:column;gap:6px;}
+  .chip{height:48px;border-radius:6px;border:1px solid var(--rule);}
+  .lbl{font-size:11px;font-weight:600;color:var(--ink);}
+  .hex{font-size:10px;color:var(--text-muted);font-variant-numeric:tabular-nums;}
+  .role{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+</style></head><body>
+<div class="grid">
+  <div class="sw"><div class="chip" style="background:#0F172A;"></div><div class="lbl">Ink</div><div class="hex">#0F172A</div><div class="role">Primary text</div></div>
+  <div class="sw"><div class="chip" style="background:#475569;"></div><div class="lbl">Muted</div><div class="hex">#475569</div><div class="role">Secondary text</div></div>
+  <div class="sw"><div class="chip" style="background:#94A3B8;"></div><div class="lbl">Faint</div><div class="hex">#94A3B8</div><div class="role">Tertiary · meta</div></div>
+  <div class="sw"><div class="chip" style="background:#E2E8F0;"></div><div class="lbl">Rule</div><div class="hex">#E2E8F0</div><div class="role">Dividers · borders</div></div>
+  <div class="sw"><div class="chip" style="background:#F1F5F9;"></div><div class="lbl">Surface Soft</div><div class="hex">#F1F5F9</div><div class="role">Inset · hover fill</div></div>
+  <div class="sw"><div class="chip" style="background:#F8FAFC;"></div><div class="lbl">Surface Alt</div><div class="hex">#F8FAFC</div><div class="role">App background</div></div>
+  <div class="sw"><div class="chip" style="background:#FFFFFF;"></div><div class="lbl">Surface</div><div class="hex">#FFFFFF</div><div class="role">Cards</div></div>
+  <div class="sw"><div class="chip" style="background:#0A0A0A;"></div><div class="lbl">Dark Surface</div><div class="hex">#0A0A0A</div><div class="role">Dark-theme base</div></div>
+</div>
+</body></html>

@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Post palette-audit tokens. See MeeruAI_Design_System/palette_audit.html.
+   Two-coral pattern in light theme: deep coral --primary for working UI
+   (CTAs, active), light coral --brand-accent for decorative only (logo "AI"
+   glyph, onboarding). Warning shifts to gold to pull away from coral's hue
+   band. --info reserved for links + tooltips so "click this" doesn't always
+   read as brand. */
 :root {
   --ink: #0F172A;
   --text-muted: #475569;
@@ -10,15 +16,19 @@
   --surface: #FFFFFF;
   --surface-alt: #F8FAFC;
   --surface-soft: #F1F5F9;
-  --primary: #1E40AF;
-  --primary-weak: #DBEAFE;
-  --primary-tint: #EFF6FF;
+  --primary: #FE9519;
+  --primary-hover: #E07F0A;
+  --primary-weak: #FED5A8;
+  --primary-tint: #FFF1E0;
+  --primary-tint-soft: #FFF8EE;
+  --brand-accent: #FFAA48;
   --positive: #16A34A;
   --positive-weak: #DCFCE7;
-  --warning: #D97706;
+  --warning: #CA8A04;
   --warning-weak: #FEF3C7;
   --negative: #DC2626;
   --negative-weak: #FEE2E2;
+  --info: #2563EB;
 }
 [data-theme='dark'] {
   /* Pure-black dark theme — near-black surfaces with vivid accent colors.
@@ -32,15 +42,19 @@
   --surface: #0A0A0A;
   --surface-alt: #141414;
   --surface-soft: #1F1F1F;
-  --primary: #3B82F6;
-  --primary-weak: #1E3A8A;
-  --primary-tint: #0F1E4D;
+  --primary: #FE9519;
+  --primary-hover: #FFA940;
+  --primary-weak: #5C3A0A;
+  --primary-tint: #2E1D05;
+  --primary-tint-soft: #1F1303;
+  --brand-accent: #FFAA48;
   --positive: #22C55E;
   --positive-weak: #14532D;
-  --warning: #F59E0B;
-  --warning-weak: #78350F;
-  --negative: #F87171;
+  --warning: #EAB308;
+  --warning-weak: #713F12;
+  --negative: #EF4444;
   --negative-weak: #7F1D1D;
+  --info: #60A5FA;
 }
 
 html, body, #root { height: 100%; }
@@ -111,13 +125,13 @@ body {
   100% { background-position: 200% 0; }
 }
 .shimmer-bg {
-  background: linear-gradient(90deg, transparent 0%, rgba(30,64,175,0.06) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(254,149,25,0.06) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 2.5s linear infinite;
 }
 
 @keyframes live-new {
-  0%   { background-color: rgba(30,64,175,0.12); }
+  0%   { background-color: rgba(254,149,25,0.12); }
   100% { background-color: transparent; }
 }
 .flash-new { animation: live-new 2.2s ease-out; }
@@ -160,4 +174,4 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 .chip-neg  { background: color-mix(in srgb, var(--negative) 14%, transparent); color: var(--negative); border: 1px solid color-mix(in srgb, var(--negative) 28%, transparent); }
 .chip-pos  { background: color-mix(in srgb, var(--positive) 14%, transparent); color: var(--positive); border: 1px solid color-mix(in srgb, var(--positive) 28%, transparent); }
 .chip-warn { background: color-mix(in srgb, var(--warning)  14%, transparent); color: var(--warning);  border: 1px solid color-mix(in srgb, var(--warning)  28%, transparent); }
-.chip-info { background: color-mix(in srgb, var(--primary)  14%, transparent); color: var(--primary);  border: 1px solid color-mix(in srgb, var(--primary)  28%, transparent); }
+.chip-info { background: color-mix(in srgb, var(--info)     14%, transparent); color: var(--info);     border: 1px solid color-mix(in srgb, var(--info)     28%, transparent); }

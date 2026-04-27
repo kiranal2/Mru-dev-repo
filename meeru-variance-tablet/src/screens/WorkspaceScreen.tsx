@@ -104,7 +104,7 @@ export default function WorkspaceScreen() {
             className="bg-surface rounded-2xl p-4 active:opacity-70"
             style={{ width: '48%', borderWidth: 1, borderColor: '#E2E8F0' }}
           >
-            <Icon.Chart color="#F16922" size={22} />
+            <Icon.Chart color="#FE9519" size={22} />
             <Text className="text-sm font-semibold text-ink mt-2">Variance</Text>
             <Text className="text-[13px] text-muted">Performance · Margin · Flux</Text>
           </Pressable>
@@ -113,7 +113,7 @@ export default function WorkspaceScreen() {
             className="bg-surface rounded-2xl p-4 active:opacity-70"
             style={{ width: '48%', borderWidth: 1, borderColor: '#E2E8F0' }}
           >
-            <Icon.Calendar color="#F16922" size={22} />
+            <Icon.Calendar color="#FE9519" size={22} />
             <Text className="text-sm font-semibold text-ink mt-2">Close</Text>
             <Text className="text-[13px] text-muted">Day 4 / 5 · 2 blockers</Text>
           </Pressable>

@@ -5,7 +5,7 @@ import { Logo } from '../components/Logo';
 
 const STATUS = [
   { key: 'done',        label: 'Done',        count: 5,  color: '#16A34A' },
-  { key: 'in_progress', label: 'In Progress', count: 4,  color: '#F16922' },
+  { key: 'in_progress', label: 'In Progress', count: 4,  color: '#FE9519' },
   { key: 'blocked',     label: 'Blocked',     count: 2,  color: '#DC2626' },
   { key: 'not_started', label: 'Not Started', count: 1,  color: '#475569' },
 ];

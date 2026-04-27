@@ -16,7 +16,24 @@
       "Bash(npx next:*)",
       "Bash(curl:*)",
       "Bash(lsof -ti:3000)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(echo \"---exit $?---\")",
+      "Bash(node *)",
+      "Bash(xargs basename *)",
+      "Bash(mkdir -p .claude/skills)",
+      "Bash(ln -s \"../../MeeruAI_Design_System\" .claude/skills/meeruai-design)",
+      "Bash(cp \"/Users/kirankumaralugonda/Downloads/1OrginalLogo.svg\"       /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-app/src/assets/meeru-logo-full-coral.svg)",
+      "Bash(cp \"/Users/kirankumaralugonda/Downloads/2LogoinWhiteColor.svg\"  /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-app/src/assets/meeru-logo-full-white.svg)",
+      "Bash(cp \"/Users/kirankumaralugonda/Downloads/3MIconinCoral.svg\"      /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-app/src/assets/meeru-icon-coral.svg)",
+      "Bash(cp \"/Users/kirankumaralugonda/Downloads/4MIconinWhite.svg\"      /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-app/src/assets/meeru-icon-white.svg)",
+      "Bash(cp \"/Users/kirankumaralugonda/Downloads/1OrginalLogo.svg\"       /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-tablet/assets/meeru-logo-full-coral.svg)",
+      "Bash(mkdir -p /tmp/meeru-design-audit)",
+      "Read(//tmp/**)",
+      "Bash(tar -xzf /Users/kirankumaralugonda/.claude/projects/-Users-kirankumaralugonda-Documents-GitHub-Mru-dev-repo-frontend/da10e0bc-b882-4328-98e7-55f6284384b7/tool-results/webfetch-1777025551162-cgbt5z.bin)",
+      "Bash(cp \"/Users/kirankumaralugonda/Desktop/meeruai-black-logo.png\" /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-app/src/assets/meeru-logo-dark.png)",
+      "Bash(cp \"/Users/kirankumaralugonda/Desktop/meeruai-black-logo.png\" /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-tablet/assets/meeru-logo-dark.png)",
+      "Bash(python3 -c \"import json; json.load\\(open\\('app.json'\\)\\); print\\('valid JSON'\\)\")",
+      "Bash(python3 *)"
     ]
   }
 }

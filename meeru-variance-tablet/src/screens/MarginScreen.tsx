@@ -17,14 +17,14 @@ const TONE_COLOR = {
   pos:  '#16A34A',
   neg:  '#DC2626',
   warn: '#D97706',
-  blue: '#F16922',
+  blue: '#FE9519',
 } as const;
 
 const TAG_STYLES: Record<TagTone, { bg: string; fg: string }> = {
   red:   { bg: '#FEE2E2', fg: '#DC2626' },
   green: { bg: '#DCFCE7', fg: '#16A34A' },
   amber: { bg: '#FEF3C7', fg: '#D97706' },
-  blue:  { bg: '#FFF1E7', fg: '#F16922' },
+  blue:  { bg: '#FFF1E0', fg: '#FE9519' },
 };
 
 const MAX_W = 1100;
@@ -71,7 +71,7 @@ function Waterfall({ width }: { width: number }) {
       {rows.map((r, i) => {
         const x = pad + i * (barW + gap);
         const color =
-          r.kind === 'start' || r.kind === 'end' ? '#F16922'
+          r.kind === 'start' || r.kind === 'end' ? '#FE9519'
           : r.kind === 'pos' ? '#16A34A'
           : '#DC2626';
 
@@ -221,7 +221,7 @@ export default function MarginScreen() {
             <Text style={{ fontSize: 10, color: '#64748B', letterSpacing: 0.4 }}>Q1 2026</Text>
           </View>
           <Pressable onPress={() => chatRef.current?.expand()} hitSlop={8}>
-            <Icon.Sparkle color="#F16922" size={22} />
+            <Icon.Sparkle color="#FE9519" size={22} />
           </Pressable>
         </View>
       </View>
@@ -240,7 +240,7 @@ export default function MarginScreen() {
               style={{
                 paddingHorizontal: 14, paddingVertical: 10,
                 borderBottomWidth: 2,
-                borderBottomColor: tab === t.k ? '#F16922' : 'transparent',
+                borderBottomColor: tab === t.k ? '#FE9519' : 'transparent',
               }}
             >
               <Text style={{
@@ -276,7 +276,7 @@ export default function MarginScreen() {
                   Gross Margin Bridge — Prior Q to Current Q
                 </Text>
                 <Pressable onPress={() => askAgent('Walk me through the gross margin bridge')} hitSlop={6}>
-                  <Icon.Sparkle color="#F16922" size={14} />
+                  <Icon.Sparkle color="#FE9519" size={14} />
                 </Pressable>
               </View>
               <Waterfall width={contentW} />
@@ -346,7 +346,7 @@ export default function MarginScreen() {
                           style={{
                             width: `${p.revShareNum * 2}%` as any,
                             maxWidth: '100%' as any,
-                            height: 6, backgroundColor: '#F16922', borderRadius: 3,
+                            height: 6, backgroundColor: '#FE9519', borderRadius: 3,
                           }}
                         />
                       </View>
@@ -414,7 +414,7 @@ export default function MarginScreen() {
             {MARGIN_SENSITIVITY.map((s, i) => {
               const mColor = TONE_COLOR[s.marginTone];
               const aColor = TONE_COLOR[s.arrTone];
-              const probColor = s.probability >= 60 ? '#16A34A' : s.probability >= 40 ? '#F16922' : '#D97706';
+              const probColor = s.probability >= 60 ? '#16A34A' : s.probability >= 40 ? '#FE9519' : '#D97706';
               return (
                 <View
                   key={i}
@@ -434,11 +434,11 @@ export default function MarginScreen() {
                       onPress={() => askAgent(`Run what-if: ${s.name}`)}
                       style={{
                         paddingHorizontal: 10, paddingVertical: 5, borderRadius: 5,
-                        backgroundColor: '#FFF1E7', flexDirection: 'row', gap: 4, alignItems: 'center',
+                        backgroundColor: '#FFF1E0', flexDirection: 'row', gap: 4, alignItems: 'center',
                       }}
                     >
-                      <Icon.Sparkle color="#F16922" size={11} />
-                      <Text style={{ fontSize: 10, fontWeight: '600', color: '#F16922' }}>Run</Text>
+                      <Icon.Sparkle color="#FE9519" size={11} />
+                      <Text style={{ fontSize: 10, fontWeight: '600', color: '#FE9519' }}>Run</Text>
                     </Pressable>
                   </View>
                   <View style={{ flexDirection: 'row', marginTop: 10, gap: 16 }}>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 77.58 70.49">
+  <!-- Generator: Adobe Illustrator 30.3.0, SVG Export Plug-In . SVG Version: 2.1.3 Build 182)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: none;
+      }
+
+      .st1 {
+        fill: #f16922;
+      }
+
+      .st2 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <polygon class="st0" points="49.05 20 57.58 20 57.58 50.49 49.05 50.49 49.07 37.16 42.42 50.52 35.88 50.52 34.22 47.69 49.05 20"/>
+    </clipPath>
+  </defs>
+  <g class="st2">
+    <g>
+      <polyline class="st1" points="32.26 50.49 59.55 50.49 59.55 48.45 32.26 48.45"/>
+      <polyline class="st1" points="32.26 22.04 59.55 22.04 59.55 20 32.26 20"/>
+      <polyline class="st1" points="32.26 24.89 59.55 24.89 59.55 22.84 32.26 22.84"/>
+      <polyline class="st1" points="32.26 27.73 59.55 27.73 59.55 25.69 32.26 25.69"/>
+      <polyline class="st1" points="32.26 30.58 59.55 30.58 59.55 28.42 32.26 28.42"/>
+      <polyline class="st1" points="32.26 33.42 59.55 33.42 59.55 31.38 32.26 31.38"/>
+      <polyline class="st1" points="32.26 36.27 59.55 36.27 59.55 34.22 32.26 34.22"/>
+      <polyline class="st1" points="32.26 39.11 59.55 39.11 59.55 37.07 32.26 37.07"/>
+      <polyline class="st1" points="32.26 41.96 59.55 41.96 59.55 39.91 32.26 39.91"/>
+      <polyline class="st1" points="32.26 44.8 59.55 44.8 59.55 42.76 32.26 42.76"/>
+      <polyline class="st1" points="32.26 47.65 59.55 47.65 59.55 45.6 32.26 45.6"/>
+    </g>
+  </g>
+  <polygon class="st1" points="28.53 20.02 20 20.02 20 50.52 28.53 50.52 28.53 37.98 35.88 50.52 42.42 50.52 43.64 48.07 28.53 20.02"/>
+</svg>

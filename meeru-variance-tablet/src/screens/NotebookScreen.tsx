@@ -11,7 +11,7 @@ const TAG_STYLES: Record<TagTone, { bg: string; fg: string }> = {
   red:   { bg: '#FEE2E2', fg: '#DC2626' },
   green: { bg: '#DCFCE7', fg: '#16A34A' },
   amber: { bg: '#FEF3C7', fg: '#D97706' },
-  blue:  { bg: '#FFF1E7', fg: '#F16922' },
+  blue:  { bg: '#FFF1E0', fg: '#FE9519' },
 };
 
 const MAX_W = 1100;
@@ -95,7 +95,7 @@ export default function NotebookScreen() {
             </Text>
           </View>
           <Pressable onPress={() => chatRef.current?.expand()} hitSlop={8}>
-            <Icon.Sparkle color="#F16922" size={22} />
+            <Icon.Sparkle color="#FE9519" size={22} />
           </Pressable>
         </View>
       </View>
@@ -116,19 +116,19 @@ export default function NotebookScreen() {
                 onPress={() => setFilter(f.k)}
                 style={{
                   paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999,
-                  backgroundColor: active ? '#FFF1E7' : '#FFFFFF',
-                  borderWidth: 1, borderColor: active ? '#F16922' : '#E2E8F0',
+                  backgroundColor: active ? '#FFF1E0' : '#FFFFFF',
+                  borderWidth: 1, borderColor: active ? '#FE9519' : '#E2E8F0',
                   flexDirection: 'row', alignItems: 'center', gap: 6,
                 }}
               >
                 <Text style={{
                   fontSize: 12, fontWeight: active ? '600' : '500',
-                  color: active ? '#F16922' : '#64748B',
+                  color: active ? '#FE9519' : '#64748B',
                 }}>
                   {f.n}
                 </Text>
                 <View style={{
-                  backgroundColor: active ? '#F16922' : '#F1F5F9',
+                  backgroundColor: active ? '#FE9519' : '#F1F5F9',
                   paddingHorizontal: 6, paddingVertical: 1, borderRadius: 999,
                 }}>
                   <Text style={{
@@ -175,18 +175,18 @@ export default function NotebookScreen() {
                       backgroundColor: '#FFFFFF', borderRadius: 8, padding: 14,
                       borderWidth: 1, borderColor: '#E2E8F0',
                       borderLeftWidth: 3,
-                      borderLeftColor: isPinned ? '#F16922' : '#16A34A',
+                      borderLeftColor: isPinned ? '#FE9519' : '#16A34A',
                     }}
                   >
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                         <View style={{
                           paddingHorizontal: 6, paddingVertical: 1, borderRadius: 3,
-                          backgroundColor: isPinned ? '#FFF1E7' : '#DCFCE7',
+                          backgroundColor: isPinned ? '#FFF1E0' : '#DCFCE7',
                         }}>
                           <Text style={{
                             fontSize: 9, fontWeight: '700', letterSpacing: 0.4,
-                            color: isPinned ? '#F16922' : '#16A34A',
+                            color: isPinned ? '#FE9519' : '#16A34A',
                           }}>
                             {isPinned ? 'PINNED' : 'SAVED'}
                           </Text>
@@ -195,7 +195,7 @@ export default function NotebookScreen() {
                           {e.date.toUpperCase()}
                         </Text>
                       </View>
-                      <Icon.Sparkle color="#F16922" size={12} />
+                      <Icon.Sparkle color="#FE9519" size={12} />
                     </View>
                     <Text style={{ fontSize: 13, fontWeight: '600', color: '#0F172A', marginBottom: 4 }}>
                       {e.title}
@@ -203,7 +203,7 @@ export default function NotebookScreen() {
                     <Text style={{ fontSize: 11, color: '#64748B', lineHeight: 16, marginBottom: 8 }}>
                       {e.summary}
                     </Text>
-                    <Text style={{ fontSize: 10, color: '#F16922', fontWeight: '500' }}>
+                    <Text style={{ fontSize: 10, color: '#FE9519', fontWeight: '500' }}>
                       {e.source}
                     </Text>
                     {e.tags.length > 0 && (

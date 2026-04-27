@@ -12,10 +12,12 @@ const CHIP_STYLE: Record<
   'neg' | 'pos' | 'warn' | 'info',
   { bg: string; border: string; textClass: string; label: string }
 > = {
-  neg:  { bg: 'rgba(220,38,38,0.14)',  border: 'rgba(220,38,38,0.28)',  textClass: 'text-negative', label: 'Investigating' },
+  // Palette audit: "INVESTIGATING" → warning-gold, "MONITORING" → neutral
+  // (was red — too loud). Coral stays reserved for "WATCH" (active focus).
+  neg:  { bg: 'rgba(220,38,38,0.14)',  border: 'rgba(220,38,38,0.28)',  textClass: 'text-negative', label: 'Blocker' },
   pos:  { bg: 'rgba(22,163,74,0.14)',  border: 'rgba(22,163,74,0.28)',  textClass: 'text-positive', label: 'On track' },
   warn: { bg: 'rgba(217,119,6,0.14)',  border: 'rgba(217,119,6,0.28)',  textClass: 'text-warning',  label: 'Monitoring' },
-  info: { bg: 'rgba(241,105,34,0.14)',  border: 'rgba(241,105,34,0.28)',  textClass: 'text-brand',    label: 'Predictive flag' },
+  info: { bg: 'rgba(254,149,25,0.14)',  border: 'rgba(254,149,25,0.28)',  textClass: 'text-brand',    label: 'Predictive flag' },
 };
 
 function StatusChip({ kind, children }: { kind: keyof typeof CHIP_STYLE; children: string }) {
@@ -152,7 +154,7 @@ export function CommentaryPanel({ items, headline, sparkByName }: Props) {
       {/* Header */}
       <View className="px-3.5 pt-3 pb-2 border-b border-rule flex-row items-center gap-2">
         <View className="w-1.5 h-1.5 rounded-full bg-positive" />
-        <Icon.Sparkle size={12} color="#F16922" />
+        <Icon.Sparkle size={12} color="#FE9519" />
         <Text className="text-[14px] font-bold tracking-wider uppercase text-ink">
           AI Insights
         </Text>
