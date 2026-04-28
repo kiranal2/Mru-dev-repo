@@ -54,6 +54,7 @@ export const Icon = {
   Bulb: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.7.5 1 1.3 1 2.1V18h6v-1.2c0-.8.3-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>),
   History: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><path d="M3 3v5h5"/><path d="M3.05 13a9 9 0 1 0 2.13-6.36L3 8"/><polyline points="12 7 12 12 15.5 13.5"/></svg>),
   Target: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>),
+  Activity: (p: P) => (<svg viewBox="0 0 24 24" {...base} {...p}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>),
 };
 
 export function getActionIcon(kind: string) {

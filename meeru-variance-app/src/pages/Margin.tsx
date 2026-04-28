@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { WorkbenchShell } from '../components/WorkbenchShell';
+import { CommandCenter } from '../components/CommandCenter';
 import { RailGroup } from '../components/LeftRail';
 import { TopNav } from '../components/TopNav';
 import { KpiRow } from '../components/KpiRow';
@@ -100,6 +101,7 @@ export default function Margin() {
         </>
       }
       topNav={<TopNav tabs={WORKBENCHES.margin.topTabs} active={topTab} onChange={setTopTab} />}
+      dock={<CommandCenter />}
     >
       <div className="flex items-start justify-between mb-4">
         <div>

@@ -184,7 +184,7 @@ export function CommandCenter({ prompts }: Props) {
           onPress={() => setHidden(false)}
           className="px-3 py-1.5 rounded-full bg-brand-tint border border-brand-weak flex-row items-center gap-1.5"
         >
-          <Icon.Sparkle size={12} color="#FE9519" />
+          <Icon.Sparkle size={12} color="#B64D1D" />
           <Text className="text-[13px] font-semibold text-brand">Show Command Center</Text>
         </Pressable>
       </View>
@@ -207,11 +207,11 @@ export function CommandCenter({ prompts }: Props) {
       {/* whole widget behind a "Show Command Center" pill (above).        */}
       {/* ================================================================ */}
       <View className="px-4 py-2.5 flex-row items-center gap-2 bg-brand-tint/40">
-        <Icon.Sparkle size={14} color="#FE9519" />
+        <Icon.Sparkle size={14} color="#B64D1D" />
         <Text className="text-[15px] font-semibold text-ink">Command Center</Text>
         {/* New Chat — always visible on the left, right next to the title. */}
         <Pressable onPress={reset} className="ml-2 flex-row items-center gap-1">
-          <Icon.Pencil size={12} color="#FE9519" />
+          <Icon.Pencil size={12} color="#B64D1D" />
           <Text className="text-[13px] text-brand font-medium">New Chat</Text>
         </Pressable>
         <View className="flex-1" />
@@ -220,7 +220,7 @@ export function CommandCenter({ prompts }: Props) {
         {/* Right-side parity controls */}
         <View className="flex-row items-center gap-1 ml-3">
           <HeaderChip
-            icon={<Icon.ChevDown size={12} color={minimized ? '#FE9519' : '#A3A3A3'} />}
+            icon={<Icon.ChevDown size={12} color={minimized ? '#B64D1D' : '#A3A3A3'} />}
             label={minimized ? 'Restore' : 'Minimize'}
             active={minimized}
             disabled={pinned}
@@ -235,7 +235,7 @@ export function CommandCenter({ prompts }: Props) {
             }}
           />
           <HeaderChip
-            icon={<Icon.Pin size={12} color={pinned ? '#FE9519' : '#A3A3A3'} />}
+            icon={<Icon.Pin size={12} color={pinned ? '#B64D1D' : '#A3A3A3'} />}
             label="Pin"
             active={pinned}
             onPress={() => {
@@ -247,7 +247,7 @@ export function CommandCenter({ prompts }: Props) {
             }}
           />
           <HeaderChip
-            icon={<Icon.Star size={12} color={favorited ? '#FE9519' : '#A3A3A3'} fill={favorited ? '#FE9519' : 'none'} />}
+            icon={<Icon.Star size={12} color={favorited ? '#B64D1D' : '#A3A3A3'} fill={favorited ? '#B64D1D' : 'none'} />}
             label="Favorite"
             active={favorited}
             disabled={!lastAi || !lastUserMsg}
@@ -273,7 +273,7 @@ export function CommandCenter({ prompts }: Props) {
             }}
           />
           <HeaderChip
-            icon={fullsize ? <Icon.Minimize size={12} color="#FE9519" /> : <Icon.Maximize size={12} color="#A3A3A3" />}
+            icon={fullsize ? <Icon.Minimize size={12} color="#B64D1D" /> : <Icon.Maximize size={12} color="#A3A3A3" />}
             label={fullsize ? 'Collapse' : 'Expand'}
             active={fullsize}
             onPress={() => {
@@ -370,7 +370,7 @@ export function CommandCenter({ prompts }: Props) {
                   i < suggestions.length - 1 ? 'border-b border-rule' : ''
                 }`}
               >
-                <Icon.Sparkle size={12} color="#FE9519" />
+                <Icon.Sparkle size={12} color="#B64D1D" />
                 <Text className="text-[14px] text-ink flex-1">{s}</Text>
               </Pressable>
             ))}

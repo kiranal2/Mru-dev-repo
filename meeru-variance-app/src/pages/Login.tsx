@@ -24,7 +24,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-surface-alt p-6">
       <div className="max-w-[900px] w-full">
         <div className="flex items-center gap-4 mb-8">
-          <Logo className="h-8 w-auto object-contain select-none" />
+          <Logo className="h-10 w-auto object-contain select-none" />
           <div className="h-8 w-px bg-rule" />
           <div>
             <div className="text-[14px] font-semibold text-ink">Variance Workbench</div>

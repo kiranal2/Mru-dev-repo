@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type Theme = 'light' | 'dark';
 
-// Palette: brand is orange (#FE9519) — same in light + dark. Warning is gold
+// Palette: brand is warm rust (#B64D1D) — same in light + dark. Warning is gold
 // to pull away from brand's hue band. --color-info is reserved for links +
 // tooltip accents so "click this" doesn't always read as brand.
 const PALETTES: Record<Theme, Record<string, string>> = {
@@ -18,9 +18,9 @@ const PALETTES: Record<Theme, Record<string, string>> = {
     '--color-surface': '#FFFFFF',
     '--color-surface-alt': '#F8FAFC',
     '--color-surface-soft': '#F1F5F9',
-    '--color-brand': '#FE9519',
-    '--color-brand-weak': '#FED5A8',
-    '--color-brand-tint': '#FFF1E0',
+    '--color-brand': '#B64D1D',
+    '--color-brand-weak': '#E8C5A8',
+    '--color-brand-tint': '#F7E8D8',
     '--color-positive': '#16A34A',
     '--color-positive-weak': '#DCFCE7',
     '--color-warning': '#CA8A04',
@@ -32,7 +32,7 @@ const PALETTES: Record<Theme, Record<string, string>> = {
   // Pure-black dark theme matching the web prototype — cards layer via
   // subtle steps surface (#0A0A0A) → surface-alt (#141414) → surface-soft
   // (#1F1F1F). Borders (rule) are neutral-800 so edges read without
-  // dominating. Brand stays #FE9519 — bright orange reads cleanly on near-black.
+  // dominating. Brand stays #B64D1D — deep rust reads cleanly on near-black.
   dark: {
     '--color-ink': '#F5F5F5',
     '--color-muted': '#A3A3A3',
@@ -41,9 +41,9 @@ const PALETTES: Record<Theme, Record<string, string>> = {
     '--color-surface': '#0A0A0A',
     '--color-surface-alt': '#141414',
     '--color-surface-soft': '#1F1F1F',
-    '--color-brand': '#FE9519',
-    '--color-brand-weak': '#5C3A0A',
-    '--color-brand-tint': '#2E1D05',
+    '--color-brand': '#B64D1D',
+    '--color-brand-weak': '#4A2208',
+    '--color-brand-tint': '#2A1305',
     '--color-positive': '#22C55E',
     '--color-positive-weak': '#14532D',
     '--color-warning': '#EAB308',

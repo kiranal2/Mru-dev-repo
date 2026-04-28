@@ -2,10 +2,11 @@ import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '../components/icons';
 import { Logo } from '../components/Logo';
+import { CommandCenter } from '../components/CommandCenter';
 
 const STATUS = [
   { key: 'done',        label: 'Done',        count: 5,  color: '#16A34A' },
-  { key: 'in_progress', label: 'In Progress', count: 4,  color: '#FE9519' },
+  { key: 'in_progress', label: 'In Progress', count: 4,  color: '#B64D1D' },
   { key: 'blocked',     label: 'Blocked',     count: 2,  color: '#DC2626' },
   { key: 'not_started', label: 'Not Started', count: 1,  color: '#475569' },
 ];
@@ -31,7 +32,7 @@ export default function CloseScreen() {
             <Text className="text-xl font-semibold text-ink mt-1">Day 4 / 5 · Period-End Close</Text>
             <Text className="text-xs text-muted mt-1">Target close: Day 5 EOD. 2 blockers open.</Text>
           </View>
-          <Logo height={24} style={{ marginTop: 4 }} />
+          <Logo height={30} style={{ marginTop: 4 }} />
         </View>
 
         <View className="flex-row flex-wrap gap-3 mb-4">
@@ -79,6 +80,7 @@ export default function CloseScreen() {
           })}
         </View>
       </ScrollView>
+      <CommandCenter />
     </SafeAreaView>
   );
 }

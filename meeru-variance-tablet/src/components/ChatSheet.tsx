@@ -110,7 +110,7 @@ function ChatContent({
           so the peek state stays clean. */}
       <View className="flex-row items-center justify-between px-4 pb-2" style={{ borderBottomWidth: 1, borderBottomColor: '#E2E8F0' }}>
         <Pressable onPress={expanded ? undefined : onExpand} className="flex-row items-center gap-2 flex-1">
-          <Icon.Sparkle color="#FE9519" size={16} />
+          <Icon.BarChart color="#B64D1D" size={16} />
           <Text className="text-sm font-semibold text-ink">AI Analysis</Text>
           <View className="ml-1 px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#DCFCE7' }}>
             <Text style={{ fontSize: 9, fontWeight: '600', color: '#16A34A' }}>● LIVE</Text>
@@ -143,8 +143,8 @@ function ChatContent({
               }}
             >
               <Icon.Star
-                color={favorited ? '#FE9519' : '#64748B'}
-                fill={favorited ? '#FE9519' : 'none'}
+                color={favorited ? '#B64D1D' : '#64748B'}
+                fill={favorited ? '#B64D1D' : 'none'}
                 size={14}
               />
             </HeaderIconButton>
@@ -157,7 +157,7 @@ function ChatContent({
               }}
             >
               {fullscreen
-                ? <Icon.Minimize color="#FE9519" size={14} />
+                ? <Icon.Minimize color="#B64D1D" size={14} />
                 : <Icon.Maximize color="#475569" size={14} />}
             </HeaderIconButton>
             <HeaderIconButton
@@ -185,16 +185,16 @@ function ChatContent({
           return (
             <View key={idx} className="mb-3">
               <Text
-                style={{ fontSize: 10, fontWeight: '600', letterSpacing: 0.6, textTransform: 'uppercase', marginBottom: 4, color: isUser ? '#FE9519' : '#475569' }}
+                style={{ fontSize: 10, fontWeight: '600', letterSpacing: 0.6, textTransform: 'uppercase', marginBottom: 4, color: isUser ? '#B64D1D' : '#475569' }}
               >
                 {who}
               </Text>
               <View
                 className="rounded-xl p-3"
                 style={{
-                  backgroundColor: isUser ? '#FFF1E0' : '#F8FAFC',
+                  backgroundColor: isUser ? '#F7E8D8' : '#F8FAFC',
                   borderWidth: 1,
-                  borderColor: isUser ? '#FED5A8' : '#E2E8F0',
+                  borderColor: isUser ? '#E8C5A8' : '#E2E8F0',
                 }}
               >
                 <Text className="text-[13px] leading-relaxed text-ink">{m.text}</Text>
@@ -209,7 +209,7 @@ function ChatContent({
         {contextual.length > 0 && (
           <View className="mt-2">
             <View className="flex-row items-center gap-1 mb-2">
-              <Icon.Flag color="#FE9519" size={12} />
+              <Icon.Flag color="#B64D1D" size={12} />
               <Text className="text-[14px] tracking-wider uppercase font-semibold text-brand">
                 Next Best Action
               </Text>
@@ -304,7 +304,7 @@ function ChatContent({
             disabled={!input.trim()}
             className="rounded-lg active:opacity-90"
             style={{
-              backgroundColor: input.trim() ? '#FE9519' : '#CBD5E1',
+              backgroundColor: input.trim() ? '#B64D1D' : '#CBD5E1',
               width: 32, height: 32, alignItems: 'center', justifyContent: 'center',
             }}
           >
@@ -341,7 +341,7 @@ function HeaderIconButton({
         borderRadius: 6,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: active ? '#FFF1E0' : 'transparent',
+        backgroundColor: active ? '#F7E8D8' : 'transparent',
       }}
     >
       {children}
@@ -354,7 +354,7 @@ function WelcomeBlock({ personaName }: { personaName: string }) {
   return (
     <View
       className="rounded-2xl p-4 mb-3"
-      style={{ backgroundColor: '#FFF1E0', borderWidth: 1, borderColor: '#FED5A8' }}
+      style={{ backgroundColor: '#F7E8D8', borderWidth: 1, borderColor: '#E8C5A8' }}
     >
       <View className="flex-row items-center gap-2 mb-2">
         <View className="w-7 h-7 rounded-full bg-brand items-center justify-center">
@@ -428,9 +428,9 @@ function NBACard({
 }) {
   const Icn = iconForActionKind(action.kind);
   const accent: Record<string, string> = {
-    slack: '#4A154B', email: '#FE9519', im: '#16A34A', pin: '#D97706',
+    slack: '#4A154B', email: '#B64D1D', im: '#16A34A', pin: '#D97706',
     remind: '#8B5CF6', share: '#475569', approve: '#16A34A',
-    whatif: '#FE9519', open: '#FE9519', investigate: '#D97706',
+    whatif: '#B64D1D', open: '#B64D1D', investigate: '#D97706',
   };
   const verb = ['pin', 'remind', 'share', 'approve', 'whatif', 'open', 'investigate'].includes(action.kind)
     ? (action.kind === 'pin' ? 'Pin' : action.kind === 'remind' ? 'Set' : action.kind === 'share' ? 'Share' : action.kind === 'approve' ? 'Approve' : action.kind === 'whatif' ? 'Run' : 'Open')
@@ -440,9 +440,9 @@ function NBACard({
       className={`${expanded ? '' : 'mr-2'} p-3 rounded-xl`}
       style={{
         width: expanded ? '100%' : 240,
-        backgroundColor: '#FFF1E0',
+        backgroundColor: '#F7E8D8',
         borderWidth: 1,
-        borderColor: '#FED5A8',
+        borderColor: '#E8C5A8',
         opacity: sent ? 0.6 : 1,
         position: 'relative',
       }}
@@ -468,7 +468,7 @@ function NBACard({
           onPress={onSend}
           disabled={sent}
           className="px-3 py-1 rounded"
-          style={{ backgroundColor: sent ? '#16A34A' : '#FE9519' }}
+          style={{ backgroundColor: sent ? '#16A34A' : '#B64D1D' }}
         >
           <Text className="text-[14px] font-semibold text-white">{sent ? '✓ Sent' : verb}</Text>
         </Pressable>

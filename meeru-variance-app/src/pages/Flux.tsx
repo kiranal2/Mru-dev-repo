@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { WorkbenchShell } from '../components/WorkbenchShell';
+import { CommandCenter } from '../components/CommandCenter';
 import { RailGroup } from '../components/LeftRail';
 import { TopNav } from '../components/TopNav';
 import { StatusChip } from '../components/ui';
@@ -65,6 +66,7 @@ export default function Flux() {
         </>
       }
       topNav={<TopNav tabs={WORKBENCHES.flux.topTabs} active={topTab} onChange={setTopTab} />}
+      dock={<CommandCenter />}
     >
       <div className="flex items-start justify-between mb-4">
         <div>

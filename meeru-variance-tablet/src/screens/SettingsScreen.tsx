@@ -6,6 +6,7 @@ import { useTheme } from '../theme';
 import type { Theme } from '../theme';
 import { INDUSTRY_PRESETS, INDUSTRY_LIST } from '../industry-presets';
 import { Icon } from '../components/icons';
+import { CommandCenter } from '../components/CommandCenter';
 
 export default function SettingsScreen() {
   const { settings, update } = useSettings();
@@ -128,6 +129,7 @@ export default function SettingsScreen() {
           </Pressable>
         </SectionCard>
       </ScrollView>
+      <CommandCenter />
     </SafeAreaView>
   );
 }

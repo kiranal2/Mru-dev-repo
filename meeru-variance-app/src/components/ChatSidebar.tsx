@@ -57,7 +57,7 @@ export function ChatSidebar({ style }: { style?: CSSProperties }) {
   return (
     <aside
       style={style}
-      className="bg-surface border-l border-rule flex flex-col overflow-hidden relative"
+      className="bg-surface border-l border-rule border-r border-white/10 flex flex-col overflow-hidden relative"
     >
       {/* Resize handle — 4px hit area on the left edge, becomes visible on hover */}
       <div

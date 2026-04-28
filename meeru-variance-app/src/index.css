@@ -16,12 +16,12 @@
   --surface: #FFFFFF;
   --surface-alt: #F8FAFC;
   --surface-soft: #F1F5F9;
-  --primary: #FE9519;
-  --primary-hover: #E07F0A;
-  --primary-weak: #FED5A8;
-  --primary-tint: #FFF1E0;
-  --primary-tint-soft: #FFF8EE;
-  --brand-accent: #FFAA48;
+  --primary: #B64D1D;
+  --primary-hover: #94400F;
+  --primary-weak: #E8C5A8;
+  --primary-tint: #F7E8D8;
+  --primary-tint-soft: #FBF3EB;
+  --brand-accent: #DB6D40;
   --positive: #16A34A;
   --positive-weak: #DCFCE7;
   --warning: #CA8A04;
@@ -42,12 +42,12 @@
   --surface: #0A0A0A;
   --surface-alt: #141414;
   --surface-soft: #1F1F1F;
-  --primary: #FE9519;
-  --primary-hover: #FFA940;
-  --primary-weak: #5C3A0A;
-  --primary-tint: #2E1D05;
-  --primary-tint-soft: #1F1303;
-  --brand-accent: #FFAA48;
+  --primary: #B64D1D;
+  --primary-hover: #C76235;
+  --primary-weak: #4A2208;
+  --primary-tint: #2A1305;
+  --primary-tint-soft: #1A0C03;
+  --brand-accent: #DB6D40;
   --positive: #22C55E;
   --positive-weak: #14532D;
   --warning: #EAB308;
@@ -125,13 +125,13 @@ body {
   100% { background-position: 200% 0; }
 }
 .shimmer-bg {
-  background: linear-gradient(90deg, transparent 0%, rgba(254,149,25,0.06) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(182,77,29,0.06) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 2.5s linear infinite;
 }
 
 @keyframes live-new {
-  0%   { background-color: rgba(254,149,25,0.12); }
+  0%   { background-color: rgba(182,77,29,0.12); }
   100% { background-color: transparent; }
 }
 .flash-new { animation: live-new 2.2s ease-out; }
@@ -171,7 +171,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
    "COMPETITIVE PRESSURE" pill treatment. Semi-transparent tint of the base
    color (reads cleanly on both light + dark surfaces) with a soft matching
    border, so the chip communicates status without dominating the title row. */
-.chip-neg  { background: color-mix(in srgb, var(--negative) 14%, transparent); color: var(--negative); border: 1px solid color-mix(in srgb, var(--negative) 28%, transparent); }
+.chip-neg  { background: color-mix(in srgb, var(--negative) 8%, transparent); color: var(--negative); border: 1px solid color-mix(in srgb, var(--negative) 16%, transparent); }
 .chip-pos  { background: color-mix(in srgb, var(--positive) 14%, transparent); color: var(--positive); border: 1px solid color-mix(in srgb, var(--positive) 28%, transparent); }
 .chip-warn { background: color-mix(in srgb, var(--warning)  14%, transparent); color: var(--warning);  border: 1px solid color-mix(in srgb, var(--warning)  28%, transparent); }
 .chip-info { background: color-mix(in srgb, var(--info)     14%, transparent); color: var(--info);     border: 1px solid color-mix(in srgb, var(--info)     28%, transparent); }

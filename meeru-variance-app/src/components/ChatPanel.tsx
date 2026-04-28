@@ -595,7 +595,7 @@ export function ChatPanel() {
       <div className="px-3.5 py-2.5 border-b border-rule flex justify-between items-center shrink-0 relative overflow-hidden">
         {thinking && <div className="absolute inset-0 shimmer-bg pointer-events-none" />}
         <div className="flex items-center gap-1.5 text-[12px] font-semibold text-ink relative z-10">
-          <Icon.Sparkle className={`w-3.5 h-3.5 text-brand ${thinking ? 'dot-pulse' : ''}`} />
+          <Icon.Activity className={`w-3.5 h-3.5 text-brand ${thinking ? 'dot-pulse' : ''}`} />
           <span>AI Analysis</span>
           <span className="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-positive-weak text-positive text-[9px] font-semibold uppercase tracking-wider">
             <span className="w-1 h-1 rounded-full bg-positive live-dot" />

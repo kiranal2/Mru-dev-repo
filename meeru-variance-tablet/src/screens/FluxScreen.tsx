@@ -8,6 +8,7 @@ import {
 import type { FluxRow, FluxView } from '../types';
 import { KpiCard } from '../components/KpiCard';
 import { ChatSheet, type ChatSheetRef } from '../components/ChatSheet';
+import { CommandCenter } from '../components/CommandCenter';
 import { VarianceSwitcher } from '../components/VarianceSwitcher';
 import { Icon } from '../components/icons';
 
@@ -15,7 +16,7 @@ const TONE_COLOR = {
   pos:  '#16A34A',
   neg:  '#DC2626',
   warn: '#D97706',
-  blue: '#FE9519',
+  blue: '#B64D1D',
 } as const;
 
 const MAX_W = 1100;
@@ -132,11 +133,11 @@ export default function FluxScreen() {
             style={{
               flexDirection: 'row', alignItems: 'center', gap: 6,
               paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999,
-              backgroundColor: '#FFF1E0',
+              backgroundColor: '#F7E8D8',
             }}
           >
-            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#FE9519' }} />
-            <Text style={{ fontSize: 10, fontWeight: '600', letterSpacing: 0.4, color: '#FE9519' }}>
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#B64D1D' }} />
+            <Text style={{ fontSize: 10, fontWeight: '600', letterSpacing: 0.4, color: '#B64D1D' }}>
               {matCount} MATERIAL
             </Text>
           </View>
@@ -149,7 +150,7 @@ export default function FluxScreen() {
             <Text style={{ fontSize: 10, color: '#64748B', letterSpacing: 0.4 }}>Q1 vs Q4 2025</Text>
           </View>
           <Pressable onPress={() => chatRef.current?.expand()} hitSlop={8}>
-            <Icon.Sparkle color="#FE9519" size={22} />
+            <Icon.Sparkle color="#B64D1D" size={22} />
           </Pressable>
         </View>
       </View>
@@ -169,17 +170,17 @@ export default function FluxScreen() {
                 onPress={() => setView(v.k)}
                 style={{
                   paddingHorizontal: 12, paddingVertical: 7, borderRadius: 6,
-                  backgroundColor: active ? '#FFF1E0' : '#FFFFFF',
-                  borderWidth: 1, borderColor: active ? '#FE9519' : '#E2E8F0',
+                  backgroundColor: active ? '#F7E8D8' : '#FFFFFF',
+                  borderWidth: 1, borderColor: active ? '#B64D1D' : '#E2E8F0',
                 }}
               >
                 <Text style={{
                   fontSize: 12, fontWeight: active ? '700' : '500',
-                  color: active ? '#FE9519' : '#0F172A',
+                  color: active ? '#B64D1D' : '#0F172A',
                 }}>
                   {v.n}
                 </Text>
-                <Text style={{ fontSize: 9, color: active ? '#FE9519' : '#94A3B8', marginTop: 1 }}>{v.sub}</Text>
+                <Text style={{ fontSize: 9, color: active ? '#B64D1D' : '#94A3B8', marginTop: 1 }}>{v.sub}</Text>
               </Pressable>
             );
           })}
@@ -192,13 +193,13 @@ export default function FluxScreen() {
           onPress={() => setShowMaterialOnly(false)}
           style={{
             paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999,
-            backgroundColor: !showMaterialOnly ? '#FFF1E0' : '#FFFFFF',
-            borderWidth: 1, borderColor: !showMaterialOnly ? '#FE9519' : '#E2E8F0',
+            backgroundColor: !showMaterialOnly ? '#F7E8D8' : '#FFFFFF',
+            borderWidth: 1, borderColor: !showMaterialOnly ? '#B64D1D' : '#E2E8F0',
           }}
         >
           <Text style={{
             fontSize: 12, fontWeight: !showMaterialOnly ? '600' : '500',
-            color: !showMaterialOnly ? '#FE9519' : '#64748B',
+            color: !showMaterialOnly ? '#B64D1D' : '#64748B',
           }}>
             All rows · {pickRows(view).length}
           </Text>
@@ -207,13 +208,13 @@ export default function FluxScreen() {
           onPress={() => setShowMaterialOnly(true)}
           style={{
             paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999,
-            backgroundColor: showMaterialOnly ? '#FFF1E0' : '#FFFFFF',
-            borderWidth: 1, borderColor: showMaterialOnly ? '#FE9519' : '#E2E8F0',
+            backgroundColor: showMaterialOnly ? '#F7E8D8' : '#FFFFFF',
+            borderWidth: 1, borderColor: showMaterialOnly ? '#B64D1D' : '#E2E8F0',
           }}
         >
           <Text style={{
             fontSize: 12, fontWeight: showMaterialOnly ? '600' : '500',
-            color: showMaterialOnly ? '#FE9519' : '#64748B',
+            color: showMaterialOnly ? '#B64D1D' : '#64748B',
           }}>
             Material only · {matCount}
           </Text>
@@ -278,9 +279,9 @@ export default function FluxScreen() {
                       {r.material && (
                         <View style={{
                           paddingHorizontal: 5, paddingVertical: 1,
-                          backgroundColor: '#FFF1E0', borderRadius: 3,
+                          backgroundColor: '#F7E8D8', borderRadius: 3,
                         }}>
-                          <Text style={{ fontSize: 8, fontWeight: '700', color: '#FE9519', letterSpacing: 0.4 }}>MAT</Text>
+                          <Text style={{ fontSize: 8, fontWeight: '700', color: '#B64D1D', letterSpacing: 0.4 }}>MAT</Text>
                         </View>
                       )}
                     </View>
@@ -310,7 +311,7 @@ export default function FluxScreen() {
                     </View>
                   )}
                   <View style={{ width: 24, alignItems: 'flex-end' }}>
-                    <Icon.Sparkle color="#FE9519" size={12} />
+                    <Icon.Sparkle color="#B64D1D" size={12} />
                   </View>
                 </Pressable>
               );
@@ -323,6 +324,7 @@ export default function FluxScreen() {
         </View>
       </ScrollView>
 
+      <CommandCenter />
       <ChatSheet ref={chatRef} />
     </SafeAreaView>
   );

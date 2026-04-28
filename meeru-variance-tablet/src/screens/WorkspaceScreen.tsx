@@ -6,6 +6,7 @@ import { LIVE_PINS, WATCHLIST } from '../data';
 import type { LivePin } from '../types';
 import { Icon } from '../components/icons';
 import { Logo } from '../components/Logo';
+import { CommandCenter } from '../components/CommandCenter';
 import { useNavigation } from '@react-navigation/native';
 import type { NavigationProp } from '@react-navigation/native';
 
@@ -47,7 +48,7 @@ export default function WorkspaceScreen() {
               Tuesday · Week 10 · Global — 3 items need your attention before Thursday.
             </Text>
           </View>
-          <Logo height={24} style={{ marginTop: 4 }} />
+          <Logo height={30} style={{ marginTop: 4 }} />
         </View>
 
         {/* Live pins (2 × 2 grid) */}
@@ -104,7 +105,7 @@ export default function WorkspaceScreen() {
             className="bg-surface rounded-2xl p-4 active:opacity-70"
             style={{ width: '48%', borderWidth: 1, borderColor: '#E2E8F0' }}
           >
-            <Icon.Chart color="#FE9519" size={22} />
+            <Icon.Chart color="#B64D1D" size={22} />
             <Text className="text-sm font-semibold text-ink mt-2">Variance</Text>
             <Text className="text-[13px] text-muted">Performance · Margin · Flux</Text>
           </Pressable>
@@ -113,12 +114,13 @@ export default function WorkspaceScreen() {
             className="bg-surface rounded-2xl p-4 active:opacity-70"
             style={{ width: '48%', borderWidth: 1, borderColor: '#E2E8F0' }}
           >
-            <Icon.Calendar color="#FE9519" size={22} />
+            <Icon.Calendar color="#B64D1D" size={22} />
             <Text className="text-sm font-semibold text-ink mt-2">Close</Text>
             <Text className="text-[13px] text-muted">Day 4 / 5 · 2 blockers</Text>
           </Pressable>
         </View>
       </ScrollView>
+      <CommandCenter />
     </SafeAreaView>
   );
 }

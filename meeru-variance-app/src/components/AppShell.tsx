@@ -18,7 +18,7 @@ function Sidebar() {
       active ? 'bg-brand text-white' : 'text-slate-400 hover:bg-white/10 hover:text-white'
     }`;
   return (
-    <aside className="bg-slate-900 dark:bg-black flex flex-col items-center py-2.5 gap-1" style={{ width: 56 }}>
+    <aside className="bg-slate-900 dark:bg-black flex flex-col items-center py-2.5 gap-1 border-r border-white/10" style={{ width: 56 }}>
       <Link to="/workspace" className={cls(is('/workspace'))} title="Home"><Icon.Home className="w-5 h-5" /></Link>
       <Link to="/variance/performance" className={cls(is('/variance'))} title="Decision Intelligence"><Icon.Chart className="w-5 h-5" /></Link>
       <Link to="/close" className={cls(is('/close') || is('/reconciliations'))} title="Close Intelligence"><Icon.Calendar className="w-5 h-5" /></Link>
@@ -43,7 +43,7 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
         >
           <Icon.Menu className="w-4 h-4" />
         </button>
-        <Logo className="h-5 w-auto object-contain select-none" />
+        <Logo className="h-7 w-auto object-contain select-none" />
       </div>
       <div className="flex items-center gap-2.5">
         <ContextSwitcher />
@@ -154,7 +154,7 @@ function ContextSwitcher() {
                   onClick={() => switchPersona(r)}
                   className={`w-full flex items-center gap-2.5 px-4 py-1.5 text-left text-[12px] ${active ? 'bg-brand-tint' : 'hover:bg-surface-soft'}`}
                 >
-                  <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[10px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg,#FED5A8,#FE9519)' }}>{p.init}</div>
+                  <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[10px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg,#E8C5A8,#B64D1D)' }}>{p.init}</div>
                   <div className="min-w-0 flex-1">
                     <div className="text-[11px] font-semibold text-ink truncate">{p.name}</div>
                     <div className="text-[10px] text-muted truncate">{p.role}</div>
@@ -209,7 +209,7 @@ function ProfileMenu() {
         className={`flex items-center gap-2 pl-1 pr-2 py-0.5 rounded-full border transition-colors ${open ? 'bg-brand-tint border-brand-weak' : 'bg-surface-soft border-transparent hover:border-rule'}`}
         title="Open profile menu"
       >
-        <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[11px] font-semibold" style={{ background: 'linear-gradient(135deg,#FED5A8,#FE9519)' }}>{user.init}</div>
+        <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[11px] font-semibold" style={{ background: 'linear-gradient(135deg,#E8C5A8,#B64D1D)' }}>{user.init}</div>
         <div className="leading-tight text-left">
           <div className="text-[11px] font-semibold text-ink">{user.name}</div>
           <div className="text-[10px] text-muted">{user.role}</div>
@@ -222,7 +222,7 @@ function ProfileMenu() {
           {/* Header */}
           <div className="p-4 border-b border-rule bg-gradient-to-br from-brand-tint to-transparent">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full text-white grid place-items-center text-[16px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg,#FED5A8,#FE9519)' }}>{user.init}</div>
+              <div className="w-12 h-12 rounded-full text-white grid place-items-center text-[16px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg,#E8C5A8,#B64D1D)' }}>{user.init}</div>
               <div className="min-w-0 flex-1">
                 <div className="text-[14px] font-semibold text-ink truncate">{user.name}</div>
                 <div className="text-[11px] text-muted truncate">{user.role}</div>
@@ -442,7 +442,7 @@ function ChatToggleButton() {
       title={hidden ? 'Show AI panel' : 'Hide AI panel'}
       className={`w-7 h-7 rounded-md grid place-items-center transition-colors ${hidden ? 'text-faint hover:bg-surface-soft hover:text-ink' : 'text-brand bg-brand-tint hover:bg-brand-weak'}`}
     >
-      <Icon.Sparkle className="w-4 h-4" />
+      <Icon.Bars className="w-4 h-4" />
     </button>
   );
 }

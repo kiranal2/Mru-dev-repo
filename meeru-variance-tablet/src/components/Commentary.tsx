@@ -5,7 +5,7 @@ const TAG_STYLES = {
   red:   { bg: '#FEE2E2', fg: '#DC2626' },
   green: { bg: '#DCFCE7', fg: '#16A34A' },
   amber: { bg: '#FEF3C7', fg: '#D97706' },
-  blue:  { bg: '#FFF1E0', fg: '#FE9519' },
+  blue:  { bg: '#F7E8D8', fg: '#B64D1D' },
 } as const;
 
 export function Commentary({ items }: { items: CommentaryItem[] }) {

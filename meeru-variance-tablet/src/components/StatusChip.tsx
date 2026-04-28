@@ -6,10 +6,10 @@ import { View, Text } from 'react-native';
 // it pulls away from coral's hue band; info is a cool blue so "info" and
 // "brand" don't collide. See MeeruAI_Design_System/palette_audit.html.
 const STYLES = {
-  neg:  { bg: 'rgba(220,38,38,0.14)',  border: 'rgba(220,38,38,0.28)',  text: 'text-negative' },
+  neg:  { bg: 'rgba(220,38,38,0.08)',  border: 'rgba(220,38,38,0.16)',  text: 'text-negative' },
   pos:  { bg: 'rgba(22,163,74,0.14)',  border: 'rgba(22,163,74,0.28)',  text: 'text-positive' },
   warn: { bg: 'rgba(217,119,6,0.14)',  border: 'rgba(217,119,6,0.28)',  text: 'text-warning' },
-  info: { bg: 'rgba(254,149,25,0.14)',  border: 'rgba(254,149,25,0.28)',  text: 'text-brand' },
+  info: { bg: 'rgba(182,77,29,0.14)',  border: 'rgba(182,77,29,0.28)',  text: 'text-brand' },
 } as const;
 
 export type StatusKind = keyof typeof STYLES;

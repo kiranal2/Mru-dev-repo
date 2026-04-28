@@ -80,7 +80,7 @@ export function LeftRail({ children }: LeftRailProps) {
   return (
     <View className="bg-surface border-r border-rule" style={{ width: 200 }}>
       <View className="px-3 pt-3 pb-2 border-b border-rule">
-        <Logo height={22} />
+        <Logo height={28} />
       </View>
       <ScrollView contentContainerStyle={{ padding: 10 }}>{children}</ScrollView>
     </View>

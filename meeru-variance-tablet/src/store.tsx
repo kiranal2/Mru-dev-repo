@@ -28,6 +28,13 @@ export const useAuth = () => {
 // ==========================================================
 // CHAT
 // ==========================================================
+export interface ConversationEntry {
+  id: string;
+  userMsg: string;
+  aiText: string;
+  ts: number;
+  persona?: Role;
+}
 interface ChatCtx {
   msgs: ChatMsg[];
   contextual: ActionCard[];
@@ -37,6 +44,10 @@ interface ChatCtx {
   send: (q: string) => void;
   reset: () => void;
   markSent: (id: string) => void;
+  /** Persisted history of every user/AI exchange across sessions. */
+  history: ConversationEntry[];
+  clearHistory: () => void;
+  restoreFromHistory: (entry: ConversationEntry) => void;
 }
 const ChatContext = createContext<ChatCtx | null>(null);
 export const useChat = () => {
@@ -129,6 +140,18 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [sent, setSent] = useState<Set<string>>(new Set());
   const [thinking, setThinking] = useState(false);
+  // Persisted conversation history — every user/AI exchange across sessions.
+  // Stored under meeru.chat.history. Newest entries first.
+  const [history, setHistory] = useState<ConversationEntry[]>([]);
+  useEffect(() => {
+    AsyncStorage.getItem('meeru.chat.history').then((raw) => {
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setHistory(parsed);
+      } catch {}
+    });
+  }, []);
 
   const send = useCallback((q: string) => {
     if (!q.trim()) return;
@@ -154,6 +177,20 @@ export function AppProviders({ children }: { children: ReactNode }) {
       setFollowUps(resp.followUps ?? []);
       setSent(new Set());
       setThinking(false);
+      // Append this exchange to the persistent history. Cap at 200 newest
+      // entries so AsyncStorage doesn't grow unbounded.
+      const entry: ConversationEntry = {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        userMsg: q,
+        aiText: resp.text,
+        ts: Date.now(),
+        persona: currentRole,
+      };
+      setHistory((prev) => {
+        const next = [entry, ...prev].slice(0, 200);
+        AsyncStorage.setItem('meeru.chat.history', JSON.stringify(next)).catch(() => {});
+        return next;
+      });
     }, delay);
   }, [user]);
 
@@ -163,6 +200,23 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   const markSent = useCallback((id: string) => {
     setSent((prev) => { const n = new Set(prev); n.add(id); return n; });
+  }, []);
+
+  const clearHistory = useCallback(() => {
+    setHistory([]);
+    AsyncStorage.removeItem('meeru.chat.history').catch(() => {});
+  }, []);
+
+  // Replay a past exchange into the active conversation so the user can
+  // resume where they left off.
+  const restoreFromHistory = useCallback((entry: ConversationEntry) => {
+    setMsgs([
+      { role: 'user', text: entry.userMsg },
+      { role: 'ai', text: entry.aiText },
+    ]);
+    setContextual([]);
+    setFollowUps([]);
+    setSent(new Set());
   }, []);
 
   // ---- settings ----
@@ -200,8 +254,8 @@ export function AppProviders({ children }: { children: ReactNode }) {
   // ---- memoised contexts ----
   const authV = useMemo(() => ({ user, login, logout, hydrated }), [user, login, logout, hydrated]);
   const chatV = useMemo(
-    () => ({ msgs, contextual, followUps, sent, thinking, send, reset, markSent }),
-    [msgs, contextual, followUps, sent, thinking, send, reset, markSent]
+    () => ({ msgs, contextual, followUps, sent, thinking, send, reset, markSent, history, clearHistory, restoreFromHistory }),
+    [msgs, contextual, followUps, sent, thinking, send, reset, markSent, history, clearHistory, restoreFromHistory]
   );
   const toastV = useMemo(() => ({ toasts, push, dismiss }), [toasts, push, dismiss]);
   const settingsV = useMemo(() => ({ settings, update: updateSettings }), [settings, updateSettings]);

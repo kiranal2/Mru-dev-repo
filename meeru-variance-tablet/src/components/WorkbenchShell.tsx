@@ -72,7 +72,7 @@ export function WorkbenchShell({ topNav, leftRail, children, commentary, dock }:
               onPress={() => setCommentaryOpen(true)}
               className="px-3 h-[44px] flex-row items-center justify-center gap-1.5 border-l border-rule"
             >
-              <Icon.Sparkle size={14} color="#FE9519" />
+              <Icon.Sparkle size={14} color="#B64D1D" />
               <Text className="text-[13px] font-semibold tracking-wider uppercase text-brand">AI</Text>
             </Pressable>
           )}

@@ -1,29 +1,30 @@
-import { Image } from 'react-native';
-import type { StyleProp, ImageStyle } from 'react-native';
+import { View } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
-
-const logoLight = require('../../assets/meeru-logo.png');
-const logoDark = require('../../assets/meeru-logo-dark.png');
+import LogoLightSvg from '../../assets/meeru-logo-full-coral.svg';
+import LogoDarkSvg from '../../assets/meeru-logo-dark.svg';
 
 /**
- * Brand logo — swaps PNG by active theme.
- *   light → coral wordmark on white  (`meeru-logo.png`)
- *   dark  → coral-M + white "eeruAI" on near-black (`meeru-logo-dark.png`)
- * Caller passes `height`; width auto-derives to preserve the ~5.2:1 aspect.
+ * Brand logo.
+ *   light → SVG wordmark (coral M + dark "eeruAI")
+ *   dark  → SVG wordmark (coral M + white "eeruAI")
+ * Caller passes `height`; width auto-derives to preserve aspect (~3:1).
  */
+const RATIO = 210 / 71; // ~2.958
+
 export function Logo({
   height = 24,
   style,
 }: {
   height?: number;
-  style?: StyleProp<ImageStyle>;
+  style?: StyleProp<ViewStyle>;
 }) {
   const { theme } = useTheme();
-  const source = theme === 'dark' ? logoDark : logoLight;
+  const h = height;
+  const Svg = theme === 'dark' ? LogoDarkSvg : LogoLightSvg;
   return (
-    <Image
-      source={source}
-      style={[{ width: height * 5.2, height, resizeMode: 'contain' }, style]}
-    />
+    <View style={style}>
+      <Svg width={h * RATIO} height={h} />
+    </View>
   );
 }

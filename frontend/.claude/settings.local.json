@@ -33,7 +33,13 @@
       "Bash(cp \"/Users/kirankumaralugonda/Desktop/meeruai-black-logo.png\" /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-app/src/assets/meeru-logo-dark.png)",
       "Bash(cp \"/Users/kirankumaralugonda/Desktop/meeruai-black-logo.png\" /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-tablet/assets/meeru-logo-dark.png)",
       "Bash(python3 -c \"import json; json.load\\(open\\('app.json'\\)\\); print\\('valid JSON'\\)\")",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(cp \"/Users/kirankumaralugonda/Downloads/1OrginalLogo.svg\" /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-app/src/assets/meeru-logo-full-coral.svg)",
+      "Bash(cp \"/Users/kirankumaralugonda/Downloads/1OrginalLogo.svg\" /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-tablet/assets/meeru-logo-full-coral.svg)",
+      "Bash(command -v sips)",
+      "Bash(cp \"/Users/kirankumaralugonda/Downloads/darkthemelogo.svg\" /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-app/src/assets/meeru-logo-dark.svg)",
+      "Bash(cp \"/Users/kirankumaralugonda/Downloads/darkthemelogo.svg\" /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-tablet/assets/meeru-logo-dark.svg)",
+      "Bash(echo \"exit=$?\")"
     ]
   }
 }

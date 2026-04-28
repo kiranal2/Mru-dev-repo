@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import type { ReactNode, ComponentType, SVGProps } from 'react';
 import { useChat, useToasts } from '../store';
+import type { ChatSession } from '../store';
 import { usePersona } from './AppShell';
 import { Icon, getActionIcon } from '../icons';
 import type { ActionCard, ActionKind, Role, SavedReply } from '../types';
@@ -847,7 +848,7 @@ function ActionPlanPanel({
             '0 1px 2px rgba(15,23,42,0.04)',
             '0 12px 28px -6px rgba(15,23,42,0.2)',
             '0 28px 56px -12px rgba(15,23,42,0.28)',
-            '0 0 0 1px rgba(254,149,25,0.12)',
+            '0 0 0 1px rgba(182,77,29,0.12)',
           ].join(', '),
         }}
       >
@@ -857,7 +858,7 @@ function ActionPlanPanel({
           className="w-10 h-10 rounded-lg grid place-items-center shrink-0 text-white shadow-e1"
           style={{
             background:
-              'linear-gradient(135deg, var(--primary) 0%, rgba(254,149,25,0.8) 100%)',
+              'linear-gradient(135deg, var(--primary) 0%, rgba(182,77,29,0.8) 100%)',
           }}
         >
           <IconC className="w-5 h-5" />
@@ -964,7 +965,7 @@ function ActionPlanPanel({
           style={{
             background: finished
               ? 'linear-gradient(135deg, var(--positive) 0%, rgba(22,163,74,0.85) 100%)'
-              : 'linear-gradient(135deg, var(--primary) 0%, rgba(254,149,25,0.85) 100%)',
+              : 'linear-gradient(135deg, var(--primary) 0%, rgba(182,77,29,0.85) 100%)',
           }}
         >
           {finished ? (
@@ -1106,72 +1107,143 @@ function EmptyRow({ icon, title, sub }: { icon: ReactNode; title: string; sub?: 
   );
 }
 
+// Format an updatedAt timestamp into a compact relative label that fits the
+// History row footer: "Just now", "12m ago", "Yesterday", "Mar 4".
+function relativeTime(ts: number): string {
+  const diff = Date.now() - ts;
+  const min = Math.round(diff / 60_000);
+  if (min < 1) return 'Just now';
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.round(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const d = new Date(ts);
+  const today = new Date();
+  const isYesterday =
+    d.getFullYear() === today.getFullYear() &&
+    d.getMonth() === today.getMonth() &&
+    d.getDate() === today.getDate() - 1;
+  if (isYesterday) return 'Yesterday';
+  return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+}
+
 function HistoryPanel({
-  entries, onPick, onClear, hasSessionMsgs,
+  sessions, activeSessionId, onLoad, onTogglePin, onDelete, onClear,
 }: {
-  entries: HistoryEntry[];
-  onPick: (q: string) => void;
+  sessions: ChatSession[];
+  activeSessionId: string | null;
+  onLoad: (id: string) => void;
+  onTogglePin: (id: string) => void;
+  onDelete: (id: string) => void;
   onClear: () => void;
-  hasSessionMsgs: boolean;
 }) {
   const [q, setQ] = useState('');
-  const filtered = useMemo(() => {
+  // Pinned conversations sort to the top so saved threads are always one tap
+  // away. Within each group we sort by updatedAt desc.
+  const sorted = useMemo(() => {
     const k = q.trim().toLowerCase();
-    if (!k) return entries;
-    return entries.filter(e => e.q.toLowerCase().includes(k) || (e.scope ?? '').toLowerCase().includes(k));
-  }, [q, entries]);
+    const filtered = k
+      ? sessions.filter(s =>
+          s.title.toLowerCase().includes(k) ||
+          (s.scope ?? '').toLowerCase().includes(k))
+      : sessions;
+    return [...filtered].sort((a, b) => {
+      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+      return b.updatedAt - a.updatedAt;
+    });
+  }, [q, sessions]);
+  const hasAny = sessions.length > 0;
   return (
     <div>
       <PanelHeader
         title="Chat history"
-        count={entries.length}
-        right={hasSessionMsgs && (
+        count={sessions.length}
+        right={hasAny && (
           <button
             type="button"
             onMouseDown={(e) => e.preventDefault()}
             onClick={onClear}
+            title="Clear unpinned conversations"
             className="text-[10px] font-medium text-muted hover:text-negative transition-colors"
           >
-            Clear
+            Clear unpinned
           </button>
         )}
       />
-      <div className="px-3 py-2 border-b border-rule">
-        <div className="relative">
-          <Icon.Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-faint" />
-          <input
-            value={q}
-            onChange={e => setQ(e.target.value)}
-            placeholder="Search history…"
-            className="w-full pl-7 pr-2 py-1.5 text-[12px] bg-surface-alt border border-rule rounded-md outline-none focus:border-brand text-ink placeholder:text-faint"
-          />
+      {hasAny && (
+        <div className="px-3 py-2 border-b border-rule">
+          <div className="relative">
+            <Icon.Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-faint" />
+            <input
+              value={q}
+              onChange={e => setQ(e.target.value)}
+              placeholder="Search conversations…"
+              className="w-full pl-7 pr-2 py-1.5 text-[12px] bg-surface-alt border border-rule rounded-md outline-none focus:border-brand text-ink placeholder:text-faint"
+            />
+          </div>
         </div>
-      </div>
-      <ul className="max-h-[260px] overflow-y-auto py-1">
-        {filtered.length === 0 ? (
+      )}
+      <ul className="max-h-[320px] overflow-y-auto py-1">
+        {!hasAny ? (
           <EmptyRow
             icon={<Icon.History className="w-4 h-4" />}
-            title="No matching history"
+            title="No conversations yet"
+            sub="Ask anything below to start your first chat"
+          />
+        ) : sorted.length === 0 ? (
+          <EmptyRow
+            icon={<Icon.Search className="w-4 h-4" />}
+            title="No matches"
             sub="Try a different keyword"
           />
-        ) : filtered.map((e, i) => (
-          <li
-            key={`${e.q}-${i}`}
-            onMouseDown={(ev) => { ev.preventDefault(); onPick(e.q); }}
-            className="px-3 py-2 cursor-pointer hover:bg-brand-tint transition-colors group"
-          >
-            <div className="flex items-start gap-2">
-              <Icon.History className="w-3.5 h-3.5 text-faint group-hover:text-brand shrink-0 mt-0.5" />
-              <div className="min-w-0 flex-1">
-                <div className="text-[12.5px] text-ink truncate group-hover:text-brand">{e.q}</div>
-                <div className="text-[10px] text-faint mt-0.5 flex items-center gap-1.5">
-                  <span>{e.when}</span>
-                  {e.scope && <><span>·</span><span className="truncate">{e.scope}</span></>}
+        ) : sorted.map(s => {
+          const isActive = s.id === activeSessionId;
+          const turnCount = Math.floor(s.messages.length / 2);
+          return (
+            <li
+              key={s.id}
+              className={`group relative px-3 py-2 cursor-pointer transition-colors ${
+                isActive ? 'bg-brand-tint/60' : 'hover:bg-brand-tint'
+              }`}
+              onMouseDown={(ev) => { ev.preventDefault(); onLoad(s.id); }}
+            >
+              <div className="flex items-start gap-2 pr-12">
+                <Icon.History className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isActive ? 'text-brand' : 'text-faint group-hover:text-brand'}`} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    {s.pinned && <Icon.Pin className="w-3 h-3 text-brand shrink-0" />}
+                    <div className={`text-[12.5px] truncate ${isActive ? 'text-brand font-medium' : 'text-ink group-hover:text-brand'}`}>{s.title}</div>
+                  </div>
+                  <div className="text-[10px] text-faint mt-0.5 flex items-center gap-1.5">
+                    <span>{relativeTime(s.updatedAt)}</span>
+                    <span>·</span>
+                    <span>{turnCount} {turnCount === 1 ? 'turn' : 'turns'}</span>
+                    {s.scope && <><span>·</span><span className="truncate">{s.scope}</span></>}
+                  </div>
                 </div>
               </div>
-            </div>
-          </li>
-        ))}
+              {/* Per-row actions: pin + delete. Stop propagation so click
+                  doesn't also trigger the load handler on the row. */}
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  type="button"
+                  title={s.pinned ? 'Unpin' : 'Pin conversation'}
+                  onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); onTogglePin(s.id); }}
+                  className="w-6 h-6 rounded grid place-items-center text-faint hover:text-brand hover:bg-surface"
+                >
+                  <Icon.Pin className={`w-3.5 h-3.5 ${s.pinned ? 'text-brand' : ''}`} />
+                </button>
+                <button
+                  type="button"
+                  title="Delete conversation"
+                  onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(s.id); }}
+                  className="w-6 h-6 rounded grid place-items-center text-faint hover:text-negative hover:bg-surface"
+                >
+                  <Icon.X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -1285,7 +1357,14 @@ export function CommandCenter({
   const {
     send, reset, msgs, contextual, followUps, thinking, markSent, sent,
     saved, removeSaved,
+    sessions, activeSessionId, loadSession, togglePinSession, deleteSession, clearAllSessions,
   } = useChat();
+  // The currently active session (if any) — used to drive the Pin button's
+  // visual state and to make Pin actually persist.
+  const activeSession = useMemo(
+    () => sessions.find(s => s.id === activeSessionId) ?? null,
+    [sessions, activeSessionId],
+  );
   const persona = usePersona();
   const { push } = useToasts();
   const [input, setInput] = useState('');
@@ -1443,9 +1522,10 @@ export function CommandCenter({
   // Distinct from `minimized` (which keeps the header visible). Lets users
   // fully reclaim the canvas when they don't need the AI surface.
   const [hidden, setHidden] = useState(false);
-  // Default pinned = false so the Pin button doesn't read as "active" on first
-  // load. Users who want the CC to follow them while scrolling can click Pin.
-  const [pinned, setPinned] = useState(false);
+  // Pin reflects the active session's `pinned` flag (ChatGPT/Claude-style:
+  // pin saves the entire conversation thread, not the widget). Pinning before
+  // any messages exist is a no-op since there's nothing to save yet.
+  const pinned = activeSession?.pinned ?? false;
   // `favorited` marks the current session/thread as a favorite. Locally held
   // (the whole widget is a cross-page surface; a session-scoped bookmark is
   // the right granularity here). Shows a filled star when active.
@@ -1455,19 +1535,6 @@ export function CommandCenter({
   // conversation + action plan and ignore the canvas underneath.
   const [fullscreen, setFullscreen] = useState(false);
   const hasAsked = msgs.length > 0;
-
-  // ---------- History (current session + seed) ----------
-  // The user's real queries from this session are prepended so History always
-  // leads with what they most recently asked. Deduped on exact text.
-  const history: HistoryEntry[] = useMemo(() => {
-    const live: HistoryEntry[] = msgs
-      .filter(m => m.role === 'user' && m.text)
-      .reverse()
-      .map(m => ({ q: m.text as string, when: 'Just now' }));
-    const seen = new Set(live.map(e => e.q.toLowerCase()));
-    const rest = SEED_HISTORY.filter(e => !seen.has(e.q.toLowerCase()));
-    return [...live, ...rest];
-  }, [msgs]);
 
   // ---------- Click-outside to close composer popovers ----------
   useEffect(() => {
@@ -1619,11 +1686,16 @@ export function CommandCenter({
               active={pinned}
               icon={<Icon.Pin className="w-3.5 h-3.5" />}
               onClick={() => {
-                const next = !pinned;
-                setPinned(next);
+                if (!activeSession) {
+                  push({ kind: 'info', title: 'Ask something first', sub: 'Pin saves the whole conversation.' });
+                  return;
+                }
+                const next = !activeSession.pinned;
+                togglePinSession(activeSession.id);
                 push({
                   kind: 'ok',
-                  title: next ? 'Pinned to bottom' : 'Unpinned',
+                  title: next ? 'Conversation saved' : 'Removed from saved',
+                  sub: next ? 'Find it under History · Pinned.' : undefined,
                 });
               }}
             />
@@ -1737,14 +1809,16 @@ export function CommandCenter({
             <div className="absolute left-0 right-0 bottom-full mb-2 bg-surface border border-rule rounded-xl shadow-e2 overflow-hidden z-[60] anim-fade-up">
               {openPanel === 'history' && (
                 <HistoryPanel
-                  entries={history}
-                  onPick={(q) => { setOpenPanel(null); submit(q); }}
+                  sessions={sessions}
+                  activeSessionId={activeSessionId}
+                  onLoad={(id) => { setOpenPanel(null); loadSession(id); }}
+                  onTogglePin={(id) => togglePinSession(id)}
+                  onDelete={(id) => deleteSession(id)}
                   onClear={() => {
-                    reset();
+                    clearAllSessions();
                     setOpenPanel(null);
-                    push({ kind: 'info', title: 'Chat history cleared' });
+                    push({ kind: 'info', title: 'Cleared unpinned conversations' });
                   }}
-                  hasSessionMsgs={msgs.length > 0}
                 />
               )}
               {openPanel === 'saved' && (
@@ -1781,7 +1855,7 @@ export function CommandCenter({
                 shortLabel="History"
                 icon={<Icon.History className="w-3.5 h-3.5" />}
                 active={openPanel === 'history'}
-                badge={msgs.filter(m => m.role === 'user').length}
+                badge={sessions.length}
                 onClick={() => setOpenPanel(p => (p === 'history' ? null : 'history'))}
               />
               <UtilityButton
@@ -1809,7 +1883,7 @@ export function CommandCenter({
               className="inline-flex items-center justify-center w-9 h-9 rounded-full text-white shadow-e2 hover:shadow-e3 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-e1 transition-all shrink-0"
               style={{
                 background:
-                  'linear-gradient(135deg, var(--primary) 0%, rgba(254,149,25,0.85) 100%)',
+                  'linear-gradient(135deg, var(--primary) 0%, rgba(182,77,29,0.85) 100%)',
               }}
             >
               <Icon.Send className="w-4 h-4" />

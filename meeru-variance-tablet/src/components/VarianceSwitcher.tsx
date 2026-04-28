@@ -21,7 +21,7 @@ export function VarianceSwitcher() {
 
   return (
     <View className="flex-row items-center justify-between px-4 py-2.5 bg-surface border-b border-rule">
-      <Logo height={22} />
+      <Logo height={28} />
 
       <View className="flex-row gap-1 p-0.5 rounded-lg bg-surface-soft border border-rule">
         {ITEMS.map((it) => {

@@ -1,6 +1,27 @@
 import { useEffect, useState } from 'react';
 import type { Kpi } from '../types';
 
+// Live PST clock — used to replace any "HH:MM AM/PM" literal inside a KPI
+// delta with the actual current time. Updates every 30s so users see a fresh
+// timestamp without spamming renders.
+function formatPST(d: Date): string {
+  return d.toLocaleTimeString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+function useLivePST(): string {
+  const [t, setT] = useState(() => formatPST(new Date()));
+  useEffect(() => {
+    const id = setInterval(() => setT(formatPST(new Date())), 30_000);
+    return () => clearInterval(id);
+  }, []);
+  return t;
+}
+const TIME_RE = /\d{1,2}:\d{2}\s+(AM|PM)/i;
+
 /**
  * Renders the 3-tile KPI row. The "watched" KPI (typically the worst-performing
  * one) cycles a subtle live-pulse indicator so the user can see the agent is
@@ -10,6 +31,7 @@ export function KpiRow({ kpis, onCardClick }: { kpis: Kpi[]; onCardClick?: (inde
   // The agent "watches" the most concerning KPI. Cycle the indicator slowly.
   const watchedIndex = kpis.findIndex(k => k.tone === 'neg');
   const [pulse, setPulse] = useState(true);
+  const livePST = useLivePST();
   useEffect(() => {
     const id = setInterval(() => setPulse(p => !p), 6000);
     return () => clearInterval(id);
@@ -54,7 +76,7 @@ export function KpiRow({ kpis, onCardClick }: { kpis: Kpi[]; onCardClick?: (inde
               )}
             </div>
             <div className={`${valCls} font-semibold text-ink mt-1 num tracking-tight relative truncate`}>{k.val}</div>
-            <div className={`text-[11px] mt-1 ${deltaCls} relative truncate`}>{k.delta}</div>
+            <div className={`text-[11px] mt-1 ${deltaCls} relative truncate`}>{k.delta.replace(TIME_RE, livePST)}</div>
           </div>
         );
       })}

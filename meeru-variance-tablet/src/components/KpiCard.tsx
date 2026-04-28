@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import type { Kpi } from '../types';
 
@@ -6,6 +7,26 @@ const DELTA_CLASS = {
   neg:  'text-negative',
   warn: 'text-warning',
 } as const;
+
+// Live PST clock — substitutes any "HH:MM AM/PM" literal inside a KPI delta
+// with the current time in America/Los_Angeles. Refreshes every 30s.
+function formatPST(d: Date): string {
+  return d.toLocaleTimeString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+function useLivePST(): string {
+  const [t, setT] = useState(() => formatPST(new Date()));
+  useEffect(() => {
+    const id = setInterval(() => setT(formatPST(new Date())), 30_000);
+    return () => clearInterval(id);
+  }, []);
+  return t;
+}
+const TIME_RE = /\d{1,2}:\d{2}\s+(AM|PM)/i;
 
 /**
  * Compact stat card matching the web prototype's `.uf-stat-card` style.
@@ -20,6 +41,8 @@ export function KpiCard({
   compact?: boolean;
   onPress?: () => void;
 }) {
+  const livePST = useLivePST();
+  const delta = kpi.delta.replace(TIME_RE, livePST);
   const body = (
     <View className="flex-1 bg-surface border border-rule rounded-lg" style={{ padding: compact ? 10 : 14 }}>
       <Text className="text-[13px] font-semibold uppercase text-muted tracking-widest mb-1">
@@ -35,7 +58,7 @@ export function KpiCard({
       >
         {kpi.val}
       </Text>
-      <Text className={`text-[14px] mt-0.5 ${DELTA_CLASS[kpi.tone]}`}>{kpi.delta}</Text>
+      <Text className={`text-[14px] mt-0.5 ${DELTA_CLASS[kpi.tone]}`}>{delta}</Text>
     </View>
   );
   if (onPress) {

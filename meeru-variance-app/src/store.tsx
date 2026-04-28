@@ -147,6 +147,21 @@ export const useMission = () => {
 // ==================================================================
 // CHAT (per-page scope — held at app level but keyed by workbench)
 // ==================================================================
+/** A single back-and-forth conversation. ChatGPT/Claude-style: user asks
+ *  multiple questions, every reply lands in the same session, "New Chat"
+ *  starts a fresh one. Sessions are auto-saved on every AI reply. */
+export interface ChatSession {
+  id: string;
+  /** First user message, truncated — used as the History list label. */
+  title: string;
+  messages: ChatMsg[];
+  createdAt: number;
+  updatedAt: number;
+  persona?: Role;
+  scope?: string;
+  /** User-pinned (Save). Pinned sessions sort to the top of History. */
+  pinned: boolean;
+}
 interface ChatCtx {
   msgs: ChatMsg[];
   contextual: ActionCard[];
@@ -157,10 +172,14 @@ interface ChatCtx {
   setScope: (s: string) => void;
   send: (q: string) => void;
   regenerate: () => void;
+  /** Save the current conversation and start a fresh one. Empty active
+   *  conversations are not saved (so refreshing without asking does nothing). */
+  newSession: () => void;
+  /** @deprecated Alias for newSession — kept so existing call sites keep working. */
   reset: () => void;
   markSent: (id: string) => void;
   clearContextual: () => void;
-  /** Pinned and saved replies — persisted across sessions */
+  /** Pinned and saved replies — persisted across sessions (legacy, per-reply). */
   pinned: SavedReply[];
   saved: SavedReply[];
   isPinned: (id: string) => boolean;
@@ -169,6 +188,13 @@ interface ChatCtx {
   toggleSave: (item: SavedReply) => void;
   removePinned: (id: string) => void;
   removeSaved: (id: string) => void;
+  /** Session-based history. Auto-populated on each AI reply. */
+  sessions: ChatSession[];
+  activeSessionId: string | null;
+  loadSession: (id: string) => void;
+  togglePinSession: (id: string) => void;
+  deleteSession: (id: string) => void;
+  clearAllSessions: () => void;
 }
 const ChatContext = createContext<ChatCtx | null>(null);
 export const useChat = () => {
@@ -229,12 +255,15 @@ export function AppProviders({ children }: { children: ReactNode }) {
     chatWidth: 344,
     railCollapsed: false,
     industry: 'delivery',
-    showWorkbenchTabs: false,
+    showWorkbenchTabs: true,
   };
   const [settings, setSettings] = useState<Settings>(() => {
     try {
       const raw = localStorage.getItem('meeru.settings');
-      if (raw) return { ...defaults, ...JSON.parse(raw) };
+      // AI panel always starts open + workbench tabs always shown — drop
+      // persisted values for these so a previously collapsed/hidden session
+      // doesn't carry over to the next launch.
+      if (raw) return { ...defaults, ...JSON.parse(raw), chatHidden: false, showWorkbenchTabs: true };
     } catch {}
     return defaults;
   });
@@ -299,6 +328,21 @@ export function AppProviders({ children }: { children: ReactNode }) {
   useEffect(() => { try { localStorage.setItem('meeru.pinnedReplies', JSON.stringify(pinned)); } catch {} }, [pinned]);
   useEffect(() => { try { localStorage.setItem('meeru.savedReplies', JSON.stringify(saved)); } catch {} }, [saved]);
 
+  // Session-based conversation history (ChatGPT/Claude pattern). Each session
+  // is one continuous back-and-forth thread; "New Chat" starts a fresh session.
+  // Auto-saved on every AI reply. Capped at 200 most-recent so localStorage
+  // doesn't grow unbounded.
+  const [sessions, setSessions] = useState<ChatSession[]>(() => {
+    try {
+      const raw = localStorage.getItem('meeru.chat.sessions');
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  });
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  useEffect(() => { try { localStorage.setItem('meeru.chat.sessions', JSON.stringify(sessions)); } catch {} }, [sessions]);
+
   const [thinking, setThinking] = useState(false);
 
   // Persona-aware matcher with a 3-tier fallback so every chip prompt gets a
@@ -319,21 +363,59 @@ export function AppProviders({ children }: { children: ReactNode }) {
     return anyPersonaHit ?? FALLBACK_RESPONSE;
   }, [user?.key]);
 
+  // Reuse existing session id across the full reply lifecycle so the user
+  // turn and AI turn land in the same session even when sendChat is called
+  // before the previous reply finishes resolving.
+  const pendingSessionRef = useRef<string | null>(null);
+
   const sendChat = useCallback((q: string) => {
     if (!q.trim()) return;
     setMsgs(prev => [...prev, { role: 'user', text: q }]);
     setThinking(true);
     const resp = resolveResponse(q);
-    // Slight variable delay for more realistic feel
     const delay = 900 + Math.random() * 500;
+    // Resolve which session this turn belongs to. If the user is mid-thread
+    // (activeSessionId is set), keep appending. Otherwise create a fresh one.
+    const sessionId = activeSessionId ?? pendingSessionRef.current ?? `s-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    if (!activeSessionId) {
+      pendingSessionRef.current = sessionId;
+      setActiveSessionId(sessionId);
+    }
+    const userMsg: ChatMsg = { role: 'user', text: q };
     setTimeout(() => {
-      setMsgs(prev => [...prev, { role: 'ai', html: resp.text }]);
+      const aiMsg: ChatMsg = { role: 'ai', html: resp.text };
+      setMsgs(prev => [...prev, aiMsg]);
       setContextual(resp.actions);
       setFollowUps(resp.followUps ?? []);
       setSent(new Set());
       setThinking(false);
+      pendingSessionRef.current = null;
+      // Append both turns to the active session, creating it if missing.
+      setSessions(prev => {
+        const existing = prev.find(s => s.id === sessionId);
+        if (existing) {
+          const updated = {
+            ...existing,
+            messages: [...existing.messages, userMsg, aiMsg],
+            updatedAt: Date.now(),
+          };
+          // Move the active session to the front so History sorts newest-first.
+          return [updated, ...prev.filter(s => s.id !== sessionId)];
+        }
+        const fresh: ChatSession = {
+          id: sessionId,
+          title: q.length > 60 ? q.slice(0, 60).trim() + '…' : q,
+          messages: [userMsg, aiMsg],
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          persona: user?.key,
+          scope,
+          pinned: false,
+        };
+        return [fresh, ...prev].slice(0, 200);
+      });
     }, delay);
-  }, [resolveResponse]);
+  }, [resolveResponse, user?.key, scope, activeSessionId]);
 
   const regenerate = useCallback(() => {
     // Find the last user message and re-run the pipeline
@@ -359,9 +441,15 @@ export function AppProviders({ children }: { children: ReactNode }) {
     }, 900 + Math.random() * 500);
   }, [msgs]);
 
-  const resetChat = useCallback(() => {
+  // Start a fresh conversation. The previous session was already auto-saved
+  // on each AI reply, so we just need to clear the active surface and drop
+  // the pointer — no separate "save" step is required.
+  const newSession = useCallback(() => {
     setMsgs([]); setContextual([]); setFollowUps([]); setSent(new Set());
+    setActiveSessionId(null);
+    pendingSessionRef.current = null;
   }, []);
+  const resetChat = newSession;
   const markSent = useCallback((id: string) => {
     setSent(prev => { const n = new Set(prev); n.add(id); return n; });
   }, []);
@@ -382,6 +470,37 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const removePinned = useCallback((id: string) => setPinned(prev => prev.filter(p => p.id !== id)), []);
   const removeSaved  = useCallback((id: string) => setSaved(prev  => prev.filter(s => s.id !== id)),  []);
 
+  // ---- Session-list controls (ChatGPT/Claude-style sidebar) ----
+  const loadSession = useCallback((id: string) => {
+    const s = sessions.find(x => x.id === id);
+    if (!s) return;
+    setMsgs(s.messages);
+    setContextual([]);
+    setFollowUps([]);
+    setSent(new Set());
+    setActiveSessionId(id);
+  }, [sessions]);
+
+  const togglePinSession = useCallback((id: string) => {
+    setSessions(prev => prev.map(s => s.id === id ? { ...s, pinned: !s.pinned } : s));
+  }, []);
+
+  const deleteSession = useCallback((id: string) => {
+    setSessions(prev => prev.filter(s => s.id !== id));
+    if (activeSessionId === id) {
+      setMsgs([]); setContextual([]); setFollowUps([]); setSent(new Set());
+      setActiveSessionId(null);
+    }
+  }, [activeSessionId]);
+
+  const clearAllSessions = useCallback(() => {
+    // Pinned sessions survive a clear-all so users can't accidentally drop
+    // saved threads. To delete a pinned thread the user has to unpin first.
+    setSessions(prev => prev.filter(s => s.pinned));
+    setMsgs([]); setContextual([]); setFollowUps([]); setSent(new Set());
+    setActiveSessionId(null);
+  }, []);
+
   // ------ Provide values ------
   const auth = useMemo(() => ({ user, login, logout }), [user, login, logout]);
   const themeV = useMemo(() => ({ theme, toggle: toggleTheme, set: setTheme }), [theme, toggleTheme]);
@@ -400,9 +519,10 @@ export function AppProviders({ children }: { children: ReactNode }) {
   }), [inFlight, loadingBegin, loadingEnd]);
   const chatV = useMemo(() => ({
     msgs, contextual, followUps, sent, scope, thinking, setScope,
-    send: sendChat, regenerate, reset: resetChat, markSent, clearContextual,
+    send: sendChat, regenerate, reset: resetChat, newSession, markSent, clearContextual,
     pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved,
-  }), [msgs, contextual, followUps, sent, scope, thinking, sendChat, regenerate, resetChat, markSent, clearContextual, pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved]);
+    sessions, activeSessionId, loadSession, togglePinSession, deleteSession, clearAllSessions,
+  }), [msgs, contextual, followUps, sent, scope, thinking, sendChat, regenerate, resetChat, newSession, markSent, clearContextual, pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved, sessions, activeSessionId, loadSession, togglePinSession, deleteSession, clearAllSessions]);
 
   return (
     <AuthContext.Provider value={auth}>

@@ -8,7 +8,7 @@ import { Icon } from '../components/icons';
 import { Logo } from '../components/Logo';
 
 const CARD_ACCENTS: Record<Role, readonly [string, string]> = {
-  CFO:        ['#FFAA48', '#5C3A0A'],
+  CFO:        ['#DB6D40', '#4A2208'],
   CONTROLLER: ['#10B981', '#0F766E'],
   STAFF:   ['#F59E0B', '#C2410C'],
 };
@@ -26,7 +26,7 @@ export default function LoginScreen() {
     <SafeAreaView className="flex-1 bg-surface-alt">
       <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 40 }}>
         <View className="mb-8 mt-4">
-          <Logo height={40} />
+          <Logo height={48} />
           <Text className="text-xs text-muted mt-2">
             Variance Workbench — pick a persona to explore
           </Text>
@@ -57,7 +57,7 @@ export default function LoginScreen() {
 
                 <View className="flex-row items-center gap-1">
                   <Text className="text-[13px] font-medium text-brand">Enter workspace</Text>
-                  <Icon.Send color="#FE9519" size={14} />
+                  <Icon.Send color="#B64D1D" size={14} />
                 </View>
               </Pressable>
             );
