@@ -188,11 +188,15 @@ interface ChatCtx {
   toggleSave: (item: SavedReply) => void;
   removePinned: (id: string) => void;
   removeSaved: (id: string) => void;
+  /** Remove a single message (and its paired reply when removing a user
+   *  prompt) from the active conversation. */
+  deleteMessage: (index: number) => void;
   /** Session-based history. Auto-populated on each AI reply. */
   sessions: ChatSession[];
   activeSessionId: string | null;
   loadSession: (id: string) => void;
   togglePinSession: (id: string) => void;
+  renameSession: (id: string, title: string) => void;
   deleteSession: (id: string) => void;
   clearAllSessions: () => void;
 }
@@ -237,7 +241,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   // THEME
   const [theme, setTheme] = useState<Theme>(() => {
-    try { return (localStorage.getItem('meeru.theme') as Theme) || 'light'; } catch { return 'light'; }
+    try { return (localStorage.getItem('meeru.theme') as Theme) || 'dark'; } catch { return 'dark'; }
   });
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -455,6 +459,33 @@ export function AppProviders({ children }: { children: ReactNode }) {
   }, []);
   const clearContextual = useCallback(() => { setContextual([]); setSent(new Set()); }, []);
 
+  // Delete a single message. If a user prompt is removed, drop the AI reply
+  // that immediately followed it too — keeping the transcript coherent. The
+  // active session in `sessions` is also kept in sync so the row in History
+  // matches what's on screen.
+  const deleteMessage = useCallback((index: number) => {
+    setMsgs(prev => {
+      if (index < 0 || index >= prev.length) return prev;
+      const target = prev[index];
+      const next = [...prev];
+      // If user deletes their own prompt and the very next message is an AI
+      // reply, take both — otherwise the orphaned reply reads as nonsense.
+      if (target.role === 'user' && prev[index + 1]?.role === 'ai') {
+        next.splice(index, 2);
+      } else {
+        next.splice(index, 1);
+      }
+      // Mirror into the active session so Chat History stays consistent.
+      if (activeSessionId) {
+        setSessions(s => s.map(ss => ss.id === activeSessionId
+          ? { ...ss, messages: next, updatedAt: Date.now() }
+          : ss
+        ));
+      }
+      return next;
+    });
+  }, [activeSessionId]);
+
   const isPinned = useCallback((id: string) => pinned.some(p => p.id === id), [pinned]);
   const isSaved  = useCallback((id: string) => saved.some(s => s.id === id),  [saved]);
   const togglePin = useCallback((item: SavedReply) => {
@@ -483,6 +514,14 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   const togglePinSession = useCallback((id: string) => {
     setSessions(prev => prev.map(s => s.id === id ? { ...s, pinned: !s.pinned } : s));
+  }, []);
+
+  // Rename a saved session. Trims and clamps to 80 chars; empty input keeps
+  // the existing title so the user can't accidentally blank it out.
+  const renameSession = useCallback((id: string, title: string) => {
+    const cleaned = title.trim().slice(0, 80);
+    if (!cleaned) return;
+    setSessions(prev => prev.map(s => s.id === id ? { ...s, title: cleaned } : s));
   }, []);
 
   const deleteSession = useCallback((id: string) => {
@@ -521,8 +560,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
     msgs, contextual, followUps, sent, scope, thinking, setScope,
     send: sendChat, regenerate, reset: resetChat, newSession, markSent, clearContextual,
     pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved,
-    sessions, activeSessionId, loadSession, togglePinSession, deleteSession, clearAllSessions,
-  }), [msgs, contextual, followUps, sent, scope, thinking, sendChat, regenerate, resetChat, newSession, markSent, clearContextual, pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved, sessions, activeSessionId, loadSession, togglePinSession, deleteSession, clearAllSessions]);
+    deleteMessage,
+    sessions, activeSessionId, loadSession, togglePinSession, renameSession, deleteSession, clearAllSessions,
+  }), [msgs, contextual, followUps, sent, scope, thinking, sendChat, regenerate, resetChat, newSession, markSent, clearContextual, pinned, saved, isPinned, isSaved, togglePin, toggleSave, removePinned, removeSaved, deleteMessage, sessions, activeSessionId, loadSession, togglePinSession, renameSession, deleteSession, clearAllSessions]);
 
   return (
     <AuthContext.Provider value={auth}>

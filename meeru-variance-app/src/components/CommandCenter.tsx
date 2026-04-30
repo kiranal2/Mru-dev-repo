@@ -49,21 +49,33 @@ const SHARED_PROMPTS = [
 ];
 
 // Persona-specific prompt pools — surfaced based on the active persona.
-// Persona-tagged CHAT_RESPONSES match these in data.ts.
+// Persona-tagged CHAT_RESPONSES match these in data.ts. Prompts are scoped to
+// the persona's authorization band so the suggestions never imply an action
+// the user can't actually take (e.g. STAFF doesn't see "Approve…" prompts).
 const PROMPTS_BY_PERSONA: Record<Role, { defaults: string[]; library: string[] }> = {
   CFO: {
+    // CFO defaults lead with chart prompts so visual answers surface in the
+    // first three picks — that's what executives reach for during reviews.
     defaults: [
-      'Show items needing my approval',
+      'Show variance by region as a chart',
       'Draft a W10 board summary',
-      'What is the Q1 cumulative exposure?',
+      'Show items needing my approval',
     ],
     library: [
+      // Charts & visualizations
+      'Show variance by region as a chart',
+      'Show the 10-week variance trend',
+      'Show driver split as a pie chart',
+      'Compare W11 forecast scenarios',
+      'Show the Segment × Region heatmap',
+      // Authorization-aware (CFO only — exceeds $1M materiality)
       'Show items needing my approval',
+      'Approve the LATAM recovery package',
+      'Lock W10 period for closed segments',
+      // Strategic & exec
       'Draft a W10 board summary',
       'What is the Q1 cumulative exposure?',
-      'What segments are ready for period lock?',
       'Compare W10 to same week last year',
-      'Total materiality-exceeding variances this quarter',
       'Publish board pre-read for Friday',
       'Model Q2 recovery if all LATAM interventions land',
     ],
@@ -71,41 +83,65 @@ const PROMPTS_BY_PERSONA: Record<Role, { defaults: string[]; library: string[] }
   CONTROLLER: {
     defaults: [
       'Show my review queue',
+      'Show variance by region as a chart',
       'What are the close-day blockers?',
-      'Reconciliation status across segments',
     ],
     library: [
+      // Charts & visualizations
+      'Show variance by region as a chart',
+      'Show the 10-week variance trend',
+      'Show the Segment × Region heatmap',
+      'Show driver split as a pie chart',
+      // Workflow / authorization (Controller can post < $1M JE, route > $1M to CFO)
       'Show my review queue',
-      'What are the close-day blockers?',
-      'Reconciliation status across segments',
-      'Show the Mexico audit trail',
       'Which staff-prepared items need approval?',
       'Post the Mexico provisional JE',
       'Route Mexico to CFO for sign-off',
+      'Show the Mexico audit trail',
+      // Close ops
+      'What are the close-day blockers?',
+      'Reconciliation status across segments',
       'Day 4 critical-path items',
     ],
   },
   STAFF: {
     defaults: [
       'What are my tasks for today?',
+      'Show variance by region as a chart',
       'How do I prepare the Mexico investigation?',
-      'What evidence am I missing?',
     ],
     library: [
+      // Charts & visualizations (read-only context, but useful for evidence prep)
+      'Show variance by region as a chart',
+      'Show the 10-week variance trend',
+      'Show driver split as a pie chart',
+      // Workflow (Staff can prepare + submit, never approve)
       'What are my tasks for today?',
       'How do I prepare the Mexico investigation?',
       'What evidence am I missing?',
       'Submit Mexico for Controller review',
       'Show me a well-documented example',
-      'How long does Raj usually take to review?',
       'Prepare the Voltair JE',
       'Upload Bank recon evidence',
+      // Coaching
+      'How long does Raj usually take to review?',
     ],
   },
 };
 
 // Shared topical buckets — useful for all personas.
 const SHARED_SUGGESTION_GROUPS: { label: string; icon: 'Sparkle' | 'Trend' | 'Target' | 'Email'; items: string[] }[] = [
+  {
+    label: 'Visualize',
+    icon: 'Trend',
+    items: [
+      'Show variance by region as a chart',
+      'Show the 10-week variance trend',
+      'Show driver split as a pie chart',
+      'Compare W11 forecast scenarios',
+      'Show the Segment × Region heatmap',
+    ],
+  },
   {
     label: 'Diagnose',
     icon: 'Sparkle',
@@ -991,8 +1027,135 @@ function ActionPlanPanel({
 // Conversation transcript
 // ---------------------------------------------------------------------------
 
+/**
+ * Single chat bubble with a hover-revealed kebab menu (Copy · Save ·
+ * Regenerate · Delete). Same interaction pattern as the Chat History rows
+ * in the AI panel so the two surfaces feel consistent. Regenerate is only
+ * passed in for AI replies — undefined hides that menu item.
+ */
+function MessageRow({
+  msg, index, isLast, saved, onCopy, onSave, onRegenerate, onDelete,
+}: {
+  msg: { role: 'user' | 'ai'; text?: string; html?: string };
+  index: number;
+  isLast: boolean;
+  saved: SavedReply[];
+  onCopy: () => void;
+  onSave: () => void;
+  onRegenerate?: () => void;
+  onDelete: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDoc);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const isUser = msg.role === 'user';
+  const id = `msg-${index}-${(msg.text ?? msg.html ?? '').slice(0, 16)}`;
+  const isSaved = saved.some(s => s.id === id);
+
+  const bubble = isUser ? (
+    <div className="max-w-[85%] px-3 py-1.5 rounded-xl rounded-br-sm bg-brand text-white text-[12px] leading-relaxed">
+      {msg.text}
+    </div>
+  ) : (
+    <div
+      className="max-w-[92%] px-3 py-2 rounded-xl rounded-bl-sm bg-surface-alt border border-rule text-[12px] text-ink leading-relaxed"
+      dangerouslySetInnerHTML={{ __html: msg.html ?? msg.text ?? '' }}
+    />
+  );
+
+  return (
+    <div className={`group flex anim-fade-up ${isUser ? 'justify-end' : 'justify-start'}`}>
+      {/* Layout: bubble + a thin action column. The kebab sits next to the
+          bubble (not inside it) so it never disrupts the message itself. */}
+      <div className={`flex items-start gap-1 ${isUser ? 'flex-row-reverse' : 'flex-row'} max-w-full`}>
+        {bubble}
+        <div ref={wrapRef} className="relative pt-1">
+          <button
+            type="button"
+            title="Message actions"
+            aria-haspopup="menu"
+            aria-expanded={open}
+            onClick={() => setOpen(v => !v)}
+            className={`w-6 h-6 rounded grid place-items-center transition-opacity ${
+              open ? 'text-ink bg-surface-soft opacity-100' : 'text-faint hover:text-ink hover:bg-surface-soft opacity-0 group-hover:opacity-100'
+            }`}
+          >
+            <span aria-hidden className="flex flex-col gap-[2px]">
+              <span className="w-[3px] h-[3px] rounded-full bg-current" />
+              <span className="w-[3px] h-[3px] rounded-full bg-current" />
+              <span className="w-[3px] h-[3px] rounded-full bg-current" />
+            </span>
+          </button>
+          {open && (
+            <div
+              role="menu"
+              className={`absolute z-30 ${isUser ? 'right-0' : 'left-0'} ${isLast ? 'bottom-full mb-1' : 'top-full mt-1'} w-40 bg-surface border border-rule rounded-md shadow-e3 overflow-hidden anim-fade-up`}
+            >
+              <MenuItem icon={<Icon.Sheet className="w-3.5 h-3.5 text-faint" />} label="Copy" onClick={() => { setOpen(false); onCopy(); }} />
+              <MenuItem
+                icon={<Icon.Star className={`w-3.5 h-3.5 ${isSaved ? 'text-brand' : 'text-faint'}`} />}
+                label={isSaved ? 'Unsave' : 'Save'}
+                onClick={() => { setOpen(false); onSave(); }}
+              />
+              {onRegenerate && (
+                <MenuItem icon={<Icon.Refresh className="w-3.5 h-3.5 text-faint" />} label="Regenerate" onClick={() => { setOpen(false); onRegenerate(); }} />
+              )}
+              <div className="h-px bg-rule" />
+              <MenuItem
+                icon={<Icon.X className="w-3.5 h-3.5" />}
+                label="Delete"
+                tone="danger"
+                onClick={() => { setOpen(false); onDelete(); }}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MenuItem({
+  icon, label, onClick, tone,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  tone?: 'danger';
+}) {
+  const cls = tone === 'danger'
+    ? 'text-negative hover:bg-negative-weak'
+    : 'text-ink hover:bg-brand-tint hover:text-brand';
+  return (
+    <button
+      type="button"
+      role="menuitem"
+      onClick={onClick}
+      className={`w-full px-3 py-1.5 text-[12px] flex items-center gap-2 text-left ${cls}`}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}
+
+
 function Transcript({ thinking }: { thinking: boolean }) {
-  const { msgs } = useChat();
+  const { msgs, regenerate, deleteMessage, toggleSave, saved } = useChat();
+  const { push } = useToasts();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   // Keep the latest message visible
@@ -1020,22 +1183,50 @@ function Transcript({ thinking }: { thinking: boolean }) {
       ref={scrollerRef}
       className="mb-3 max-h-[280px] overflow-y-auto pr-1 space-y-2"
     >
-      {msgs.map((m, i) =>
-        m.role === 'user' ? (
-          <div key={i} className="flex justify-end anim-fade-up">
-            <div className="max-w-[85%] px-3 py-1.5 rounded-xl rounded-br-sm bg-brand text-white text-[12px] leading-relaxed">
-              {m.text}
-            </div>
-          </div>
-        ) : (
-          <div key={i} className="flex justify-start anim-fade-up">
-            <div
-              className="max-w-[92%] px-3 py-2 rounded-xl rounded-bl-sm bg-surface-alt border border-rule text-[12px] text-ink leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: m.html ?? m.text ?? '' }}
-            />
-          </div>
-        ),
-      )}
+      {msgs.map((m, i) => (
+        <MessageRow
+          key={i}
+          msg={m}
+          index={i}
+          isLast={i === msgs.length - 1}
+          saved={saved}
+          onCopy={() => {
+            const text = m.text ?? (m.html ? m.html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : '');
+            try {
+              navigator.clipboard.writeText(text);
+              push({ kind: 'ok', title: 'Copied to clipboard' });
+            } catch {
+              push({ kind: 'warn', title: 'Copy failed' });
+            }
+          }}
+          onSave={() => {
+            // Reuse the existing SavedReply system. Pair the AI reply with its
+            // user prompt so the saved entry has full context.
+            const isAi = m.role === 'ai';
+            const userPrompt = isAi ? msgs[i - 1]?.text ?? '' : m.text ?? '';
+            const reply = isAi ? m : msgs[i + 1];
+            if (!reply) return;
+            const id = `msg-${i}-${(m.text ?? m.html ?? '').slice(0, 16)}`;
+            const item = {
+              id,
+              question: userPrompt,
+              answerText: reply.text ?? '',
+              answerHtml: reply.html ?? reply.text ?? '',
+              scope: 'Command Center',
+              persona: '',
+              timestamp: new Date().toISOString(),
+            };
+            const wasSaved = saved.some(s => s.id === id);
+            toggleSave(item);
+            push({ kind: 'ok', title: wasSaved ? 'Removed from saved' : 'Saved reply' });
+          }}
+          onRegenerate={m.role === 'ai' ? () => {
+            regenerate();
+            push({ kind: 'info', title: 'Regenerating…' });
+          } : undefined}
+          onDelete={() => deleteMessage(i)}
+        />
+      ))}
       {thinking && (
         <div className="flex justify-start anim-fade-up">
           <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl rounded-bl-sm bg-surface-alt border border-rule text-[11px] text-muted shimmer-bg">
@@ -1357,7 +1548,7 @@ export function CommandCenter({
   const {
     send, reset, msgs, contextual, followUps, thinking, markSent, sent,
     saved, removeSaved,
-    sessions, activeSessionId, loadSession, togglePinSession, deleteSession, clearAllSessions,
+    sessions, activeSessionId, loadSession, togglePinSession, renameSession, deleteSession, clearAllSessions,
   } = useChat();
   // The currently active session (if any) — used to drive the Pin button's
   // visual state and to make Pin actually persist.
@@ -1523,18 +1714,52 @@ export function CommandCenter({
   // fully reclaim the canvas when they don't need the AI surface.
   const [hidden, setHidden] = useState(false);
   // Pin reflects the active session's `pinned` flag (ChatGPT/Claude-style:
-  // pin saves the entire conversation thread, not the widget). Pinning before
-  // any messages exist is a no-op since there's nothing to save yet.
+  // pin saves the entire conversation thread). Pinned threads surface under
+  // the Chat History → Pinned sub-tab. No-op before any messages exist.
   const pinned = activeSession?.pinned ?? false;
-  // `favorited` marks the current session/thread as a favorite. Locally held
-  // (the whole widget is a cross-page surface; a session-scoped bookmark is
-  // the right granularity here). Shows a filled star when active.
-  const [favorited, setFavorited] = useState(false);
+  // (Old `favorited` local state was removed — Pin now reflects the active
+  // session's persisted `pinned` flag instead.)
   // `fullscreen` expands the widget out of the sticky bottom slot into a
   // centered modal-style pane. Useful when the user wants to focus on the
   // conversation + action plan and ignore the canvas underneath.
   const [fullscreen, setFullscreen] = useState(false);
   const hasAsked = msgs.length > 0;
+
+  // Header kebab menu — replaces the standalone Pin button so the user gets
+  // Pin / Rename / Delete in one discoverable dropdown.
+  const [headerMenuMode, setHeaderMenuMode] = useState<'closed' | 'menu' | 'rename'>('closed');
+  const [renameDraft, setRenameDraft] = useState('');
+  const headerMenuRef = useRef<HTMLDivElement>(null);
+  const renameInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (headerMenuMode === 'closed') return;
+    const onDoc = (e: MouseEvent) => {
+      if (headerMenuRef.current && !headerMenuRef.current.contains(e.target as Node)) {
+        setHeaderMenuMode('closed');
+      }
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setHeaderMenuMode('closed'); };
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDoc);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [headerMenuMode]);
+  useEffect(() => {
+    if (headerMenuMode === 'rename') {
+      requestAnimationFrame(() => renameInputRef.current?.select());
+    }
+  }, [headerMenuMode]);
+  const commitRename = () => {
+    if (!activeSession) { setHeaderMenuMode('closed'); return; }
+    const next = renameDraft.trim();
+    if (next && next !== activeSession.title) {
+      renameSession(activeSession.id, next);
+      push({ kind: 'ok', title: 'Conversation renamed' });
+    }
+    setHeaderMenuMode('closed');
+  };
 
   // ---------- Click-outside to close composer popovers ----------
   useEffect(() => {
@@ -1603,130 +1828,213 @@ export function CommandCenter({
       className={`min-w-0 scroll-mt-6 transition-[top,left,right,bottom,margin,max-width,padding] duration-300 ease-out ${
         fullscreen
           ? 'fixed inset-4 sm:inset-8 md:inset-12 z-50 mt-0 w-auto max-w-none overflow-y-auto overflow-x-hidden bg-surface border border-rule rounded-xl shadow-e3'
-          : `w-auto`
+          : `w-auto mt-1`
       }`}
     >
-      {/* ========================================================== */}
-      {/* Section 1 — Command Center card                             */}
-      {/*                                                              */}
-      {/*  Premium treatment to earn its center-stage position:        */}
-      {/*   - `shadow-e3` and a 2px brand-tinted ring for depth        */}
-      {/*   - top gradient accent bar to brand the widget              */}
-      {/*   - backdrop-blur so content behind is gently frosted when   */}
-      {/*     pinned and the page scrolls underneath                   */}
-      {/* ========================================================== */}
-      <div className={`relative bg-surface min-w-0 transition-all duration-300 ${fullscreen ? 'overflow-hidden' : 'border-t border-rule'}`}>
-        {/* Row 1 — Title (left) + tagline (right). Flat tinted band per ref. */}
-        <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-brand-tint/40">
-          <span className="text-[14px] font-semibold text-ink tracking-tight">
+      {/* Inline card chrome — clean rounded surface lifted off the canvas with
+          a deep shadow and a subtle inner top-light. No outline ring, no
+          accent stripe; depth + elevation alone do the work so the panel
+          reads as polished rather than annotated. */}
+      <div
+        className={`relative min-w-0 transition-all duration-300 ${
+          fullscreen
+            ? 'bg-surface overflow-hidden'
+            : 'bg-surface border border-rule rounded-xl overflow-hidden shadow-[0_18px_40px_-18px_rgba(15,23,42,0.45),0_4px_14px_-4px_rgba(15,23,42,0.18)]'
+        }`}
+        style={!fullscreen ? { boxShadow: '0 18px 40px -18px rgba(15,23,42,0.45), 0 4px 14px -4px rgba(15,23,42,0.18), inset 0 1px 0 rgba(255,255,255,0.04)' } : undefined}
+      >
+        {/* Single header — title + tagline on the left, action icons + close on
+            the right. Merged from the previous two rows so we don't waste a
+            whole strip of vertical space on three right-aligned icons. */}
+        <div className="flex items-center gap-3 px-4 py-2 bg-brand-tint/40">
+          <span className="text-[13.5px] font-semibold text-ink tracking-tight shrink-0">
             Command Center
           </span>
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="text-[11px] text-faint truncate">
-              Every answer generates a next best action
-            </span>
-            {/* ✕ button — context-aware:
-                • In fullscreen mode → collapses back to the inline view
-                • Otherwise → hides the whole Command Center (restore via pill) */}
+          <span className="text-[11px] text-faint truncate hidden sm:inline">
+            Every answer generates a next best action
+          </span>
+          <div className="flex-1" />
+          <div className="flex items-center gap-0.5 shrink-0">
             <button
+              type="button"
+              title="New chat"
+              aria-label="New chat"
               onClick={() => {
-                if (fullscreen) {
-                  setFullscreen(false);
-                  push({ kind: 'info', title: 'Back to inline view' });
-                } else {
-                  setHidden(true);
-                  push({
-                    kind: 'info',
-                    title: 'Command Center hidden',
-                    sub: 'Click the floating pill to show it again',
-                  });
-                }
+                reset();
+                setInput('');
+                if (taRef.current) taRef.current.style.height = 'auto';
               }}
-              title={fullscreen ? 'Exit full screen' : 'Hide Command Center'}
-              aria-label={fullscreen ? 'Exit full screen' : 'Hide Command Center'}
-              className={`rounded grid place-items-center text-faint hover:text-ink hover:bg-surface shrink-0 ${
-                fullscreen
-                  ? 'inline-flex items-center gap-1 px-2 h-7 text-[11px] font-medium'
-                  : 'w-5 h-5'
+              className="w-7 h-7 grid place-items-center rounded-md text-muted hover:text-brand hover:bg-brand-tint transition-colors"
+            >
+              <Icon.Pencil className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              title={minimized ? 'Show body' : 'Minimize'}
+              aria-label={minimized ? 'Show body' : 'Minimize'}
+              aria-pressed={minimized}
+              onClick={() => setMinimized(v => !v)}
+              className={`w-7 h-7 grid place-items-center rounded-md transition-colors ${
+                minimized
+                  ? 'text-brand bg-brand-tint'
+                  : 'text-muted hover:text-ink hover:bg-surface-soft'
               }`}
             >
-              <Icon.X className={fullscreen ? 'w-3.5 h-3.5' : 'w-3 h-3'} />
-              {fullscreen && <span>Close</span>}
+              {minimized
+                ? <Icon.ChevUp className="w-3.5 h-3.5" />
+                : <Icon.ChevDown className="w-3.5 h-3.5" />
+              }
             </button>
-          </div>
-        </div>
-
-        {/* Row 2 — New Chat (left) + Pin / Favorite / Expand (right) per ref */}
-        <div className="flex items-center justify-between gap-3 px-4 py-2">
-          <button
-            onClick={() => {
-              reset();
-              setInput('');
-              if (taRef.current) taRef.current.style.height = 'auto';
-              push({ kind: 'info', title: 'New chat started' });
-            }}
-            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-brand hover:underline"
-          >
-            <Icon.Pencil className="w-3.5 h-3.5" />
-            <span>New Chat</span>
-          </button>
-          <div className="flex items-center gap-1.5">
-            <HeaderLabeledButton
-              label={minimized ? 'Show' : 'Minimize'}
-              active={minimized}
-              icon={
-                minimized
-                  ? <Icon.ChevUp className="w-3.5 h-3.5" />
-                  : <Icon.ChevDown className="w-3.5 h-3.5" />
-              }
-              onClick={() => setMinimized(v => !v)}
-            />
-            <HeaderLabeledButton
-              label="Pin"
-              active={pinned}
-              icon={<Icon.Pin className="w-3.5 h-3.5" />}
-              onClick={() => {
-                if (!activeSession) {
-                  push({ kind: 'info', title: 'Ask something first', sub: 'Pin saves the whole conversation.' });
-                  return;
-                }
-                const next = !activeSession.pinned;
-                togglePinSession(activeSession.id);
-                push({
-                  kind: 'ok',
-                  title: next ? 'Conversation saved' : 'Removed from saved',
-                  sub: next ? 'Find it under History · Pinned.' : undefined,
-                });
-              }}
-            />
-            <HeaderLabeledButton
-              label="Favorite"
-              active={favorited}
-              icon={
-                <Icon.Star
-                  className="w-3.5 h-3.5"
-                  style={favorited ? { fill: 'currentColor' } : undefined}
-                />
-              }
-              onClick={() => {
-                const next = !favorited;
-                setFavorited(next);
-                push({
-                  kind: 'ok',
-                  title: next ? 'Added to favorites' : 'Removed from favorites',
-                });
-              }}
-            />
-            <HeaderLabeledButton
-              label={fullscreen ? 'Collapse' : 'Expand'}
-              active={fullscreen}
-              icon={<Icon.Open className={`w-3.5 h-3.5 ${fullscreen ? 'rotate-180' : ''}`} />}
+            {/* Kebab dropdown — Pin / Rename / Delete on the active session.
+                Replaces the previous single-purpose Pin button so all session
+                actions live in one discoverable menu. Only renders once a
+                conversation exists; before that there's nothing to act on. */}
+            {activeSession && (
+              <div ref={headerMenuRef} className="relative">
+                <button
+                  type="button"
+                  title={pinned ? 'Pinned · open conversation actions' : 'Conversation actions'}
+                  aria-haspopup="menu"
+                  aria-label="Conversation actions"
+                  aria-expanded={headerMenuMode !== 'closed'}
+                  onClick={() => setHeaderMenuMode(m => m === 'closed' ? 'menu' : 'closed')}
+                  className={`w-7 h-7 grid place-items-center rounded-md transition-colors ${
+                    headerMenuMode !== 'closed'
+                      ? 'text-brand bg-brand-tint'
+                      : pinned
+                        ? 'text-brand hover:bg-brand-tint'
+                        : 'text-muted hover:text-ink hover:bg-surface-soft'
+                  }`}
+                >
+                  <span aria-hidden className="flex flex-col gap-[2.5px]">
+                    <span className="w-[3px] h-[3px] rounded-full bg-current" />
+                    <span className="w-[3px] h-[3px] rounded-full bg-current" />
+                    <span className="w-[3px] h-[3px] rounded-full bg-current" />
+                  </span>
+                </button>
+                {headerMenuMode === 'menu' && (
+                  <div
+                    role="menu"
+                    className="absolute right-0 top-full mt-1 z-30 w-48 bg-surface border border-rule rounded-md shadow-e3 overflow-hidden anim-fade-up"
+                  >
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        const next = !activeSession.pinned;
+                        togglePinSession(activeSession.id);
+                        setHeaderMenuMode('closed');
+                        push({
+                          kind: 'ok',
+                          title: next ? 'Conversation pinned' : 'Unpinned',
+                          sub: next ? 'Find it under Chat History · Pinned.' : undefined,
+                        });
+                      }}
+                      className="w-full px-3 py-1.5 text-[12px] text-ink hover:bg-brand-tint hover:text-brand flex items-center gap-2 text-left"
+                    >
+                      <Icon.Pin className={`w-3.5 h-3.5 ${pinned ? 'text-brand' : 'text-faint'}`} />
+                      {pinned ? 'Unpin conversation' : 'Pin conversation'}
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setRenameDraft(activeSession.title);
+                        setHeaderMenuMode('rename');
+                      }}
+                      className="w-full px-3 py-1.5 text-[12px] text-ink hover:bg-brand-tint hover:text-brand flex items-center gap-2 text-left"
+                    >
+                      <Icon.Pencil className="w-3.5 h-3.5 text-faint" />
+                      Rename
+                    </button>
+                    <div className="h-px bg-rule" />
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        deleteSession(activeSession.id);
+                        setHeaderMenuMode('closed');
+                        push({ kind: 'info', title: 'Conversation deleted' });
+                      }}
+                      className="w-full px-3 py-1.5 text-[12px] text-negative hover:bg-negative-weak flex items-center gap-2 text-left"
+                    >
+                      <Icon.X className="w-3.5 h-3.5" />
+                      Delete
+                    </button>
+                  </div>
+                )}
+                {headerMenuMode === 'rename' && (
+                  <div className="absolute right-0 top-full mt-1 z-30 w-64 bg-surface border border-rule rounded-md shadow-e3 p-2 anim-fade-up">
+                    <div className="text-[10px] font-bold tracking-wider uppercase text-faint mb-1.5">
+                      Rename conversation
+                    </div>
+                    <input
+                      ref={renameInputRef}
+                      value={renameDraft}
+                      onChange={(e) => setRenameDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                        if (e.key === 'Enter') { e.preventDefault(); commitRename(); }
+                        else if (e.key === 'Escape') { setHeaderMenuMode('closed'); }
+                      }}
+                      maxLength={80}
+                      placeholder="Conversation title"
+                      className="w-full text-[12px] text-ink bg-surface-soft border border-rule focus:border-brand rounded px-2 py-1 outline-none"
+                    />
+                    <div className="flex items-center justify-end gap-1.5 mt-2">
+                      <button
+                        type="button"
+                        onClick={() => setHeaderMenuMode('closed')}
+                        className="px-2 py-1 rounded text-[11px] text-muted hover:text-ink"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={commitRename}
+                        className="px-2.5 py-1 rounded text-[11px] font-semibold bg-brand text-white hover:bg-brand-strong"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            <button
+              type="button"
+              title={fullscreen ? 'Collapse' : 'Expand'}
+              aria-label={fullscreen ? 'Collapse' : 'Expand'}
+              aria-pressed={fullscreen}
               onClick={() => {
                 const next = !fullscreen;
                 setFullscreen(next);
                 if (next) setMinimized(false);
               }}
-            />
+              className={`w-7 h-7 grid place-items-center rounded-md transition-colors ${
+                fullscreen
+                  ? 'text-brand bg-brand-tint'
+                  : 'text-muted hover:text-ink hover:bg-surface-soft'
+              }`}
+            >
+              <Icon.Open className={`w-3.5 h-3.5 ${fullscreen ? 'rotate-180' : ''}`} />
+            </button>
+            {/* Hide / exit-fullscreen — context-aware: collapses out of
+                fullscreen when active, otherwise hides the whole widget. */}
+            <button
+              onClick={() => {
+                if (fullscreen) {
+                  setFullscreen(false);
+                } else {
+                  setHidden(true);
+                }
+              }}
+              title={fullscreen ? 'Exit full screen' : 'Hide Command Center'}
+              aria-label={fullscreen ? 'Exit full screen' : 'Hide Command Center'}
+              className="w-7 h-7 grid place-items-center rounded-md text-faint hover:text-ink hover:bg-surface-soft transition-colors ml-1"
+            >
+              <Icon.X className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
 
@@ -1734,15 +2042,8 @@ export function CommandCenter({
             when the user minimizes. Uses a CSS-grid row trick
             (`grid-rows-[0fr] → [1fr]`) so the container animates smoothly to
             the content's natural height without needing a JS height probe. */}
-        <div
-          aria-hidden={minimized}
-          className={`grid transition-all duration-300 ease-out ${
-            minimized
-              ? 'grid-rows-[0fr] opacity-0'
-              : 'grid-rows-[1fr] opacity-100'
-          }`}
-        >
-          <div className="overflow-hidden min-h-0 px-4 pt-3 pb-0">
+        {!minimized && (
+          <div className="px-4 pt-3 pb-0 anim-fade-up">
             {/* Conversation transcript (renders only after first send) */}
             <Transcript thinking={thinking} />
 
@@ -1757,16 +2058,17 @@ export function CommandCenter({
               </div>
             )}
           </div>
-        </div>
+        )}
 
         {/* Composer — always visible, even in minimized mode.
-            `relative z-10` so the type-ahead dropdown and popovers can
-            absolutely-position above, and so the composer sits on top of the
-            decorative orb. Upgraded to a bolder ask-surface: pure white
-            background, heavier border, larger focus halo, bigger textarea. */}
+            Top margin is conditional: in expanded mode we want a `mt-2`
+            beat between the body and the composer; in minimized mode the
+            body collapses to 0, so we drop the margin entirely so the
+            composer sits flush against the header. Same logic for bottom
+            margin so the minimized card stays compact. */}
         <div
           ref={composerWrapRef}
-          className="relative z-10 mx-4 mt-2 mb-4 bg-surface border border-rule rounded-xl px-3.5 pt-3 pb-2 focus-within:border-brand focus-within:shadow-[0_0_0_3px_var(--primary-tint)] transition-all"
+          className={`relative z-10 mx-4 ${minimized ? 'mt-2 mb-2' : 'mt-2 mb-4'} bg-surface border border-rule rounded-xl px-3.5 ${minimized ? 'pt-1.5 pb-1' : 'pt-3 pb-2'} focus-within:border-brand focus-within:shadow-[0_0_0_3px_var(--primary-tint)] transition-all`}
         >
           {/* Type-ahead suggestions — floats above the textarea as the user types.
               Uses Sparkle icon + subtle brand tint for the highlighted row. */}
@@ -1850,22 +2152,6 @@ export function CommandCenter({
           />
           <div className="flex items-center justify-between mt-1.5">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <UtilityButton
-                label="Chat history"
-                shortLabel="History"
-                icon={<Icon.History className="w-3.5 h-3.5" />}
-                active={openPanel === 'history'}
-                badge={sessions.length}
-                onClick={() => setOpenPanel(p => (p === 'history' ? null : 'history'))}
-              />
-              <UtilityButton
-                label="Saved prompts"
-                shortLabel="Saved"
-                icon={<Icon.Star className="w-3.5 h-3.5" />}
-                active={openPanel === 'saved'}
-                badge={saved.length}
-                onClick={() => setOpenPanel(p => (p === 'saved' ? null : 'saved'))}
-              />
               <UtilityButton
                 label="Prompt suggestions"
                 shortLabel="Suggestions"

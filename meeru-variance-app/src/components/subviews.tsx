@@ -5,6 +5,7 @@ import type {
 } from '../data';
 import { Card, CardHeader, StatusChip, Badge } from './ui';
 import { Icon } from '../icons';
+import { useToasts } from '../store';
 
 // ==========================================================
 // helpers
@@ -558,8 +559,47 @@ export function CostsView({ rows }: { rows: CostRow[] }) {
 // MARGIN — Sensitivity
 // ==========================================================
 export function SensitivityView({ scenarios }: { scenarios: SensitivityScenario[] }) {
+  const { push } = useToasts();
   const [selected, setSelected] = useState(scenarios[0]?.id ?? '');
+  // Track which scenarios are currently running a simulation and which have
+  // been pinned to the board deck. Keyed by scenario id so user can run /
+  // pin different scenarios independently.
+  const [running, setRunning] = useState<Record<string, boolean>>({});
+  const [pinned, setPinned] = useState<Record<string, boolean>>({});
+  const [completed, setCompleted] = useState<Record<string, boolean>>({});
   const current = scenarios.find(s => s.id === selected) ?? scenarios[0];
+  const isRunning = current ? !!running[current.id] : false;
+  const isPinned = current ? !!pinned[current.id] : false;
+  const isComplete = current ? !!completed[current.id] : false;
+
+  const runSimulation = () => {
+    if (!current || isRunning) return;
+    setRunning(prev => ({ ...prev, [current.id]: true }));
+    push({ kind: 'info', title: 'Running full simulation…', sub: `${current.name} · 5,000 iterations` });
+    // Simulated compute window — keeps the demo realistic without hitting an
+    // actual backend. ~2.4s feels weighty for a "5k iterations" toast.
+    window.setTimeout(() => {
+      setRunning(prev => ({ ...prev, [current.id]: false }));
+      setCompleted(prev => ({ ...prev, [current.id]: true }));
+      push({
+        kind: 'ok',
+        title: 'Simulation complete',
+        sub: `${current.name} · GM ${current.gmImpact} · EPS ${current.epsImpact} (${current.confidence}% confidence)`,
+      });
+    }, 2400);
+  };
+
+  const togglePin = () => {
+    if (!current) return;
+    const next = !isPinned;
+    setPinned(prev => ({ ...prev, [current.id]: next }));
+    push({
+      kind: 'ok',
+      title: next ? 'Pinned to Board Deck' : 'Removed from Board Deck',
+      sub: next ? `${current.name} · Q1 board prep` : undefined,
+    });
+  };
+
   const riskCls = (r: SensitivityScenario['risk']) =>
     r === 'low' ? 'bg-positive-weak text-positive' :
     r === 'medium' ? 'bg-warning-weak text-warning' :
@@ -617,12 +657,241 @@ export function SensitivityView({ scenarios }: { scenarios: SensitivityScenario[
             </div>
           </div>
           <p className="mt-4 text-[12px] text-muted leading-relaxed">{current.body}</p>
-          <div className="mt-4 flex gap-2">
-            <button className="px-3 py-1.5 bg-brand text-white text-[12px] font-medium rounded-md hover:opacity-90">Run full simulation</button>
-            <button className="px-3 py-1.5 border border-rule text-muted text-[12px] font-medium rounded-md hover:bg-surface-soft">Pin to Board Deck</button>
+          <div className="mt-4 flex items-center gap-2 flex-wrap">
+            <button
+              onClick={runSimulation}
+              disabled={isRunning}
+              title="Runs a 5,000-iteration Monte Carlo over the scenario's input distributions and returns a P10/P50/P90 outcome range. The headline numbers above are the P50 baseline; the simulation reveals the spread and tail risk."
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand text-white text-[12px] font-medium rounded-md hover:opacity-90 disabled:opacity-60 disabled:cursor-progress transition-opacity"
+            >
+              {isRunning ? (
+                <>
+                  <span className="inline-block w-2 h-2 rounded-full bg-white/80 dot-pulse" />
+                  Running…
+                </>
+              ) : isComplete ? (
+                <>
+                  <Icon.Refresh className="w-3.5 h-3.5" />
+                  Re-run simulation
+                </>
+              ) : (
+                <>
+                  <Icon.WhatIf className="w-3.5 h-3.5" />
+                  Run full simulation
+                </>
+              )}
+            </button>
+            <button
+              onClick={togglePin}
+              title="Adds the simulated outcome (P50 + range + top drivers) to the next board deck."
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-md transition-colors border ${
+                isPinned
+                  ? 'bg-brand-tint border-brand text-brand'
+                  : 'border-rule text-muted hover:bg-surface-soft hover:text-ink'
+              }`}
+            >
+              <Icon.Pin className={`w-3.5 h-3.5 ${isPinned ? 'text-brand' : ''}`} />
+              {isPinned ? 'Pinned to Board Deck' : 'Pin to Board Deck'}
+            </button>
+            {isComplete && !isRunning && (
+              <span className="inline-flex items-center gap-1 text-[11px] text-positive font-medium">
+                <Icon.Check className="w-3 h-3" />
+                5,000 iterations · simulation valid
+              </span>
+            )}
           </div>
+
+          {/* Simulation results — materialize after the run completes so the
+              button leaves a visible artifact, not just a toast. The headline
+              KPIs above are the P50; this panel shows P10/P90 spread, the
+              outcome distribution, and the top sensitivity drivers. */}
+          {isComplete && !isRunning && (
+            <SimulationResults scenario={current} />
+          )}
         </Card>
       )}
+    </div>
+  );
+}
+
+/**
+ * Monte-Carlo result panel for the Sensitivity scenario card.
+ *
+ * What "Run full simulation" does conceptually: rolls the scenario's input
+ * variables (price elasticity, ramp curve, FX, retention, etc) through 5,000
+ * iterations using the modeled probability distributions, and emits an
+ * outcome distribution for GM / OM / EPS. The card's headline KPIs are the
+ * P50 (median) — this panel reveals the surrounding spread, the upside /
+ * downside tails, and which inputs contribute most to the variance.
+ *
+ * The numbers here are deterministic from the scenario's confidence level
+ * (lower confidence → wider band) so the demo is reproducible without a
+ * real Monte Carlo backend.
+ */
+function SimulationResults({ scenario }: { scenario: SensitivityScenario }) {
+  // Parse the scenario's headline impact strings into numbers so we can
+  // synthesize a normal distribution centered on each.
+  const parse = (s: string) => parseFloat(s.replace(/[^\d.\-]/g, '')) || 0;
+  const gmMid  = parse(scenario.gmImpact);
+  const omMid  = parse(scenario.omImpact);
+  const epsMid = parse(scenario.epsImpact);
+
+  // Wider band when confidence is low — confidence 50% = ±50% of midpoint,
+  // confidence 95% = ±10%. Shape: span = (1 - confidence/100) * mid * 2 + floor.
+  const span = (mid: number) => Math.max(Math.abs(mid) * (1 - scenario.confidence / 100) * 2, Math.abs(mid) * 0.15);
+  const gmSpan = span(gmMid), omSpan = span(omMid), epsSpan = span(epsMid);
+
+  const ranges = [
+    { label: 'Gross Margin',   unit: 'pp', mid: gmMid,  span: gmSpan,  fmt: (v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(2)}pp` },
+    { label: 'Operating Margin', unit: 'pp', mid: omMid,  span: omSpan,  fmt: (v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(2)}pp` },
+    { label: 'EPS',              unit: '$',  mid: epsMid, span: epsSpan, fmt: (v: number) => `${v >= 0 ? '+' : ''}$${v.toFixed(2)}` },
+  ];
+
+  // Outcome histogram — 25 bins of synthetic normal samples around gmMid.
+  // Reproducible per scenario id (seeded) so re-runs produce a similar shape
+  // until the user re-runs (when actual MC would re-roll). Acceptable for demo.
+  const bins = 25;
+  const hist = (() => {
+    const arr = new Array(bins).fill(0);
+    let s = scenario.id.charCodeAt(scenario.id.length - 1) || 7;
+    const rand = () => { s = (s * 1664525 + 1013904223) % 2147483647; return (s & 0x7fffffff) / 0x7fffffff; };
+    const samples = 5000;
+    const lo = gmMid - gmSpan * 1.6;
+    const hi = gmMid + gmSpan * 1.6;
+    for (let i = 0; i < samples; i++) {
+      // Box-Muller transform for normal distribution.
+      const u1 = rand() || 1e-9, u2 = rand();
+      const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+      const v = gmMid + z * (gmSpan * 0.45);
+      const idx = Math.floor(((v - lo) / (hi - lo)) * bins);
+      if (idx >= 0 && idx < bins) arr[idx]++;
+    }
+    const max = Math.max(...arr, 1);
+    return { arr, max, lo, hi };
+  })();
+
+  // Top sensitivity drivers — synthetic but scenario-flavored so the panel
+  // doesn't feel generic. Real model would surface partial-derivative ranks.
+  const drivers = (() => {
+    if (scenario.id === 'sc1') return [
+      { name: 'Volume guarantee threshold', pct: 38 },
+      { name: 'Memory spot-price drift',     pct: 27 },
+      { name: 'Logistics cost variance',     pct: 18 },
+      { name: 'FX (KRW/USD)',                pct: 11 },
+    ];
+    if (scenario.id === 'sc2') return [
+      { name: 'Ramp time to productivity',   pct: 34 },
+      { name: 'Attrition during onboarding',  pct: 28 },
+      { name: 'Demand seasonality',           pct: 22 },
+      { name: 'Wage benchmark drift',         pct: 10 },
+    ];
+    if (scenario.id === 'sc3') return [
+      { name: 'Premium price elasticity',    pct: 46 },
+      { name: 'Competitor price moves',      pct: 24 },
+      { name: 'Mix shift to mid-tier',        pct: 20 },
+      { name: 'Channel margin stack',         pct:  8 },
+    ];
+    if (scenario.id === 'sc4') return [
+      { name: 'Workload utilization curve',  pct: 41 },
+      { name: 'Cloud list price drift',       pct: 26 },
+      { name: 'Egress cost volatility',       pct: 20 },
+      { name: 'Reservation overhang risk',     pct:  9 },
+    ];
+    return [
+      { name: 'Trial-to-paid conversion',    pct: 36 },
+      { name: 'Cannibalization rate',         pct: 28 },
+      { name: 'Pro+ adoption pace',           pct: 22 },
+      { name: 'APAC-to-global lift transfer',  pct: 11 },
+    ];
+  })();
+
+  // Histogram geometry
+  const W = 480, H = 110, P = 12;
+  const barW = (W - P * 2) / bins;
+
+  return (
+    <div className="mt-4 pt-4 border-t border-rule">
+      <div className="flex items-baseline justify-between gap-2 mb-2">
+        <span className="text-[10px] font-bold tracking-wider uppercase text-faint">
+          Simulation results · 5,000 Monte-Carlo iterations
+        </span>
+        <span className="text-[10px] text-muted">
+          P10 · P50 · P90 ranges
+        </span>
+      </div>
+
+      {/* Range bars for the 3 metrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-4">
+        {ranges.map(r => {
+          const p10 = r.mid - r.span;
+          const p90 = r.mid + r.span;
+          const total = Math.abs(p90 - p10) || 1;
+          const pct = (v: number) => ((v - p10) / total) * 100;
+          const tone = r.mid >= 0 ? 'positive' : 'negative';
+          return (
+            <div key={r.label} className="bg-surface-alt rounded-md border border-rule p-2.5">
+              <div className="text-[10px] uppercase tracking-wider text-muted font-semibold">{r.label}</div>
+              <div className="flex items-baseline gap-1.5 mt-1">
+                <span className={`text-[16px] font-semibold num text-${tone}`}>{r.fmt(r.mid)}</span>
+                <span className="text-[10px] text-faint">P50</span>
+              </div>
+              <div className="relative h-2 mt-2 rounded-full bg-surface-soft overflow-hidden">
+                <div
+                  className={`absolute top-0 h-full rounded-full bg-${tone}/30`}
+                  style={{ left: `${pct(p10)}%`, width: `${pct(p90) - pct(p10)}%` }}
+                />
+                <div className={`absolute top-0 h-full w-0.5 bg-${tone}`} style={{ left: `calc(${pct(r.mid)}% - 1px)` }} />
+              </div>
+              <div className="flex justify-between text-[10px] text-muted num mt-1">
+                <span>{r.fmt(p10)}</span>
+                <span>{r.fmt(p90)}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Outcome distribution histogram for GM (the headline metric) */}
+      <div className="mb-4 bg-surface-alt rounded-md border border-rule p-3">
+        <div className="flex items-baseline justify-between mb-1">
+          <span className="text-[11px] font-semibold text-ink">Outcome distribution · GM impact (pp)</span>
+          <span className="text-[10px] text-muted">μ {gmMid.toFixed(2)}pp · σ {(gmSpan * 0.45).toFixed(2)}</span>
+        </div>
+        <svg viewBox={`0 0 ${W} ${H}`} width="100%" className="block">
+          {hist.arr.map((c, i) => {
+            const h = (c / hist.max) * (H - P * 2);
+            const x = P + i * barW;
+            const y = H - P - h;
+            const v = hist.lo + (i + 0.5) / bins * (hist.hi - hist.lo);
+            const inMid = Math.abs(v - gmMid) <= gmSpan;
+            return <rect key={i} x={x} y={y} width={Math.max(barW - 1.5, 1)} height={h} rx="1" fill={inMid ? 'var(--positive)' : 'var(--text-faint)'} opacity={inMid ? 0.85 : 0.45} />;
+          })}
+          {/* P50 marker */}
+          {(() => {
+            const xMid = P + ((gmMid - hist.lo) / (hist.hi - hist.lo)) * (W - P * 2);
+            return <line x1={xMid} y1={P} x2={xMid} y2={H - P} stroke="var(--text-ink)" strokeWidth="1.5" strokeDasharray="3 3" />;
+          })()}
+          <line x1={P} y1={H - P} x2={W - P} y2={H - P} stroke="var(--rule)" strokeWidth="1" />
+        </svg>
+      </div>
+
+      {/* Top sensitivity drivers — what's contributing to the variance */}
+      <div>
+        <div className="text-[10px] font-bold tracking-wider uppercase text-faint mb-1.5">
+          Top sensitivity drivers · % contribution to variance
+        </div>
+        <ul className="space-y-1.5">
+          {drivers.map(d => (
+            <li key={d.name} className="flex items-center gap-2.5 text-[11.5px]">
+              <span className="text-ink truncate flex-1">{d.name}</span>
+              <div className="w-32 h-1.5 rounded-full bg-surface-soft overflow-hidden">
+                <div className="h-full bg-brand" style={{ width: `${d.pct}%` }} />
+              </div>
+              <span className="text-muted num w-9 text-right">{d.pct}%</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

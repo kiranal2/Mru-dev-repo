@@ -25,7 +25,11 @@ function Sidebar() {
       <button className={cls(false)} title="Automation"><Icon.Bolt className="w-5 h-5" /></button>
       <button className={cls(false)} title="Reports"><Icon.File className="w-5 h-5" /></button>
       <div className="flex-1" />
-      <Link to="/settings" className={cls(is('/settings'))} title="Settings"><Icon.Settings className="w-5 h-5" /></Link>
+      {/* Profile menu — replaces the standalone Settings icon. The dropdown
+          contains Settings, theme, notebook, persona detail, and logout, so a
+          dedicated sidebar Settings link would just duplicate what's a click
+          away inside this menu. */}
+      <ProfileMenu variant="sidebar" />
     </aside>
   );
 }
@@ -51,7 +55,6 @@ function Header({ sidebarHidden, onToggleSidebar }: { sidebarHidden: boolean; on
         <button onClick={toggle} className="w-7 h-7 rounded-md grid place-items-center text-muted hover:bg-surface-soft hover:text-ink" title="Toggle theme">
           {theme === 'light' ? <Icon.Moon className="w-4 h-4" /> : <Icon.Sun className="w-4 h-4" />}
         </button>
-        <ProfileMenu />
       </div>
     </header>
   );
@@ -171,9 +174,12 @@ function ContextSwitcher() {
 }
 
 // ==========================================================
-// ProfileMenu — header user chip + dropdown with persona detail
+// ProfileMenu — user chip + dropdown with persona detail.
+// `variant='sidebar'` renders a square avatar tile sized to match the
+// sidebar's other icons and anchors the dropdown to the right of the bar so
+// it opens up-and-out instead of below.
 // ==========================================================
-function ProfileMenu() {
+function ProfileMenu({ variant = 'header' }: { variant?: 'header' | 'sidebar' }) {
   const { user, logout } = useAuth();
   const { theme, toggle } = useTheme();
   const { pinned, saved } = useChat();
@@ -202,23 +208,49 @@ function ProfileMenu() {
                  : user.quickStat?.tone === 'warn' ? 'text-warning'
                  : 'text-ink';
 
+  const isSidebar = variant === 'sidebar';
+
   return (
     <div className="relative" ref={ref}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        className={`flex items-center gap-2 pl-1 pr-2 py-0.5 rounded-full border transition-colors ${open ? 'bg-brand-tint border-brand-weak' : 'bg-surface-soft border-transparent hover:border-rule'}`}
-        title="Open profile menu"
-      >
-        <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[11px] font-semibold" style={{ background: 'linear-gradient(135deg,#E8C5A8,#B64D1D)' }}>{user.init}</div>
-        <div className="leading-tight text-left">
-          <div className="text-[11px] font-semibold text-ink">{user.name}</div>
-          <div className="text-[10px] text-muted">{user.role}</div>
-        </div>
-        <svg className={`w-3 h-3 text-faint transition-transform ${open ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
+      {isSidebar ? (
+        <button
+          onClick={() => setOpen(o => !o)}
+          title={`${user.name} · ${user.role}`}
+          aria-label="Open profile menu"
+          className={`w-10 h-10 rounded-lg grid place-items-center relative transition-colors ${
+            open ? 'ring-2 ring-brand' : 'hover:bg-white/10'
+          }`}
+        >
+          <div
+            className="w-8 h-8 rounded-full text-white grid place-items-center text-[11px] font-semibold shadow-sm"
+            style={{ background: 'linear-gradient(135deg,#E8C5A8,#B64D1D)' }}
+          >
+            {user.init}
+          </div>
+        </button>
+      ) : (
+        <button
+          onClick={() => setOpen(o => !o)}
+          className={`flex items-center gap-2 pl-1 pr-2 py-0.5 rounded-full border transition-colors ${open ? 'bg-brand-tint border-brand-weak' : 'bg-surface-soft border-transparent hover:border-rule'}`}
+          title="Open profile menu"
+        >
+          <div className="w-6 h-6 rounded-full text-white grid place-items-center text-[11px] font-semibold" style={{ background: 'linear-gradient(135deg,#E8C5A8,#B64D1D)' }}>{user.init}</div>
+          <div className="leading-tight text-left">
+            <div className="text-[11px] font-semibold text-ink">{user.name}</div>
+            <div className="text-[10px] text-muted">{user.role}</div>
+          </div>
+          <svg className={`w-3 h-3 text-faint transition-transform ${open ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      )}
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-[340px] bg-surface border border-rule rounded-xl shadow-e3 z-[60] overflow-hidden anim-fade-up">
+        <div
+          className={`absolute w-[340px] max-h-[80vh] overflow-y-auto bg-surface border border-rule rounded-xl shadow-e3 z-[60] anim-fade-up ${
+            isSidebar
+              ? 'left-full bottom-0 ml-2'
+              : 'right-0 top-full mt-1 overflow-hidden'
+          }`}
+        >
           {/* Header */}
           <div className="p-4 border-b border-rule bg-gradient-to-br from-brand-tint to-transparent">
             <div className="flex items-center gap-3">

@@ -70,7 +70,7 @@ export default function Flux() {
     >
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h1 className="text-[18px] font-semibold text-ink tracking-tight">Flux Intelligence · {compareLabel}</h1>
+          <h1 className="text-[18px] font-semibold text-ink tracking-tight">Flux Intelligence</h1>
           <p className="text-[11px] text-faint mt-0.5">{tabSub[topTab]} · {comparePeriod} · {persona.role}</p>
         </div>
         <div className="flex items-center gap-2">

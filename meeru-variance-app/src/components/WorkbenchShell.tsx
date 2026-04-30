@@ -1,11 +1,45 @@
 import type { ReactNode } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { WORKBENCHES, PERF_COMMENTARY } from '../data';
 import type { CommentaryItem } from '../types';
 import { Icon } from '../icons';
 import { CommentaryPanel, CommentaryShowButton } from './CommentaryPanel';
 import { useChat, useSettings } from '../store';
+
+/**
+ * Live local clock chip rendered next to the workbench scope label. Uses the
+ * user's actual locale + timezone (no hardcoded PT/PST) so the displayed time
+ * always matches their machine. Refreshes every 30s to stay near-current
+ * without re-rendering the shell every second.
+ */
+function LocalNow() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 30_000);
+    return () => clearInterval(id);
+  }, []);
+  // "Tue, Apr 28 · 7:04 PM" — date + time in one chip, separator dot keeps it
+  // consistent with the other scope label segments.
+  const date = now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+  const time = now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  // Detect the user's timezone abbreviation (e.g. "PT", "ET", "IST"). Falls
+  // back to nothing if Intl can't resolve it.
+  const tz = (() => {
+    try {
+      const parts = new Intl.DateTimeFormat(undefined, { timeZoneName: 'short' }).formatToParts(now);
+      return parts.find(p => p.type === 'timeZoneName')?.value ?? '';
+    } catch { return ''; }
+  })();
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted whitespace-nowrap">
+      <span className="text-ink">{date}</span>
+      <span>·</span>
+      <span className="text-ink num">{time}</span>
+      {tz && <span className="text-faint">{tz}</span>}
+    </span>
+  );
+}
 
 const RAIL_W_EXPANDED = 200;
 const RAIL_W_COLLAPSED = 36;
@@ -85,11 +119,15 @@ export function WorkbenchShell({ workbench, leftRail, topNav, children, dock, sc
           <div className="flex-1 min-w-0">
             {topNav}
           </div>
-          {scopeRight && (
-            <div className="shrink-0 flex items-center gap-2 pr-4 text-[11px] font-medium text-muted whitespace-nowrap">
-              {scopeRight}
-            </div>
-          )}
+          <div className="shrink-0 flex items-center gap-2 pr-4 text-[11px] font-medium text-muted whitespace-nowrap">
+            <LocalNow />
+            {scopeRight && (
+              <>
+                <span className="text-faint">·</span>
+                {scopeRight}
+              </>
+            )}
+          </div>
         </div>
         <aside
           style={{ gridArea: 'left' }}

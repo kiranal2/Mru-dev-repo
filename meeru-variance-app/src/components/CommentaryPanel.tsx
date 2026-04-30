@@ -254,14 +254,53 @@ function stripHtml(html: string): string {
 }
 
 function SessionRow({
-  session, isActive, onLoad, onTogglePin, onDelete,
+  session, isActive, onLoad, onTogglePin, onRename, onDelete,
 }: {
   session: ChatSession;
   isActive: boolean;
   onLoad: () => void;
   onTogglePin: () => void;
+  onRename: (title: string) => void;
   onDelete: () => void;
 }) {
+  // Inline rename — pencil item in the dropdown switches the title to a
+  // focused text input. Enter / blur commits, Escape cancels.
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(session.title);
+  const inputRef = useRef<HTMLInputElement>(null);
+  // Kebab dropdown for row actions. Stays anchored to the row so narrow
+  // panels don't push the timestamp under the buttons.
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (editing) {
+      setDraft(session.title);
+      requestAnimationFrame(() => inputRef.current?.select());
+    }
+  }, [editing, session.title]);
+  // Close the menu on outside click / Esc.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDoc = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false); };
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDoc);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
+
+  const commit = () => {
+    const next = draft.trim();
+    if (next && next !== session.title) onRename(next);
+    setEditing(false);
+  };
+
   // Surface the most recent AI reply as the snippet — that's the content the
   // user is most likely scanning for when they revisit a thread.
   const lastAi = [...session.messages].reverse().find(m => m.role === 'ai');
@@ -269,71 +308,141 @@ function SessionRow({
   const turnCount = Math.floor(session.messages.length / 2);
   return (
     <div
-      onClick={onLoad}
-      className={`group relative mb-2 px-2.5 py-2 rounded-md border cursor-pointer transition-colors ${
+      onClick={editing ? undefined : onLoad}
+      className={`group relative mb-2 px-2.5 py-2 rounded-md border transition-colors ${
+        editing ? 'cursor-default' : 'cursor-pointer'
+      } ${
         isActive ? 'border-brand bg-brand-tint/60' : 'border-rule bg-surface-soft hover:border-brand-weak hover:bg-brand-tint/40'
       }`}
     >
-      <div className="flex items-center justify-between mb-1 pr-12">
-        <span className="text-[9.5px] font-bold tracking-wider uppercase text-faint truncate">
+      {/* `pr-7` reserves space for the kebab button anchored at the row's
+          top-right corner — without it the timestamp slides under the menu
+          trigger on narrower panels. */}
+      <div className="flex items-center justify-between mb-1 gap-2 pr-7">
+        <span className="text-[9.5px] font-bold tracking-wider uppercase text-faint truncate min-w-0">
           {session.persona ?? 'You'}
           {session.scope && session.scope !== 'Variance Workbench' ? ` · ${session.scope}` : ''}
           <span className="text-faint ml-1.5">· {turnCount} {turnCount === 1 ? 'turn' : 'turns'}</span>
         </span>
         <span className="text-[10px] text-faint shrink-0">{formatHistoryWhen(session.updatedAt)}</span>
       </div>
-      <div className="flex items-start gap-1.5 pr-12">
-        {session.pinned && <Icon.Pin className="w-3 h-3 text-brand shrink-0 mt-0.5" />}
-        <div className="text-[12px] font-semibold text-ink line-clamp-2 leading-snug flex-1">
-          {session.title}
-        </div>
+      <div className="flex items-start gap-1.5 pr-7">
+        {session.pinned && !editing && <Icon.Pin className="w-3 h-3 text-brand shrink-0 mt-0.5" />}
+        {editing ? (
+          <input
+            ref={inputRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              if (e.key === 'Enter') { e.preventDefault(); commit(); }
+              else if (e.key === 'Escape') { setEditing(false); }
+            }}
+            onBlur={commit}
+            onClick={(e) => e.stopPropagation()}
+            maxLength={80}
+            className="flex-1 text-[12px] font-semibold text-ink leading-snug bg-surface border border-brand rounded px-1.5 py-0.5 outline-none"
+          />
+        ) : (
+          <div className="text-[12px] font-semibold text-ink line-clamp-2 leading-snug flex-1">
+            {session.title}
+          </div>
+        )}
       </div>
-      {snippet && (
+      {snippet && !editing && (
         <div className="text-[11px] text-muted line-clamp-2 mt-1 leading-snug">
           {snippet}
         </div>
       )}
-      {/* Per-row actions (pin, delete) — appear on hover so the row stays clean. */}
-      <div className="absolute right-1.5 top-1.5 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button
-          type="button"
-          title={session.pinned ? 'Unpin' : 'Pin conversation'}
-          onClick={(e) => { e.stopPropagation(); onTogglePin(); }}
-          className="w-6 h-6 rounded grid place-items-center text-faint hover:text-brand hover:bg-surface"
-        >
-          <Icon.Pin className={`w-3.5 h-3.5 ${session.pinned ? 'text-brand' : ''}`} />
-        </button>
-        <button
-          type="button"
-          title="Delete conversation"
-          onClick={(e) => { e.stopPropagation(); onDelete(); }}
-          className="w-6 h-6 rounded grid place-items-center text-faint hover:text-negative hover:bg-surface"
-        >
-          <Icon.X className="w-3.5 h-3.5" />
-        </button>
-      </div>
+      {/* Kebab menu — single trigger replaces the 3 inline icons so the
+          timestamp can never collide with action buttons on narrow panels. */}
+      {!editing && (
+        <div ref={menuRef} className="absolute right-1 top-1">
+          <button
+            type="button"
+            title="More actions"
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v); }}
+            className={`w-6 h-6 rounded grid place-items-center border transition-colors ${
+              menuOpen
+                ? 'text-ink bg-surface border-rule'
+                : 'text-muted hover:text-ink border-transparent hover:border-rule hover:bg-surface'
+            }`}
+          >
+            {/* Vertical dots glyph (kebab). Inline so we don't add a new icon. */}
+            <span aria-hidden className="flex flex-col gap-[2px]">
+              <span className="w-[3px] h-[3px] rounded-full bg-current" />
+              <span className="w-[3px] h-[3px] rounded-full bg-current" />
+              <span className="w-[3px] h-[3px] rounded-full bg-current" />
+            </span>
+          </button>
+          {menuOpen && (
+            <div
+              role="menu"
+              onClick={(e) => e.stopPropagation()}
+              className="absolute right-0 top-full mt-1 z-30 w-40 bg-surface border border-rule rounded-md shadow-e3 overflow-hidden anim-fade-up"
+            >
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => { setMenuOpen(false); onTogglePin(); }}
+                className="w-full px-3 py-1.5 text-[12px] text-ink hover:bg-brand-tint hover:text-brand flex items-center gap-2 text-left"
+              >
+                <Icon.Pin className={`w-3.5 h-3.5 ${session.pinned ? 'text-brand' : 'text-faint'}`} />
+                {session.pinned ? 'Unpin' : 'Pin conversation'}
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => { setMenuOpen(false); setEditing(true); }}
+                className="w-full px-3 py-1.5 text-[12px] text-ink hover:bg-brand-tint hover:text-brand flex items-center gap-2 text-left"
+              >
+                <Icon.Pencil className="w-3.5 h-3.5 text-faint" />
+                Rename
+              </button>
+              <div className="h-px bg-rule" />
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => { setMenuOpen(false); onDelete(); }}
+                className="w-full px-3 py-1.5 text-[12px] text-negative hover:bg-negative-weak flex items-center gap-2 text-left"
+              >
+                <Icon.X className="w-3.5 h-3.5" />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
 function HistoryView({
-  sessions, activeSessionId, onLoad, onTogglePin, onDelete, onClear,
+  sessions, activeSessionId, onLoad, onTogglePin, onRename, onDelete, onClear,
 }: {
   sessions: ChatSession[];
   activeSessionId: string | null;
   onLoad: (id: string) => void;
   onTogglePin: (id: string) => void;
+  onRename: (id: string, title: string) => void;
   onDelete: (id: string) => void;
   onClear: () => void;
 }) {
-  // Pinned sessions float to the top so saved threads are always one tap away.
-  const sorted = useMemo(
-    () => [...sessions].sort((a, b) => {
+  // Sub-filter: All vs Pinned. Pinned counter shown in the chip badge so
+  // users see how many saved threads exist at a glance.
+  const [filter, setFilter] = useState<'all' | 'pinned'>('all');
+  const pinnedCount = useMemo(() => sessions.filter(s => s.pinned).length, [sessions]);
+
+  const sorted = useMemo(() => {
+    const pool = filter === 'pinned' ? sessions.filter(s => s.pinned) : sessions;
+    return [...pool].sort((a, b) => {
       if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
       return b.updatedAt - a.updatedAt;
-    }),
-    [sessions],
-  );
+    });
+  }, [sessions, filter]);
+
   if (sessions.length === 0) {
     return (
       <div className="flex-1 overflow-y-auto px-3.5 py-8 text-center">
@@ -346,27 +455,62 @@ function HistoryView({
       </div>
     );
   }
+
   return (
     <div className="flex-1 overflow-y-auto px-3.5 py-3">
-      <div className="flex items-center justify-between mb-2 px-1">
-        <span className="text-[10px] font-semibold tracking-wider uppercase text-faint">
-          Recent · newest first
-        </span>
+      {/* Sub-filter chips — All / Pinned. Live counters show what's where. */}
+      <div className="flex items-center gap-1.5 mb-3">
         <button
-          onClick={onClear}
-          title="Clear unpinned conversations"
-          className="text-[10.5px] text-muted hover:text-ink underline"
+          onClick={() => setFilter('all')}
+          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-semibold tracking-wider uppercase transition-colors ${
+            filter === 'all' ? 'bg-brand-tint text-brand border border-brand-weak' : 'text-muted hover:text-ink border border-transparent'
+          }`}
         >
-          Clear unpinned
+          All
+          <span className={`px-1 rounded-full text-[9.5px] ${filter === 'all' ? 'bg-surface text-brand' : 'bg-surface-soft text-muted'}`}>
+            {sessions.length}
+          </span>
         </button>
+        <button
+          onClick={() => setFilter('pinned')}
+          disabled={pinnedCount === 0}
+          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-semibold tracking-wider uppercase transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+            filter === 'pinned' ? 'bg-brand-tint text-brand border border-brand-weak' : 'text-muted hover:text-ink border border-transparent'
+          }`}
+        >
+          <Icon.Pin className="w-2.5 h-2.5" />
+          Pinned
+          <span className={`px-1 rounded-full text-[9.5px] ${filter === 'pinned' ? 'bg-surface text-brand' : 'bg-surface-soft text-muted'}`}>
+            {pinnedCount}
+          </span>
+        </button>
+        <div className="flex-1" />
+        {filter === 'all' && (
+          <button
+            onClick={onClear}
+            title="Clear unpinned conversations"
+            className="text-[10.5px] text-muted hover:text-ink underline"
+          >
+            Clear unpinned
+          </button>
+        )}
       </div>
-      {sorted.map((s) => (
+
+      {sorted.length === 0 ? (
+        <div className="py-8 text-center">
+          <div className="text-[12px] text-faint">No pinned conversations.</div>
+          <div className="text-[11px] text-faint mt-1">
+            Pin a conversation from the Command Center header or open the ⋮ menu on any row.
+          </div>
+        </div>
+      ) : sorted.map((s) => (
         <SessionRow
           key={s.id}
           session={s}
           isActive={s.id === activeSessionId}
           onLoad={() => onLoad(s.id)}
           onTogglePin={() => onTogglePin(s.id)}
+          onRename={(title) => onRename(s.id, title)}
           onDelete={() => onDelete(s.id)}
         />
       ))}
@@ -388,7 +532,7 @@ export function CommentaryPanel({
   const { settings, update } = useSettings();
   const {
     send, sessions, activeSessionId, loadSession, togglePinSession,
-    deleteSession, clearAllSessions,
+    renameSession, deleteSession, clearAllSessions,
   } = useChat();
   const industry = useIndustryData();
   // Tab toggle: Insights (existing ranked drivers) vs. History (persisted
@@ -481,24 +625,28 @@ export function CommentaryPanel({
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 rounded-r bg-rule opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
 
-      {/* header — same visual weight as CardHeader elsewhere */}
-      <div className="px-3.5 pt-3 pb-2 border-b border-rule bg-surface sticky top-0 z-10">
-        <div className="flex items-center gap-2">
+      {/* Panel header — tabs are the primary identity now (no redundant "AI
+          INSIGHTS" label). Live dot + brand mark anchor the panel; tab toggle
+          uses an underline indicator like a typical app sidebar. */}
+      <div className="px-3.5 pt-3 pb-0 border-b border-rule bg-surface sticky top-0 z-10">
+        <div className="flex items-center gap-2 mb-2">
           <span className="relative inline-flex w-1.5 h-1.5 shrink-0">
             <span className="absolute inset-0 rounded-full bg-positive opacity-60 animate-ping" />
             <span className="relative w-1.5 h-1.5 rounded-full bg-positive" />
           </span>
-          <Icon.Bars className="w-3 h-3 text-brand shrink-0" />
-          <div className="text-[10.5px] font-bold tracking-wider uppercase text-ink">AI Insights</div>
+          <Icon.Bulb className="w-3.5 h-3.5 text-brand shrink-0" />
+          <span className="text-[10.5px] font-bold tracking-wider uppercase text-faint">Assistant</span>
           <div className="flex-1" />
-          <button
-            onClick={() => setExpanded(false)}
-            title="Refresh — fetch the latest ranked commentary"
-            className="inline-flex items-center gap-1 text-[11px] text-muted hover:text-ink"
-          >
-            <Icon.Refresh className="w-3 h-3" />
-            New
-          </button>
+          {tab === 'insights' && (
+            <button
+              onClick={() => setExpanded(false)}
+              title="Refresh — fetch the latest ranked commentary"
+              className="inline-flex items-center gap-1 text-[11px] text-muted hover:text-ink"
+            >
+              <Icon.Refresh className="w-3 h-3" />
+              New
+            </button>
+          )}
           <button
             onClick={() => update({ chatHidden: true })}
             title="Hide AI panel"
@@ -507,27 +655,35 @@ export function CommentaryPanel({
             <Icon.X className="w-3 h-3" />
           </button>
         </div>
-        {/* Tab switcher — Insights vs History */}
-        <div className="flex gap-1 mt-2 -mb-0.5">
+        {/* Underline-style tab toggle. Active tab gets a 2px brand bar — no
+            pill chrome — so the panel reads as a single surface with two
+            views, not a button row. */}
+        <div className="flex">
           <button
             onClick={() => setTab('insights')}
-            className={`flex-1 px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wider uppercase transition-colors ${
-              tab === 'insights' ? 'bg-brand-tint text-brand border border-brand-weak' : 'text-muted hover:text-ink'
+            className={`relative px-3 pb-2 pt-1 text-[12px] font-semibold tracking-wide transition-colors ${
+              tab === 'insights' ? 'text-ink' : 'text-muted hover:text-ink'
             }`}
           >
             Insights
+            {tab === 'insights' && (
+              <span className="absolute left-2 right-2 -bottom-px h-0.5 bg-brand rounded-full" />
+            )}
           </button>
           <button
             onClick={() => setTab('history')}
-            className={`flex-1 px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wider uppercase transition-colors inline-flex items-center justify-center gap-1.5 ${
-              tab === 'history' ? 'bg-brand-tint text-brand border border-brand-weak' : 'text-muted hover:text-ink'
+            className={`relative px-3 pb-2 pt-1 text-[12px] font-semibold tracking-wide transition-colors inline-flex items-center gap-1.5 ${
+              tab === 'history' ? 'text-ink' : 'text-muted hover:text-ink'
             }`}
           >
-            History
+            Chat History
             {sessions.length > 0 && (
-              <span className={`px-1 rounded-full text-[10px] font-bold ${tab === 'history' ? 'bg-surface text-brand' : 'bg-surface-soft text-muted'}`}>
+              <span className={`px-1.5 rounded-full text-[10px] font-bold ${tab === 'history' ? 'bg-brand text-white' : 'bg-surface-soft text-muted'}`}>
                 {sessions.length}
               </span>
+            )}
+            {tab === 'history' && (
+              <span className="absolute left-2 right-2 -bottom-px h-0.5 bg-brand rounded-full" />
             )}
           </button>
         </div>
@@ -535,10 +691,9 @@ export function CommentaryPanel({
 
       {tab === 'insights' ? (
         <div className="flex-1 overflow-y-auto px-3.5 py-3">
-          {/* headline — concise, single line */}
-          <div className="text-[12px] font-semibold text-ink leading-tight mb-3">
-            {headlineText}
-          </div>
+          {/* (The "Drivers of …" headline used to render here, but the
+              workbench's top scope row now carries the period + region label,
+              so repeating it inside the panel was just visual duplication.) */}
 
           {/* ranked driver rows — same layout as main Commentary component.
               The AI-conversation card that used to live here was removed so
@@ -578,6 +733,7 @@ export function CommentaryPanel({
           activeSessionId={activeSessionId}
           onLoad={loadSession}
           onTogglePin={togglePinSession}
+          onRename={renameSession}
           onDelete={deleteSession}
           onClear={clearAllSessions}
         />

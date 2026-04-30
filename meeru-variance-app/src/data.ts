@@ -813,6 +813,306 @@ export const CHAT_RESPONSES: ChatResponseDef[] = [
       'What is the current materiality threshold?',
     ],
   },
+
+  // ==================================================================
+  // Chart-rendering responses — inline SVG so the chat bubble can show
+  // a real visualization. The bubble container is dark/light agnostic,
+  // so all SVG color references go through CSS variables.
+  // ==================================================================
+  {
+    // Triggered by the AI Summary's "AI Diagnose" button — surfaces driver
+    // decomposition, 10-week trend, and recommended levers in one rich reply
+    // so the user stays inside the Command Center instead of bouncing to a
+    // modal. Layout: label column 0–150, centerline 160, bars 0–200.
+    match: /(?:run an? )?ai diagnos|ai diagnose|diagnose.*workbench|diagnose.*variance/i,
+    text: (() => {
+      const drivers = [
+        { name: 'China macro slowdown',         delta: -22 },
+        { name: 'Local competition',             delta: -16 },
+        { name: 'Premium soft demand',           delta: -10 },
+        { name: 'Channel mix shift',              delta:  -3 },
+        { name: 'Other / unexplained',            delta:  -2 },
+        { name: 'EUP holiday boost',              delta:   2 },
+        { name: 'Germany FX tailwind',            delta:   3 },
+      ];
+      const maxAbs = Math.max(...drivers.map(d => Math.abs(d.delta)));
+      // Geometry: 480 wide. Labels right-align at x=150 with padding to x=158.
+      // Centerline at x=160. Negative bars draw left from 160 → 160 - w. Max
+      // negative bar width capped so it never crosses the label column.
+      const barRange = 220;
+      const W = 460, rowH = 22, P = 6;
+      const barRows = drivers.map((d, i) => {
+        const y = P + i * rowH;
+        const w = (Math.abs(d.delta) / maxAbs) * barRange;
+        const x = d.delta < 0 ? 160 - w : 160;
+        const c = d.delta < 0 ? 'var(--negative)' : 'var(--positive)';
+        return (
+          `<text x="152" y="${y + 14}" text-anchor="end" font-size="11" fill="var(--text-muted)">${d.name}</text>` +
+          `<rect x="${x}" y="${y + 4}" width="${w}" height="14" rx="2" fill="${c}" opacity="0.85"/>` +
+          `<text x="${d.delta < 0 ? x - 4 : x + w + 4}" y="${y + 14}" text-anchor="${d.delta < 0 ? 'end' : 'start'}" font-size="11" font-weight="600" fill="${c}">${d.delta > 0 ? '+' : ''}$${d.delta}M</text>`
+        );
+      }).join('');
+      const driverChart =
+        `<svg viewBox="0 0 ${W} ${P * 2 + drivers.length * rowH}" width="100%" style="display:block;max-width:520px">` +
+        `<line x1="160" y1="${P}" x2="160" y2="${P + drivers.length * rowH}" stroke="var(--rule)" stroke-width="1"/>` +
+        barRows +
+        `</svg>`;
+
+      const trend = [-8, -12, -10, -15, -18, -22, -28, -32, -35, -38];
+      const tW = 460, tH = 150, tP = 24;
+      const tMin = Math.min(...trend), tMax = Math.max(...trend);
+      const tx = (i: number) => tP + (i / (trend.length - 1)) * (tW - tP * 2);
+      const ty = (v: number) => tP + ((tMax - v) / Math.max(tMax - tMin, 1)) * (tH - tP * 2);
+      const points = trend.map((v, i) => `${tx(i)},${ty(v)}`).join(' ');
+      const dots = trend.map((v, i) => `<circle cx="${tx(i)}" cy="${ty(v)}" r="2.5" fill="var(--negative)"/>`).join('');
+      const labels = trend.map((_, i) => `<text x="${tx(i)}" y="${tH - tP + 12}" text-anchor="middle" font-size="9" fill="var(--text-faint)">W${i + 1}</text>`).join('');
+      const trendChart =
+        `<svg viewBox="0 0 ${tW} ${tH}" width="100%" style="display:block;max-width:520px">` +
+        `<line x1="${tP}" y1="${tH - tP}" x2="${tW - tP}" y2="${tH - tP}" stroke="var(--rule)" stroke-width="1"/>` +
+        `<polyline points="${points}" fill="none" stroke="var(--negative)" stroke-width="2" stroke-linejoin="round"/>` +
+        dots + labels +
+        `<text x="${tW - tP}" y="${ty(trend[trend.length - 1]) - 6}" text-anchor="end" font-size="11" font-weight="600" fill="var(--negative)">$${trend[trend.length - 1]}M</text>` +
+        `</svg>`;
+
+      return (
+        `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-faint)">AI diagnosis</span><span style="font-size:9px;color:var(--text-faint)">·</span><span style="font-size:9px;color:var(--text-faint)">88% confidence · 4 sources</span></div>` +
+        `<strong>Root cause:</strong> the headline gap is dominated by <strong>China macro pressure (−$22M)</strong> + <strong>local competition (−$16M)</strong>, with soft Premium demand (−$10M) compounding it. Germany FX (+$3M) and EUP holiday lift (+$2M) are the only offsets. The trend has compounded for 4 weeks — without intervention, model projects W11 hole at <strong class="text-negative">−$45M to −$52M</strong>.<br/><br/>` +
+        `<strong>Driver decomposition</strong> ($M)<br/>` +
+        driverChart +
+        `<br/><strong>10-week cumulative build</strong><br/>` +
+        trendChart +
+        `<br/><strong>3 levers</strong> · pick one to model:` +
+        `<ul style="margin:6px 0 0 18px;padding:0">` +
+        `<li><strong>Pricing:</strong> hold Premium price (no Q1 promo) — model adds back ~+$10M.</li>` +
+        `<li><strong>Channel:</strong> reallocate spend from China to EMEA — model adds ~+$6M.</li>` +
+        `<li><strong>Supply:</strong> raise LATAM courier ceiling +11% — protects ~+$8M.</li>` +
+        `</ul>` +
+        `<br/><span style="font-size:10.5px;color:var(--text-faint)"><strong>Sources:</strong> SAP S/4HANA · Anaplan plan baseline · NielsenIQ macro · Salesforce pipeline</span>`
+      );
+    })(),
+    actions: [
+      { kind: 'whatif', label: 'Model "Pricing hold" lever',  who: 'Forecast · pricing',     body: 'Adds ~+$10M; tests Premium elasticity assumption.' },
+      { kind: 'whatif', label: 'Model "Channel reallocation"', who: 'Forecast · channel',     body: '+$6M expected if EMEA absorbs China spend.' },
+      { kind: 'whatif', label: 'Model "Supply lift"',          who: 'Forecast · supply',      body: 'LATAM courier ceiling +11% protects +$8M.' },
+      { kind: 'pin',    label: 'Pin diagnosis',                 who: 'Workspace',              body: 'AI diagnosis snapshot.' },
+      { kind: 'share',  label: 'Share with Controller',        who: 'Raj · Controller',       body: 'Driver decomposition + recommended levers.' },
+    ],
+    followUps: [
+      'Which lever has the highest ROI?',
+      'Show this same breakdown for Q4 2024',
+      'What is the cost of the supply lift?',
+    ],
+  },
+
+  {
+    match: /chart.*variance.*region|variance by region|regional breakdown.*chart|bar chart.*region/i,
+    text: `<strong>Variance by region — W10 ($M vs Plan):</strong><br/><br/>` +
+      `<svg viewBox="0 0 360 180" width="100%" style="display:block;max-width:520px">` +
+      `<line x1="100" y1="10" x2="100" y2="160" stroke="var(--rule)" stroke-width="1"/>` +
+      [
+        { name: 'LATAM',   v: -24 },
+        { name: 'NA',       v:  -9 },
+        { name: 'APAC',    v:  -7 },
+        { name: 'Global',  v:  -2 },
+        { name: 'EMEA',    v:   4 },
+      ].map((r, i) => {
+        const y = 18 + i * 28;
+        const max = 30;
+        const w = (Math.abs(r.v) / max) * 240;
+        const x = r.v < 0 ? 100 - w : 100;
+        const c = r.v < 0 ? 'var(--negative)' : 'var(--positive)';
+        return (
+          `<text x="92" y="${y + 12}" text-anchor="end" font-size="11" fill="var(--text-muted)">${r.name}</text>` +
+          `<rect x="${x}" y="${y}" width="${w}" height="16" rx="2" fill="${c}" opacity="0.85"/>` +
+          `<text x="${r.v < 0 ? x - 4 : x + w + 4}" y="${y + 12}" text-anchor="${r.v < 0 ? 'end' : 'start'}" font-size="11" font-weight="600" fill="${c}">${r.v > 0 ? '+' : ''}$${r.v}M</text>`
+        );
+      }).join('') +
+      `</svg><br/>` +
+      `<strong>Read:</strong> LATAM is 4× the gap of NA. EMEA is the only positive (school holiday lift). Global rolls to <strong class="text-negative">−$38M</strong>.`,
+    actions: [
+      { kind: 'open',   label: 'Open LATAM drilldown',   who: 'Performance · LATAM',  body: 'Mexico + Brazil supply detail.' },
+      { kind: 'whatif', label: 'Model LATAM recovery',    who: 'Forecast · W11',       body: '+15% courier supply scenario.' },
+      { kind: 'pin',    label: 'Pin chart to Workspace',  who: 'Workspace',            body: 'W10 regional variance snapshot.' },
+      { kind: 'share',  label: 'Share with leadership',   who: 'Exec',                 body: 'Regional variance breakdown.' },
+    ],
+    followUps: [
+      'Why is LATAM so much worse than NA?',
+      'Show this trend over the last 10 weeks',
+      'Break LATAM into its country drivers',
+    ],
+  },
+  {
+    match: /trend.*10.?weeks?|10.?week.?trend|cumulative.*build|line chart.*variance|weekly variance trend/i,
+    text: (() => {
+      const trend = [-8, -12, -10, -15, -18, -22, -28, -32, -35, -38];
+      const W = 520, H = 180, P = 32;
+      const min = Math.min(...trend), max = Math.max(...trend);
+      const xy = (i: number, v: number) => `${P + (i / (trend.length - 1)) * (W - P * 2)},${P + ((max - v) / Math.max(max - min, 1)) * (H - P * 2)}`;
+      const points = trend.map((v, i) => xy(i, v)).join(' ');
+      const dots = trend.map((v, i) => `<circle cx="${xy(i, v).split(',')[0]}" cy="${xy(i, v).split(',')[1]}" r="3" fill="var(--negative)"/>`).join('');
+      const labels = trend.map((_, i) => `<text x="${xy(i, 0).split(',')[0]}" y="${H - P + 14}" text-anchor="middle" font-size="9" fill="var(--text-faint)">W${i + 1}</text>`).join('');
+      return `<strong>Cumulative variance build — last 10 weeks ($M):</strong><br/><br/>` +
+        `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;max-width:520px">` +
+        `<line x1="${P}" y1="${H - P}" x2="${W - P}" y2="${H - P}" stroke="var(--rule)" stroke-width="1"/>` +
+        `<line x1="${P}" y1="${P}" x2="${P}" y2="${H - P}" stroke="var(--rule)" stroke-width="1"/>` +
+        `<polyline points="${points}" fill="none" stroke="var(--negative)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` +
+        dots + labels +
+        `</svg><br/>` +
+        `<strong>Trough:</strong> W10 at <strong class="text-negative">$${trend[trend.length - 1]}M</strong>. Compounding 4-week negative streak — no auto-recovery signal yet.`;
+    })(),
+    actions: [
+      { kind: 'whatif', label: 'Project W11–W14',         who: 'Forecast',             body: 'Continue trend with current run-rate.' },
+      { kind: 'open',   label: 'Open History tab',        who: 'Performance · history',body: 'Full weekly drill.' },
+      { kind: 'pin',    label: 'Pin trend',               who: 'Workspace',            body: '10-week build trend.' },
+      { kind: 'share',  label: 'Share with CFO',          who: 'Mai · CFO',            body: 'Trend deteriorating week-over-week.' },
+    ],
+    followUps: [
+      'When did the streak start?',
+      'How does this compare to last quarter?',
+      'What will W11 look like under recovery scenario?',
+    ],
+  },
+  {
+    match: /pie chart|donut|driver split|share of variance|composition.*variance/i,
+    text: (() => {
+      const slices = [
+        { name: 'China macro',           v: 22, c: 'var(--negative)' },
+        { name: 'Local competition',     v: 16, c: 'var(--negative)' },
+        { name: 'Premium soft demand',   v: 10, c: 'var(--negative)' },
+        { name: 'Channel mix',            v:  3, c: 'var(--warning)'  },
+        { name: 'Other',                   v:  2, c: 'var(--warning)'  },
+      ];
+      const total = slices.reduce((a, s) => a + s.v, 0);
+      const cx = 80, cy = 80, R = 60, r = 36; // donut
+      let acc = 0;
+      const arc = (start: number, end: number) => {
+        const a0 = (start / total) * Math.PI * 2 - Math.PI / 2;
+        const a1 = (end   / total) * Math.PI * 2 - Math.PI / 2;
+        const large = end - start > total / 2 ? 1 : 0;
+        const x0 = cx + R * Math.cos(a0), y0 = cy + R * Math.sin(a0);
+        const x1 = cx + R * Math.cos(a1), y1 = cy + R * Math.sin(a1);
+        const x2 = cx + r * Math.cos(a1), y2 = cy + r * Math.sin(a1);
+        const x3 = cx + r * Math.cos(a0), y3 = cy + r * Math.sin(a0);
+        return `M ${x0} ${y0} A ${R} ${R} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${r} ${r} 0 ${large} 0 ${x3} ${y3} Z`;
+      };
+      const paths = slices.map(s => {
+        const start = acc;
+        acc += s.v;
+        return `<path d="${arc(start, acc)}" fill="${s.c}" opacity="0.9"/>`;
+      }).join('');
+      const legend = slices.map((s, i) => {
+        const pct = ((s.v / total) * 100).toFixed(0);
+        return `<g transform="translate(180, ${20 + i * 22})">` +
+          `<rect x="0" y="2" width="10" height="10" rx="1" fill="${s.c}"/>` +
+          `<text x="16" y="11" font-size="11" fill="var(--text-ink)">${s.name}</text>` +
+          `<text x="180" y="11" text-anchor="end" font-size="11" font-weight="600" fill="var(--text-muted)">−$${s.v}M · ${pct}%</text>` +
+          `</g>`;
+      }).join('');
+      return `<strong>Variance composition — $${total}M total negative drivers:</strong><br/><br/>` +
+        `<svg viewBox="0 0 380 160" width="100%" style="display:block;max-width:520px">` +
+        paths + legend +
+        `<text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="11" fill="var(--text-faint)">Total</text>` +
+        `<text x="${cx}" y="${cy + 12}" text-anchor="middle" font-size="14" font-weight="700" fill="var(--negative)">−$${total}M</text>` +
+        `</svg><br/>` +
+        `<strong>Top 3 drivers</strong> (China macro, local competition, Premium) account for <strong>~88%</strong> of the variance.`;
+    })(),
+    actions: [
+      { kind: 'open',   label: 'Open driver decomposition', who: 'AI Diagnostic',    body: 'Full driver waterfall + lineage.' },
+      { kind: 'whatif', label: 'Model "Premium recovers"',  who: 'Forecast',          body: 'If Premium soft demand inflects, what is the gap?' },
+      { kind: 'pin',    label: 'Pin composition',           who: 'Workspace',         body: 'W10 driver split.' },
+    ],
+    followUps: [
+      'How fixable is the China macro driver?',
+      'Show last 4 weeks of this composition',
+      'Which driver is the cheapest to mitigate?',
+    ],
+  },
+  {
+    match: /forecast scenarios|w11 scenarios|scenario chart|recovery scenarios/i,
+    text: (() => {
+      const scenarios = [
+        { name: 'Do nothing',           v: -52, c: 'var(--negative)' },
+        { name: 'Mexico ceiling lift',   v: -36, c: 'var(--warning)'  },
+        { name: '+ Brazil incentive',    v: -28, c: 'var(--warning)'  },
+        { name: '+ Premium price hold',  v: -18, c: 'var(--positive)' },
+        { name: 'Full recovery package', v:  -8, c: 'var(--positive)' },
+      ];
+      const max = 60;
+      const W = 520, barH = 24, gap = 10, P = 140;
+      const H = scenarios.length * (barH + gap) + 12;
+      const bars = scenarios.map((s, i) => {
+        const y = 8 + i * (barH + gap);
+        const w = (Math.abs(s.v) / max) * (W - P - 30);
+        return `<text x="${P - 8}" y="${y + barH / 2 + 4}" text-anchor="end" font-size="11" fill="var(--text-muted)">${s.name}</text>` +
+          `<rect x="${P}" y="${y}" width="${w}" height="${barH}" rx="3" fill="${s.c}" opacity="0.85"/>` +
+          `<text x="${P + w + 6}" y="${y + barH / 2 + 4}" font-size="11" font-weight="600" fill="${s.c}">$${s.v}M</text>`;
+      }).join('');
+      return `<strong>W11 forecast scenarios — variance vs Plan ($M):</strong><br/><br/>` +
+        `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;max-width:520px">${bars}</svg><br/>` +
+        `<strong>Recommendation:</strong> the combined supply + pricing package gets us within $10M — a defensible miss the CFO can communicate. "Do nothing" is the worst path: −$52M is a disclosure event.`;
+    })(),
+    actions: [
+      { kind: 'approve', label: 'Approve full recovery package', who: 'Mai · CFO',           body: 'Mexico ceiling + BR incentive + Premium price hold.', requires: 'approve_je_over_1m' },
+      { kind: 'whatif',  label: 'Add 5th scenario',              who: 'Forecast model',      body: 'Customize variables and re-run.' },
+      { kind: 'share',   label: 'Share scenarios with exec',     who: 'Exec leadership',      body: 'W11 forecast options.' },
+      { kind: 'pin',     label: 'Pin scenarios',                 who: 'Workspace',            body: 'W11 options analysis.' },
+    ],
+    followUps: [
+      'What is the cost of the full recovery package?',
+      'Which scenario has the highest ROI?',
+      'How sensitive is the result to Premium pricing?',
+    ],
+  },
+  {
+    match: /heatmap|region.*segment.*matrix|cross.*segment|segment heatmap/i,
+    text: (() => {
+      const segments = ['Grocery', 'Convenience', 'Pharmacy', 'Premium'];
+      const regions  = ['NA', 'LATAM', 'EMEA', 'APAC'];
+      const cells = [
+        [-2, -9, +1, -1],   // Grocery
+        [-3, -3, 0,  -1],   // Convenience
+        [+1, 0,  -2, 0 ],   // Pharmacy
+        [-5, -12, +3, -5],  // Premium
+      ];
+      const cellW = 80, cellH = 36, leftP = 88, topP = 28;
+      const colorFor = (v: number) => {
+        if (v <= -8) return 'rgba(239,68,68,0.85)';
+        if (v <= -3) return 'rgba(239,68,68,0.45)';
+        if (v <   0) return 'rgba(245,158,11,0.45)';
+        if (v ===  0) return 'rgba(148,163,184,0.25)';
+        return 'rgba(16,185,129,0.6)';
+      };
+      const W = leftP + cellW * regions.length + 8;
+      const H = topP + cellH * segments.length + 8;
+      let svg = '';
+      // header
+      regions.forEach((r, i) => {
+        svg += `<text x="${leftP + i * cellW + cellW / 2}" y="${topP - 8}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-ink)">${r}</text>`;
+      });
+      cells.forEach((row, ri) => {
+        svg += `<text x="${leftP - 8}" y="${topP + ri * cellH + cellH / 2 + 4}" text-anchor="end" font-size="11" fill="var(--text-muted)">${segments[ri]}</text>`;
+        row.forEach((v, ci) => {
+          svg += `<rect x="${leftP + ci * cellW + 1}" y="${topP + ri * cellH + 1}" width="${cellW - 2}" height="${cellH - 2}" rx="2" fill="${colorFor(v)}"/>`;
+          svg += `<text x="${leftP + ci * cellW + cellW / 2}" y="${topP + ri * cellH + cellH / 2 + 4}" text-anchor="middle" font-size="11" font-weight="600" fill="${v < -3 ? '#fff' : 'var(--text-ink)'}">${v > 0 ? '+' : ''}${v}</text>`;
+        });
+      });
+      return `<strong>Segment × Region heatmap ($M variance):</strong><br/><br/>` +
+        `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;max-width:520px">${svg}</svg><br/>` +
+        `<strong>Hotspot:</strong> Premium × LATAM at <strong class="text-negative">−$12M</strong>. ` +
+        `Pharmacy × EMEA is the only meaningful loss outside the obvious LATAM block (Brazilian regulatory delay). ` +
+        `EMEA Grocery and Premium are positive — confirms the holiday-tailwind narrative.`;
+    })(),
+    actions: [
+      { kind: 'open',   label: 'Drill into Premium × LATAM', who: 'Performance · LATAM · Premium', body: 'Hotspot: −$12M.' },
+      { kind: 'whatif', label: 'Filter heatmap to last 4 weeks', who: 'Time filter',                  body: 'Show 4-week average instead of W10 snapshot.' },
+      { kind: 'pin',    label: 'Pin heatmap',                  who: 'Workspace',                     body: 'Segment × Region cross-cut.' },
+    ],
+    followUps: [
+      'Why is Pharmacy × EMEA negative?',
+      'Show the same heatmap by margin %',
+      'Compare to Q4 2024 heatmap',
+    ],
+  },
 ];
 export const FALLBACK_RESPONSE: ChatResponseDef = {
   match: /.*/,

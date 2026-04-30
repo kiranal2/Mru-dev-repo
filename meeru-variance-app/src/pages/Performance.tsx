@@ -5,7 +5,9 @@ import { TopNav } from '../components/TopNav';
 import { KpiRow } from '../components/KpiRow';
 import { VarianceChart } from '../components/VarianceChart';
 import { CommandCenter } from '../components/CommandCenter';
-import { StatusChip, InlineFilterMenu } from '../components/ui';
+import { InlineFilterMenu } from '../components/ui';
+import { AISummaryPanel } from '../components/AISummaryPanel';
+import type { Severity } from '../components/AISummaryPanel';
 import { Icon } from '../icons';
 import { DrillDownView, ExceptionsView, SignalsView, HistoryView } from '../components/subviews';
 import {
@@ -163,6 +165,12 @@ export default function Performance() {
 
   const chip = analysis.data?.statusChip ?? personaChip;
 
+  // Map StatusChip kind → AI Summary severity. Drives the left border, icon
+  // tint, and action button set inside the consolidated AI Summary card.
+  const severity: Severity = chip.kind === 'neg' ? 'critical'
+    : chip.kind === 'warn' ? 'warning'
+    : 'note';
+
   return (
     <WorkbenchShell
       workbench="performance"
@@ -199,69 +207,27 @@ export default function Performance() {
       }
       dock={<CommandCenter />}
     >
-      <div className="flex items-center justify-between mb-3 gap-3">
-        <h1 className="text-[18px] font-semibold text-ink tracking-tight truncate">
-          Performance Intelligence · {industry.meta.periodLabel} · {regionLabel}
-        </h1>
-        <div className="flex items-center gap-2 shrink-0">
-          {PERF_BRIDGE[region] && topTab === 'analysis' && (
-            <button
-              type="button"
-              onClick={() => setAhaOpen(v => !v)}
-              aria-expanded={ahaOpen}
-              // Per palette audit item 5: "at most one coral element per major
-              // region" — the StatusChip next to this button already owns the
-              // primary/warning pill role, so the "AI summary" toggle goes
-              // neutral (surface-soft/rule). No coral tint.
-              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded border text-[10.5px] font-medium transition-colors ${
-                ahaOpen
-                  ? 'text-ink bg-surface-soft border-rule'
-                  : 'text-muted border-transparent hover:text-ink hover:bg-surface-soft'
-              }`}
-            >
-              <Icon.Sparkle className="w-3 h-3" />
-              <span>AI summary</span>
-              <svg
-                width="9"
-                height="9"
-                viewBox="0 0 12 12"
-                fill="none"
-                className={`transition-transform ${ahaOpen ? 'rotate-180' : ''}`}
-              >
-                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          )}
-          <StatusChip kind={chip.kind}>{chip.text}</StatusChip>
-        </div>
-      </div>
+      {/* H1 trimmed to just the workbench name — the scope row at the top of
+          the shell already carries period + region, so repeating them inline
+          here was redundant. */}
+      <h1 className="text-[18px] font-semibold text-ink tracking-tight mb-3 truncate">
+        Performance Intelligence
+      </h1>
 
-      {/* AI summary callout — shown by default. Brand-tinted card with a
-          Sparkle icon and a × close button. Preference persists (see above).
-          Re-open via the "AI summary" pill next to the title. */}
-      {ahaOpen && PERF_BRIDGE[region] && topTab === 'analysis' && (
-        <div className="relative mb-3 rounded-lg border border-brand-weak bg-gradient-to-br from-brand-tint to-transparent px-3.5 py-3 pr-9 anim-fade-up">
-          <div className="flex items-start gap-2.5">
-            <div className="w-6 h-6 rounded-md bg-brand/10 text-brand grid place-items-center shrink-0 mt-0.5">
-              <Icon.Sparkle className="w-3.5 h-3.5" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 mb-1">
-                <span className="text-[10px] font-semibold tracking-wider uppercase text-brand">AI Summary</span>
-              </div>
-              <p className="text-[12.5px] leading-[1.55] text-ink">
-                {PERF_BRIDGE[region].aha}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => setAhaOpen(false)}
-            title="Hide AI summary"
-            className="absolute top-2 right-2 w-6 h-6 rounded grid place-items-center text-faint hover:text-ink hover:bg-surface-soft transition-colors"
-          >
-            <Icon.X className="w-3.5 h-3.5" />
-          </button>
-        </div>
+      {/* Unified AI Summary + Variance Flag — single container. Severity drives
+          the left edge color, icon, chip, and which action buttons appear, so
+          the user reads one connected callout instead of two competing ones. */}
+      {PERF_BRIDGE[region] && topTab === 'analysis' && (
+        <AISummaryPanel
+          severity={severity}
+          severityLabel={chip.text}
+          text={PERF_BRIDGE[region].aha}
+          scopeLabel={`${WORKBENCHES.performance.label} · ${industry.meta.periodLabel} · ${regionLabel}`}
+          varianceDelta={analysis.data?.kpis?.[0]?.delta}
+          open={ahaOpen}
+          onToggle={() => setAhaOpen(v => !v)}
+          onClose={() => setAhaOpen(false)}
+        />
       )}
 
       {topTab === 'analysis' && (

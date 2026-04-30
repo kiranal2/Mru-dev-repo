@@ -18,6 +18,11 @@ export function RailGroup({ label, items, active, onSelect, groupKey }: GroupPro
       {items.map(it => {
         const isActive = it.k === active;
         const toneCls = it.tone === 'pos' ? 'text-positive' : it.tone === 'neg' ? 'text-negative' : it.tone === 'warn' ? 'text-warning' : 'text-faint';
+        // When the row carries a semantic tone (pos/neg/warn), keep that color
+        // even on the active row — masking it with `text-brand` would erase the
+        // signal the user is scanning for. Only items without a tone fall back
+        // to brand on active so the row still reads as selected.
+        const valueColorCls = it.tone ? toneCls : (isActive ? 'text-brand' : 'text-faint');
         return (
           <button
             key={it.k}
@@ -31,7 +36,7 @@ export function RailGroup({ label, items, active, onSelect, groupKey }: GroupPro
             }`}
           >
             <span>{it.n}</span>
-            {it.d && <span className={`text-[11px] font-medium num ${isActive ? 'text-brand' : toneCls}`}>{it.d}</span>}
+            {it.d && <span className={`text-[11px] font-medium num ${valueColorCls}`}>{it.d}</span>}
           </button>
         );
       })}

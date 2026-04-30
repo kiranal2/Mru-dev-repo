@@ -39,7 +39,8 @@
       "Bash(command -v sips)",
       "Bash(cp \"/Users/kirankumaralugonda/Downloads/darkthemelogo.svg\" /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-app/src/assets/meeru-logo-dark.svg)",
       "Bash(cp \"/Users/kirankumaralugonda/Downloads/darkthemelogo.svg\" /Users/kirankumaralugonda/Documents/GitHub/Mru-dev-repo/meeru-variance-tablet/assets/meeru-logo-dark.svg)",
-      "Bash(echo \"exit=$?\")"
+      "Bash(echo \"exit=$?\")",
+      "Bash(echo \"EXIT=$?\")"
     ]
   }
 }

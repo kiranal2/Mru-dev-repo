@@ -6,7 +6,7 @@ import { TopNav } from '../components/TopNav';
 import { KpiRow } from '../components/KpiRow';
 import { Commentary } from '../components/Commentary';
 import { NbaMainSection } from '../components/NbaMainSection';
-import { StatusChip } from '../components/ui';
+import { StatusChip, InlineFilterMenu } from '../components/ui';
 import { WaterfallView, ProductMixView, CostsView, SensitivityView } from '../components/subviews';
 import {
   KpiRowSkeleton, CommentarySkeleton, ChartSkeleton, TableSkeleton,
@@ -90,14 +90,28 @@ export default function Margin() {
     <WorkbenchShell
       workbench="margin"
       scopeLabel={`${WORKBENCHES.margin.label} · ${periodLabel} · ${productLabel} · ${channelLabel}`}
-      scopeRight={<><span>{periodLabel}</span><span className="text-faint">·</span><span>{productLabel}</span><span className="text-faint">·</span><span>{channelLabel}</span></>}
+      scopeRight={
+        <>
+          <InlineFilterMenu
+            label="Period"
+            items={MARGIN_PERIODS}
+            value={period}
+            onChange={setPeriod}
+          />
+          <span className="text-faint">·</span>
+          <span>{productLabel}</span>
+          <span className="text-faint">·</span>
+          <span>{channelLabel}</span>
+        </>
+      }
       commentary={waterfallData.data?.commentary}
       commentaryHeadline={`Margin drivers · ${productLabel}`}
       leftRail={
         <>
           <RailGroup label="Product" items={MARGIN_PRODUCTS} active={product} onSelect={setProduct} groupKey="product" />
           <RailGroup label="Channel" items={MARGIN_CHANNELS} active={channel} onSelect={setChannel} groupKey="channel" />
-          <RailGroup label="Period"  items={MARGIN_PERIODS}  active={period}  onSelect={setPeriod}  groupKey="period" />
+          {/* Period filter moved to the top-row dropdown (scopeRight) so the
+              left rail stays focused on dimensional cuts (Product, Channel). */}
         </>
       }
       topNav={<TopNav tabs={WORKBENCHES.margin.topTabs} active={topTab} onChange={setTopTab} />}
@@ -105,7 +119,7 @@ export default function Margin() {
     >
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h1 className="text-[18px] font-semibold text-ink tracking-tight">Margin Intelligence · {productLabel}</h1>
+          <h1 className="text-[18px] font-semibold text-ink tracking-tight">Margin Intelligence</h1>
           <p className="text-[11px] text-faint mt-0.5">{tabSub[topTab]} · {persona.role}</p>
         </div>
         <StatusChip kind={chip.kind}>{chip.text}</StatusChip>
